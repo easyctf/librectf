@@ -1,0 +1,7 @@
+BASEDIR=/root/OpenCTF
+cd $BASEDIR
+
+tmux kill-session -t openctf
+docker rm openctf
+docker build -t openctf .
+tmux new-session -s openctf -d 'docker run --name openctf -p 80:8000 openctf'
