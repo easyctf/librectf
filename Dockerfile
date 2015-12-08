@@ -1,7 +1,10 @@
 FROM ubuntu:latest
 
+RUN apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv 7F0CEB10
+RUN echo "deb http://repo.mongodb.org/apt/ubuntu trusty/mongodb-org/3.0 multiverse" | tee /etc/apt/sources.list.d/mongodb-org-3.0.list
+
 RUN apt-get update && apt-get -y upgrade
-RUN apt-get install -y python python-dev python-pip
+RUN apt-get install -y mongodb-org libffi-dev python python-dev python-pip
 
 RUN mkdir /openctf
 ADD . /openctf/

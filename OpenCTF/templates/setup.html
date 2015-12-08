@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+
+{% block header %}
+<link rel="stylesheet" href="http://cdn.rawgit.com/Eonasdan/bootstrap-datetimepicker/e8bddc60e73c1ec2475f827be36e1957af72e2ea/build/css/bootstrap-datetimepicker.css" />
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.10.6/moment.min.js" integrity="sha384-v7eExOYhwaHa3+GhP+lHytJsMcidazNdjiaggRhdbvVTVTCjweLpa23t37ZKxaCf" crossorigin="anonymous"></script>
+<script src="http://cdn.rawgit.com/Eonasdan/bootstrap-datetimepicker/e8bddc60e73c1ec2475f827be36e1957af72e2ea/src/js/bootstrap-datetimepicker.js" integrity="sha384-0w1QEyltHE5d6Y/8crZEZS9XClEhn4RF7pj+XqnoKTp3DJiK/qJWy2Ttlg6WTII2" crossorigin="anonymous"></script>
+{% endblock %}
+
+{% block content %}
+<div class="container">
+	<div class="page-header">
+		<h1>Setup your CTF</h1>
+	</div>
+	<div class="row">
+		<div class="col-md-6 col-md-offset-3 col-sm-10 col-sm-offset-1">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h2 class="panel-title">Setup</h2>
+				</div>
+				<div class="panel-body">
+					{% if errors is defined and errors|length > 0 %}
+						<div class="alert alert-danger">
+							Please review the following error(s):
+							<ul>
+							{% for error in errors %}
+								<li>{{ error }}</li>
+							{% endfor %}
+							</ul>
+						</div>
+					{% endif %}
+					<form class="form-horizontal" action="/setup" method="POST">
+						<fieldset>
+							<div id="login_msg"></div>
+						</fieldset>
+						<fieldset class="container-fluid">
+							<legend>General Information</legend>
+							<div class="row">
+								<div class="col-sm-12 form-group">
+									<label class="col-sm-12" for="ctf_name"><small>CTF Name</small></label>
+									<div class="col-sm-12">
+										<input class="form-control" type="text" required name="ctf_name" id="ctf_name" placeholder="CTF Name" autocomplete="off" {% if data is defined and data.ctf_name is defined %}value="{{ data.ctf_name }}"{% endif %} />
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-12 form-group">
+									<label class="col-sm-12" for="ctf_start"><small>CTF Start</small></label>
+									<div class="col-sm-12">
+										<div class="input-group date" id="ctf_start_container">
+											<input type="text" class="form-control" name="ctf_start" id="ctf_start" placeholder="CTF Start" {% if data is defined and data.ctf_start is defined %}value="{{ data.ctf_start }}"{% endif %} />
+											<span class="input-group-addon">
+												<span class="glyphicon glyphicon-calendar"></span>
+											</span>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-12 form-group">
+									<label class="col-sm-12" for="ctf_end"><small>CTF End</small></label>
+									<div class="col-sm-12">
+										<div class="input-group date" id="ctf_start_container">
+											<input type="text" class="form-control" name="ctf_end" id="ctf_end" placeholder="CTF End" {% if data is defined and data.ctf_end is defined %}value="{{ data.ctf_end }}"{% endif %} />
+											<span class="input-group-addon">
+												<span class="glyphicon glyphicon-calendar"></span>
+											</span>
+										</div>
+									</div>
+								</div>
+							</div>
+						</fieldset>
+						<fieldset class="container-fluid">
+							<legend>Create Admin Account</legend>
+							<div class="row">
+								<div class="col-sm-12 form-group">
+									<label class="col-sm-12" for="email"><small>Email</small></label>
+									<div class="col-sm-12">
+										<input class="form-control" type="email" required name="email" id="email" placeholder="Email" autocomplete="off" {% if data is defined and data.email is defined %}value="{{ data.email }}"{% endif %} />
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-12 form-group">
+									<label class="col-sm-12" for="username"><small>Username</small></label>
+									<div class="col-sm-12">
+										<input class="form-control" type="text" required name="username" id="username" placeholder="Username" autocomplete="off" {% if data is defined and data.username is defined %}value="{{ data.username }}"{% endif %} />
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-12 form-group">
+									<label class="col-sm-12" for="password"><small>Password</small></label>
+									<div class="col-sm-12">
+										<input class="form-control" type="password" required name="password" id="password" placeholder="Password" autocomplete="off" {% if data is defined and data.password is defined %}value="{{ data.password }}"{% endif %} />
+									</div>
+								</div>
+							</div>
+						</fieldset>
+						<fieldset class="container-fluid">
+							<legend>Complete Setup</legend>
+							<div class="row">
+								<div class="col-sm-12 form-group">
+									<div class="col-sm-12">
+										<p>In the <code>config</code> collection in your database, there is a document with the key <code>setup_verification</code>. Retrieve the value and paste it here.</p>
+									</div>
+									<label class="col-sm-12" for="verification"><small>Verification</small></label>
+									<div class="col-sm-12">
+										<input class="form-control" type="text" required name="verification" id="verification" placeholder="Verification" autocomplete="off" {% if data is defined and data.verification is defined %}value="{{ data.verification }}"{% endif %} />
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-12 form-group">
+									<div class="col-sm-12">
+										<input type="hidden" name="nonce" value="{{ nonce }}" />
+										<input type="submit" class="btn btn-primary" value="Done." />
+									</div>
+								</div>
+							</div>
+						</fieldset>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+	$(document).ready(function() {
+		$("#ctf_start").datetimepicker();
+		$("#ctf_end").datetimepicker();
+	});
+</script>
+{% endblock %}

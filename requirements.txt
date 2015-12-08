@@ -1,2 +1,5 @@
 Flask
+pymongo
+passlib
+bcrypt
 gunicorn
