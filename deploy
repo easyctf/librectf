@@ -1,8 +1,15 @@
-BASEDIR=/root/OpenCTF
-cd $BASEDIR
+#!/bin/bash
 
-tmux kill-session -t openctf
-docker stop openctf
-docker rm openctf
-docker build -t openctf .
-tmux new-session -s openctf -d 'docker run --link mongodb:mongo --name openctf -p 80:8000 openctf'
+echo "Stopping the server..."
+pkill gunicorn
+sudo service nginx stop
+sudo service memcached stop
+tmux kill-session -t ctf 2> /dev/null
+
+sudo cp /vagrant/ctf.nginx /etc/nginx/sites-enabled/ctf
+
+echo "Starting the server..."
+cd /vagrant/server
+sudo service nginx start
+sudo service memcached start
+tmux new-session -s ctf -d 'tmux set remain-on-exit on && gunicorn "app:app" -c /vagrant/scripts/gunicorn.py.ini'

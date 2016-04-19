@@ -1,0 +1,103 @@
+<div class="container">
+	<p>&nbsp;</p>
+	<div class="row">
+		<div class="col-md-6 col-md-offset-3 col-sm-10 col-sm-offset-1">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h2 class="panel-title">Register</h2>
+				</div>
+				<div class="panel-body">
+					<form class="form-horizontal" onsubmit="register_form(); return false;" id="register_form">
+						<fieldset>
+							<div id="register_msg"></div>
+						</fieldset>
+						<fieldset class="container-fluid">
+							<p>Register your individual account here. Make sure that members of your team also register accounts. You'll be able to create teams and add members after you register!</p>
+							<div class="row">
+								<div class="col-sm-12 form-group">
+									<label class="col-sm-12" for="name"><small>Your Name</small></label>
+									<div class="col-sm-12">
+										<input class="form-control" type="text" required name="name" id="name" placeholder="Your Name" autocomplete="off" />
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-12 form-group">
+									<label class="col-sm-12" for="email"><small>Email</small></label>
+									<div class="col-sm-12">
+										<input class="form-control" type="email" required name="email" id="email" placeholder="michael@example.com" autocomplete="off" />
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-12 form-group">
+									<label class="col-sm-12" for="username"><small>Username</small></label>
+									<div class="col-sm-12">
+										<input class="form-control" type="text" required name="username" id="username" placeholder="Username" autocomplete="off" />
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-12 form-group">
+									<label class="col-sm-12" for="password"><small>Password</small></label>
+									<div class="col-sm-6">
+										<input class="form-control" type="password" required name="password" id="password" placeholder="Password" autocomplete="off" />
+									</div>
+									<div class="col-sm-6">
+										<input class="form-control" type="password" required name="password_confirm" id="password_confirm" placeholder="Confirm Password" autocomplete="off" />
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-12 form-group">
+									<label class="col-sm-12" for="type"><small>Who are you?</small></label>
+									<div class="col-sm-12">
+										<select name="type" id="type" class="selectpicker" data-width="100%">
+											<option value="1">US Middle/High School Student</option>
+											<option value="2">Middle/High School Teacher</option>
+											<option value="3">Non-US/Non-Student/Observer</option>
+										</select>
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-12 form-group">
+									<label class="col-sm-12"><small>Receive email notifications about future CTFs?</small></label>
+									<div class="col-sm-12">
+										<div class="btn-group" data-toggle="buttons">
+											<label class="btn btn-default active" id="notify_btn">
+												<input type="checkbox" autocomplete="off" checked name="notify" id="notify"><span id="notify_box" class="fa fa-fw fa-check-square"></span>&nbsp;Get notified about future CTFs
+											</label>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-12 form-group">
+									<center>
+										<input type="submit" class="btn btn-primary btn-lg" value="Register" />
+									</center>
+								</div>
+							</div>
+						</fieldset>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+	$(".selectpicker").selectpicker();
+	var checkedClass = "fa fa-check-square";
+	var uncheckedClass = "fa fa-square";
+	$("#notify_btn").click(function() {
+		if($("#notify").is(":checked")) {
+			$("#notify_box").removeClass(checkedClass);
+			$("#notify_box").addClass(uncheckedClass);
+		} else {
+			$("#notify_box").removeClass(uncheckedClass);
+			$("#notify_box").addClass(checkedClass);
+		}
+	});
+</script>

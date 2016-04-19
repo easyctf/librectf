@@ -1,0 +1,22 @@
+<div class="page-header">
+	<h1>Scoreboard</h1>
+</div>
+
+<table class="table table-striped">
+	<thead>
+		<tr>
+			<th>Rank</th>
+			<th>Team Name</th>
+			<th>School</th>
+			<th>Points</th>
+		</tr>
+	</thead>
+	<tbody>
+		<tr ng-repeat="team in scoreboard">
+			<td>{{ team['rank'] }}</td>
+			<td><a ng-href="/team/{{ team['teamname'] }}">{{ team['teamname'] }}</a></td>
+			<td>{{ team['school'] }}</td>
+			<td>{{ team['points'] }}</td>
+		</tr>
+	</tbody>
+</table>

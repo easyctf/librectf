@@ -1,0 +1,12 @@
+Flask
+mysql-python
+Flask-SQLAlchemy
+SQLAlchemy
+gunicorn
+requests
+voluptuous
+Pillow
+markdown2
+onetimepass
+pyqrcode
+python-memcached

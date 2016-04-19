@@ -1,0 +1,121 @@
+<div ng-show="user['user_found']==true">
+	<div class="row">
+		<div class="col-sm-3 col-xs-12">
+			<div class="panel panel-default">
+				<div class="panel-body">
+					<div style="width:100%;max-width:100%;">
+						<img src="/api/user/avatar/{{ user.uid }}?{{ timestamp }}" id="avatar" style="width:100%;max-height:256px;" />
+						<small style="display:block;text-align:right;" ng-show="user['me']==true"><a href="/settings#profile">Edit Picture</a></small>
+					</div>
+					<h2 style="margin:0px;font-weight:bold;font-size:2em;">{{ user.name }}</h2>
+					<small style="display:block;font-size:1.5em;color:#999;">@{{ user.username }}</small>
+					<hr>
+					<div>
+						<i class="fa fa-fw fa-user"></i>
+						{{ user.type }}
+						<div class="label label-info" ng-show="user['admin']==true">ADMIN</div>
+					</div>
+					<div ng-show="user['show_email']==true">
+						<i class="fa fa-fw fa-envelope"></i>
+						<a style="color:#666;" href="mailto:{{ user.email }}">
+							<span id="email">{{ user.email }}</span>
+						</a>
+					</div>
+					<div>
+						<i class="fa fa-fw fa-clock-o"></i>
+						Joined <time class="timeago" datetime="{{ user.registertime }}"></time>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="col-sm-9 col-xs-12">
+			<ul class="nav nav-tabs" role="tablist">
+				<li role="presentation" class="active"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">Profile</a></li>
+				<li role="presentation"><a href="#activity" aria-controls="activity" role="tab" data-toggle="tab">Activity</a></li>
+				<a href="/settings" class="btn btn-primary" style="float:right;" ng-show="user['me']==true"><i class="fa fa-fw fa-pencil"></i> Edit Profile</a>
+			</ul>
+			<div class="tab-content">
+				<div role="tabpanel" class="tab-pane active" id="profile">
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<h4 class="panel-title">Team Information</h4>
+						</div>
+						<div class="table-responsive" ng-show="user['in_team']==true">
+							<table class="table table-bordered">
+								<tr>
+									<th>Team Name</th>
+									<td><a ng-href="/team/{{ user.team['teamname'] }}">{{ user.team['teamname'] }}</a></td>
+								</tr>
+								<tr>
+									<th>School</th>
+									<td>{{ user.team['school'] }}</td>
+								</tr>
+								<tr>
+									<th>Points</th>
+									<td>{{ user.team['points'] }}</td>
+								</tr>
+								<tr>
+									<th>Rank</th>
+									<td>{{ user.team['place'] }}</td>
+								</tr>
+							</table>
+						</div>
+						<div class="panel-body" ng-show="user['in_team']!=true">
+							<div class="alert alert-success" ng-show="user['me']==true && user['invitations'].length>0">You have {{ user['invitations'].length }} invitation{{ user['invitations'].length==1 ? "" : "s" }}! <a href="/team">View &raquo;</a></div>
+							<p>{{ user['me']==true ? "You're" : "This user is" }} not a part of a team.</p>
+							<a href="/team" class="btn btn-primary" ng-show="user['me']==true">Join or create one now &raquo;</a>
+						</div>
+					</div>
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<h4 class="panel-title">Statistics</h4>
+						</div>
+						<div class="panel-body">
+							Hi.
+						</div>
+					</div>
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<h4 class="panel-title">Top Solves</h4>
+						</div>
+						<div class="panel-body">
+							Hi.
+						</div>
+					</div>
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<h4 class="panel-title">Achievements</h4>
+						</div>
+						<div class="panel-body">
+							Hi.
+						</div>
+					</div>
+				</div>
+				<div role="tabpanel" class="tab-pane" id="activity">
+					<table class="table">
+						<tr ng-repeat="event in user['activity']">
+							<td><time class="timeago" datetime="{{ event['timestamp'] }}"></time></td>
+							<td ng-bind-html="event['message_clean']"></td>
+						</tr>
+					</table>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div ng-show="user['user_found']!=true">
+	<div class="page-header">
+		<h1>User Not Found</h1>
+	</div>
+
+	<p>The user you were looking for doesn't exist. Check to make sure you've spelled the name right.</p>
+</div>
+
+<script type="text/javascript">
+	$(document).ready(function() {
+		$("ul[role=tablist]").tab();
+		$("a[role=tab]").click(function(e) {
+			e.preventDefault();
+		});
+	});
+</script>

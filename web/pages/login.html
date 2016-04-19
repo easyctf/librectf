@@ -1,0 +1,54 @@
+<div class="container">
+	<p>&nbsp;</p>
+	<div class="row">
+		<div class="col-md-6 col-md-offset-3 col-sm-10 col-sm-offset-1">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h2 class="panel-title">Login</h2>
+				</div>
+				<div class="panel-body">
+					<form class="form-horizontal" onsubmit="login_form(); return false;" id="login_form">
+						<fieldset>
+							<div id="login_msg"></div>
+						</fieldset>
+						<fieldset class="container-fluid">
+							<div class="row">
+								<div class="col-sm-12 form-group">
+									<label class="col-sm-12" for="username"><small>Username</small></label>
+									<div class="col-sm-12">
+										<input class="form-control" type="text" required name="username" id="username" placeholder="Username" autocomplete="off" />
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-12 form-group">
+									<label class="col-sm-12" for="password"><small>Password</small></label>
+									<div class="col-sm-12">
+										<input class="form-control" type="password" required name="password" id="password" placeholder="Password" autocomplete="off" />
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-12 form-group">
+									<center>
+										<input type="hidden" id="_csrf" value="{{ csrf_token }}" />
+										<input type="submit" class="btn btn-success btn-lg" value="Login" />
+									</center>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-12 form-group">
+									<center>
+										<small>
+											<a href="/forgot">Forgot Password?</a>
+										</small>
+									</center>
+								</div>
+							</div>
+						</fieldset>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

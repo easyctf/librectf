@@ -1,0 +1,92 @@
+<div class="container">
+    <p>&nbsp;</p>
+    <div ng-switch on="token">
+        <div ng-switch-when="true">
+            {{ body }}
+            <div ng-switch on="success">
+                <div ng-switch-when="1">
+
+                    <div class="row">
+                        <div class="col-md-6 col-md-offset-3 col-sm-10 col-sm-offset-1">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h2 class="panel-title">Reset Password</h2>
+                                </div>
+                                <div class="panel-body">
+                                    <form class="form-horizontal" onsubmit="reset_form(); return false;" id="reset_form">
+                                        <fieldset>
+                                            <div id="reset_msg"></div>
+                                        </fieldset>
+                                        <fieldset class="container-fluid">
+                                            <div class="row">
+                                                <p>Reset your password here</p>
+                                                <div class="col-sm-12 form-group">
+                                                    <label class="col-sm-12" for="password"><small>Password</small></label>
+                                                    <div class="col-sm-12">
+                                                        <input class="form-control" type="password" required name="password" id="password" placeholder="New password" autocomplete="off" />
+                                                    </div>
+                                                </div>
+                                                <div class="col-sm-12 form-group">
+                                                    <label class="col-sm-12" for="confirm_password"><small>Confirm Password</small></label>
+                                                    <div class="col-sm-12">
+                                                        <input class="form-control" type="password" required name="confirm_password" id="confirm_password" placeholder="Confirm new password" autocomplete="off" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="row">
+                                                <div class="col-sm-12 form-group">
+                                                    <center>
+                                                        <input type="hidden" id="_csrf" value="{{ csrf_token }}" />
+                                                        <input type="submit" class="btn btn-success btn-lg" value="Reset password" />
+                                                    </center>
+                                                </div>
+                                            </div>
+                                        </fieldset>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div ng-switch-default>
+            <div class="row">
+                <div class="col-md-6 col-md-offset-3 col-sm-10 col-sm-offset-1">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h2 class="panel-title">Reset Password</h2>
+                        </div>
+                        <div class="panel-body">
+                            <form class="form-horizontal" onsubmit="request_reset_form(); return false;" id="request_reset_form">
+                                <fieldset>
+                                    <div id="reset_msg"></div>
+                                </fieldset>
+                                <fieldset class="container-fluid">
+                                    <div class="row">
+                                        <p>Enter the email you used to sign up with, and we'll send you an an email with a link to reset your password.</p>
+                                        <div class="col-sm-12 form-group">
+                                            <label class="col-sm-12" for="email"><small>Email</small></label>
+                                            <div class="col-sm-12">
+                                                <input class="form-control" type="email" required name="email" id="email" placeholder="Email" autocomplete="off" />
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-12 form-group">
+                                            <center>
+                                                <input type="hidden" id="_csrf" value="{{ csrf_token }}" />
+                                                <input type="submit" class="btn btn-success btn-lg" value="Send email" />
+                                            </center>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>

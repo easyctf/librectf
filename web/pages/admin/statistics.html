@@ -1,0 +1,27 @@
+<div class="page-header">
+	<h1>Statistics</h1>
+</div>
+
+<div>
+	<ul class="nav nav-tabs" role="tablist">
+		<li role="presentation" class="active"><a href="#overview" aria-controls="overview" role="tab" data-toggle="tab">Overview</a></li>
+	</ul>
+	<div class="tab-content">
+		<div role="tabpanel" class="tab-pane active" id="overview">
+			<div class="row">
+				<div class="col-md-4 col-sm-6 col-xs-12">
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<h4 class="panel-title">Quick Stats</h4>
+						</div>
+						<div class="panel-body">
+							<p><b class="large-number">{{ overview.num_teams[0] }} / {{ overview.num_teams[1] }}</b> ranked teams / total</p>
+							<p><b class="large-number">{{ overview.num_users[0] }} / {{ overview.num_users[1] }}</b> ranked users / total</p>
+							<p><b class="large-number">{{ overview.num_problems }}</b> problems</p>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

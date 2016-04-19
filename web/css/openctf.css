@@ -1,0 +1,35 @@
+@font-face {
+	font-family: "Proxima Nova";
+	src: url("/fonts/ProximaNova.woff2");
+}
+@font-face {
+	font-family: "Proxima Nova";
+	src: url("/fonts/ProximaNovaBold.woff2");
+	font-weight: bold;
+}
+
+body {
+	font-family: "Proxima Nova", Helvetica Neue, Helvetica, Arial, sans-serif;
+}
+
+.tab-content {
+	padding: 15px;
+	> .tab-pane {
+		display: none;
+	}
+	> .active {
+		display: block;
+	}
+}
+
+.NO_HOVER_UNDERLINE_DAMMIT:hover, .NO_HOVER_UNDERLINE_DAMMIT:focus, .NO_HOVER_UNDERLINE_DAMMIT:active {
+	text-decoration:none;
+}
+
+#avatar {
+	border: 1px solid rgb(221, 221, 221);
+}
+
+.large-number {
+	font-size: 1.6em;
+}

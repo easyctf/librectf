@@ -1,0 +1,48 @@
+<div class="container">
+	<p>&nbsp;</p>
+	<div class="row">
+		<div class="col-md-6 col-md-offset-3 col-sm-10 col-sm-offset-1">
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h2 class="panel-title">Two-Factor Authentication</h2>
+				</div>
+				<div class="panel-body">
+					<form class="form-horizontal" onsubmit="twofactor_form(); return false;" id="twofactor_form">
+						<fieldset>
+							<div id="twofactor_msg"></div>
+						</fieldset>
+						<fieldset class="container-fluid">
+							<p>Two-factor authentication protects your account by requiring you to verify your identity using a means other than your password. We'll use the app <a href="https://www.authy.com/" target="_blank">Authy</a> to moderate this process. To begin, scan the following QR code with your app, and then enter the 6-digit code shown on your screen.</p>
+							<div class="row">
+								<div class="col-sm-12 form-group">
+									<label class="col-sm-12"><small>QR Code</small></label>
+									<div class="col-sm-12">
+										<center>
+											<img src="/api/user/twofactor/qr" />
+										</center>
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-12 form-group">
+									<label class="col-sm-12" for="token"><small>Code</small></label>
+									<div class="col-sm-12">
+										<input class="form-control" type="number" required name="token" id="token" placeholder="Code" autocomplete="off" />
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-12 form-group">
+									<center>
+										<input type="hidden" id="_csrf" value="{{ csrf_token }}" />
+										<input type="submit" class="btn btn-success btn-lg" value="Confirm" />
+									</center>
+								</div>
+							</div>
+						</fieldset>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
