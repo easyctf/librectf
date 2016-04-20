@@ -93,7 +93,9 @@ function api_call(method, url, data, callback_success, callback_fail) {
 		"data": data,
 		"url": url,
 		"cache": false
-	}).done(callback_success).fail(callback_fail);
+	}).done(callback_success).fail(function(xhr) {
+		callback_fail();
+	});
 }
 
 function permanent_message(containerId, alertType, message, callback) {

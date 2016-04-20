@@ -277,3 +277,12 @@ class TeamInvitations(db.Model):
 		self.rtype = rtype
 		self.frid = frid
 		self.toid = toid
+
+class Config(db.Model):
+	cfid = db.Column(db.Integer, primary_key=True)
+	key = db.Column(db.String(32))
+	value = db.Column(db.Text)
+
+	def __init__(self, key, value):
+		self.key = key
+		self.value = value
