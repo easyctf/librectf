@@ -1,0 +1,97 @@
+<div class="page-header">
+	<center>
+		<h1>Setup</h1>
+	</center>
+</div>
+
+<div class="row">
+	<div class="col-md-6 col-md-offset-3 col-sm-10 col-sm-offset-1">
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h2 class="panel-title">Setup</h2>
+			</div>
+			<div class="panel-body">
+				<form class="form-horizontal" onsubmit="setup_form(); return false;" id="setup_form" ng-show="ready==true">
+					<fieldset>
+						<div id="login_msg"></div>
+					</fieldset>
+					<fieldset class="container-fluid">
+						<div class="row">
+							<div class="col-sm-12 form-group">
+								<label class="col-sm-12" for="ctf_name"><small>CTF name</small></label>
+								<div class="col-sm-12">
+									<input class="form-control" type="text" required name="ctf_name" id="ctf_name" placeholder="CTF name" autocomplete="off" />
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-sm-12 form-group">
+								<label class="col-sm-12" for="start_time"><small>Start Time</small></label>
+								<div class="col-sm-12">
+									<input class="form-control" type="number" required name="start_time" id="start_time" placeholder="UNIX Timestamp" autocomplete="off" />
+								</div>
+							</div>
+						</div>
+						<p id="start_time_hint">CTF will begin on <time>...</time></p>
+						<div class="row">
+							<div class="col-sm-12 form-group">
+								<label class="col-sm-12" for="end_time"><small>End Time</small></label>
+								<div class="col-sm-12">
+									<input class="form-control" type="number" required name="end_time" id="end_time" placeholder="UNIX Timestamp" autocomplete="off" />
+								</div>
+							</div>
+						</div>
+						<p id="end_time_hint">CTF will end on <time>...</time></p>
+					</fieldset>
+					<fieldset class="container-fluid">
+						<legend>Confirmation</legend>
+						<p>In order to verify that you are actually the owner of this application, we need you to retrieve a certain verification token from the database. You may execute the following query at your MySQL terminal to retrieve this query:</p>
+						<p><code>SELECT `value` FROM `config` WHERE `key`='setup_verification';</code></p>
+						<p>Enter that verification token here:
+						<br /><small>For the demo version, check console for verification code.</small></p>
+						<div class="row">
+							<div class="col-sm-12 form-group">
+								<label class="col-sm-12" for="verification"><small>Verification</small></label>
+								<div class="col-sm-12">
+									<input class="form-control" type="text" required name="verification" id="verification" placeholder="Verification" autocomplete="off" />
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col-sm-12 form-group">
+								<center>
+									<input type="hidden" id="_csrf" value="{{ csrf_token }}" />
+									<input type="submit" class="btn btn-success btn-lg" value="Confirm" />
+								</center>
+							</div>
+						</div>
+					</fieldset>
+				</form>
+				<div class="alert alert-danger" ng-show="ready!=true">
+					Sorry, setup could not be initialized. To fix this issue:
+					<ol>
+						<li>Clear the <code>csrf_token</code> cookie if you're getting a <code>403</code> error.</li>
+						<li>Restart the server.</li>
+					</ol>
+					If neither of those work, please file an issue at <a href="https://github.com/EasyCTF/OpenCTF/issues" target="_blank">Github</a>.
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+	var handler = function() {
+		var date = new Date(~~($("#start_time").val()) * 1000);
+		$("#start_time_hint > time").html(date.toLocaleString());
+		date = new Date(~~($("#end_time").val()) * 1000);
+		$("#end_time_hint > time").html(date.toLocaleString());
+	};
+	$(document).ready(function() {
+		$("#start_time").change(handler);
+		$("#start_time").keyup(handler);
+		$("#start_time").val(~~(new Date().getTime() / 1000 + 60 * 60));
+		$("#end_time").val(~~(new Date().getTime() / 1000 + 2 * 60 * 60));
+		handler();
+	});
+</script>

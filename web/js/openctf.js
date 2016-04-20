@@ -52,6 +52,10 @@ app.config(function($routeProvider, $locationProvider) {
 		templateUrl: "pages/twofactor.html",
 		controller: "twofactorController"
 	})
+	.when("/setup", {
+		templateUrl: "pages/setup.html",
+		controller: "setupController"
+	})
 	.when("/forgot", {
 		templateUrl: "pages/forgot.html",
 		controller: "resetController"
@@ -93,7 +97,13 @@ function api_call(method, url, data, callback_success, callback_fail) {
 		"data": data,
 		"url": url,
 		"cache": false
-	}).done(callback_success).fail(function(xhr) {
+	}).done(function(result) {
+		if (result["redirect"] && location.pathname != result["redirect"]) {
+			location.href = result["redirect"];
+		} else {
+			callback_success(result);
+		}
+	}).fail(function(xhr) {
 		callback_fail();
 	});
 }
@@ -150,6 +160,15 @@ app.controller("profileController", ["$controller", "$scope", "$http", "$routePa
 		}
 		$scope.$apply();
 		$(".timeago").timeago();
+	});
+}]);
+
+app.controller("setupController", ["$controller", "$scope", "$http", function($controller, $scope, $http) {
+	$controller("mainController", { $scope: $scope });
+	api_call("POST", "/api/admin/setup", { }, function(result) {
+		$scope["ready"] = result["success"] == 1;
+		if (result["verification"]) console.log("Verification code:", result["verification"]);
+		$scope.$apply();
 	});
 }]);
 

@@ -144,6 +144,9 @@ def user_status():
 	}
 	if logged_in:
 		result["has_team"] = in_team(get_user().first())
+	if not utils.is_setup_complete():
+		result["redirect"] = "/setup"
+		result["setup"] = False
 
 	return result
 
