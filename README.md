@@ -1,6 +1,11 @@
 OpenCTF
 ======
 
+Demo
+------
+
+A demo copy of this platform is up at [OpenCTF](https://openctf.easyctf.com/). The server is running a cron job that resets the site every 2 hours. Report issues [here](https://github.com/EasyCTF/OpenCTF/issues).
+
 Installation
 ------
 
