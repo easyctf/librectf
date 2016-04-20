@@ -1,6 +1,7 @@
 language: python
+sudo: required
 python:
   - "2.7"
 install:
-  - sh scripts/setup.sh
+  - sudo sh scripts/setup.sh
 scripts: deploy
