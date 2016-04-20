@@ -33,14 +33,14 @@ class Users(db.Model):
 	otp_secret = db.Column(db.String(16))
 	otp_confirmed = db.Column(db.Boolean)
 
-	def __init__(self, name, username, email, password, utype=1):
+	def __init__(self, name, username, email, password, utype=1, admin=False):
 		self.name = name
 		self.username = username
 		self.username_lower = username.lower()
 		self.email = email.lower()
 		self.password = utils.hash_password(password)
 		self.utype = utype
-		self.admin = False
+		self.admin = admin
 		self.registertime = int(time.time())
 		self.otp_confirmed = False
 		self.otp_secret = None

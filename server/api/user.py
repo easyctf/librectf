@@ -81,6 +81,10 @@ def user_forgot_password(token=None):
 def user_register():
 	params = utils.flat_multi(request.form)
 
+	if params.get("password") != params.get("password_confirm"):
+		raise WebException("Passwords do not match.")
+	verify_to_schema(UserSchema, params)
+
 	name = params.get("name")
 	email = params.get("email")
 	username = params.get("username")
@@ -88,11 +92,7 @@ def user_register():
 	password_confirm = params.get("password_confirm")
 	utype = int(params.get("type"))
 
-	if password != password_confirm:
-		raise WebException("Passwords do not match.")
-	verify_to_schema(UserSchema, params)
-
-	user = Users(name, username, email, password, utype)
+	user = Users(name, username, email, password, utype=utype)
 	with app.app_context():
 		db.session.add(user)
 		db.session.commit()
