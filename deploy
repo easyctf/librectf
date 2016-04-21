@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 echo "Stopping the server..."
 pkill gunicorn
 sudo service nginx stop
