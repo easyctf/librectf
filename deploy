@@ -10,4 +10,4 @@ echo "Starting the server..."
 cd /vagrant/server
 sudo service nginx start
 sudo service memcached start
-tmux new-session -s ctf -d 'tmux set remain-on-exit on && gunicorn "app:app" -c /vagrant/scripts/gunicorn.py.ini'
+tmux new-session -s ctf -d 'tmux set remain-on-exit on && cd /vagrant/server && ./app.py run'
