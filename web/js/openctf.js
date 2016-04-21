@@ -165,7 +165,7 @@ app.controller("profileController", ["$controller", "$scope", "$http", "$routePa
 
 app.controller("setupController", ["$controller", "$scope", "$http", function($controller, $scope, $http) {
 	$controller("mainController", { $scope: $scope });
-	api_call("POST", "/api/admin/setup", { }, function(result) {
+	api_call("GET", "/api/admin/setup/init", { }, function(result) {
 		$scope["ready"] = result["success"] == 1;
 		if (result["verification"]) console.log("Verification code:", result["verification"]);
 		$scope.$apply();
@@ -365,6 +365,28 @@ var reset_form = function() {
 		});
 	});
 }
+
+// setup page
+
+var setup_form = function() {
+	var input = "#setup_form input";
+	var data = $("#setup_form").serializeObject();
+	$(input).attr("disabled", "disabled");
+	api_call("POST", "/api/admin/setup", data, function(result) {
+		if (result["success"] == 1) {
+			location.href = "/";
+		} else {
+			display_message("setup_msg", "danger", result["message"], function() {
+				$(input).removeAttr("disabled");
+			});
+		}
+	}, function(jqXHR, status, error) {
+		var result = jqXHR["responseText"];
+		display_message("setup_msg", "danger", "Error " + jqXHR["status"] + ": " + result["message"], function() {
+			$(input).removeAttr("disabled");
+		});
+	});
+};
 
 // login page
 

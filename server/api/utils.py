@@ -27,7 +27,7 @@ def get_time_since_epoch():
 
 from models import Config
 def is_setup_complete():
-	setup_complete = Config.query.filter_by(key="setup_complete").first()
+	setup_complete = Config.query.filter_by(key="setup_complete").first().value
 	return setup_complete == True
 
 def hash_password(s):
