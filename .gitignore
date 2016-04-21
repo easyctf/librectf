@@ -47,6 +47,7 @@ doc/
 
 # c9
 .c9
+.c9*
 
 .secret_key
 pfp
