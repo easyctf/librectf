@@ -98,7 +98,7 @@ function api_call(method, url, data, callback_success, callback_fail) {
 		"url": url,
 		"cache": false
 	}).done(function(result) {
-		if (result["redirect"] && location.pathname != result["redirect"]) {
+		if (result && result["redirect"] && location.pathname != result["redirect"]) {
 			location.href = result["redirect"];
 		} else {
 			callback_success(result);

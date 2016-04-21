@@ -123,10 +123,20 @@ def user_login():
 
 	username = params.get("username")
 	password = params.get("password")
+	token = params.get("token")
 
-	result = login_user(username, password)
+	if username is None or password is None:
+		raise WebException("Please fill out all the fields.")
+
+	creds = { "username": username, "password": password }
+	_user = get_user(username_lower = username.lower()).first()
+	if _user.tfa_enabled():
+		if token is None:
+			raise WebException("Invalid token.")
+		creds["token"] = params.get("token")
+	result = login_user(**creds)
 	if result != True:
-		raise WebException("Please check if your username/password are correct.")
+		raise WebException("Please check if your credentials are correct.")
 
 	return { "success": 1, "message": "Success!" }
 
@@ -178,7 +188,8 @@ def user_info():
 		"show_email": show_email,
 		"in_team": user_in_team,
 		"uid": user.uid,
-		"activity": user.get_activity()
+		"activity": user.get_activity(),
+		"tfa_enabled": user.tfa_enabled()
 	}
 	if show_email:
 		userdata["email"] = user.email
@@ -219,7 +230,7 @@ def user_twofactor_qr():
 		"Cache-Control": "no-cache, no-store, must-revalidate",
 		"Pragma": "no-cache",
 		"Expires": 0,
-		"Debug-Secret": user.otp_secret
+		"Secret": user.otp_secret
 	}
 
 @blueprint.route("/twofactor/verify", methods=["POST"])
@@ -321,12 +332,19 @@ UserSchema = Schema({
 	"notify": str
 }, extra=True)
 
-def login_user(username, password):
+def login_user(username, password, token=None):
 	user = get_user(username_lower=username.lower()).first()
 	if user is None: return False
 	correct = utils.check_password(user.password, password)
-	if not correct: return False
+	if not correct:
+		return False
+	if user.tfa_enabled() and not(user.verify_totp(token)):
+		return False
+	create_login_token(username)
+	return True
 
+def create_login_token(username):
+	user = get_user(username_lower=username.lower()).first()
 	useragent = request.headers.get("User-Agent")
 	ip = request.remote_addr
 
@@ -345,6 +363,7 @@ def login_user(username, password):
 			session["tid"] = user.tid
 
 	return True
+
 
 def is_logged_in():
 	if not("sid" in session and "username" in session): return False
