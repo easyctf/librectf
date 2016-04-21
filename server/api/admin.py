@@ -28,6 +28,9 @@ def admin_setup():
 	global user
 	params = utils.flat_multi(request.form)
 
+	k = Config.query.filter_by(key="setup_verification").first()
+	if k is not None and k.value == True: raise WebException("Installation has been complete.")
+
 	if params.get("verification") != Config.query.filter_by(key="setup_verification").first().value:
 		raise WebException("Verification does not match.")
 
