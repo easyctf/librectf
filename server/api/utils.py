@@ -29,7 +29,7 @@ from models import Config
 def is_setup_complete():
 	obj = Config.query.filter_by(key="setup_complete").first()
 	if obj is None: return False
-	return obj.value == True or obj.value == 1
+	return obj.value == True or int(obj.value) == 1
 
 def hash_password(s):
 	return generate_password_hash(s)
