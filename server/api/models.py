@@ -48,6 +48,7 @@ class Users(db.Model):
 	def get_totp_uri(self):
 		if self.otp_secret is None:
 			self.otp_secret = base64.b32encode(os.urandom(10)).decode("utf-8").lower()
+			db.session.commit()
 		service_name = "openctf"
 		return "otpauth://totp/%s:%s?secret=%s&issuer=%s" % (service_name, self.username, self.otp_secret, service_name)
 
