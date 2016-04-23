@@ -72,6 +72,10 @@ app.config(function($routeProvider, $locationProvider) {
 		templateUrl: "pages/team.html",
 		controller: "teamController"
 	})
+	.when("/admin/problems", {
+		templateUrl: "pages/admin/problems.html",
+		controller: "adminProblemsController"
+	})
 	.when("/admin/stats", {
 		templateUrl: "pages/admin/statistics.html",
 		controller: "adminStatisticsController"
@@ -236,6 +240,22 @@ app.controller("adminController", ["$controller", "$scope", "$http", function($c
 			location.href = "/profile";
 			return;
 		}
+	});
+}]);
+
+app.controller("adminProblemsController", ["$controller", "$scope", "$http", function($controller, $scope, $http) {
+	$controller("adminController", { $scope: $scope });
+	api_call("GET", "/api/problem/data", {}, function(result) {
+		if (result["success"] == 1) {
+			$scope.problems = result["problems"];
+		}
+		$scope.$apply();
+		$scope.problems.forEach(function(problem) {
+			var grader = ace.edit(problem.pid + "_grader");
+			grader.setTheme("ace/theme/tomorrow");
+			grader.getSession().setMode("ace/mode/python");
+			grader.setValue(problem.grader_contents);
+		});
 	});
 }]);
 

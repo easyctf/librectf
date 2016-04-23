@@ -16,9 +16,7 @@ SQLALCHEMY_DATABASE_URI = "mysql://root:i_hate_passwords@localhost/openctf"
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 UPLOAD_FOLDER = os.path.normpath("../web/files")
-
-CTF_BEGIN = 0 # To be used later
-CTF_END = 0 # To be used later
+GRADER_FOLDER = os.path.normpath("graders")
 
 MG_HOST = ""
 MG_API_KEY = ""
