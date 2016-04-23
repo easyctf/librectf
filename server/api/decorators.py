@@ -51,18 +51,28 @@ def api_wrapper(f):
 
 def login_required(f):
 	@wraps(f)
-	def decorated_function(*args, **kwargs):
+	def wrapper(*args, **kwds):
 		if not user.is_logged_in():
 			return { "success": 0, "message": "Not logged in." }
-		return f(*args, **kwargs)
-	return decorated_function
+		return f(*args, **kwds)
+	return wrapper
 
 import user # Must go below api_wrapper to prevent import loops
 
 def admins_only(f):
 	@wraps(f)
-	def decorated_function(*args, **kwargs):
+	def wrapper(*args, **kwds):
 		if not user.is_admin():
 			return { "success": 0, "message": "Not authorized." }
-		return f(*args, **kwargs)
-	return decorated_function
+		return f(*args, **kwds)
+	return wrapper
+
+def team_required(admin_bypass=False):
+	def generic(f):
+		@wraps(f)
+		def wrapper(*args, **kwds):
+			if not admin_bypass and ("tid" not in session or session["tid"] < 0):
+				return { "success": 0, "message": "You need a team." }
+			return f(*args, **kwds)
+		return wrapper
+	return generic

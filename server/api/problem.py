@@ -11,7 +11,7 @@ from flask import current_app as app
 from werkzeug import secure_filename
 
 from models import db, Files, Problems, Solves, Teams
-from decorators import admins_only, api_wrapper, login_required, InternalException, WebException
+from decorators import admins_only, api_wrapper, login_required, team_required, InternalException, WebException
 
 blueprint = Blueprint("problem", __name__)
 
@@ -123,6 +123,7 @@ def problem_update():
 @blueprint.route("/submit", methods=["POST"])
 @api_wrapper
 @login_required
+@team_required
 def problem_submit():
 	pid = request.form["pid"]
 	flag = request.form["flag"]
@@ -166,6 +167,7 @@ def problem_submit():
 
 @blueprint.route("/data", methods=["GET"])
 @api_wrapper
+@team_required(admin_bypass=True)
 def problem_data():
 	problems = Problems.query.order_by(Problems.value).all()
 	problems_return = [ ]
