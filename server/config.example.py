@@ -12,13 +12,13 @@ secret.close()
 
 SECRET_KEY = key
 
-SQLALCHEMY_DATABASE_URI = "mysql://root:i_hate_passwords@localhost/openctf"
+SQLALCHEMY_DATABASE_URI = "mysql://user:pass@host:port/db"
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
 UPLOAD_FOLDER = os.path.normpath("../web/files")
 
-MAILGUN_URL = "https://api.mailgun.net/v3/easyctf.com"
-MAILGUN_KEY = "key-18dc2ef0ebf9c9695fb566c6fe203dc4"
-ADMIN_EMAIL = "EasyCTF Team <team@easyctf.com>"
+MAILGUN_URL = ""
+MAILGUN_KEY = ""
+ADMIN_EMAIL = ""
 
 PROBLEM_DIR = "../problems"

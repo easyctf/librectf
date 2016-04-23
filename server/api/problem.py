@@ -1,6 +1,7 @@
 import hashlib
 import logger
 import os
+import cache
 
 from flask import Blueprint, jsonify, session, request
 from flask import current_app as app
@@ -161,3 +162,7 @@ def get_problem(title=None, pid=None):
 	with app.app_context():
 		result = Problems.query.filter_by(**match)
 		return result
+
+@cache.memoize()
+def num_problems():
+	return Problems.query.filter_by().count()

@@ -129,6 +129,7 @@ app.controller("mainController", ["$scope", "$http", function($scope, $http) {
 		if (result["success"] == 1) {
 			delete result["success"];
 			$scope.config.navbar = result;
+			document.title = result["ctf_name"];
 			$scope.$emit("loginStatus");
 		} else {
 			$scope.config.navbar.logged_in = false;

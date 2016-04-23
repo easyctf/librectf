@@ -31,6 +31,11 @@ def is_setup_complete():
 	if obj is None: return False
 	return obj.value == True or int(obj.value) == 1
 
+def get_ctf_name():
+	name = Config.query.filter_by(key="ctf_name").first()
+	if name is None: return "OpenCTF"
+	else: return name.value
+
 def hash_password(s):
 	return generate_password_hash(s)
 
@@ -48,14 +53,15 @@ def flat_multi(multidict):
 	return flat
 
 def send_email(recipient, subject, body):
-	api_key = app.config["MG_API_KEY"]
-	data = {"from": "OpenCTF Administrator <%s>" % (app.config["ADMIN_EMAIL"]),
-			"to": recipient,
-			"subject": subject,
-			"text": body
-			}
-	auth = ("api", api_key)
-	return requests.post("https://api.mailgun.net/v3/%s/messages" % (app.config["MG_HOST"]), auth=auth, data=data)
+	with app.app_context():
+		api_key = app.config["MAILGUN_KEY"]
+		data = {"from": app.config["ADMIN_EMAIL"],
+				"to": recipient,
+				"subject": subject,
+				"text": body
+				}
+		auth = ("api", api_key)
+		return requests.post(app.config["MAILGUN_URL"] + "/messages", auth=auth, data=data)
 
 def generate_identicon(email, filename):
 	email = email.strip().lower()

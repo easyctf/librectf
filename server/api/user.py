@@ -4,7 +4,7 @@ from flask import current_app as app
 from voluptuous import Schema, Length, Required
 from StringIO import StringIO
 
-from models import db, LoginTokens, Users, UserActivity
+from models import db, LoginTokens, Users, UserActivity, Config
 from decorators import api_wrapper, WebException, login_required
 from schemas import verify_to_schema, check
 
@@ -151,6 +151,7 @@ def user_status():
 		"competition": is_admin(),
 		"in_team": in_team(get_user()),
 		"username": session["username"] if logged_in else "",
+		"ctf_name": utils.get_ctf_name()
 	}
 	if logged_in:
 		result["has_team"] = in_team(get_user().first())

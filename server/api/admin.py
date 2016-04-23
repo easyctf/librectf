@@ -7,6 +7,7 @@ from schemas import verify_to_schema, check
 import user
 import team
 import utils
+import problem
 import logger
 
 blueprint = Blueprint("admin", __name__)
@@ -14,6 +15,9 @@ blueprint = Blueprint("admin", __name__)
 @blueprint.route("/setup/init")
 @api_wrapper
 def admin_setup_init():
+	k = Config.query.filter_by(key="setup_verification").first()
+	if k is not None and k.value == True: raise WebException("Installation has been complete.")
+
 	verification = Config("setup_verification", utils.generate_string().lower())
 	with app.app_context():
 		for item in Config.query.filter_by(key="setup_verification").all():
@@ -75,4 +79,5 @@ def admin_stats_overview():
 	overview = { }
 	overview["num_users"] = user.num_users(), user.num_users(observer=True)
 	overview["num_teams"] = team.num_teams(), team.num_teams(observer=True)
+	overview["num_problems"] = problem.num_problems()
 	return { "success": 1, "overview": overview }
