@@ -40,6 +40,10 @@ app.config(function($routeProvider, $locationProvider) {
 		templateUrl: "pages/profile.html",
 		controller: "profileController"
 	})
+	.when("/programming", {
+		templateUrl: "pages/programming.html",
+		controller: "programmingController"
+	})
 	.when("/register", {
 		templateUrl: "pages/register.html",
 		controller: "mainController"
@@ -179,6 +183,21 @@ app.controller("profileController", ["$controller", "$scope", "$http", "$routePa
 		$scope.$apply();
 		$(".timeago").timeago();
 	});
+}]);
+
+
+app.controller("programmingController", ["$controller", "$scope", "$http", function($controller, $scope, $http) {
+	$controller("loginController", { $scope: $scope });
+	$("#editor").height($(window).height()/2);
+	var grader = ace.edit("editor");
+	grader.setTheme("ace/theme/tomorrow");
+	grader.getSession().setMode("ace/mode/python");
+	grader.setOptions({
+		fontFamily: "monospace",
+		fontSize: "10pt"
+	});
+	grader.setValue("");
+
 }]);
 
 app.controller("setupController", ["$controller", "$scope", "$http", function($controller, $scope, $http) {
