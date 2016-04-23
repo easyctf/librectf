@@ -1,11 +1,49 @@
 <div class="fade_in text-center">
-  <h1 class="heading1">Programming</h1>
-  <div class="panel panel-default">
-    <div class="panel-heading">
-      <h3 class="panel-title">Problems Avalible: NaN?</h3>
-    </div>
-    <div class="panel-body">
-      <h3>Insert Programming Client Here</h3>
-    </div>
-  </div>
+	<h1 class="heading1">Programming</h1>
+	<div class="panel panel-default">
+		<div class="panel-heading clearfix">
+			<h4 class="panel-title">Code Editor
+				<div class="pull-right">
+					<select class="form-control" id="language-select" onchange="update_highlighting()">
+						<option value="python">Python 2</option>
+						<option value="python3">Python 3</option>
+						<option value="java">Java</option>
+					</select>
+				</div>
+			</h4>
+		</div>
+		<br>
+		<div style="text-align: left" class="panel-body" id="editor">
+		</div>
+	</div>
 </div>
+<div class="input-group">
+	<select class="form-control" id="problem-select">
+		<option value="pid">Problem name</option>
+	</select>
+	<span class="input-group-btn">
+		<button class="btn btn-success" type="button" onclick="submit(); return false;">Submit</button>
+	</span>
+</div>
+<script>
+var update_highlighting = function() {
+	var language = $("#language-select").val();
+	if (language == "python3") {
+		language = "python";
+	}
+	var editor = ace.edit("editor");
+	editor.getSession().setMode("ace/mode/" + language);
+}
+
+var submit = function() {
+	data = {};
+	var pid = $("#problem-select").val();
+	var language = $("#language-select").val();
+	var editor = ace.edit("editor");
+	var program = editor.getValue();
+	data["pid"] = pid;
+	data["language"] = language;
+	data["program"] = program;
+	// api_call("POST", "/api/programming/submit", data, function(result) {});
+}
+</script>

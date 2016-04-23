@@ -28,6 +28,10 @@ app.config(function($routeProvider, $locationProvider) {
 		templateUrl: "pages/blank.html",
 		controller: "logoutController"
 	})
+	.when("/problems", {
+		templateUrl: "pages/problems.html",
+		controller: "problemsController"
+	})
 	.when("/profile", {
 		templateUrl: "pages/profile.html",
 		controller: "profileController"
@@ -35,6 +39,10 @@ app.config(function($routeProvider, $locationProvider) {
 	.when("/profile/:username", {
 		templateUrl: "pages/profile.html",
 		controller: "profileController"
+	})
+	.when("/programming", {
+		templateUrl: "pages/programming.html",
+		controller: "programmingController"
 	})
 	.when("/register", {
 		templateUrl: "pages/register.html",
@@ -71,6 +79,10 @@ app.config(function($routeProvider, $locationProvider) {
 	.when("/team/:teamname", {
 		templateUrl: "pages/team.html",
 		controller: "teamController"
+	})
+	.when("/admin/problems", {
+		templateUrl: "pages/admin/problems.html",
+		controller: "adminProblemsController"
 	})
 	.when("/admin/stats", {
 		templateUrl: "pages/admin/statistics.html",
@@ -148,6 +160,16 @@ app.controller("logoutController", function() {
 	});
 });
 
+app.controller("problemsController", ["$controller", "$scope", "$http", function($controller, $scope, $http) {
+	$controller("loginController", { $scope: $scope });
+	api_call("GET", "/api/problem/data", {}, function(result) {
+		if (result["success"] == 1) {
+			$scope.problems = result["problems"];
+		}
+		$scope.$apply();
+	});
+}]);
+
 app.controller("profileController", ["$controller", "$scope", "$http", "$routeParams", "$sce", function($controller, $scope, $http, $routeParams, $sce) {
 	var data = { };
 	if ("username" in $routeParams) data["username"] = $routeParams["username"];
@@ -162,6 +184,21 @@ app.controller("profileController", ["$controller", "$scope", "$http", "$routePa
 		$scope.$apply();
 		$(".timeago").timeago();
 	});
+}]);
+
+
+app.controller("programmingController", ["$controller", "$scope", "$http", function($controller, $scope, $http) {
+	$controller("loginController", { $scope: $scope });
+	$("#editor").height($(window).height()/2);
+	var grader = ace.edit("editor");
+	grader.setTheme("ace/theme/tomorrow");
+	grader.getSession().setMode("ace/mode/python");
+	grader.setOptions({
+		fontFamily: "monospace",
+		fontSize: "10pt"
+	});
+	grader.setValue("");
+
 }]);
 
 app.controller("setupController", ["$controller", "$scope", "$http", function($controller, $scope, $http) {
@@ -237,6 +274,22 @@ app.controller("adminController", ["$controller", "$scope", "$http", function($c
 			location.href = "/profile";
 			return;
 		}
+	});
+}]);
+
+app.controller("adminProblemsController", ["$controller", "$scope", "$http", function($controller, $scope, $http) {
+	$controller("adminController", { $scope: $scope });
+	api_call("GET", "/api/problem/data", {}, function(result) {
+		if (result["success"] == 1) {
+			$scope.problems = result["problems"];
+		}
+		$scope.$apply();
+		$scope.problems.forEach(function(problem) {
+			var grader = ace.edit(problem.pid + "_grader");
+			grader.setTheme("ace/theme/tomorrow");
+			grader.getSession().setMode("ace/mode/python");
+			grader.setValue(problem.grader_contents);
+		});
 	});
 }]);
 

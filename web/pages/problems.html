@@ -5,7 +5,66 @@
   3) remove these instructions (:P)
 -->
 <div class="fade_in">
-    <h1 class="heading1 text-center">Problems</h1>
-    <div id="problems"></div>
+	<h1 class="text-center">Problems</h1>
+	<div ng-repeat="problem in problems">
+		<div class="panel-group">
+			<div class="panel panel-default">
+				<div class="panel-heading" data-toggle="collapse" data-target="#{{ problem['pid'] }}_body">
+					<h4 class="panel-title">
+						{{ problem["title"] }} {{ problem["value"] }} points
+						<div class="pull-right">{{ problem["category"] }} - {{ problem["solved"] }} ({{ problem["solves"] }} {{ problem["solves"] === 1 ? "solve" : "solves" }})</div>
+					</h4>
+				</div>
+				<div id="{{ problem['pid'] }}_body" class="panel-collapse collapse">
+					<div class="panel-body">
+						<div hidden id="{{ problem['pid'] }}_hint">{{ problem['hint'] }}</div>
+						<div hidden id="{{ problem['pid'] }}_status"/>
+						{{ problem["description"] }}
+					</div>
+					<form id="{{ problem['pid'] }}_form" class="horizontal-form" onsubmit="submit_problem(this.id); return false;">
+						<div class="input-group">
+							<input hidden name="pid" value="{{ problem['pid'] }}"/>
+							<input class="form-control" name="flag" placeholder="Flag"/>
+							<span class="input-group-btn">
+								<input onclick="toggle_hint(this.closest('form').id); return false;" type="button" class="btn btn-success" value="Hint"/>
+							</span>
+							<span class="input-group-btn">
+								<input type="submit" class="btn btn-success" value="Submit"/>
+							</span>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
-<script src="js/problems.js">
+
+<script>
+var toggle_hint = function(form) {
+	pid = form.split("_")[0];
+	$("#" + pid + "_hint").slideToggle("fast", function() {});
+}
+
+var submit_problem = function(form) {
+	var input = "#" + form + " input";
+	var data = $("#" + form).serializeObject();
+	pid = data["pid"];
+	$(input).attr("disabled", "disabed");
+	api_call("POST", "/api/problem/submit", data, function(result) {
+		if (result["success"] == 1) {
+			display_message(pid + "_status", "success", result["message"], function() {
+				$(input).removeAttr("disabled");
+			});
+		} else {
+			display_message(pid + "_status", "danger", result["message"], function() {
+				$(input).removeAttr("disabled");
+			});
+		}
+	}, function(jqXHR, status, error) {
+		var result = jqXHR["responseText"];
+		display_message(pid + "_status", "danger", "Error " + jqXHR["status"] + ": " + result["message"], function() {
+			$(input).removeAttr("disabled");
+		});
+	});
+}
+</script>

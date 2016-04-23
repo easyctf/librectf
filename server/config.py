@@ -21,4 +21,6 @@ MAILGUN_URL = "https://api.mailgun.net/v3/easyctf.com"
 MAILGUN_KEY = "key-18dc2ef0ebf9c9695fb566c6fe203dc4"
 ADMIN_EMAIL = "EasyCTF Team <team@easyctf.com>"
 
+GRADER_FOLDER = os.path.normpath("graders")
+
 PROBLEM_DIR = "../problems"

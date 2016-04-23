@@ -1,0 +1,124 @@
+<div class="page-header">
+	<h1>Problem Editor</h1>
+</div>
+
+<style>
+.ace_editor {
+	width: 100%;
+	height: 200px;
+}
+.epiceditor-edit-mode {
+	border: 1px solid #999 !important;
+}
+</style>
+
+<div class="row"> <div class="tabbable"> <ul class="nav nav-pills nav-stacked col-md-3">
+			<li class="active"><a data-target="#new" data-toggle="tab">New</a></li>
+			<li ng-repeat="problem in problems"><a data-target="#problem_{{ problem['pid'] }}" data-toggle="tab">{{ problem["title"] }} ({{ problem["value"] }} points)</a></li>
+		</ul>
+		<div class="tab-content col-md-9">
+			<div class="tab-pane active" id="new">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h4 class="panel-title">New Problem</h4>
+					</div>
+					<div class="panel-body">
+						<div id="add-status"></div>
+						<form class="form-horizontal" onsubmit="create_problem(); return false;" id="new_problem_form">
+							<input class="form-control" name="title" placeholder="Name" required/>
+							<br>
+							<textarea class="form-control" name="description" placeholder="Description" required autocomplete="off"/>
+							<br>
+							<input class="form-control" name="category" placeholder="Category" required autocomplete="off"/>
+							<br>
+							<input class="form-control" name="hint" placeholder="Hint" required/>
+							<br>
+							<input class="form-control" name="value" type="number" placeholder="Problem Value" required autocomplete="off"/>
+							<br>
+							<label for="bonus">Speed bonuses (%)</label>
+							<select class="form-control" id="bonus">
+								<option value="0">0/0/0</option>
+								<option value="1">3/2/1</option>
+								<option value="2">5/3/1</option>
+								<option value="3">8/5/3</option>
+								<option value="4">10/8/6</option>
+								<option value="5">20/12/8</option>
+							</select>
+
+							<br>
+							<div id="new_grader"></div>
+							<br>
+							<input type="submit" id="create-problem" class="btn btn-success" value="Create"/>
+						</form>
+					</div>
+				</div>
+			</div>
+			<div class="tab-pane" ng-repeat="problem in problems" id="problem_{{ problem['pid'] }}">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h4 class="panel-title">{{ problem["title"] }}</h4>
+					</div>
+					<div class="panel-body">
+						<div id="{{ problem['pid'] }}_status"/>
+						<form class="form-horizontal" onsubmit="update_problem(this.id); return false;" id="update_{{ problem['pid'] }}">
+							<input type="hidden" name="pid" value="{{ problem['pid'] }}"/>
+							<input class="form-control" name="title" value="{{ problem['title'] }}" required/>
+							<br>
+							<textarea class="form-control" name="description" required autocomplete="off">{{ problem["description"] }}</textarea>
+							<br>
+							<input class="form-control" name="category" value="{{ problem['category'] }}" required/>
+							<br>
+							<input class="form-control" name="hint" value="{{ problem['hint'] }}" required/>
+							<br>
+							<input class="form-control" type="number" name="value" value="{{ problem['value'] }}" required/>
+							<br>
+							<label for="bonus">Speed bonuses (%)</label>
+							<select class="form-control" id="{{ problem.pid }}_bonus">
+								<option ng-selected="problem.bonus == 0" value="0">0/0/0</option>
+								<option ng-selected="problem.bonus == 1" value="1">3/2/1</option>
+								<option ng-selected="problem.bonus == 2" value="2">5/3/1</option>
+								<option ng-selected="problem.bonus == 3" value="3">8/5/3</option>
+								<option ng-selected="problem.bonus == 4" value="4">10/8/6</option>
+								<option ng-selected="problem.bonus == 5" value="5">20/12/8</option>
+							</select>
+							<br>
+							<div id="{{ problem['pid'] }}_grader"></div>
+							<br>
+							<input type="submit" class="btn btn-success" value="Update"/>
+							<input onclick="delete_problem(this.closest('form').id); return false;" class="btn btn-danger" value="Delete"/>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="confirm" class="modal fade">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-body">Are you sure you want to delete this problem?</div>
+			<div class="modal-footer">
+				<button type="button" data-dismiss="modal" class="btn btn-primary" id="delete">Delete</button>
+				<button type="button" data-dismiss="modal" class="btn">Cancel</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script type="text/javascript">
+	$(document).ready(function() {
+		var new_grader = ace.edit("new_grader");
+		new_grader.setTheme("ace/theme/tomorrow");
+		new_grader.getSession().setMode("ace/mode/python");
+		new_grader.setValue(
+			'flag = "easyctf{FLAG}"\n\n'+
+			'def grade(candidate):\n'+
+			'    if candidate == flag:\n'+
+			'        return True, "Correct!"\n'+
+			'    return False, "Incorrect."\n\n'+
+			'# Return True if the flag is correct, False otherwise, along with\n'+
+			'# a corresponding message to send to the user.'
+		);
+	});
+</script>

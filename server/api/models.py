@@ -209,18 +209,20 @@ class Problems(db.Model):
 	description = db.Column(db.Text)
 	value = db.Column(db.Integer)
 	hint = db.Column(db.Text)
+	grader = db.Column(db.Text)
 	autogen = db.Column(db.Boolean)
 	bonus = db.Column(db.Integer)
 	threshold = db.Column(db.Integer)
 	weightmap = db.Column(db.PickleType)
 
-	def __init__(self, pid, title, category, description, value, hint="", autogen=False, bonus=0, threshold=0, weightmap={}):
+	def __init__(self, pid, title, category, description, value, grader, hint="", autogen=False, bonus=0, threshold=0, weightmap={}):
 		self.pid = pid
 		self.title = title
 		self.category = category
 		self.description = description
 		self.value = value
 		self.hint = hint
+		self.grader = grader
 		self.autogen = autogen
 		self.bonus = bonus
 		self.threshold = threshold
@@ -236,13 +238,13 @@ class Files(db.Model):
 		self.location = location
 
 class Solves(db.Model):
-	__table_args__ = (db.UniqueConstraint("pid", "tid"), {})
 	sid = db.Column(db.Integer, primary_key=True)
-	pid = db.Column(db.Integer)
+	pid = db.Column(db.String(128))
 	tid = db.Column(db.Integer)
-	date = db.Column(db.Integer, default=utils.get_time_since_epoch())
+	date = db.Column(db.String(64), default=utils.get_time_since_epoch())
 	correct = db.Column(db.Boolean)
 	flag = db.Column(db.Text)
+	bonus = db.Column(db.Integer)
 
 	def __init__(self, pid, tid, flag, correct):
 		self.pid = pid

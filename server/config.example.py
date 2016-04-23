@@ -21,4 +21,6 @@ MAILGUN_URL = ""
 MAILGUN_KEY = ""
 ADMIN_EMAIL = ""
 
+GRADER_FOLDER = os.path.normpath("graders")
+
 PROBLEM_DIR = "../problems"
