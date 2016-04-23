@@ -1,4 +1,5 @@
 import hashlib
+import imp
 import json
 import logger
 import os
@@ -129,45 +130,69 @@ def problem_submit():
 
 	problem = Problems.query.filter_by(pid=pid).first()
 	team = Teams.query.filter_by(tid=tid).first()
+	solved = Solves.query.filter_by(pid=pid, tid=tid, correct=1).first()
+	if solved:
+		raise WebException("You already solved this problem.")
+
 	if problem:
-		if flag == problem.flag:
-			solve = Solves(pid, tid)
-			team.score += problem.value
-			problem.solves += 1
+		grader = imp.load_source("grader", problem.grader)
+		correct, response = grader.grade(flag)
+
+		solve = Solves(pid, tid, flag, correct)
+		db.session.add(solve)
+		db.session.commit()
+
+		if correct:
+			# Wait until after the solve has been added to the database before adding bonus
+			solves = Solves.query.filter_by(pid=pid, correct=1).count()
+			if solves < 4:
+				bonus = solves
+			else:
+				bonus = -1
+			solve.bonus = bonus
 			db.session.add(solve)
-			db.session.add(team)
-			db.session.add(problem)
 			db.session.commit()
 
-			logger.log(__name__, logger.WARNING, "%s has solved %s by submitting %s" % (team.name, problem.title, flag))
-			return { "success": 1, "message": "Correct!" }
+			logger.log(__name__, "%s has solved %s by submitting %s" % (team.teamname, problem.title, flag), level=logger.WARNING)
+			return { "success": 1, "message": response }
 
 		else:
-			logger.log(__name__, logger.WARNING, "%s has incorrectly submitted %s to %s" % (team.name, flag, problem.title))
-			raise WebException("Incorrect.")
+			logger.log(__name__, "%s has incorrectly submitted %s to %s" % (team.teamname, flag, problem.title), level=logger.WARNING)
+			raise WebException(response)
 
 	else:
 		raise WebException("Problem does not exist!")
 
+
 @blueprint.route("/data", methods=["GET"])
 @api_wrapper
-@admins_only
 def problem_data():
 	problems = Problems.query.order_by(Problems.value).all()
 	problems_return = [ ]
 	for problem in problems:
-		problems_return.append({
+		solves = Solves.query.filter_by(pid=problem.pid, correct=1).count()
+		solved = Solves.query.filter_by(pid=problem.pid, tid=session.get("tid", None), correct=1).first()
+		solved = ["Solved", "Unsolved"][solved is None]
+
+		data = {
 			"pid": problem.pid,
 			"title": problem.title,
 			"category": problem.category,
 			"description": problem.description,
 			"hint": problem.hint,
 			"value": problem.value,
+			"solves": solves,
+			"solved": solved
+		}
+		admin_data = {
 			"threshold": problem.threshold,
 			"weightmap": problem.weightmap,
 			"grader_contents": open(problem.grader, "r").read(),
 			"bonus": problem.bonus
-		})
+		}
+		if "admin" in session and session["admin"]:
+			data.update(admin_data)
+		problems_return.append(data)
 	return { "success": 1, "problems": problems_return }
 
 def insert_problem(data, force=False):

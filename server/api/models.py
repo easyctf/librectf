@@ -238,7 +238,6 @@ class Files(db.Model):
 		self.location = location
 
 class Solves(db.Model):
-	__table_args__ = (db.UniqueConstraint("pid", "tid"), {})
 	sid = db.Column(db.Integer, primary_key=True)
 	pid = db.Column(db.String(128))
 	tid = db.Column(db.Integer)

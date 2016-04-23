@@ -28,6 +28,10 @@ app.config(function($routeProvider, $locationProvider) {
 		templateUrl: "pages/blank.html",
 		controller: "logoutController"
 	})
+	.when("/problems", {
+		templateUrl: "pages/problems.html",
+		controller: "problemsController"
+	})
 	.when("/profile", {
 		templateUrl: "pages/profile.html",
 		controller: "profileController"
@@ -150,6 +154,16 @@ app.controller("logoutController", function() {
 		location.href = "/";
 	});
 });
+
+app.controller("problemsController", ["$controller", "$scope", "$http", function($controller, $scope, $http) {
+	$controller("loginController", { $scope: $scope });
+	api_call("GET", "/api/problem/data", {}, function(result) {
+		if (result["success"] == 1) {
+			$scope.problems = result["problems"];
+		}
+		$scope.$apply();
+	});
+}]);
 
 app.controller("profileController", ["$controller", "$scope", "$http", "$routeParams", "$sce", function($controller, $scope, $http, $routeParams, $sce) {
 	var data = { };
