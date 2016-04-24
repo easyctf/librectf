@@ -39,15 +39,16 @@ def user_update_profile():
 	if new_password != new_password_confirm:
 		raise WebException("Passwords do not match.")
 
-	user = get_user(username=session["username"]).first()
-	correct = utils.check_password(user.password, password)
+	if new_password != "":
+		user = get_user(username=session["username"]).first()
+		correct = utils.check_password(user.password, password)
 
-	if not correct:
-		raise WebException("Incorrect password.")
+		if not correct:
+			raise WebException("Incorrect password.")
 
-	update_password(user, new_password)
+		update_password(user, new_password)
 
-	return { "success": 1, "message": "Success!" }
+	return { "success": 1, "message": "Profile updated." }
 
 @blueprint.route("/forgot", methods=["POST"])
 @blueprint.route("/forgot/<token>", methods=["GET", "POST"])
