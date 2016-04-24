@@ -378,11 +378,14 @@ var register_form = function() {
 
 // password reset
 var request_reset_form = function() {
+	var input = $("#request_reset_form input");
 	var data = $("#request_reset_form").serializeObject();
 	$(input).attr("disabled", "disabled");
 	api_call("POST", "/api/user/forgot", data, function(result) {
 		if (result["success"] == 1) {
-			display_message("reset_msg", "success", result["message"]);
+			display_message("reset_msg", "success", result["message"], function() {
+				$(input).removeAttr("disabled");
+			});
 		} else {
 			display_message("reset_msg", "danger", result["message"], function() {
 				$(input).removeAttr("disabled");
@@ -397,6 +400,7 @@ var request_reset_form = function() {
 }
 
 var reset_form = function() {
+	var input = $("#reset_form input");
 	var data = $("#reset_form").serializeObject();
 	data["csrf_token"] = $.cookie("csrf_token");
 	var url = window.location.href;
