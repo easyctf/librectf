@@ -112,3 +112,11 @@ def generate_identicon(email, filename):
 
 	image.save(open("pfp/%s.png" % filename, "w"), "PNG")
 	return
+
+from models import Config
+
+def get_config(key):
+	config = Config.query.filter_by(key=key).first()
+	if config is None:
+		return None
+	return config.value

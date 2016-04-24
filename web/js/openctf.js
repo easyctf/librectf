@@ -60,6 +60,10 @@ app.config(function($routeProvider, $locationProvider) {
 		templateUrl: "pages/twofactor.html",
 		controller: "twofactorController"
 	})
+	.when("/settings/verify", {
+		templateUrl: "pages/verify.html",
+		controller: "verifyEmailController"
+	})
 	.when("/setup", {
 		templateUrl: "pages/setup.html",
 		controller: "setupController"
@@ -337,6 +341,21 @@ app.controller("twofactorController", ["$controller", "$scope", "$http", functio
 	});
 }]);
 
+app.controller("verifyEmailController", ["$controller", "$scope", "$http", "$location", "$window", function($controller, $scope, $http, $location, $window) {
+	$controller("loginController", { $scope: $scope });
+	var token = $location.search().token;
+	var data = { };
+	data["token"] = token;
+	api_call("GET", "/api/user/verify", data, function(result) {
+		if (result["success"] == 1) {
+			$window.location.href = "/settings";
+		}
+		$scope.body = result["message"];
+		$scope.success = result["success"]
+		$scope.$apply();
+	});
+}]);
+
 $.fn.serializeObject = function() {
 	var a, o;
 	o = {};
@@ -424,6 +443,7 @@ var reset_form = function() {
 	});
 }
 
+
 // setup page
 
 var setup_form = function() {
@@ -469,7 +489,6 @@ var login_form = function() {
 };
 
 // team page
-
 var create_team = function() {
 	var input = "#create_team input";
 	var data = $("#create_team").serializeObject();
@@ -584,3 +603,23 @@ var update_profile = function() {
 		}
 	});
 };
+
+var verify_email = function() {
+	data = {};
+	var input = $("#verify_email_btn");
+	$(input).attr("disabled", "disabled");
+	data["csrf_token"] = $.cookie("csrf_token");
+
+	api_call("POST", "/api/user/verify", {}, function(result) {
+		if (result["success"] == 1) {
+			display_message("verify_email_msg", "success", result["message"], function() {
+				$(input).removeAttr("disabled");
+			});
+		} else {
+			display_message("verify_email_msg", "danger", result["message"], function() {
+				$(input).removeAttr("disabled");
+			});
+
+		}
+	});
+}

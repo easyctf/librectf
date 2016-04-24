@@ -32,6 +32,8 @@ class Users(db.Model):
 	reset_token = db.Column(db.String(64))
 	otp_secret = db.Column(db.String(16))
 	otp_confirmed = db.Column(db.Boolean)
+	email_verified = db.Column(db.Boolean)
+	email_token = db.Column(db.String(64))
 
 	def __init__(self, name, username, email, password, utype=1, admin=False):
 		self.name = name
@@ -44,6 +46,7 @@ class Users(db.Model):
 		self.registertime = int(time.time())
 		self.otp_confirmed = False
 		self.otp_secret = None
+		self.email_verified = False
 
 	def get_totp_uri(self):
 		if self.otp_secret is None:

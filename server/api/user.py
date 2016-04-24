@@ -27,6 +27,56 @@ from PIL import Image
 
 blueprint = Blueprint("user", __name__)
 
+@blueprint.route("/verify", methods=["GET", "POST"])
+@api_wrapper
+def verify_email():
+	# Actual verification of email
+	if request.method == "GET":
+		params = utils.flat_multi(request.args)
+		token = params.get("token");
+		if token is not None:
+			user = Users.query.filter_by(email_token=token).first()
+			if user is None:
+				raise WebException("Invalid token.")
+
+			user.email_verified = True
+			user.email_token = None
+			current_session = db.session.object_session(user)
+			current_session.add(user)
+			current_session.commit()
+
+			return { "success": 1, "message": "Email verified." }
+		raise WebException("Invalid token.")
+	# Request to verify email
+	elif request.method == "POST":
+		username = session.get("username")
+		user = get_user(username=username)
+		if user is None:
+			raise WebException("User with that username does not exist.")
+
+		user = user.first()
+		if user.email_verified:
+			raise WebException("Email is already verified.")
+
+		token = utils.generate_string(length=64)
+		user.email_token = token
+		current_session = db.session.object_session(user)
+		current_session.add(user)
+		current_session.commit()
+
+		reset_link = "%s/settings/verify?token=%s" % ("127.0.0.1:8080", token)
+		subject = "OpenCTF email verification"
+		body = """Hi %s!\n\nHelp us secure your %s account by verifying your email below:\n\n%s\n\nIf you did not request this password reset, you may safely ignore this email and delete it.\n\nGood luck!\n\n- OpenCTF Administrator""" % (user.username, utils.get_config("ctf_name"), reset_link)
+		response = utils.send_email(user.email, subject, body)
+		if response.status_code != 200:
+			raise WebException("Could not send email.")
+		response = response.json()
+		if "Queued" in response["message"]:
+			return { "success": 1, "message": "Verification email sent to %s" % email }
+		else:
+			raise WebException(response["message"])
+
+
 @blueprint.route("/update_profile", methods=["POST"])
 @login_required
 @api_wrapper
@@ -50,7 +100,9 @@ def user_update_profile():
 	if new_password != "":
 		user.password = utils.hash_password(new_password)
 
-	user.email = email
+	if email != user.email:
+		user.email = email
+		user.email_verified = False
 
 	current_session = db.session.object_session(user)
 	current_session.add(user)
@@ -228,6 +280,7 @@ def user_info():
 		userdata["team"] = team.get_team_info(tid=user.tid)
 	if me:
 		userdata["tfa_enabled"] = user.tfa_enabled()
+		userdata["email_verified"] = user.email_verified == True
 		if not(user_in_team):
 			invitations = user.get_invitations()
 			userdata["invitations"] = invitations
@@ -425,6 +478,8 @@ def get_user(username=None, username_lower=None, email=None, uid=None, reset_tok
 	elif reset_token != None:
 		match.update({ "reset_token": reset_token })
 	with app.app_context():
+		if len(match) == 0:
+			return None
 		result = Users.query.filter_by(**match)
 		return result
 

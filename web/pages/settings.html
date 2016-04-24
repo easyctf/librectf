@@ -76,7 +76,14 @@
 						<h4 class="panel-title">Email Preferences</h4>
 					</div>
 					<div class="panel-body">
-						<p>Hi.</p>
+						<div id="verify_email_msg"/>
+						<div ng-show="user['email_verified']==true">
+							<p><i class="fa fa-fw fa-check" style="color:green;"></i>Your email has been verified.</p>
+						</div>
+						<div ng-show="user['email_verified']==false">
+							<p><i class="fa fa-fw fa-close" style="color:red;"></i>You email has not yet been verified.</p>
+							<a id="verify_email_btn" onclick="verify_email(); return false;" class="btn btn-primary">Verify your email &raquo;</a>
+						</div>
 					</div>
 				</div>
 			</section>

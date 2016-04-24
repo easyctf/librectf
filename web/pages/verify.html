@@ -1,0 +1,10 @@
+<div class="container">
+    <p>&nbsp;</p>
+    <div ng-switch on="success">
+	<div ng-switch-when="1">
+		<div class="alert alert-success"> {{ body }} </div>
+	</div>
+	<div ng-switch-default>
+		<div class="alert alert-danger"> {{ body }} </div>
+	</div>
+</div>
