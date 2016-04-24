@@ -94,3 +94,27 @@ var delete_problem = function(form_id) {
 
         });
 }
+
+var update_settings = function() {
+	var input = $("#update_settings_form input");
+	var data = $(input).serializeObject();
+	data["csrf_token"] = $.cookie("csrf_token");
+	$(input).attr("disabled", "disabled");
+	api_call("POST", "/api/admin/settings/update", data, function(result) {
+		if (result["success"] == 1) {
+			display_message("update_settings_msg", "success", result["message"], function() {
+				$(input).removeAttr("disabled");
+			});
+		} else {
+			display_message("update_settings_msg", "danger", result["message"], function() {
+				$(input).removeAttr("disabled");
+			});
+		}
+		console.log(result["error"]);
+	}, function(jqXHR, status, error) {
+		var result = jqXHR["responseText"];
+		display_message("update_settings_msg", "danger", "Error " + jqXHR["status"] + ": " + result["message"], function() {
+			$(input).removeAttr("disabled");
+		});
+	});
+}

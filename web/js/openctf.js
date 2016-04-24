@@ -311,13 +311,14 @@ app.controller("adminStatisticsController", ["$controller", "$scope", "$http", f
 
 app.controller("adminSettingsController", ["$controller", "$scope", "$http", function($controller, $scope, $http) {
 	$controller("adminController", { $scope: $scope });
-	api_call("GET", "/api/admin/stats/overview", {}, function(result) {
+	api_call("GET", "/api/admin/settings", {}, function(result) {
 		if (result["success"] == 1) {
-			$scope.overview = result["overview"];
+			$scope.settings = result["settings"];
 		} else {
-			$scope.overview = [];
+			$scope.settings = {};
 		}
 		$scope.$apply();
+		handler();
 	});
 }]);
 

@@ -4,11 +4,10 @@ from decorators import admins_only, api_wrapper, WebException
 from models import db, Problems, Files, Config, Users, UserActivity
 from schemas import verify_to_schema, check
 
-import user
+import logger
+import problem
 import team
 import utils
-import problem
-import logger
 
 blueprint = Blueprint("admin", __name__)
 
@@ -71,7 +70,6 @@ def admin_setup():
 	user.login_user(username, password)
 
 	return { "success": 1, "message": "Success!" }
-
 @blueprint.route("/stats/overview")
 @api_wrapper
 @admins_only
@@ -81,3 +79,30 @@ def admin_stats_overview():
 	overview["num_teams"] = team.num_teams(), team.num_teams(observer=True)
 	overview["num_problems"] = problem.num_problems()
 	return { "success": 1, "overview": overview }
+
+@blueprint.route("/settings")
+@api_wrapper
+@admins_only
+def admin_settings():
+	settings_return = {}
+	settings = Config.query.all()
+	for setting in settings:
+		settings_return[setting.key] = setting.value
+	return { "success": 1, "settings": settings_return }
+
+@blueprint.route("/settings/update", methods=["POST"])
+@api_wrapper
+@admins_only
+def admin_settings_update():
+	params = utils.flat_multi(request.form)
+	params.pop("csrf_token")
+	with app.app_context():
+		for key in params:
+			config = Config.query.filter_by(key=key).first()
+			new = params[key]
+			if config.value != new:
+				config.value = params[key]
+				db.session.add(config)
+		db.session.commit()
+
+	return { "success": 1, "message": "Success!" }
