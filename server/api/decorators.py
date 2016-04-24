@@ -67,12 +67,10 @@ def admins_only(f):
 		return f(*args, **kwds)
 	return wrapper
 
-def team_required(admin_bypass=False):
-	def generic(f):
-		@wraps(f)
-		def wrapper(*args, **kwds):
-			if not admin_bypass and ("tid" not in session or session["tid"] < 0):
-				return { "success": 0, "message": "You need a team." }
-			return f(*args, **kwds)
-		return wrapper
-	return generic
+def team_required(f):
+	@wraps(f)
+	def wrapper(*args, **kwds):
+		if "tid" not in session or session["tid"] < 0:
+			return { "success": 0, "message": "You need a team." }
+		return f(*args, **kwds)
+	return wrapper
