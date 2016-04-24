@@ -7,10 +7,16 @@ $(document).ready(function() {
 var create_problem = function() {
 	var input = "#new_problem_form input";
 	var data = $("#new_problem_form").serializeObject();
+
 	var grader_contents = ace.edit("new_grader").getValue();
 	data["grader_contents"] = grader_contents;
+
 	var bonus = $("#bonus").val();
 	data["bonus"] = bonus;
+
+	var autogen = $("#autogen").is(":checked");
+	data["autogen"] = autogen ? 1 : 0;
+
 	$(input).attr("disabled", "disabled");
 	api_call("POST", "/api/problem/add", data, function(result) {
 		if (result["success"] == 1) {
@@ -37,8 +43,12 @@ var update_problem = function(form_id) {
 
 	var grader_contents = ace.edit(pid + "_grader").getValue();
 	data["grader_contents"] = grader_contents;
+
 	var bonus = $("#" + pid + "_bonus").val();
 	data["bonus"] = bonus;
+
+	var autogen = $("#" + pid + "_autogen").is(":checked");
+	data["autogen"] = autogen ? 1 : 0;
 
 	$(input).attr("disabled", "disabled");
 	api_call("POST", "/api/problem/update", data, function(result) {

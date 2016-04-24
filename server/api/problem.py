@@ -1,3 +1,4 @@
+import autogen
 import hashlib
 import imp
 import json
@@ -27,6 +28,7 @@ def problem_add():
 	value = request.form["value"]
 	grader_contents = request.form["grader_contents"]
 	bonus = request.form["bonus"]
+	autogen = request.form["autogen"]
 
 	title_exists = Problems.query.filter_by(title=title).first()
 	if title_exists:
@@ -49,7 +51,7 @@ def problem_add():
 	grader_file.write(grader_contents)
 	grader_file.close()
 
-	problem = Problems(pid, title, category, description, value, grader_path, bonus=bonus, hint=hint)
+	problem = Problems(pid, title, category, description, value, grader_path, bonus=bonus, hint=hint, autogen=autogen)
 	db.session.add(problem)
 
 	files = request.files.getlist("files[]")
@@ -96,6 +98,7 @@ def problem_update():
 	value = request.form["value"]
 	bonus = request.form["bonus"]
 	grader_contents = request.form["grader_contents"]
+	autogen = request.form["autogen"]
 
 	problem = Problems.query.filter_by(pid=pid).first()
 	if problem:
@@ -105,6 +108,7 @@ def problem_update():
 		problem.hint = hint
 		problem.value = value
 		problem.bonus = bonus
+		problem.autogen = autogen
 
 		try:
 			exec(grader_contents)
@@ -138,7 +142,10 @@ def problem_submit():
 
 	if problem:
 		grader = imp.load_source("grader", problem.grader)
-		correct, response = grader.grade(flag)
+		random = None
+		if problem.autogen:
+			random = autogen.get_random(pid, tid)
+		correct, response = grader.grade(random, flag)
 
 		solve = Solves(pid, tid, flag, correct)
 		db.session.add(solve)
@@ -168,7 +175,6 @@ def problem_submit():
 
 @blueprint.route("/data", methods=["GET"])
 @api_wrapper
-@team_required(admin_bypass=True)
 def problem_data():
 	problems = Problems.query.order_by(Problems.value).all()
 	problems_return = [ ]
@@ -191,10 +197,15 @@ def problem_data():
 			"threshold": problem.threshold,
 			"weightmap": problem.weightmap,
 			"grader_contents": open(problem.grader, "r").read(),
-			"bonus": problem.bonus
+			"bonus": problem.bonus,
+			"autogen": problem.autogen == True
 		}
 		if "admin" in session and session["admin"]:
 			data.update(admin_data)
+		if problem.autogen:
+			grader = imp.load_source("grader", problem.grader)
+			tid = session.get("tid", "team")
+			data.update(grader.generate_problem(autogen.get_random(problem.pid, tid), problem.pid))
 		problems_return.append(data)
 	return { "success": 1, "problems": problems_return }
 

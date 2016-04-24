@@ -1,5 +1,6 @@
 import activity
 import admin
+import autogen
 import logger
 import models
 import problem
