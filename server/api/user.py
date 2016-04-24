@@ -152,7 +152,11 @@ def user_forgot_password(token=None):
 		reset_link = "%s/forgot/%s" % ("127.0.0.1:8000", token)
 		subject = "OpenCTF password reset"
 		body = """%s,\n\nA request to reset your OpenCTF password has been made. If you did not request this password reset, you may safely ignore this email and delete it.\n\nYou may reset your password by clicking this link or pasting it to your browser.\n\n%s\n\nThis link can only be used once, and will lead you to a page where you can reset your password.\n\nGood luck!\n\n- OpenCTF Administrator""" % (user.username, reset_link)
-		response = utils.send_email(email, subject, body).json()
+		response = utils.send_email(email, subject, body)
+		if response.status_code != 200:
+			raise WebException("Could not send email")
+
+		response = response.json()
 		if "Queued" in response["message"]:
 			return { "success": 1, "message": "Email sent to %s" % email }
 		else:
