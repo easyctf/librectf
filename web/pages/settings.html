@@ -9,10 +9,7 @@
 		right: 0;
 		min-width: 100%;
 		min-height: 100%;
-		font-size: 100px;
-		text-align: right;
-		filter: alpha(opacity=0);
-		opacity: 0;
+		font-size: 100px; text-align: right; filter: alpha(opacity=0); opacity: 0;
 		background: red;
 		cursor: inherit;
 		display: block;
@@ -33,87 +30,96 @@
 		</div>
 	</div>
 	<div class="col-sm-9 col-xs-12">
-		<section id="profile">
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<h4 class="panel-title">Public Profile</h4>
-				</div>
-				<div class="panel-body">
-					<label>Profile Picture</label>
-					<div class="row">
-						<div class="col-sm-2">
-							<img src="/api/user/avatar/{{ user.uid }}?{{ timestamp }}" id="avatar" style="width:100%;max-height:256px;" />
-						</div>
-						<div class="col-sm-10">
-							<div class="row">
-								<div class="btn-group">
-									<div class="btn btn-primary btn-file" id="file_upload">
-										<i class="fa fa-fw fa-upload"></i> Upload new picture
-										<input type="file" name="file" id="file" accept="image/*" />
-									</div>
-									<a class="btn btn-default" href="javascript:remove_profile_picture();">
-										<i class="fa fa-fw fa-trash"></i> Remove profile picture
-									</a>
-								</div>
+		<form onsubmit="update_profile(); return false" id="update_profile_form">
+			<section id="profile">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h4 class="panel-title">Public Profile</h4>
+					</div>
+					<div class="panel-body">
+						<label>Profile Picture</label>
+						<div class="row">
+							<div class="col-sm-2">
+								<img src="/api/user/avatar/{{ user.uid }}?{{ timestamp }}" id="avatar" style="width:100%;max-height:256px;" />
 							</div>
-							<div class="row">
-								<p><i>If you remove your picture, an automatically generated <a href="http://en.wikipedia.org/wiki/Identicon" target="_blank">identicon</a> will be used.</i></p>
-							</div1>
+							<div class="col-sm-10">
+								<div class="row">
+									<div class="btn-group">
+										<div class="btn btn-primary btn-file" id="file_upload">
+											<i class="fa fa-fw fa-upload"></i> Upload new picture
+											<input type="file" name="file" id="file" accept="image/*" />
+										</div>
+										<a class="btn btn-default" href="javascript:remove_profile_picture();">
+											<i class="fa fa-fw fa-trash"></i> Remove profile picture
+										</a>
+									</div>
+								</div>
+								<div class="row">
+									<p><i>If you remove your picture, an automatically generated <a href="http://en.wikipedia.org/wiki/Identicon" target="_blank">identicon</a> will be used.</i></p>
+								</div1>
+							</div>
 						</div>
 					</div>
 				</div>
-			</div>
-		</section>
-		<section id="email">
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<h4 class="panel-title">Email</h4>
-				</div>
-				<div class="panel-body">
-					<p>Hi.</p>
-				</div>
-			</div>
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<h4 class="panel-title">Email Preferences</h4>
-				</div>
-				<div class="panel-body">
-					<p>Hi.</p>
-				</div>
-			</div>
-		</section>
-		<section id="security">
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<h4 class="panel-title">Change Password</h4>
-				</div>
-				<div class="panel-body">
-					<p>Hi.</p>
-				</div>
-			</div>
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<h4 class="panel-title">Two-Factor Authentication</h4>
-				</div>
-				<div class="panel-body">
-					<div ng-show="user['tfa_enabled']==true">
-						<p><i class="fa fa-fw fa-lock" style="color:green;"></i> Two-factor authentication is enabled on your account.</p>
+			</section>
+			<section id="email">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h4 class="panel-title">Email</h4>
 					</div>
-					<div ng-show="user['tfa_enabled']==false">
-						<p><i class="fa fa-fw fa-lock" style="color:red;"></i> Two-factor authentication isn't enabled on your account.</p>
-						<a href="/settings/twofactor" class="btn btn-primary">Setup two-factor authentication now &raquo;</a>
+					<div class="panel-body">
+						<p>Hi.</p>
 					</div>
 				</div>
-			</div>
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<h4 class="panel-title">Active Sessions</h4>
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h4 class="panel-title">Email Preferences</h4>
+					</div>
+					<div class="panel-body">
+						<p>Hi.</p>
+					</div>
 				</div>
-				<div class="panel-body">
-					<p>Hi.</p>
+			</section>
+			<section id="security">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h4 class="panel-title">Two-Factor Authentication</h4>
+					</div>
+					<div class="panel-body">
+						<div ng-show="user['tfa_enabled']==true">
+							<p><i class="fa fa-fw fa-lock" style="color:green;"></i> Two-factor authentication is enabled on your account.</p>
+						</div>
+						<div ng-show="user['tfa_enabled']==false">
+							<p><i class="fa fa-fw fa-lock" style="color:red;"></i> Two-factor authentication isn't enabled on your account.</p>
+							<a href="/settings/twofactor" class="btn btn-primary">Setup two-factor authentication now &raquo;</a>
+						</div>
+					</div>
 				</div>
-			</div>
-		</section>
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h4 class="panel-title">Active Sessions</h4>
+					</div>
+					<div class="panel-body">
+						<p>Hi.</p>
+					</div>
+				</div>
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h4 class="panel-title">Change Password</h4>
+					</div>
+					<div class="panel-body">
+						<input class="form-control" type="password" name="new_password" placeholder="New password" autocomplete="off"/>
+						<br>
+						<input class="form-control" type="password" name="new_password_confirm" placeholder="Confirm password" autocomplete="off"/>
+						<br>
+					</div>
+				</div>
+			</section>
+			<div id="change_pass_msg"></div>
+			<input class="form-control" type="password" name="current_password" placeholder="Current password"/>
+			<br>
+			<input class="btn btn-primary" type="submit" value="Update"/>
+		</form>
 	</div>
 </div>
 

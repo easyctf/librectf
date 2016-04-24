@@ -27,6 +27,28 @@ from PIL import Image
 
 blueprint = Blueprint("user", __name__)
 
+@blueprint.route("/update_profile", methods=["POST"])
+@login_required
+@api_wrapper
+def user_update_profile():
+	params = utils.flat_multi(request.form)
+	password = params.get("current_password")
+	new_password = params.get("new_password")
+	new_password_confirm = params.get("new_password_confirm")
+
+	if new_password != new_password_confirm:
+		raise WebException("Passwords do not match.")
+
+	user = get_user(username=session["username"]).first()
+	correct = utils.check_password(user.password, password)
+
+	if not correct:
+		raise WebException("Incorrect password.")
+
+	update_password(user, new_password)
+
+	return { "success": 1, "message": "Success!" }
+
 @blueprint.route("/forgot", methods=["POST"])
 @blueprint.route("/forgot/<token>", methods=["GET", "POST"])
 @api_wrapper
@@ -397,6 +419,12 @@ def get_user(username=None, username_lower=None, email=None, uid=None, reset_tok
 	with app.app_context():
 		result = Users.query.filter_by(**match)
 		return result
+
+def update_password(user, new_password):
+	user.password = utils.hash_password(new_password)
+	current_session = db.session.object_session(user)
+	current_session.add(user)
+	current_session.commit()
 
 def is_admin():
 	return is_logged_in() and "admin" in session and session["admin"]

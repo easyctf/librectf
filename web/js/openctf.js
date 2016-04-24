@@ -565,3 +565,22 @@ var remove_profile_picture = function() {
 		}
 	});
 };
+
+var update_profile = function() {
+	var input = $("#update_profile_form input");
+	var data = $("#update_profile_form").serializeObject();
+	data["csrf_token"] = $.cookie("csrf_token");
+	$(input).attr("disabled", "disabled");
+
+	api_call("POST", "/api/user/update_profile", data, function(result) {
+		if (result["success"] == 1) {
+			display_message("change_pass_msg", "success", result["message"], function() {
+				$(input).removeAttr("disabled");
+			});
+		} else {
+			display_message("change_pass_msg", "danger", result["message"], function() {
+				$(input).removeAttr("disabled");
+			});
+		}
+	});
+};
