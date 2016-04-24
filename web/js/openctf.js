@@ -286,6 +286,8 @@ app.controller("adminProblemsController", ["$controller", "$scope", "$http", fun
 	api_call("GET", "/api/problem/data", {}, function(result) {
 		if (result["success"] == 1) {
 			$scope.problems = result["problems"];
+		} else {
+			$scope.problems = [];
 		}
 		$scope.$apply();
 		$scope.problems.forEach(function(problem) {

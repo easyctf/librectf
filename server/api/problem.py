@@ -205,7 +205,10 @@ def problem_data():
 		if problem.autogen:
 			grader = imp.load_source("grader", problem.grader)
 			tid = session.get("tid", "team")
-			data.update(grader.generate_problem(autogen.get_random(problem.pid, tid), problem.pid))
+			try:
+				data.update(grader.generate_problem(autogen.get_random(problem.pid, tid), problem.pid))
+			except Exception, e:
+				logger.log(__name__, "The grader for \"%s\" has thrown an error: %s" % (problem.name, e))
 		problems_return.append(data)
 	return { "success": 1, "problems": problems_return }
 
