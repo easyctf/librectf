@@ -35,19 +35,26 @@ def user_update_profile():
 	password = params.get("current_password")
 	new_password = params.get("new_password")
 	new_password_confirm = params.get("new_password_confirm")
+	email = params.get("email")
 
 	if new_password != new_password_confirm:
 		raise WebException("Passwords do not match.")
 
+	user = get_user(username=session["username"]).first()
+	correct = utils.check_password(user.password, password)
+
+	if not correct:
+		raise WebException("Incorrect password.")
+
+
 	if new_password != "":
-		user = get_user(username=session["username"]).first()
-		correct = utils.check_password(user.password, password)
+		user.password = utils.hash_password(new_password)
 
-		if not correct:
-			raise WebException("Incorrect password.")
+	user.email = email
 
-		update_password(user, new_password)
-
+	current_session = db.session.object_session(user)
+	current_session.add(user)
+	current_session.commit()
 	return { "success": 1, "message": "Profile updated." }
 
 @blueprint.route("/forgot", methods=["POST"])
@@ -420,12 +427,6 @@ def get_user(username=None, username_lower=None, email=None, uid=None, reset_tok
 	with app.app_context():
 		result = Users.query.filter_by(**match)
 		return result
-
-def update_password(user, new_password):
-	user.password = utils.hash_password(new_password)
-	current_session = db.session.object_session(user)
-	current_session.add(user)
-	current_session.commit()
 
 def is_admin():
 	return is_logged_in() and "admin" in session and session["admin"]
