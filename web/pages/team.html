@@ -58,6 +58,7 @@
 					<h4 class="panel-title">Team Members</h4>
 				</div>
 				<div class="list-group">
+					<div id="add_member_msg"/>
 					<div class="list-group-item" ng-repeat="member in team['members']">
 						<h4 class="list-group-item-heading" style="display:inline-block;">{{ member['name'] }}</h4>
 						<div class="label label-info" ng-show="member['captain']==true">Owner</div>

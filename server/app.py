@@ -45,7 +45,7 @@ def api_main():
 
 @app.errorhandler(404)
 def page_not_found(e):
-    return send_file("../web/index.html")
+    return send_file("../web/index.html"), 404
 
 def run(args=None):
 	with app.app_context():

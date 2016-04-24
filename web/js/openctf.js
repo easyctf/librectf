@@ -119,8 +119,8 @@ function api_call(method, url, data, callback_success, callback_fail) {
 		} else {
 			callback_success(result);
 		}
-	}).fail(function(xhr) {
-		callback_fail();
+	}).fail(function(jqXHR) {
+		callback_fail(jqXHR);
 	});
 }
 
@@ -516,13 +516,19 @@ var add_member = function() {
 	$(input).attr("disabled", "disabled");
 	api_call("POST", "/api/team/invite", data, function(result) {
 		if (result["success"] == 1) {
-			location.reload(true);
+			display_message("add_member_msg", "success", result["message"], function() {
+				location.reload(true);
+				$(input).removeAttr("disabled");
+			});
 		} else {
 			$(input).removeAttr("disabled");
+			display_message("add_member_msg", "danger", result["message"], function() {
+				$(input).removeAttr("disabled");
+			});
 		}
 	}, function(jqXHR, status, error) {
-		var result = JSON.parse(jqXHR["responseText"]);
-		display_message("create_team_msg", "danger", "Error " + jqXHR["status"] + ": " + result["message"], function() {
+		var result = jqXHR["responseText"];
+		display_message("add_member_msg", "danger", "Error " + jqXHR["status"] + ": " + result["message"], function() {
 			$(input).removeAttr("disabled");
 		});
 	});
@@ -567,12 +573,23 @@ var accept_invitation_request = function(uid) {
 };
 
 var twofactor_form = function() {
+	var input = $("#twofactor_form input");
 	var data = $("#twofactor_form").serializeObject();
 	data["csrf_token"] = $.cookie("csrf_token");
+	$(input).attr("disabled", "disabled");
 	api_call("POST", "/api/user/twofactor/verify", data, function(result) {
 		if (result["success"] == 1) {
 			location.href = "/settings";
+		} else {
+			display_message("twofactor_msg", "danger", result["message"], function() {
+				$(input).removeAttr("disabled");
+			});
 		}
+	}, function(jqXHR) {
+		var result = jqXHR["responseText"];
+		display_message("twofactor_msg", "danger", "Error " + jqXHR["status"] + ": " + result["message"], function() {
+			$(input).removeAttr("disabled");
+		});
 	});
 };
 
@@ -602,6 +619,11 @@ var update_profile = function() {
 				$(input).removeAttr("disabled");
 			});
 		}
+	}, function(jqXHR) {
+		var result = jqXHR["responseText"];
+		display_message("change_pass_msg", "danger", "Error " + jqXHR["status"] + ": " + result["message"], function() {
+			$(input).removeAttr("disabled");
+		});
 	});
 };
 
@@ -622,5 +644,10 @@ var verify_email = function() {
 			});
 
 		}
+	}, function(jqXHR) {
+		var result = jqXHR["responseText"];
+		display_message("verify_email_msg", "danger", "Error " + jqXHR["status"] + ": " + result["message"], function() {
+			$(input).removeAttr("disabled");
+		});
 	});
 }

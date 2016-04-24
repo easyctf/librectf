@@ -28,7 +28,7 @@ var create_problem = function() {
 				$(input).removeAttr("disabled");
 			});
 		}
-	}, function(jqXHR, status, error) {
+	}, function(jqXHR) {
 		var result = jqXHR["responseText"];
 		display_message("add-status", "danger", "Error " + jqXHR["status"] + ": " + result["message"], function() {
 			$(input).removeAttr("disabled");
@@ -61,7 +61,7 @@ var update_problem = function(form_id) {
 				$(input).removeAttr("disabled");
 			});
 		}
-	}, function(jqXHR, status, error) {
+	}, function(jqXHR) {
 		var result = jqXHR["responseText"];
 		display_message(pid + "_status", "danger", "Error " + jqXHR["status"] + ": " + result["message"], function() {
 			$(input).removeAttr("disabled");
@@ -85,7 +85,7 @@ var delete_problem = function(form_id) {
 					$(input).removeAttr("disabled");
 				});
 			}
-		}, function(jqXHR, status, error) {
+		}, function(jqXHR) {
 			var result = jqXHR["responseText"];
 			display_message(pid + "_status", "danger", "Error " + jqXHR["status"] + ": " + result["message"], function() {
 				$(input).removeAttr("disabled");
@@ -111,7 +111,7 @@ var update_settings = function() {
 			});
 		}
 		console.log(result["error"]);
-	}, function(jqXHR, status, error) {
+	}, function(jqXHR) {
 		var result = jqXHR["responseText"];
 		display_message("update_settings_msg", "danger", "Error " + jqXHR["status"] + ": " + result["message"], function() {
 			$(input).removeAttr("disabled");
