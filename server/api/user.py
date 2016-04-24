@@ -64,9 +64,9 @@ def verify_email():
 		current_session.add(user)
 		current_session.commit()
 
-		reset_link = "%s/settings/verify?token=%s" % ("127.0.0.1:8080", token)
+		verification_link = "%s/settings/verify?token=%s" % ("127.0.0.1:8080", token)
 		subject = "OpenCTF email verification"
-		body = """Hi %s!\n\nHelp us secure your %s account by verifying your email below:\n\n%s\n\nIf you did not request this password reset, you may safely ignore this email and delete it.\n\nGood luck!\n\n- OpenCTF Administrator""" % (user.username, utils.get_config("ctf_name"), reset_link)
+		body = """Hi %s!\n\nHelp us secure your %s account by verifying your email below:\n\n%s\n\nIf believe this is a mistake, you may safely ignore this email and delete it.\n\nGood luck!\n\n- OpenCTF Administrator""" % (user.username, utils.get_config("ctf_name"), verification_link)
 		response = utils.send_email(user.email, subject, body)
 		if response.status_code != 200:
 			raise WebException("Could not send email.")
@@ -179,6 +179,8 @@ def user_register():
 	utype = int(params.get("type"))
 
 	user = Users(name, username, email, password, utype=utype)
+	token = utils.generate_string(length=64)
+	user.email_token = token
 	with app.app_context():
 		db.session.add(user)
 		db.session.commit()
@@ -189,7 +191,18 @@ def user_register():
 	logger.log(__name__, "%s registered with %s" % (name.encode("utf-8"), email.encode("utf-8")))
 	login_user(username, password)
 
-	return { "success": 1, "message": "Success!" }
+	verification_link = "%s/settings/verify?token=%s" % ("127.0.0.1:8080", token)
+	subject = "OpenCTF email verification"
+	body = """Hi %s!\n\nHelp us secure your %s account by verifying your email below:\n\n%s\n\nIf believe this is a mistake, you may safely ignore this email and delete it.\n\nGood luck!\n\n- OpenCTF Administrator""" % (username, utils.get_config("ctf_name"), verification_link)
+	response = utils.send_email(email, subject, body)
+	if response.status_code != 200:
+		raise WebException("Could not send verification email. You can verify your email later in the settings page.")
+	response = response.json()
+
+	if "Queued" in response["message"]:
+		return { "success": 1, "message": "Success! Check your email for a verification link." }
+	else:
+		raise WebException(response["message"])
 
 @blueprint.route("/logout", methods=["GET"])
 @api_wrapper
