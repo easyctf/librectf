@@ -157,7 +157,7 @@ class Teams(db.Model):
 		points = 0
 
 		# TODO: Make this better
-		solves = Solves.query.filter_by(tid=self.tid).all()
+		solves = Solves.query.filter_by(tid=self.tid, correct=1).all()
 		for solve in solves:
 			problem = Problems.query.filter_by(pid=solve.pid).first()
 			multiplier = 1

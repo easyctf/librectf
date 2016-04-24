@@ -321,10 +321,10 @@ def get_team(tid=None, teamname=None, teamname_lower=None, owner=None):
 		match.update({ "tid": tid })
 	elif owner != None:
 		match.update({ "owner": owner })
-	elif user.is_logged_in():
-		_user = user.get_user().first()
-		if _user.tid is not None:
-			match.update({ "tid": _user.tid })
+	#elif user.is_logged_in():
+	#	_user = user.get_user().first()
+	#	if _user.tid is not None:
+	#		match.update({ "tid": _user.tid })
 	with app.app_context():
 		result = Teams.query.filter_by(**match)
 		return result
