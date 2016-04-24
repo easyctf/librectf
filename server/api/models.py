@@ -146,7 +146,26 @@ class Teams(db.Model):
 
 	def points(self):
 		""" TODO: Implement scoring with Bonus Points """
-		return 0
+		bonuses = [
+			[0, 0, 0],
+			[3, 2, 1],
+			[5, 3, 1],
+			[8, 5, 3],
+			[10, 8, 6],
+			[20, 12, 8],
+		]
+		points = 0
+
+		# TODO: Make this better
+		solves = Solves.query.filter_by(tid=self.tid).all()
+		for solve in solves:
+			problem = Problems.query.filter_by(pid=solve.pid).first()
+			multiplier = 1
+			if solve.bonus != -1:
+				multiplier += bonuses[problem.bonus][solve.bonus-1]/100.0
+			points += round(problem.value*multiplier)
+
+		return points
 
 	def place(self, ranked=True):
 		# score = db.func.sum(Problems.value).label("score")
