@@ -282,8 +282,9 @@ class LoginTokens(db.Model):
 	expiry = db.Column(db.Integer)
 	ua = db.Column(db.String(128))
 	ip = db.Column(db.String(16))
+	location = db.Column(db.String(128))
 
-	def __init__(self, uid, username, expiry=int(time.time()), active=True, ua=None, ip=None):
+	def __init__(self, uid, username, expiry=int(time.time()), active=True, ua=None, ip=None, location=None):
 		self.sid = utils.generate_string()
 		self.uid = uid
 		self.username = username
@@ -292,6 +293,7 @@ class LoginTokens(db.Model):
 		self.active = active
 		self.ua = ua
 		self.ip = ip
+		self.location = location
 
 class TeamInvitations(db.Model):
 	rid = db.Column(db.Integer, primary_key=True)

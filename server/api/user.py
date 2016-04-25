@@ -301,6 +301,15 @@ def user_info():
 		if not(user_in_team):
 			invitations = user.get_invitations()
 			userdata["invitations"] = invitations
+		session_data = []
+		sessions = LoginTokens.query.filter_by(username=user.username).all()
+		for _session in sessions:
+			session_data.append({
+				"me": _session.sid == session["sid"],
+				"ip": _session.ip,
+				"location": _session.location
+			})
+		userdata["sessions"] = session_data
 	return { "success": 1, "user": userdata }
 
 @blueprint.route("/avatar/<uid>", methods=["GET"])
@@ -447,13 +456,19 @@ def login_user(username, password, token=None):
 def create_login_token(username):
 	user = get_user(username_lower=username.lower()).first()
 	useragent = request.headers.get("User-Agent")
-	ip = request.remote_addr
+	ip = request.headers.get("X-Forwarded-For", request.remote_addr)
+	ip = ip.split(",")[0]
+
+	data = requests.get("http://ip-api.com/json/%s" % ip).json()
+	location = ""
+	if data["status"] == "success":
+		location = "%s, %s, %s" % (data["city"], data["region"], data["countryCode"])
 
 	with app.app_context():
 		expired = LoginTokens.query.filter_by(username=username).all()
 		for expired_token in expired: db.session.delete(expired_token)
 
-		token = LoginTokens(user.uid, user.username, ua=useragent, ip=ip)
+		token = LoginTokens(user.uid, user.username, ua=useragent, ip=ip, location=location)
 		db.session.add(token)
 		db.session.commit()
 

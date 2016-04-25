@@ -107,7 +107,20 @@
 						<h4 class="panel-title">Active Sessions</h4>
 					</div>
 					<div class="panel-body">
-						<p>Hi.</p>
+						<table class="table">
+							<thead>
+								<tr>
+									<th>Ip</th>
+									<th>Location</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="session in user['sessions']">
+									<td>{{ session["ip"] }}<span ng-show="session['me']==true"> (you)</span></td>
+									<td>{{ session["location"] }}</td>
+								</tr>
+							</tbody>
+						</table>
 					</div>
 				</div>
 				<div class="panel panel-default">
