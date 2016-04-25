@@ -180,7 +180,7 @@ def team_accept_invite():
 	if _team is None:
 		raise WebException("Team not found.")
 
-	if len(_team.get_members()) >= 5:
+	if len(_team.get_members()) >= utils.get_config("team_size"):
 		raise WebException("This team is full.")
 
 	invitation = TeamInvitations.query.filter_by(rtype=0, frid=tid, toid=_user.uid).first()
@@ -211,7 +211,7 @@ def team_accept_invite_request():
 	if _user.uid != _team.owner:
 		raise WebException("You must be the captain of your team to rescind invitations!")
 
-	if len(_team.get_members()) >= 5:
+	if len(_team.get_members()) >= utils.get_config("team_size"):
 		raise WebException("Your team is full.")
 
 	uid = params.get("uid")

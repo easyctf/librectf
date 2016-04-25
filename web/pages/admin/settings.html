@@ -25,6 +25,13 @@
 		</div>
 		<p id="end_time_hint">CTF will end on <time>...</time></p>
 		<div class="row">
+			<div class="col-xs-3">
+				<label for="team_size"><small>Team Size</small></label>
+				<input class="form-control" type="number" required name="team_size" id="team_size" placeholder="Team Size" autocomplete="off" value="{{ settings['team_size'] }}"/>
+			</div>
+		</div>
+		<br>
+		<div class="row">
 			<div class="col-sm-12 form-group">
 				<input type="submit" class="btn btn-success" value="Update"/>
 			</div>
