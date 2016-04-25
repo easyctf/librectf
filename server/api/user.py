@@ -522,11 +522,11 @@ def in_team(user):
 	return hasattr(user, "tid") and user.tid >= 0
 
 @cache.memoize()
-def num_users(observer=False):
+def num_users(include_observers=False):
 	cursor = None
-	if observer == True:
+	if include_observers:
 		cursor = Users.query.filter_by()
 	else:
-		cursor = Users.query.filter_by(utype=1)
+		cursor = Users.query.filter_by(utype=1,admin=0)
 	count = cursor.count()
 	return count

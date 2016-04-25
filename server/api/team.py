@@ -330,8 +330,8 @@ def get_team(tid=None, teamname=None, teamname_lower=None, owner=None):
 		return result
 
 @cache.memoize()
-def num_teams(observer=False):
+def num_teams(include_observers=False):
 	teamlist = list(get_team().all())
-	if observer == False:
-		teamlist = filter(lambda t: t.is_observer() == False, teamlist)
+	if not include_observers:
+		teamlist = filter(lambda t: not t.is_observer(), teamlist)
 	return len(teamlist)

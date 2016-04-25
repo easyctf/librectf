@@ -153,7 +153,6 @@ class Teams(db.Model):
 		return members
 
 	def points(self):
-		""" TODO: Implement scoring with Bonus Points """
 		bonuses = [
 			[0, 0, 0],
 			[3, 2, 1],
@@ -227,7 +226,7 @@ class Teams(db.Model):
 	def is_observer(self):
 		members = self.get_members()
 		for member in members:
-			if member["observer"] == True or member["admin"] == True:
+			if member["observer"] or member["admin"]:
 				return True
 		return False
 
