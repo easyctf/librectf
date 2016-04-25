@@ -19,7 +19,7 @@ def generate_team_link(teamname):
 
 class Users(db.Model):
 	uid = db.Column(db.Integer, unique=True, primary_key=True)
-	tid = db.Column(db.Integer)
+	tid = db.Column(db.Integer, db.ForeignKey("teams.tid"))
 	name = db.Column(db.String(64))
 	username = db.Column(db.String(64), unique=True)
 	username_lower = db.Column(db.String(64), unique=True)
@@ -96,9 +96,9 @@ class UserActivity(db.Model):
 	- 3: User solved a problem.
 	"""
 	uaid = db.Column(db.Integer, unique=True, primary_key=True)
-	uid = db.Column(db.Integer)
+	uid = db.Column(db.Integer, db.ForeignKey("users.uid"))
 	type = db.Column(db.Integer)
-	tid = db.Column(db.Integer)
+	tid = db.Column(db.Integer, db.ForeignKey("teams.tid"))
 	timestamp = db.Column(db.Integer)
 
 	def __init__(self, uid, atype, tid=None):
@@ -261,8 +261,8 @@ class Files(db.Model):
 
 class Solves(db.Model):
 	sid = db.Column(db.Integer, primary_key=True)
-	pid = db.Column(db.String(128))
-	tid = db.Column(db.Integer)
+	pid = db.Column(db.String(128), db.ForeignKey("problems.pid"))
+	tid = db.Column(db.Integer, db.ForeignKey("teams.tid"))
 	date = db.Column(db.String(64), default=utils.get_time_since_epoch())
 	correct = db.Column(db.Boolean)
 	flag = db.Column(db.Text)
@@ -276,8 +276,8 @@ class Solves(db.Model):
 
 class LoginTokens(db.Model):
 	sid = db.Column(db.String(64), unique=True, primary_key=True)
-	uid = db.Column(db.Integer)
-	username = db.Column(db.String(32))
+	uid = db.Column(db.Integer, db.ForeignKey("users.uid"))
+	username = db.Column(db.String(32), db.ForeignKey("users.username"))
 	active = db.Column(db.Boolean)
 	issued = db.Column(db.Integer)
 	expiry = db.Column(db.Integer)

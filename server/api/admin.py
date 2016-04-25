@@ -7,6 +7,7 @@ from schemas import verify_to_schema, check
 import logger
 import problem
 import team
+import user
 import utils
 
 blueprint = Blueprint("admin", __name__)
