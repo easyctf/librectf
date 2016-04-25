@@ -18,12 +18,12 @@ __check_email_format = lambda email: re.match(".+@.+\..{2,}", email) is not None
 __check_ascii = lambda s: all(c in string.printable for c in s)
 __check_alphanumeric = lambda s: all(c in string.digits + string.ascii_uppercase + string.ascii_lowercase for c in s)
 
-def unix_time_millis(dt):
+def unix_time_seconds(dt):
 	epoch = datetime.datetime.utcfromtimestamp(0)
-	return (dt - epoch).total_seconds() * 1000.0
+	return (dt - epoch).total_seconds()
 
 def get_time_since_epoch():
-	return unix_time_millis(datetime.datetime.now())
+	return unix_time_seconds(datetime.datetime.now())
 
 from models import Config
 def is_setup_complete():
