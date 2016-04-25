@@ -53,7 +53,7 @@ def admin_setup():
 		Config("ctf_name", params.get("ctf_name")),
 		Config("start_time", params.get("start_time")),
 		Config("end_time", params.get("end_time")),
-		Config("end_time", params.get("team_size")),
+		Config("team_size", params.get("team_size")),
 		Config("setup_complete", True)
 	]
 
