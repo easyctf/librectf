@@ -100,21 +100,29 @@ class UserActivity(db.Model):
 	type = db.Column(db.Integer)
 	tid = db.Column(db.Integer, db.ForeignKey("teams.tid"))
 	timestamp = db.Column(db.Integer)
+	pid = db.Column(db.String(128), db.ForeignKey("problems.pid"))
 
-	def __init__(self, uid, atype, tid=None):
+	def __init__(self, uid, atype, tid=None, pid=None):
 		self.uid = uid
 		self.type = atype
 		if tid is not None:
 			self.tid = tid
+		if pid is not None:
+			self.pid = pid
 		self.timestamp = int(time.time())
 
 	def __str__(self):
 		u = db.session.query(Users).filter_by(uid=self.uid).first()
 		t = db.session.query(Teams).filter_by(tid=self.tid).first()
+		p = db.session.query(Problems).filter_by(pid=self.pid).first()
 		if self.type == 0:
 			return "%s created an account!" % generate_user_link(u.username)
 		elif self.type == 1:
 			return "%s created the team %s" % (generate_user_link(u.username), generate_team_link(t.teamname))
+		elif self.type == 2:
+			return "%s has left team %s" % (generate_user_link(u.username), generate_team_link(t.teamname))
+		elif self.type == 3:
+			return "%s has solved %s" % (generate_user_link(u.username), p.title)
 
 class Teams(db.Model):
 	tid = db.Column(db.Integer, primary_key=True)

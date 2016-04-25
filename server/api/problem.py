@@ -12,7 +12,7 @@ from flask import Blueprint, jsonify, session, request
 from flask import current_app as app
 from werkzeug import secure_filename
 
-from models import db, Files, Problems, Solves, Teams
+from models import db, Files, Problems, Solves, Teams, Users, UserActivity
 from decorators import admins_only, api_wrapper, login_required, team_required, InternalException, WebException
 
 blueprint = Blueprint("problem", __name__)
@@ -79,6 +79,7 @@ def problem_delete():
 	problem = Problems.query.filter_by(pid=pid).first()
 	if problem:
 		Solves.query.filter_by(pid=pid).delete()
+		UserActivity.query.filter_by(pid=pid).delete()
 		Problems.query.filter_by(pid=pid).delete()
 		grader_folder = "/".join(problem.grader.split("/")[:-1])
 		shutil.rmtree(grader_folder)
@@ -133,6 +134,7 @@ def problem_submit():
 	pid = request.form["pid"]
 	flag = request.form["flag"]
 	tid = session["tid"]
+	username = session["username"]
 
 	problem = Problems.query.filter_by(pid=pid).first()
 	team = Teams.query.filter_by(tid=tid).first()
@@ -158,8 +160,15 @@ def problem_submit():
 				bonus = solves
 			else:
 				bonus = -1
+
 			solve.bonus = bonus
 			db.session.add(solve)
+
+			user = Users.query.filter_by(username=username).first()
+			if user:
+				activity = UserActivity(user.uid, 3, tid=tid, pid=pid)
+				db.session.add(activity)
+
 			db.session.commit()
 
 			logger.log(__name__, "%s has solved %s by submitting %s" % (team.teamname, problem.title, flag), level=logger.WARNING)
