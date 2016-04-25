@@ -120,3 +120,20 @@ def get_config(key):
 	if config is None:
 		return None
 	return config.value
+
+def is_ctf_time():
+	start = get_config("start_time")
+	end = get_config("end_time")
+
+	start = [int(start), 0][start is None]
+	end = [int(end), 0][end is None]
+
+	time = get_time_since_epoch()
+
+	if start and end:
+		return start < time < end
+
+	if start < time and end == 0:
+		return True
+
+	return False
