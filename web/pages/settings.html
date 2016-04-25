@@ -81,7 +81,7 @@
 							<p><i class="fa fa-fw fa-check" style="color:green;"></i>Your email has been verified.</p>
 						</div>
 						<div ng-show="user['email_verified']==false">
-							<p><i class="fa fa-fw fa-close" style="color:red;"></i>You email has not yet been verified.</p>
+							<p><i class="fa fa-fw fa-close" style="color:red;"></i>Your email has not yet been verified.</p>
 							<a id="verify_email_btn" onclick="verify_email(); return false;" class="btn btn-primary">Verify your email &raquo;</a>
 						</div>
 					</div>
@@ -161,7 +161,7 @@
 					img.src = progress.target.result;
 					var width = img.width;
 					var height = img.height;
-					
+
 					if (width > height) {
 						if (width > MAX_SIZE) {
 							height *= MAX_SIZE / width;
