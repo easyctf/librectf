@@ -168,10 +168,9 @@ class Teams(db.Model):
 		return points
 
 	def place(self, ranked=True):
-		# score = db.func.sum(Problems.value).label("score")
-		# quickest = db.func.max(Solves.date).label("quickest")
-		# teams = db.session.query(Solves.tid).join(Teams).join(Problems).filter().group_by(Solves.tid).order_by(score.desc(), quickest).all()
-		teams = [ self.tid ]
+		score = db.func.sum(Problems.value).label("score")
+		quickest = db.func.max(Solves.date).label("quickest")
+		teams = db.session.query(Solves.tid).join(Teams).join(Problems).filter().group_by(Solves.tid).order_by(score.desc(), quickest).all()
 		try:
 			i = teams.index((self.tid,)) + 1
 			k = i % 10
