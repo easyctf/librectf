@@ -125,8 +125,8 @@ def is_ctf_time():
 	start = get_config("start_time")
 	end = get_config("end_time")
 
-	start = [int(start), 0][start is None]
-	end = [int(end), 0][end is None]
+	start = 0 if start is None else int(start)
+	end = 0 if end is None else int(end)
 
 	time = get_time_since_epoch()
 
