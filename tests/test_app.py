@@ -25,3 +25,5 @@ class AppTestCase(TestCase):
 	def test_404(self):
 		response = self.client.get("/four-oh-four")
 		self.assert404(response)
+
+	

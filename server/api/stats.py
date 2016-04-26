@@ -11,18 +11,20 @@ blueprint = Blueprint("stats", __name__)
 @blueprint.route("/scoreboard")
 @api_wrapper
 def all_teams_stats():
+	db.session.expire_all()
 	score = db.func.sum(Problems.value).label("score")
 	quickest = db.func.max(Solves.date).label("quickest")
-	teams = db.session.query(Solves.tid, Teams).join(Teams).join(Problems).filter().group_by(Solves.tid).order_by(score.desc(), quickest).all()
+	teams = list(Teams.query.filter_by().all())
 	result = [ ]
 	count = 0
-	for tid, _team in teams:
+	for _team in teams:
 		count += 1
 		result.append({
 			"rank": count,
 			"teamname": _team.teamname,
-			"tid": tid,
+			"tid": _team.tid,
 			"school": _team.school,
-			"points": _team.points()
+			"points": _team.points(),
+			"observer": _team.is_observer(),
 		})
 	return { "success": 1, "scoreboard": result }
