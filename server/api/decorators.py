@@ -75,3 +75,10 @@ def team_required(f):
 		return f(*args, **kwds)
 	return wrapper
 
+def email_verification_required():
+	@wraps(f)
+	def wrapper(*args, **kwds):
+		if not user.is_email_verified():
+			return { "success": 0, "message": "Email not verified." }
+		return f(*args, **kwds)
+	return wrapper
