@@ -209,6 +209,8 @@ def user_login():
 
 	creds = { "username": username, "password": password }
 	_user = get_user(username_lower = username.lower()).first()
+	if _user is None:
+		raise WebException("This user doesn't exist!")
 	if _user.tfa_enabled():
 		if token is None:
 			raise WebException("Invalid token.")
