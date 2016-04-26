@@ -444,12 +444,14 @@ def create_login_token(username):
 		"ip": ip
 	}
 
-	data = requests.get("http://ip-api.com/json/%s" % ip).json()
-	if data["status"] == "success":
-		args["location"] = "%s, %s, %s" % (data["city"], data["region"], data["countryCode"])
+	try:
+		data = requests.get("http://ip-api.com/json/%s" % ip, timeout=3).json()
+		if data["status"] == "success":
+			args["location"] = "%s, %s, %s" % (data["city"], data["region"], data["countryCode"])
+	except: pass
 
 	with app.app_context():
-		expired = LoginTokens.query.filter_by(username=username).all()
+		expired = list(LoginTokens.query.filter_by(username=username, active=False).all())
 		for expired_token in expired: db.session.delete(expired_token)
 
 		token = LoginTokens(user.uid, user.username, **args)

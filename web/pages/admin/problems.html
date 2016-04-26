@@ -25,15 +25,15 @@
 					<div class="panel-body">
 						<div id="add-status"></div>
 						<form class="form-horizontal" onsubmit="create_problem(); return false;" id="new_problem_form">
-							<input class="form-control" name="title" placeholder="Name" required/>
+							<input class="form-control" name="title" placeholder="Name" required autocomplete="off" />
 							<br>
-							<textarea class="form-control" name="description" placeholder="Description" required autocomplete="off"/>
+							<textarea class="form-control" name="description" placeholder="Description" required autocomplete="off" />
 							<br>
-							<input class="form-control" name="category" placeholder="Category" required autocomplete="off"/>
+							<input class="form-control" name="category" placeholder="Category" required autocomplete="off" />
 							<br>
-							<input class="form-control" name="hint" placeholder="Hint" required/>
+							<input class="form-control" name="hint" placeholder="Hint" required autocomplete="off" />
 							<br>
-							<input class="form-control" name="value" type="number" placeholder="Problem Value" required autocomplete="off"/>
+							<input class="form-control" name="value" type="number" placeholder="Problem Value" required autocomplete="off" />
 							<br>
 							<label for="bonus">Speed bonuses (%)</label>
 							<select class="form-control" id="bonus">
@@ -70,11 +70,11 @@
 							<br>
 							<textarea class="form-control" name="description" required autocomplete="off">{{ problem["description"] }}</textarea>
 							<br>
-							<input class="form-control" name="category" value="{{ problem['category'] }}" required/>
+							<input class="form-control" name="category" value="{{ problem['category'] }}" required autocomplete="off" />
 							<br>
-							<input class="form-control" name="hint" value="{{ problem['hint'] }}" required/>
+							<input class="form-control" name="hint" value="{{ problem['hint'] }}" required autocomplete="off" />
 							<br>
-							<input class="form-control" type="number" name="value" value="{{ problem['value'] }}" required/>
+							<input class="form-control" type="number" name="value" value="{{ problem['value'] }}" required autocomplete="off" />
 							<br>
 							<label for="bonus">Speed bonuses (%)</label>
 							<select class="form-control" id="{{ problem.pid }}_bonus">
