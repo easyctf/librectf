@@ -4,8 +4,6 @@ import logging.handlers
 import os
 import pkgutil
 
-import api
-
 NOTSET = 0
 DEBUG = 10
 INFO = 20

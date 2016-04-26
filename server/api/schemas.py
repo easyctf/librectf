@@ -1,4 +1,3 @@
-import api
 import re
 
 from voluptuous import Required, Length, Schema, Invalid, MultipleInvalid
