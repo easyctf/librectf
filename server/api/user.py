@@ -64,7 +64,7 @@ def verify_email():
 		current_session.add(user)
 		current_session.commit()
 
-		if send_verification(user.username, uesr.email, token):
+		if send_verification(user.username, user.email, token):
 			return { "success": 1, "message": "Verification email sent to %s" % email }
 		return { "success": 0, "message": "Failed." }
 
