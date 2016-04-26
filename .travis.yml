@@ -3,5 +3,10 @@ sudo: required
 python:
   - "2.7"
 install:
-  - sudo sh scripts/setup.sh
-scripts: deploy
+  - sudo bash scripts/travis_setup.sh
+script:
+  - bash deploy
+services:
+  - mysql
+notifications:
+  email: false
