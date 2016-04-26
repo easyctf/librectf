@@ -74,3 +74,4 @@ def team_required(f):
 			return { "success": 0, "message": "You need a team." }
 		return f(*args, **kwds)
 	return wrapper
+

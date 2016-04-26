@@ -57,25 +57,16 @@ def verify_email():
 		user = user.first()
 		if user.email_verified:
 			raise WebException("Email is already verified.")
-
+		
 		token = utils.generate_string(length=64)
 		user.email_token = token
 		current_session = db.session.object_session(user)
 		current_session.add(user)
 		current_session.commit()
 
-		verification_link = "%s/settings/verify?token=%s" % ("127.0.0.1:8080", token)
-		subject = "OpenCTF email verification"
-		body = """Hi %s!\n\nHelp us secure your %s account by verifying your email below:\n\n%s\n\nIf believe this is a mistake, you may safely ignore this email and delete it.\n\nGood luck!\n\n- OpenCTF Administrator""" % (user.username, utils.get_config("ctf_name"), verification_link)
-		response = utils.send_email(user.email, subject, body)
-		if response.status_code != 200:
-			raise WebException("Could not send email.")
-		response = response.json()
-		if "Queued" in response["message"]:
+		if send_verification(user.username, uesr.email, token):
 			return { "success": 1, "message": "Verification email sent to %s" % email }
-		else:
-			raise WebException(response["message"])
-
+		return { "success": 0, "message": "Failed." }
 
 @blueprint.route("/update_profile", methods=["POST"])
 @login_required
@@ -95,8 +86,6 @@ def user_update_profile():
 
 	if not correct:
 		raise WebException("Incorrect password.")
-
-
 	if new_password != "":
 		user.password = utils.hash_password(new_password)
 
@@ -191,18 +180,9 @@ def user_register():
 	logger.log(__name__, "%s registered with %s" % (name.encode("utf-8"), email.encode("utf-8")))
 	login_user(username, password)
 
-	verification_link = "%s/settings/verify?token=%s" % ("127.0.0.1:8080", token)
-	subject = "OpenCTF email verification"
-	body = """Hi %s!\n\nHelp us secure your %s account by verifying your email below:\n\n%s\n\nIf believe this is a mistake, you may safely ignore this email and delete it.\n\nGood luck!\n\n- OpenCTF Administrator""" % (username, utils.get_config("ctf_name"), verification_link)
-	response = utils.send_email(email, subject, body)
-	if response.status_code != 200:
-		raise WebException("Could not send verification email. You can verify your email later in the settings page.")
-	response = response.json()
-
-	if "Queued" in response["message"]:
-		return { "success": 1, "message": "Success! Check your email for a verification link." }
-	else:
-		raise WebException(response["message"])
+	if send_verification(username, email, token):
+		return { "success": 1, "message": "Verification email sent to %s" % email }
+	return { "success": 0, "message": "Failed." }
 
 @blueprint.route("/logout", methods=["GET"])
 @api_wrapper
@@ -484,6 +464,18 @@ def create_login_token(username):
 
 	return True
 
+def send_verification(username, email, token):
+	verification_link = "%s/settings/verify?token=%s" % ("127.0.0.1:8080", token)
+	subject = utils.get_ctf_name() + " Email Verification"
+	body = """Hi %s!\n\nHelp us secure your %s account by verifying your email below:\n\n%s\n\nIf believe this is a mistake, you may safely ignore this email and delete it.\n\nGood luck!\n\n- OpenCTF Administrator""" % (username, utils.get_config("ctf_name"), verification_link)
+	response = utils.send_email(email, subject, body)
+	if response.status_code != 200:
+		raise WebException("Could not send email.")
+	response = response.json()
+	if "Queued" in response["message"]:
+		return True
+	else:
+		raise WebException(response["message"])
 
 def is_logged_in():
 	if not("sid" in session and "username" in session): return False
