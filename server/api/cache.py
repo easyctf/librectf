@@ -24,3 +24,7 @@ def memoize(timeout=120):
 			return cached_result
 		return wrapper
 	return decorator
+
+def invalidate_memoization(f, *args, **kwargs):
+	key = get_key(f, *args, **kwargs)
+	cache.delete(key)

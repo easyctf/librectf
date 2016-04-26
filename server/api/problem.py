@@ -163,6 +163,7 @@ def problem_submit():
 
 			solve.bonus = bonus
 			db.session.add(solve)
+			cache.invalidate_memoization(get_solves, pid)
 
 			user = Users.query.filter_by(username=username).first()
 			if user:
@@ -170,7 +171,6 @@ def problem_submit():
 				db.session.add(activity)
 
 			db.session.commit()
-
 			logger.log(__name__, "%s has solved %s by submitting %s" % (team.teamname, problem.title, flag), level=logger.WARNING)
 			return { "success": 1, "message": response }
 		else:

@@ -12,11 +12,11 @@
 		<div class="panel panel-default">
 			<div class="panel-heading" data-toggle="collapse" data-target="#{{ problem['pid'] }}_body">
 				<h4 class="panel-title">
-					{{ problem["title"] }} {{ problem["value"] }} points
+					<b>{{ problem["title"] }}</b> {{ problem["value"] }} points
 					<div class="pull-right">{{ problem["category"] }} - {{ problem["solved"] }} ({{ problem["solves"] }} {{ problem["solves"] === 1 ? "solve" : "solves" }})</div>
 				</h4>
 			</div>
-			<div id="{{ problem['pid'] }}_body" class="panel-collapse collapse">
+			<div id="{{ problem['pid'] }}_body" class="panel-collapse collapse {{ problem['solved'] == 'Solved' ? '': 'in' }}">
 				<div class="panel-body">
 					<div hidden id="{{ problem['pid'] }}_status"/>
 					<p>{{ problem["description"] }}</p>
