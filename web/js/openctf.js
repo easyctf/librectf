@@ -16,6 +16,10 @@ app.config(function($routeProvider, $locationProvider) {
 		templateUrl: "pages/chat.html",
 		controller: "mainController"
 	})
+	.when("/help", {
+		templateUrl: "pages/help.html",
+		controller: "mainController"
+	})
 	.when("/learn", {
 		templateUrl: "pages/learn.html",
 		controller: "mainController"

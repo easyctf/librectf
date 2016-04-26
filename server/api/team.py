@@ -329,7 +329,7 @@ def get_team(tid=None, teamname=None, teamname_lower=None, owner=None):
 		result = Teams.query.filter_by(**match)
 		return result
 
-@cache.memoize()
+@cache.memoize(timeout=120)
 def num_teams(include_observers=False):
 	teamlist = list(get_team().all())
 	if not include_observers:

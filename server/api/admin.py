@@ -72,6 +72,7 @@ def admin_setup():
 	user.login_user(username, password)
 
 	return { "success": 1, "message": "Success!" }
+	
 @blueprint.route("/stats/overview")
 @api_wrapper
 @admins_only

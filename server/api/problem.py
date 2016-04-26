@@ -173,7 +173,6 @@ def problem_submit():
 
 			logger.log(__name__, "%s has solved %s by submitting %s" % (team.teamname, problem.title, flag), level=logger.WARNING)
 			return { "success": 1, "message": response }
-
 		else:
 			logger.log(__name__, "%s has incorrectly submitted %s to %s" % (team.teamname, flag, problem.title), level=logger.WARNING)
 			raise WebException(response)
@@ -188,7 +187,7 @@ def problem_data():
 	problems = Problems.query.order_by(Problems.value).all()
 	problems_return = [ ]
 	for problem in problems:
-		solves = Solves.query.filter_by(pid=problem.pid, correct=1).count()
+		solves = get_solves(problem.pid)
 		solved = Solves.query.filter_by(pid=problem.pid, tid=session.get("tid", None), correct=1).first()
 		solved = ["Solved", "Unsolved"][solved is None]
 
@@ -220,6 +219,11 @@ def problem_data():
 				logger.log(__name__, "The grader for \"%s\" has thrown an error: %s" % (problem.name, e))
 		problems_return.append(data)
 	return { "success": 1, "problems": problems_return }
+
+@cache.memoize(timeout=120)
+def get_solves(pid):
+	solves = Solves.query.filter_by(pid=pid, correct=1).count()
+	return solves
 
 def insert_problem(data, force=False):
 	with app.app_context():

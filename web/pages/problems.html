@@ -20,7 +20,6 @@
 				<div class="panel-body">
 					<div hidden id="{{ problem['pid'] }}_status"/>
 					<p>{{ problem["description"] }}</p>
-					<div hidden id="{{ problem['pid'] }}_hint">{{ problem['hint'] }}</div>
 					<form id="{{ problem['pid'] }}_form" class="horizontal-form" onsubmit="submit_problem(this.id); return false;">
 						<input hidden type="hidden" name="pid" value="{{ problem['pid'] }}"/>
 						<div class="input-group">
@@ -33,6 +32,9 @@
 							</span>
 						</div>
 					</form>
+					<div hidden id="{{ problem['pid'] }}_hint">
+						<p>{{ problem['hint'] }}</p>
+					</div>
 				</div>
 			</div>
 		</div>

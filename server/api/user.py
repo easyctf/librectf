@@ -520,7 +520,7 @@ def in_team(user):
 def is_email_verified():
 	return is_logged_in() and get_user().first().email_verified == True
 
-@cache.memoize()
+@cache.memoize(timeout=120)
 def num_users(include_observers=False):
 	cursor = None
 	if include_observers:
