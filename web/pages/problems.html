@@ -4,30 +4,30 @@
   2) create an "<a href="/files/example.txt" target="_blank"><h4>Example File</h4></a>"
   3) remove these instructions (:P)
 -->
-<div class="fade_in">
+<div class="page-header">
 	<h1 class="text-center">Problems</h1>
-	<div ng-repeat="problem in problems">
-		<div class="panel-group">
-			<div class="panel panel-default">
-				<div class="panel-heading" data-toggle="collapse" data-target="#{{ problem['pid'] }}_body">
-					<h4 class="panel-title">
-						{{ problem["title"] }} {{ problem["value"] }} points
-						<div class="pull-right">{{ problem["category"] }} - {{ problem["solved"] }} ({{ problem["solves"] }} {{ problem["solves"] === 1 ? "solve" : "solves" }})</div>
-					</h4>
-				</div>
-				<div id="{{ problem['pid'] }}_body" class="panel-collapse collapse">
-					<div class="panel-body">
-						<div hidden id="{{ problem['pid'] }}_hint">{{ problem['hint'] }}</div>
-						<div hidden id="{{ problem['pid'] }}_status"/>
-						{{ problem["description"] }}
-					</div>
+</div>
+<div ng-repeat="problem in problems">
+	<div class="panel-group">
+		<div class="panel panel-default">
+			<div class="panel-heading" data-toggle="collapse" data-target="#{{ problem['pid'] }}_body">
+				<h4 class="panel-title">
+					{{ problem["title"] }} {{ problem["value"] }} points
+					<div class="pull-right">{{ problem["category"] }} - {{ problem["solved"] }} ({{ problem["solves"] }} {{ problem["solves"] === 1 ? "solve" : "solves" }})</div>
+				</h4>
+			</div>
+			<div id="{{ problem['pid'] }}_body" class="panel-collapse collapse">
+				<div class="panel-body">
+					<div hidden id="{{ problem['pid'] }}_status"/>
+					<p>{{ problem["description"] }}</p>
+					<div hidden id="{{ problem['pid'] }}_hint">{{ problem['hint'] }}</div>
 					<form id="{{ problem['pid'] }}_form" class="horizontal-form" onsubmit="submit_problem(this.id); return false;">
+						<input hidden type="hidden" name="pid" value="{{ problem['pid'] }}"/>
 						<div class="input-group">
-							<input hidden name="pid" value="{{ problem['pid'] }}"/>
-							<input class="form-control" name="flag" placeholder="Flag"/>
 							<span class="input-group-btn">
-								<input onclick="toggle_hint(this.closest('form').id); return false;" type="button" class="btn btn-success" value="Hint"/>
+								<input onclick="toggle_hint(this.closest('form').id); return false;" type="button" class="btn btn-primary" value="Hint"/>
 							</span>
+							<input class="form-control" name="flag" placeholder="Flag" autocomplete="off" />
 							<span class="input-group-btn">
 								<input type="submit" class="btn btn-success" value="Submit"/>
 							</span>
