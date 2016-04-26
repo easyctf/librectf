@@ -96,6 +96,10 @@ app.config(function($routeProvider, $locationProvider) {
 		templateUrl: "pages/admin/settings.html",
 		controller: "adminSettingsController"
 	})
+	.when("/admin/teams", {
+		templateUrl: "pages/admin/teams.html",
+		controller: "adminTeamsController"
+	})
 	.otherwise({
 		templateUrl: "pages/404.html",
 		controller: "mainController"
@@ -321,6 +325,18 @@ app.controller("adminSettingsController", ["$controller", "$scope", "$http", fun
 		}
 		$scope.$apply();
 		handler();
+	});
+}]);
+
+app.controller("adminTeamsController", ["$controller", "$scope", "$http", function($controller, $scope, $http) {
+	$controller("adminController", { $scope: $scope });
+	api_call("GET", "/api/admin/teams/overview", {}, function(result) {
+		if (result["success"] == 1) {
+			$scope.teams = result["teams"];
+		} else {
+			$scope.teams = {};
+		}
+		$scope.$apply();
 	});
 }]);
 

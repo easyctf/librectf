@@ -110,7 +110,6 @@ var update_settings = function() {
 				$(input).removeAttr("disabled");
 			});
 		}
-		console.log(result["error"]);
 	}, function(jqXHR) {
 		var result = jqXHR["responseText"];
 		display_message("update_settings_msg", "danger", "Error " + jqXHR["status"] + ": " + result["message"], function() {

@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
 from flask import current_app as app
 from decorators import admins_only, api_wrapper, WebException
-from models import db, Problems, Files, Config, Users, UserActivity
+from models import db, Config, Problems, Teams, Users, UserActivity
 from schemas import verify_to_schema, check
 
 import logger
@@ -108,3 +108,19 @@ def admin_settings_update():
 		db.session.commit()
 
 	return { "success": 1, "message": "Success!" }
+
+@blueprint.route("/teams/overview")
+@api_wrapper
+@admins_only
+def admin_team_overview():
+	teams_return = []
+	teams = Teams.query.all()
+
+	for team in teams:
+		teams_return.append({
+			"tid": team.tid,
+			"teamname": team.teamname,
+			"members": team.get_members(),
+			"observer": team.is_observer()
+		})
+	return { "success": 1, "teams": teams_return }

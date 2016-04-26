@@ -1,0 +1,38 @@
+<div class="page-header">
+	<h1>Teams</h1>
+
+	<div ng-repeat="team in teams">
+		<div class="panel-group">
+			<div class="panel panel-default">
+				<form id="{{ team['tid'] }}_form">
+					<div class="panel-heading" data-toggle="collapse" data-target="#{{ team['tid'] }}_body">
+						<h4 class="panel-title">
+							<a href="/team/{{ team['teamname'] }}">{{ team["teamname"] }}</a>
+						</h4>
+					</div>
+					<div id="{{ team['tid'] }}_body" class="panel-collapse collapse">
+						<div class="panel-body">
+							<input onclick="delete_team(this.closest('form').id); return false;" class="btn btn-danger btn-sm" value="Delete"/>
+							<div id="{{ team['tid'] }}_msg"/>
+								<input type="hidden" value="{{ team['tid'] }}"/>
+								<table class="table table-striped">
+									<thead>
+										<tr>
+											<th>Name:</th>
+											<th>Observer:</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr ng-repeat="member in team['members']">
+											<td><a href="/profile/{{ member['username'] }}">{{ member['username'] }}</a></td>
+											<td><input id="{{ team['tid'] }}_observer" type="checkbox" ng-checked="team['observer']==true"/></td>
+										</tr>
+									</tbody>
+								</table>
+						</div>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+</div>
