@@ -10,3 +10,5 @@ markdown2
 onetimepass
 pyqrcode
 python-memcached
+Flask-Testing
+nose

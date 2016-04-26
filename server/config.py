@@ -15,12 +15,14 @@ SECRET_KEY = key
 SQLALCHEMY_DATABASE_URI = "mysql://root:i_hate_passwords@localhost/openctf"
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-UPLOAD_FOLDER = os.path.normpath("../web/files")
+ROOT_FOLDER = os.path.abspath(os.path.join(os.path.realpath(__file__), '../..'))
+
+UPLOAD_FOLDER = os.path.abspath(os.path.join(ROOT_FOLDER, "web/files"))
 
 MAILGUN_URL = "https://api.mailgun.net/v3/easyctf.com"
 MAILGUN_KEY = "key-18dc2ef0ebf9c9695fb566c6fe203dc4"
 ADMIN_EMAIL = "EasyCTF Team <team@easyctf.com>"
 
-GRADER_FOLDER = os.path.normpath("graders")
+GRADER_FOLDER = os.path.abspath(os.path.join(ROOT_FOLDER, "server/graders"))
 
-PROBLEM_DIR = "../problems"
+PROBLEM_DIR = os.path.abspath(os.path.join(ROOT_FOLDER, "problems"))
