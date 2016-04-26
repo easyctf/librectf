@@ -11,7 +11,6 @@ apt-get -y install python-dev libmysqlclient-dev
 apt-get -y install nginx
 apt-get -y install mysql-server memcached
 apt-get -y install tmux
-apt-get -y install nosetests
 
 echo "Installing pip dependencies..."
 pip install -r scripts/requirements.txt
