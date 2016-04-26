@@ -1,6 +1,10 @@
 OpenCTF
 ======
 
+[![Slack](http://slack.easyctf.com/badge.svg)](http://slack.easyctf.com)
+[![Build Status](https://img.shields.io/travis/EasyCTF/OpenCTF.svg)](https://travis-ci.org/EasyCTF/OpenCTF)
+
+
 Demo
 ------
 

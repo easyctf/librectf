@@ -459,16 +459,20 @@ def create_login_token(username):
 	ip = request.headers.get("X-Forwarded-For", request.remote_addr)
 	ip = ip.split(",")[0]
 
+	args = {
+		"ua": useragent,
+		"ip": ip
+	}
+
 	data = requests.get("http://ip-api.com/json/%s" % ip).json()
-	location = ""
 	if data["status"] == "success":
-		location = "%s, %s, %s" % (data["city"], data["region"], data["countryCode"])
+		args["location"] = "%s, %s, %s" % (data["city"], data["region"], data["countryCode"])
 
 	with app.app_context():
 		expired = LoginTokens.query.filter_by(username=username).all()
 		for expired_token in expired: db.session.delete(expired_token)
 
-		token = LoginTokens(user.uid, user.username, ua=useragent, ip=ip, location=location)
+		token = LoginTokens(user.uid, user.username, **args)
 		db.session.add(token)
 		db.session.commit()
 
