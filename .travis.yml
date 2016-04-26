@@ -5,7 +5,7 @@ python:
 install:
   - sudo bash scripts/travis_setup.sh
 script:
-  - bash deploy
+  - nosetests
 services:
   - mysql
 notifications:
