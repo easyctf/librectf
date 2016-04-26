@@ -15,12 +15,14 @@ SECRET_KEY = key
 SQLALCHEMY_DATABASE_URI = "mysql://user:pass@host:port/db"
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 
-UPLOAD_FOLDER = os.path.normpath("../web/files")
+ROOT_FOLDER = os.path.abspath(os.path.join(os.path.realpath(__file__), '../..'))
+
+UPLOAD_FOLDER = os.path.abspath(os.path.join(ROOT_FOLDER, "web/files"))
 
 MAILGUN_URL = ""
 MAILGUN_KEY = ""
 ADMIN_EMAIL = ""
 
-GRADER_FOLDER = os.path.normpath("graders")
+GRADER_FOLDER = os.path.abspath(os.path.join(ROOT_FOLDER, "server/graders"))
 
-PROBLEM_DIR = "../problems"
+PROBLEM_DIR = os.path.abspath(os.path.join(ROOT_FOLDER, "problems"))
