@@ -49,6 +49,9 @@ doc/
 .c9
 .c9*
 
+#env
+.env
+
 .secret_key
 pfp/
 logs/

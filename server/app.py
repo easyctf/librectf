@@ -14,7 +14,7 @@ import traceback
 
 from api.decorators import api_wrapper
 
-app.config.from_object(config)
+app.config.from_object(config.options)
 
 if not os.path.exists(app.config["UPLOAD_FOLDER"]):
     os.makedirs(app.config["UPLOAD_FOLDER"])
@@ -59,11 +59,11 @@ def load_problems(args):
 	keyword_args = dict(args._get_kwargs())
 	force = keyword_args["force"] if "force" in keyword_args else False
 
-	if not os.path.exists(config.PROBLEM_DIR):
+	if not os.path.exists(config.options.PROBLEM_DIR):
 		api.logger.log("api.problem.log", "Problems directory doesn't exist.")
 		return
 
-	for (dirpath, dirnames, filenames) in os.walk(config.PROBLEM_DIR):
+	for (dirpath, dirnames, filenames) in os.walk(config.options.PROBLEM_DIR):
 		if "problem.json" in filenames:
 			json_file = os.path.join(dirpath, "problem.json")
 			contents = open(json_file).read()
@@ -84,7 +84,7 @@ def load_problems(args):
 				api.logger.log("api.problem.log", "{filename} is missing the following keys: {keys}".format(filename=json_file, keys=", ".join(missing_keys)))
 				continue
 
-			relative_path = os.path.relpath(dirpath, config.PROBLEM_DIR)
+			relative_path = os.path.relpath(dirpath, config.options.PROBLEM_DIR)
 			data["description"] = open(os.path.join(dirpath, "description.md"), "r").read()
 			api.logger.log("api.problem.log", "Found problem '{}'".format(data["title"]))
 			with app.app_context():

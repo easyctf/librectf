@@ -1,5 +1,13 @@
 import os
 
+class Object(object):
+    def __init__(self, d):
+        for a, b in d.items():
+            if isinstance(b, (list, tuple)):
+               setattr(self, a, [Object(x) if isinstance(x, dict) else x for x in b])
+            else:
+               setattr(self, a, Object(b) if isinstance(b, dict) else b)
+
 secret = open(".secret_key", "a+b")
 contents = secret.read()
 if not contents:
@@ -11,18 +19,27 @@ else:
 secret.close()
 
 SECRET_KEY = key
-
-SQLALCHEMY_DATABASE_URI = "mysql://root:i_hate_passwords@localhost/openctf"
-SQLALCHEMY_TRACK_MODIFICATIONS = False
-
 ROOT_FOLDER = os.path.abspath(os.path.join(os.path.realpath(__file__), '../..'))
 
-UPLOAD_FOLDER = os.path.abspath(os.path.join(ROOT_FOLDER, "web/files"))
+options = {
+	"SQLALCHEMY_DATABASE_URI": os.getenv("SQLALCHEMY_DATABASE_URI", ""),
+	"SQLALCHEMY_TRACK_MODIFICATIONS": False,
+	"ROOT_FOLDER": ROOT_FOLDER,
+	"UPLOAD_FOLDER": os.path.abspath(os.path.join(ROOT_FOLDER, "web/files")),
+	"MAILGUN_URL": os.getenv("MAILGUN_URL", ""),
+	"MAILGUN_KEY": os.getenv("MAILGUN_KEY", ""),
+	"ADMIN_EMAIL": os.getenv("ADMIN_EMAIL", ""),
+	"GRADER_FOLDER": os.path.abspath(os.path.join(ROOT_FOLDER, "server/graders")),
+	"PROBLEM_DIR": os.path.abspath(os.path.join(ROOT_FOLDER, "problems"))
+}
 
-MAILGUN_URL = "https://api.mailgun.net/v3/example.com"
-MAILGUN_KEY = "key-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
-ADMIN_EMAIL = "EasyCTF Team <team@easyctf.com>"
+# if there's a .env configuration file in the current directory, read it.
+# otherwise, use environmental variables
+if os.path.exists(".env"):
+	data = open(".env", "r")
+	for line in data:
+		key = line.split("=")[0]
+		value = line.split(key + "=")[1]
+		options[key] = value
 
-GRADER_FOLDER = os.path.abspath(os.path.join(ROOT_FOLDER, "server/graders"))
-
-PROBLEM_DIR = os.path.abspath(os.path.join(ROOT_FOLDER, "problems"))
+options = Object(options)
