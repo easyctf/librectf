@@ -3,7 +3,7 @@ from flask import current_app as app
 from voluptuous import Schema, Length, Required
 
 from models import db, Teams, Users, TeamInvitations, UserActivity
-from decorators import api_wrapper, login_required, WebException
+from decorators import api_wrapper, login_required, WebException, team_required
 from schemas import verify_to_schema, check
 
 import user
@@ -87,11 +87,10 @@ def team_remove_member():
 @blueprint.route("/invite", methods=["POST"])
 @api_wrapper
 @login_required
+@team_required
 def team_invite():
 	params = utils.flat_multi(request.form)
 	_user = user.get_user().first()
-	if not user.in_team(_user):
-		raise WebException("You must be in a team!")
 	_team = get_team(tid=_user.tid).first()
 	if _user.uid != _team.owner:
 		raise WebException("You must be the captain of your team to invite members!")
@@ -119,11 +118,10 @@ def team_invite():
 @blueprint.route("/invite/rescind", methods=["POST"])
 @api_wrapper
 @login_required
+@team_required
 def team_invite_rescind():
 	params = utils.flat_multi(request.form)
 	_user = user.get_user().first()
-	if not user.in_team(_user):
-		raise WebException("You must be in a team!")
 	_team = get_team(tid=_user.tid).first()
 	if _user.uid != _team.owner:
 		raise WebException("You must be the captain of your team to rescind invitations!")
@@ -274,6 +272,29 @@ def team_info():
 			teamdata["invitations"] = _user.get_invitations()
 	return { "success": 1, "team": teamdata }
 
+@blueprint.route("/edit", methods=["POST"])
+@api_wrapper
+@login_required
+@team_required
+def team_edit():
+	params = utils.flat_multi(request.form)
+	_user = user.get_user().first()
+	_team = get_team(tid=_user.tid).first()
+	if _user.uid != _team.owner:
+		raise WebException("You must be the captain of your team to edit information!")
+
+	with app.app_context():
+		update = {}
+		if params.get("new_teamname") is not None:
+			if get_team(teamname_lower=params["new_teamname"].lower()).first() is not None:
+				raise WebException("This team name is taken!")
+			_team.teamname = params["new_teamname"]
+		if params.get("new_school") is not None:
+			_team.school = params["new_school"]
+		db.session.commit()
+
+	return { "success": 1 }
+
 ##################
 # TEAM FUNCTIONS #
 ##################
@@ -326,7 +347,7 @@ def get_team(tid=None, teamname=None, teamname_lower=None, owner=None):
 	#	if _user.tid is not None:
 	#		match.update({ "tid": _user.tid })
 	with app.app_context():
-		result = Teams.query.filter_by(**match)
+		result = db.session.query(Teams).filter_by(**match)
 		return result
 
 @cache.memoize(timeout=120)

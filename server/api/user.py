@@ -15,6 +15,7 @@ import cache
 import re
 import requests
 import team
+import time
 import utils
 import pyqrcode
 import string
@@ -65,7 +66,7 @@ def verify_email():
 		current_session.commit()
 
 		if send_verification(user.username, user.email, token):
-			return { "success": 1, "message": "Verification email sent to %s" % email }
+			return { "success": 1, "message": "Verification email sent to %s" % user.email }
 		return { "success": 0, "message": "Failed." }
 
 @blueprint.route("/update_profile", methods=["POST"])
@@ -90,7 +91,9 @@ def user_update_profile():
 		user.password = utils.hash_password(new_password)
 
 	if email != user.email:
-		user.email = email
+		if get_user(email=email.lower()).count() > 0:
+			raise WebException("This email is taken!")
+		user.email = email.lower()
 		user.email_verified = False
 
 	current_session = db.session.object_session(user)
@@ -345,10 +348,10 @@ def user_twofactor_verify():
 
 	if "token" not in params:
 		raise WebException("Invalid token.")
-	token = params["token"]
-
-	if not(_user.verify_totp(token)):
-		raise WebException("Invalid token.")
+	token = params.get("token")
+	
+	if not(_user.verify_totp(int(token))):
+		raise WebException("Invalid token. Current server time: " + time.strftime("%Y-%m-%d %H:%M:%S"))
 	with app.app_context():
 		Users.query.filter_by(uid=_user.uid).update({ "otp_confirmed": True })
 		db.session.commit()
@@ -358,6 +361,7 @@ def user_twofactor_verify():
 	return { "success": 1, "message": "Confirmed!" }
 
 @blueprint.route("/avatar/upload", methods=["POST"])
+@login_required
 @api_wrapper
 def user_avatar_upload():
 	logged_in = is_logged_in()
@@ -383,6 +387,7 @@ def user_avatar_upload():
 		raise WebException(str(e))
 
 @blueprint.route("/avatar/remove", methods=["POST"])
+@login_required
 @api_wrapper
 def user_avatar_remove():
 	logged_in = is_logged_in()
@@ -396,6 +401,27 @@ def user_avatar_remove():
 		return { "success": 1, "message": "Removed!" }
 	except Exception, e:
 		raise WebException(str(e))
+
+@blueprint.route("/session/delete", methods=["POST"])
+@login_required
+@api_wrapper
+def user_session_delete():
+	params = utils.flat_multi(request.form)
+	sid = params.get("sid")
+	if sid is None:
+		raise WebException("Please specify which session to delete.")
+
+	with app.app_context():
+		_session = LoginTokens.query.filter_by(sid=sid).first()
+		_user = get_user().first()
+		if _session.uid != _user.uid:
+			raise WebException("That's not your token!")
+		LoginTokens.query.filter_by(sid=sid).update({ "active": False })
+		db.session.commit()
+
+	assert(LoginTokens.query.filter_by(sid=sid).first().active == False)
+
+	return { "success": 1, "message": "Deleted." }
 
 ##################
 # USER FUNCTIONS #
@@ -461,8 +487,10 @@ def create_login_token(username):
 	except: pass
 
 	with app.app_context():
-		expired = list(LoginTokens.query.filter_by(username=username, active=False).all())
-		for expired_token in expired: db.session.delete(expired_token)
+		current = list(LoginTokens.query.filter_by(username=username).all())
+		for current_token in current:
+			if int(time.time()) > current_token.expiry:
+				current_token.active = False
 
 		token = LoginTokens(user.uid, user.username, **args)
 		db.session.add(token)
@@ -493,7 +521,7 @@ def is_logged_in():
 	if not("sid" in session and "username" in session): return False
 	sid = session["sid"]
 	username = session["username"]
-	token = LoginTokens.query.filter_by(sid=sid).first()
+	token = LoginTokens.query.filter_by(sid=sid, active=True).first()
 	if token is None: return False
 
 	useragent = request.headers.get("User-Agent")

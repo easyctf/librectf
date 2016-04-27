@@ -39,7 +39,7 @@ if os.path.exists(".env"):
 	data = open(".env", "r")
 	for line in data:
 		key = line.split("=")[0]
-		value = line.split(key + "=")[1]
+		value = line.split(key + "=")[1].strip("\n").strip("\r")
 		options[key] = value
 
 options = Object(options)

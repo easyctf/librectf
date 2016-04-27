@@ -70,7 +70,8 @@ class Users(db.Model):
 			team = db.session.query(Teams).filter_by(tid=inv.frid).first()
 			result.append({
 				"team": team.teamname,
-				"tid": team.tid
+				"tid": team.tid,
+				"observer": team.is_observer()
 			})
 		return result
 

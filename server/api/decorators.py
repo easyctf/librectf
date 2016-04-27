@@ -57,6 +57,14 @@ def login_required(f):
 		return f(*args, **kwds)
 	return wrapper
 
+def team_required(f):
+	@wraps(f)
+	def wrapper(*args, **kwds):
+		if "tid" not in session or session["tid"] < 0:
+			return { "success": 0, "message": "You need a team." }
+		return f(*args, **kwds)
+	return wrapper
+
 import user # Must go below api_wrapper to prevent import loops
 
 def admins_only(f):
@@ -64,14 +72,6 @@ def admins_only(f):
 	def wrapper(*args, **kwds):
 		if not user.is_admin():
 			return { "success": 0, "message": "Not authorized." }
-		return f(*args, **kwds)
-	return wrapper
-
-def team_required(f):
-	@wraps(f)
-	def wrapper(*args, **kwds):
-		if "tid" not in session or session["tid"] < 0:
-			return { "success": 0, "message": "You need a team." }
 		return f(*args, **kwds)
 	return wrapper
 

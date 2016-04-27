@@ -146,7 +146,22 @@ function display_message(containerId, alertType, message, callback) {
 	});
 };
 
-app.controller("mainController", ["$scope", "$http", function($scope, $http) {
+var flashing = false;
+function flash_inputbox(inputId, color, callback) {
+	if (!flashing) {
+		flashing = true;
+		var original = { "border": $("#" + inputId).css("border-color"), "width": $("#" + inputId).css("border-width") };
+		$("#" + inputId).css("border-color", color);
+		$("#" + inputId).css("border-width", original["width"] + " 3px");
+		setTimeout(function() {
+			$("#" + inputId).css("border-color", original["border"]);
+			$("#" + inputId).css("border-width", original["width"]);
+			flashing = false;
+		}, 600);
+	}
+};
+
+app.controller("mainController", ["$scope", "$http", "$location", function($scope, $http, $location) {
 	$scope.config = { navbar: { } };
 	$scope.timestamp = Date.now();
 	api_call("GET", "/api/user/status", {}, function(result) {
@@ -155,6 +170,14 @@ app.controller("mainController", ["$scope", "$http", function($scope, $http) {
 			$scope.config.navbar = result;
 			document.title = result["ctf_name"];
 			$scope.$emit("loginStatus");
+
+			if (result["competition"] !== true) {
+				var path = $location.$$path.toLowerCase();
+				var competition_only_paths = [ "/problems", "/programming", "/shell" ];
+				if (competition_only_paths.indexOf(path) >= 0) {
+					location.href = "/team";
+				}
+			}
 		} else {
 			$scope.config.navbar.logged_in = false;
 		}
@@ -245,6 +268,25 @@ app.controller("teamController", ["$controller", "$scope", "$http", "$routeParam
 		}
 		$scope.$apply();
 		$(".timeago").timeago();
+		
+		$("#teamname_edit").on("focus", function() {
+			$("#teamname_edit").attr("data-original-title", "Press enter to apply.").tooltip("fixTitle");
+		});
+		$("#teamname_edit").on("blur", function() {
+			$("#teamname_edit").attr("data-original-title", "Click to edit team name.").tooltip("fixTitle");
+		});
+		$("#teamname_edit").on("blur keyup paste", function() {
+			var data = { "new_teamname": $("#teamname_edit").text() }
+			api_call("POST", "/api/team/edit", data, function(result) {
+				if (result["success"] !== 1) {
+					flash_inputbox("teamname_edit", "#F00");
+				} else {
+					flash_inputbox("teamname_edit", "#090");
+				}
+			}, function() {
+				flash_inputbox("teamname_edit", "#F00");
+			});
+		});
 	});
 }]);
 
@@ -594,6 +636,8 @@ var accept_invitation_request = function(uid) {
 	});
 };
 
+// twofactor page
+
 var twofactor_form = function() {
 	var input = $("#twofactor_form input");
 	var data = $("#twofactor_form").serializeObject();
@@ -672,4 +716,13 @@ var verify_email = function() {
 			$(input).removeAttr("disabled");
 		});
 	});
-}
+};
+
+var delete_session = function(sid) {
+	var data = { "sid": sid };
+	api_call("POST", "/api/user/session/delete", data, function(result) {
+		if (result["success"] == 1) {
+			location.reload(true);
+		}
+	});
+};
