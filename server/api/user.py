@@ -191,7 +191,8 @@ def user_logout():
 	username = session["username"]
 	with app.app_context():
 		expired = LoginTokens.query.filter_by(username=username).all()
-		for expired_token in expired: db.session.delete(expired_token)
+		for expired_token in expired:
+			expired_token.active = False
 		db.session.commit()
 	session.clear()
 
@@ -284,9 +285,10 @@ def user_info():
 			invitations = user.get_invitations()
 			userdata["invitations"] = invitations
 		session_data = []
-		sessions = LoginTokens.query.filter_by(username=user.username).all()
+		sessions = LoginTokens.query.filter_by(username=user.username, active=True).all()
 		for _session in sessions:
 			session_data.append({
+				"sid": _session.sid,
 				"me": _session.sid == session["sid"],
 				"ip": _session.ip,
 				"location": _session.location
@@ -333,8 +335,14 @@ def user_twofactor_verify():
 	if _user is None:
 		raise WebException("User not found.")
 
-	print "SECRET (1)", _user.otp_secret
 	params = utils.flat_multi(request.form)
+
+	pwd = params.get("password")
+	if pwd is None:
+		raise WebException("Please enter your password.")
+	if not utils.check_password(_user.password, pwd):
+		raise WebException("Incorrect password.")
+
 	if "token" not in params:
 		raise WebException("Invalid token.")
 	token = params["token"]

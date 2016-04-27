@@ -112,12 +112,14 @@
 								<tr>
 									<th>Ip</th>
 									<th>Location</th>
+									<th></th>
 								</tr>
 							</thead>
 							<tbody>
 								<tr ng-repeat="session in user['sessions']">
 									<td>{{ session["ip"] }}<span ng-show="session['me']==true"> (you)</span></td>
 									<td>{{ session["location"] }}</td>
+									<td><a href="javascript:delete_session('{{ session['sid'] }}');" class="btn btn-danger">&times;</a>
 								</tr>
 							</tbody>
 						</table>
