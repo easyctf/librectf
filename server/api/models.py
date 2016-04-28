@@ -88,6 +88,19 @@ class Users(db.Model):
 	def tfa_enabled(self):
 		return self.otp_confirmed == True
 
+	def get_stats(self):
+		result = { "problems": [] }
+		n_solved = [0, 0]
+		for solve in list(Solves.query.filter_by(uid=self.uid).all()):
+			if solve.correct == True:
+				n_solved[0] += 1
+				problem = Problems.query.filter_by(pid=solve.pid).first()
+				result["problems"].append({ "title": problem.title, "value": problem.value, "category": problem.category })
+			n_solved[1] += 1
+		result["correct_submissions"] = n_solved[0]
+		result["total_submissions"] = n_solved[1]
+		return result
+
 class UserActivity(db.Model):
 	"""
 	Types of user activity:
@@ -270,13 +283,15 @@ class Solves(db.Model):
 	sid = db.Column(db.Integer, primary_key=True)
 	pid = db.Column(db.String(128), db.ForeignKey("problems.pid"))
 	tid = db.Column(db.Integer, db.ForeignKey("teams.tid"))
+	uid = db.Column(db.Integer)
 	date = db.Column(db.String(64), default=utils.get_time_since_epoch())
 	correct = db.Column(db.Boolean)
 	flag = db.Column(db.Text)
 	bonus = db.Column(db.Integer)
 
-	def __init__(self, pid, tid, flag, correct):
+	def __init__(self, pid, uid, tid, flag, correct):
 		self.pid = pid
+		self.uid = uid
 		self.tid = tid
 		self.flag = flag
 		self.correct = correct

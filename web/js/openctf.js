@@ -218,6 +218,39 @@ app.controller("profileController", ["$controller", "$scope", "$http", "$routePa
 		}
 		$scope.$apply();
 		$(".timeago").timeago();
+		var category_chart = c3.generate({
+			bindto: "#category_chart",
+			data: {
+				columns: (function() {
+					var categories = { };
+					for(var i=0; i<result["user"]["stats"]["problems"].length; i++) {
+						var problem = result["user"]["stats"]["problems"][i];
+						if (!(problem["category"] in categories)) categories[problem["category"]] = 0;
+						categories[problem["category"]] += 1;
+					}
+					var result2 = [ ];
+					for(var key in categories) {
+						result2.push([ key, categories[key] ]);
+					}
+					return result2;
+				})(),
+				type: "pie"
+			}
+		});
+		var submissions_chart = c3.generate({
+			bindto: "#submissions_chart",
+			data: {
+				columns: [
+					[ "Successful", result["user"]["stats"]["correct_submissions"] ],
+					[ "Failed", result["user"]["stats"]["total_submissions"] - result["user"]["stats"]["correct_submissions"] ]
+				],
+				colors: {
+					Successful: "#090",
+					Failed: "#C00"
+				},
+				type: "pie"
+			}
+		});
 	});
 }]);
 

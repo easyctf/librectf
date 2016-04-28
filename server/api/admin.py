@@ -3,6 +3,7 @@ from flask import current_app as app
 from decorators import admins_only, api_wrapper, WebException
 from models import db, Config, Problems, Teams, Users, UserActivity
 from schemas import verify_to_schema, check
+from operator import itemgetter
 
 import logger
 import problem
@@ -122,6 +123,8 @@ def admin_team_overview():
 			"tid": team.tid,
 			"teamname": team.teamname,
 			"members": team.get_members(),
-			"observer": team.is_observer()
+			"observer": team.is_observer(),
+			"points": team.points()
 		})
+	teams_return.sort(key=itemgetter("points"), reverse=True)
 	return { "success": 1, "teams": teams_return }

@@ -1,3 +1,10 @@
+from flask import Blueprint, jsonify, session, request
+from flask import current_app as app
+from werkzeug import secure_filename
+
+from models import db, Files, Problems, Solves, Teams, Users, UserActivity
+from decorators import admins_only, api_wrapper, login_required, team_required, InternalException, WebException
+
 import autogen
 import hashlib
 import imp
@@ -6,14 +13,8 @@ import logger
 import os
 import cache
 import shutil
+import user
 import utils
-
-from flask import Blueprint, jsonify, session, request
-from flask import current_app as app
-from werkzeug import secure_filename
-
-from models import db, Files, Problems, Solves, Teams, Users, UserActivity
-from decorators import admins_only, api_wrapper, login_required, team_required, InternalException, WebException
 
 blueprint = Blueprint("problem", __name__)
 
@@ -134,7 +135,9 @@ def problem_submit():
 	pid = request.form["pid"]
 	flag = request.form["flag"]
 	tid = session["tid"]
-	username = session["username"]
+	print session
+	_user = user.get_user().first()
+	username = _user.username
 
 	problem = Problems.query.filter_by(pid=pid).first()
 	team = Teams.query.filter_by(tid=tid).first()
@@ -149,7 +152,7 @@ def problem_submit():
 			random = autogen.get_random(pid, tid)
 		correct, response = grader.grade(random, flag)
 
-		solve = Solves(pid, tid, flag, correct)
+		solve = Solves(pid, _user.uid, tid, flag, correct)
 		db.session.add(solve)
 		db.session.commit()
 
@@ -165,9 +168,8 @@ def problem_submit():
 			db.session.add(solve)
 			cache.invalidate_memoization(get_solves, pid)
 
-			user = Users.query.filter_by(username=username).first()
 			if user:
-				activity = UserActivity(user.uid, 3, tid=tid, pid=pid)
+				activity = UserActivity(_user.uid, 3, tid=tid, pid=pid)
 				db.session.add(activity)
 
 			db.session.commit()

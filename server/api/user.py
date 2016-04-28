@@ -275,7 +275,8 @@ def user_info():
 		"in_team": user_in_team,
 		"uid": user.uid,
 		"activity": user.get_activity(),
-		"tfa_enabled": user.tfa_enabled()
+		"tfa_enabled": user.tfa_enabled(),
+		"stats": user.get_stats()
 	}
 	if show_email:
 		userdata["email"] = user.email
@@ -496,6 +497,7 @@ def create_login_token(username):
 		db.session.add(token)
 		db.session.commit()
 
+		session["uid"] = user.uid
 		session["sid"] = token.sid
 		session["username"] = token.username
 		session["admin"] = user.admin == True

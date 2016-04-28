@@ -71,7 +71,18 @@
 							<h4 class="panel-title">Statistics</h4>
 						</div>
 						<div class="panel-body">
-							Hi.
+							<div class="row">
+								<div class="col-md-4 col-sm-6 col-xs-12">
+									<p><b class="large-number">{{ user['stats']['correct_submissions'] }}</b> correct submissions</p>
+									<p><b class="large-number">{{ user['stats']['total_submissions'] - user['stats']['correct_submissions'] }}</b> failed submissions</p>
+								</div>
+								<div class="col-md-4 col-sm-6 col-xs-12">
+									<div id="submissions_chart"></div>
+								</div>
+								<div class="col-md-4 col-sm-6 col-xs-12">
+									<div id="category_chart"></div>
+								</div>
+							</div>
 						</div>
 					</div>
 					<div class="panel panel-default">
