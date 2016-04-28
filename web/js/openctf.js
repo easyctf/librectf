@@ -403,6 +403,7 @@ app.controller("settingsController", ["$controller", "$scope", "$http", function
 			$scope.user = result["user"];
 		}
 		$scope.$apply();
+		$(".timeago").timeago();
 	});
 }]);
 

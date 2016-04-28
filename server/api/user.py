@@ -295,7 +295,8 @@ def user_info():
 				"sid": _session.sid,
 				"me": _session.sid == session["sid"],
 				"ip": _session.ip,
-				"location": _session.location
+				"location": _session.location,
+				"since": datetime.datetime.fromtimestamp(_session.issued).isoformat() + "Z"
 			})
 		userdata["sessions"] = session_data
 	return { "success": 1, "user": userdata }
