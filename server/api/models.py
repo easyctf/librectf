@@ -3,7 +3,6 @@ from flask.ext.sqlalchemy import SQLAlchemy
 import datetime
 import time
 import traceback
-import utils
 import os
 import base64
 import onetimepass
@@ -16,6 +15,18 @@ def generate_user_link(username):
 
 def generate_team_link(teamname):
 	return "<a href='/team/%s'>%s</a>" % (teamname, teamname)
+
+
+class Config(db.Model):
+	cfid = db.Column(db.Integer, primary_key=True)
+	key = db.Column(db.String(32))
+	value = db.Column(db.Text)
+
+	def __init__(self, key, value):
+		self.key = key
+		self.value = value
+
+import utils # Prevent import loops
 
 class Users(db.Model):
 	uid = db.Column(db.Integer, unique=True, primary_key=True)
@@ -329,12 +340,3 @@ class TeamInvitations(db.Model):
 		self.rtype = rtype
 		self.frid = frid
 		self.toid = toid
-
-class Config(db.Model):
-	cfid = db.Column(db.Integer, primary_key=True)
-	key = db.Column(db.String(32))
-	value = db.Column(db.Text)
-
-	def __init__(self, key, value):
-		self.key = key
-		self.value = value
