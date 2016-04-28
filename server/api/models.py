@@ -106,7 +106,7 @@ class Users(db.Model):
 			if solve.correct == True:
 				n_solved[0] += 1
 				problem = Problems.query.filter_by(pid=solve.pid).first()
-				result["problems"].append({ "title": problem.title, "value": problem.value, "category": problem.category })
+				result["problems"].append({ "title": problem.title, "value": problem.value, "category": problem.category, "date": solve.date })
 			n_solved[1] += 1
 		result["correct_submissions"] = n_solved[0]
 		result["total_submissions"] = n_solved[1]
@@ -322,7 +322,7 @@ class LoginTokens(db.Model):
 	ip = db.Column(db.String(16))
 	location = db.Column(db.String(128))
 
-	def __init__(self, uid, username, expiry=int(time.time()), active=True, ua=None, ip=None, location=None):
+	def __init__(self, uid, username, expiry=int(time.time()) + 5259492, active=True, ua=None, ip=None, location=None):
 		self.sid = utils.generate_string()
 		self.uid = uid
 		self.username = username

@@ -146,21 +146,6 @@ function display_message(containerId, alertType, message, callback) {
 	});
 };
 
-var flashing = false;
-function flash_inputbox(inputId, color, callback) {
-	if (!flashing) {
-		flashing = true;
-		var original = { "border": $("#" + inputId).css("border-color"), "width": $("#" + inputId).css("border-width") };
-		$("#" + inputId).css("border-color", color);
-		$("#" + inputId).css("border-width", original["width"] + " 3px");
-		setTimeout(function() {
-			$("#" + inputId).css("border-color", original["border"]);
-			$("#" + inputId).css("border-width", original["width"]);
-			flashing = false;
-		}, 600);
-	}
-};
-
 app.controller("mainController", ["$scope", "$http", "$location", function($scope, $http, $location) {
 	$scope.config = { navbar: { } };
 	$scope.timestamp = Date.now();
@@ -310,15 +295,7 @@ app.controller("teamController", ["$controller", "$scope", "$http", "$routeParam
 		});
 		$("#teamname_edit").on("blur keyup paste", function() {
 			var data = { "new_teamname": $("#teamname_edit").text() }
-			api_call("POST", "/api/team/edit", data, function(result) {
-				if (result["success"] !== 1) {
-					flash_inputbox("teamname_edit", "#F00");
-				} else {
-					flash_inputbox("teamname_edit", "#090");
-				}
-			}, function() {
-				flash_inputbox("teamname_edit", "#F00");
-			});
+			api_call("POST", "/api/team/edit", data);
 		});
 	});
 }]);
