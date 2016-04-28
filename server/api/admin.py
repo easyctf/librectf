@@ -16,8 +16,7 @@ blueprint = Blueprint("admin", __name__)
 @blueprint.route("/setup/init")
 @api_wrapper
 def admin_setup_init():
-	k = Config.query.filter_by(key="setup_verification").first()
-	if k is not None and k.value == True: raise WebException("Installation has been complete.")
+	if utils.is_setup_complete(): raise WebException("Setup has already been complete.")
 
 	verification = Config("setup_verification", utils.generate_string().lower())
 	with app.app_context():
@@ -32,9 +31,7 @@ def admin_setup_init():
 def admin_setup():
 	global user
 	params = utils.flat_multi(request.form)
-
-	k = Config.query.filter_by(key="setup_verification").first()
-	if k is not None and k.value == True: raise WebException("Installation has been complete.")
+	if utils.is_setup_complete(): raise WebException("Setup has already been complete.")
 
 	if params.get("verification") != Config.query.filter_by(key="setup_verification").first().value:
 		raise WebException("Verification does not match.")

@@ -244,6 +244,10 @@ class Teams(db.Model):
 				return True
 		return False
 
+	def get_last_solved():
+		latest = 0
+		return Solves.query.filter_by(tid=self.tid, correct=1).order_by(Solves.date.desc()).first().date
+
 class Problems(db.Model):
 	pid = db.Column(db.String(128), primary_key=True, autoincrement=False)
 	title = db.Column(db.String(128))
