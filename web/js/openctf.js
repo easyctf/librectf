@@ -72,6 +72,14 @@ app.config(function($routeProvider, $locationProvider) {
 		templateUrl: "pages/setup.html",
 		controller: "setupController"
 	})
+	.when("/tickets", {
+		templateUrl: "pages/tickets.html",
+		controller: "ticketsController"
+	})
+	.when("/tickets/:ticket", {
+		templateUrl: "pages/tickets.html",
+		controller: "ticketsController"
+	})
 	.when("/forgot", {
 		templateUrl: "pages/forgot.html",
 		controller: "resetController"
@@ -297,6 +305,24 @@ app.controller("teamController", ["$controller", "$scope", "$http", "$routeParam
 			var data = { "new_teamname": $("#teamname_edit").text() }
 			api_call("POST", "/api/team/edit", data);
 		});
+	});
+}]);
+
+app.controller("ticketsController", ["$controller", "$scope", "$http", "$routeParams", function($controller, $scope, $http, $routeParams) {
+	$controller("mainController", { $scope: $scope });
+	ticket = "";
+	$scope.view = false;
+	if ("ticket" in $routeParams) {
+		ticket = "/" + $routeParams["ticket"];
+		$scope.view = true;
+	}
+	api_call("GET", "/api/tickets/data" + ticket, {}, function(result) {
+		if (result["success"] == 1) {
+			$scope.data = result["data"];
+		} else {
+			$scope.data = [];
+		}
+		$scope.$apply();
 	});
 }]);
 

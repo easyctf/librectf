@@ -6,6 +6,6 @@ import models
 import problem
 import stats
 import team
-import ticket
+import tickets
 import user
 import utils

@@ -35,6 +35,7 @@ app.register_blueprint(api.admin.blueprint, url_prefix="/api/admin")
 app.register_blueprint(api.problem.blueprint, url_prefix="/api/problem")
 app.register_blueprint(api.stats.blueprint, url_prefix="/api/stats")
 app.register_blueprint(api.team.blueprint, url_prefix="/api/team")
+app.register_blueprint(api.tickets.blueprint, url_prefix="/api/tickets")
 app.register_blueprint(api.user.blueprint, url_prefix="/api/user")
 api.logger.initialize_logs()
 

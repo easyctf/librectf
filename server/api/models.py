@@ -344,3 +344,38 @@ class TeamInvitations(db.Model):
 		self.rtype = rtype
 		self.frid = frid
 		self.toid = toid
+
+class Tickets(db.Model):
+	htid = db.Column(db.Integer, primary_key=True)
+	date = db.Column(db.Integer, default=utils.get_time_since_epoch())
+	opened = db.Column(db.Boolean, default=False)
+	author = db.Column(db.Integer, db.ForeignKey("users.uid"))
+	title = db.Column(db.Text)
+	body = db.Column(db.Text)
+
+	def __init__(self, title, body, author):
+		self.title = title
+		self.body = body
+		self.author = author
+
+	def get_replies(self):
+		replies = []
+		for reply in TicketReplies.query.filter_by(htid=self.thid).all():
+			replies.append({
+				"trid": reply.trid,
+				"body": reply.body,
+				"date": reply.date,
+				"author": reply.author
+			})
+		return replies
+
+class TicketReplies(db.Model):
+	trid = db.Column(db.Integer, primary_key=True)
+	htid = db.Column(db.Integer, db.ForeignKey("tickets.htid"))
+	date = db.Column(db.Integer, default=utils.get_time_since_epoch())
+	author = db.Column(db.Integer, db.ForeignKey("users.uid"))
+	body = db.Column(db.Text)
+
+	def __init__(self, body, author):
+		self.body = body
+		self.author = author
