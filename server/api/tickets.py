@@ -1,5 +1,5 @@
 from flask import Blueprint, request, session
-
+from flask import current_app as app
 from decorators import api_wrapper, login_required, WebException
 from models import db, Tickets, TicketReplies
 
@@ -74,7 +74,7 @@ def open_ticket():
 @api_wrapper
 def ticket_data(htid=None):
 	data = []
-	result = user.get_user()
+	result = user.get_user().first()
 
 	if result is None:
 		raise WebException("User does not exist.")
@@ -84,7 +84,7 @@ def ticket_data(htid=None):
 	elif user.is_admin():
 		result = get_ticket()
 	else:
-		result = get_ticket(author=user.uid)
+		result = get_ticket(author=result.uid)
 
 	if result is not None:
 		tickets = result.all()
