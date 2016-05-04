@@ -328,7 +328,8 @@ def get_team_info(tid=None, teamname=None, teamname_lower=None, owner=None):
 		"points": team.points(),
 		"members": team.get_members(),
 		"captain": team.owner,
-		"observer": team.is_observer()
+		"observer": team.is_observer(),
+		"finalized": team.finalized
 	}
 	return result
 

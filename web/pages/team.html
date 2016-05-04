@@ -33,9 +33,13 @@
 						<i class="fa fa-fw fa-flag"></i>
 						I'm in the team!
 					</div>
-					<div class="label label-warning" ng-show="team['observer']==true">
+					<div class="label label-warning" data-toggle="tooltip" data-placement="top" title="This team isn't eligible for prizes." ng-show="team['observer']==true">
 						<i class="fa fa-fw fa-globe"></i>
 						OBSERVER
+					</div>
+					<div class="label label-danger" data-toggle="tooltip" data-placement="top" title="This team isn't finalized yet." ng-show="team['finalized']!=true">
+						<i class="fa fa-exclamation-triangle"></i>
+						UNFINALIZED
 					</div>
 				</div>
 			</div>
@@ -43,9 +47,13 @@
 				<h1><span class="padded">{{ team['teamname'] }}</span></h1>
 				<h4><i class="fa fa-fw fa-university"></i> <span class="padded">{{ team['school'] || 'Unknown Affiliation' }}</span></h4>
 				<div class="row">
-					<div class="label label-warning" ng-show="team['observer']==true">
+					<div class="label label-warning" data-toggle="tooltip" data-placement="top" title="This team isn't eligible for prizes." ng-show="team['observer']==true">
 						<i class="fa fa-fw fa-globe"></i>
 						OBSERVER
+					</div>
+					<div class="label label-danger" data-toggle="tooltip" data-placement="top" title="This team isn't finalized yet." ng-show="team['finalized']!=true">
+						<i class="fa fa-exclamation-triangle"></i>
+						UNFINALIZED
 					</div>
 				</div>
 			</div>

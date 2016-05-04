@@ -156,6 +156,7 @@ class Teams(db.Model):
 	school = db.Column(db.Text)
 	owner = db.Column(db.Integer)
 	observer = db.Column(db.Boolean)
+	finalized = db.Column(db.Boolean)
 
 	def __init__(self, teamname, school, owner, observer):
 		self.teamname = teamname
@@ -163,6 +164,7 @@ class Teams(db.Model):
 		self.school = school
 		self.owner = owner
 		self.observer = observer
+		self.finalized = False
 
 	def get_members(self):
 		members = [ ]
