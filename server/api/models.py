@@ -265,6 +265,10 @@ class Teams(db.Model):
 		Teams.query.filter_by(tid=self.tid).update(to_update)
 		db.session.commit()
 
+	def finalize(self):
+		Teams.query.filter_by(tid=self.tid).update({ "finalized": True })
+		db.session.commit()
+
 class Problems(db.Model):
 	pid = db.Column(db.String(128), primary_key=True, autoincrement=False)
 	title = db.Column(db.String(128))

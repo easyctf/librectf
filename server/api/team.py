@@ -309,6 +309,21 @@ def team_edit():
 
 	return { "success": 1 }
 
+@blueprint.route("/finalize", methods=["POST"])
+@api_wrapper
+@login_required
+@team_required
+def team_finalize():
+	_user = user.get_user().first()
+	_team = get_team(tid=_user.tid).first()
+	if _user.uid != _team.owner:
+		raise WebException("You must be the captain of your team to finalize the team!")
+	if _team.finalized:
+		raise WebException("This team is already finalized.")
+
+	_team.finalize()
+	return { "success": 1 }
+
 ##################
 # TEAM FUNCTIONS #
 ##################
