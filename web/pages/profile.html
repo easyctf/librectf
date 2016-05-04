@@ -4,7 +4,7 @@
 			<div class="panel panel-default">
 				<div class="panel-body">
 					<div style="width:100%;max-width:100%;">
-						<img src="/api/user/avatar/{{ user.uid }}?{{ timestamp }}" id="avatar" style="width:100%;max-height:256px;" />
+						<img ng-src="/api/user/avatar/{{ user.uid }}?{{ timestamp }}" id="avatar" style="width:100%;max-height:256px;" />
 						<small style="display:block;text-align:right;" ng-show="user['me']==true"><a href="/settings#profile">Edit Picture</a></small>
 					</div>
 					<h2 style="margin:0px;font-weight:bold;font-size:2em;">{{ user.name }}</h2>

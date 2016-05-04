@@ -20,7 +20,7 @@ To set up the server, clone this repository, and `vagrant up` from it. The setup
 
 You need to provide the following environmental variables:
 
-  - `SQLALCHEMY_DATABASE_URI`: The MySQL URL for your database. It looks like: `mysql://user:password@host:port/database`.
+  - `SQLALCHEMY_DATABASE_URI`: The SQL URI for your database. It may look like `mysql://user:password@host:port/database` or `sqlite:///database.db`.
   - `MAILGUN_URL`: The Mailgun API URL that the application must connect to.
   - `MAILGUN_KEY`: Your secret API key.
   - `ADMIN_EMAIL`: An email in the format `John Doe <john@doe.com>`. This will be your "from" address.
