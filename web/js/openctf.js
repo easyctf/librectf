@@ -18,7 +18,11 @@ app.config(function($routeProvider, $locationProvider) {
 	})
 	.when("/help", {
 		templateUrl: "pages/help.html",
-		controller: "mainController"
+		controller: "helpController"
+	})
+	.when("/help/:ticket", {
+		templateUrl: "pages/help.html",
+		controller: "helpController"
 	})
 	.when("/learn", {
 		templateUrl: "pages/learn.html",
@@ -71,14 +75,6 @@ app.config(function($routeProvider, $locationProvider) {
 	.when("/setup", {
 		templateUrl: "pages/setup.html",
 		controller: "setupController"
-	})
-	.when("/tickets", {
-		templateUrl: "pages/tickets.html",
-		controller: "ticketsController"
-	})
-	.when("/tickets/:ticket", {
-		templateUrl: "pages/tickets.html",
-		controller: "ticketsController"
 	})
 	.when("/forgot", {
 		templateUrl: "pages/forgot.html",
@@ -306,20 +302,21 @@ app.controller("teamController", ["$controller", "$scope", "$http", "$routeParam
 	});
 }]);
 
-app.controller("ticketsController", ["$controller", "$scope", "$http", "$routeParams", function($controller, $scope, $http, $routeParams) {
+app.controller("helpController", ["$controller", "$scope", "$http", "$routeParams", function($controller, $scope, $http, $routeParams) {
 	$controller("mainController", { $scope: $scope });
-	ticket = "";
+	var data = {};
 	$scope.view = false;
 	if ("ticket" in $routeParams) {
-		ticket = "/" + $routeParams["ticket"];
+		data["ticket"] = $routeParams["ticket"];
 		$scope.view = true;
 	}
-	api_call("GET", "/api/tickets/data" + ticket, {}, function(result) {
+	api_call("GET", "/api/tickets/data", data, function(result) {
 		if (result["success"] == 1) {
 			$scope.data = result["data"];
 		} else {
-			$scope.data = [];
+			$scope.data = [[], []];
 		}
+		console.log(result);
 		$scope.$apply();
 	});
 }]);

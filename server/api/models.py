@@ -364,7 +364,7 @@ class Tickets(db.Model):
 
 	def get_replies(self):
 		replies = []
-		for reply in TicketReplies.query.filter_by(htid=self.thid).all():
+		for reply in TicketReplies.query.filter_by(htid=self.htid).all():
 			replies.append({
 				"trid": reply.trid,
 				"body": reply.body,

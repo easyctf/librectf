@@ -8,7 +8,8 @@
 	<div class="tabbable">
 		<ul class="nav nav-pills nav-stacked col-md-3">
 			<li class="active"><a data-target="#new" data-toggle="tab">New</a></li>
-			<li ng-repeat="problem in problems"><a data-target="#problem_{{ problem['pid'] }}" data-toggle="tab">{{ problem["title"] }} ({{ problem["value"] }} points)</a></li>
+			<li><a data-target="#opened" data-toggle="tab">Open Tickets</a></li>
+			<li><a data-target="#closed" data-toggle="tab">Closed Tickets</a></li>
 		</ul>
 		<div class="tab-content col-md-9">
 			<div class="tab-pane active" id="new">
@@ -17,6 +18,7 @@
 						<h4 class="panel-title">New Ticket</h4>
 					</div>
 					<div class="panel-body">
+						<div id="new_ticket_msg"/>
 						<form class="form-horizontal" onsubmit="new_ticket(); return false;" id="new_ticket_form">
 							<div class="row">
 								<div class="col-sm-12 form-group">
@@ -28,16 +30,64 @@
 							</div>
 							<div class="row">
 								<div class="col-sm-12 form-group">
-									<label class="col-sm-12" for="title"><small>Title</small></label>
+									<label class="col-sm-12" for="title"><small>Description</small></label>
 									<div class="col-sm-12">
-										<input class="form-control" type="text" required name="title" id="title" placeholder="Title" autocomplete="off" />
+										<textarea class="form-control" type="text" required name="body" id="body" placeholder="Leave a comment" autocomplete="off" />
 									</div>
 								</div>
 							</div>
+							<input type="submit" class="btn btn-success" value="Create"/>
 						</form>
+					</div>
+				</div>
+			</div>
+			<div class="tab-pane" id="opened">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h4 class="panel-title">Open Tickets</h4>
+					</div>
+					<div class="panel-body">
+						<div ng-repeat="ticket in data[0]">
+							{{ ticket.title }}
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="tab-pane" id="closed">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h4 class="panel-title">Closed Tickets</h4>
+					</div>
+					<div class="panel-body">
+						<div ng-repeat="ticket in data[1]">
+							{{ ticket.title }}
+						</div>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
 </div>
+<script>
+var new_ticket = function() {
+	var input = "#new_ticket_form input";
+	var data = $(input).serializeObject();
+	$(input).attr("disabled", "disabled");
+	api_call("POST", "/api/tickets/create", data, function(result) {
+		if (result["success"] == 1) {
+			display_message("new_ticket_msg", "success", result["message"], function() {
+				$(input).removeAttr("disabled");
+			});
+		} else {
+			display_message("new_ticket_msg", "danger", result["message"], function() {
+				$(input).removeAttr("disabled");
+			});
+		}
+	}, function(jqXHR) {
+		var result = jqXHR["responseText"];
+		display_message("new_ticket_msg", "danger", "Error " + jqXHR["status"] + ": " + result["message"], function() {
+			$(input).removeAttr("disabled");
+		});
+	});
+}
+</script>
