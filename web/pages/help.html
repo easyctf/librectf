@@ -1,3 +1,35 @@
 <div class="page-header">
 	<h1>Help</h1>
 </div>
+
+<p>Are you having trouble with the platform? Have you discovered a bug? Submit a ticket here and admins will review it for you!</p>
+
+<div class="row">
+	<div class="tabbable">
+		<ul class="nav nav-pills nav-stacked col-md-3">
+			<li class="active"><a data-target="#new" data-toggle="tab">New</a></li>
+			<li ng-repeat="problem in problems"><a data-target="#problem_{{ problem['pid'] }}" data-toggle="tab">{{ problem["title"] }} ({{ problem["value"] }} points)</a></li>
+		</ul>
+		<div class="tab-content col-md-9">
+			<div class="tab-pane active" id="new">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h4 class="panel-title">New Ticket</h4>
+					</div>
+					<div class="panel-body">
+						<form class="form-horizontal" onsubmit="new_ticket(); return false;" id="new_ticket_form">
+							<div class="row">
+								<div class="col-sm-12 form-group">
+									<label class="col-sm-12" for="title"><small>Title</small></label>
+									<div class="col-sm-12">
+										<input class="form-control" type="text" required name="title" id="title" placeholder="Title" autocomplete="off" />
+									</div>
+								</div>
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>

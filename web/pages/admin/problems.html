@@ -12,7 +12,9 @@
 }
 </style>
 
-<div class="row"> <div class="tabbable"> <ul class="nav nav-pills nav-stacked col-md-3">
+<div class="row">
+	<div class="tabbable">
+		<ul class="nav nav-pills nav-stacked col-md-3">
 			<li class="active"><a data-target="#new" data-toggle="tab">New</a></li>
 			<li ng-repeat="problem in problems"><a data-target="#problem_{{ problem['pid'] }}" data-toggle="tab">{{ problem["title"] }} ({{ problem["value"] }} points)</a></li>
 		</ul>
@@ -52,7 +54,7 @@
 								<label><input id="autogen" type="checkbox"/>Autogen</label>
 							</div>
 							<br>
-							<input type="submit" id="create-problem" class="btn btn-success" value="Create"/>
+							<input type="submit" id="create-problem" class="btn btn-success" value="Create" />
 						</form>
 					</div>
 				</div>
@@ -63,9 +65,9 @@
 						<h4 class="panel-title">{{ problem["title"] }}</h4>
 					</div>
 					<div class="panel-body">
-						<div id="{{ problem['pid'] }}_status"/>
+						<div id="{{ problem['pid'] }}_status" />
 						<form class="form-horizontal" onsubmit="update_problem(this.id); return false;" id="update_{{ problem['pid'] }}">
-							<input type="hidden" name="pid" value="{{ problem['pid'] }}"/>
+							<input type="hidden" name="pid" value="{{ problem['pid'] }}" />
 							<input class="form-control" name="title" value="{{ problem['title'] }}" required/>
 							<br>
 							<textarea class="form-control" name="description" required autocomplete="off">{{ problem["description"] }}</textarea>
@@ -92,8 +94,8 @@
 								<label><input id="{{ problem['pid'] }}_autogen" type="checkbox" ng-checked="problem['autogen'] == true"/>Autogen</label>
 							</div>
 							<br>
-							<input type="submit" class="btn btn-success" value="Update"/>
-							<input onclick="delete_problem(this.closest('form').id); return false;" class="btn btn-danger" value="Delete"/>
+							<input type="submit" class="btn btn-success" value="Update" />
+							<input onclick="delete_problem(this.closest('form').id); return false;" class="btn btn-danger" value="Delete" />
 						</form>
 					</div>
 				</div>
