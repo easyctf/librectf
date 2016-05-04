@@ -106,7 +106,7 @@ class Users(db.Model):
 			if solve.correct == True:
 				n_solved[0] += 1
 				problem = Problems.query.filter_by(pid=solve.pid).first()
-				result["problems"].append({ "title": problem.title, "value": problem.value, "category": problem.category, "date": solve.date })
+				result["problems"].append({ "title": problem.title, "value": problem.value, "category": problem.category, "date": datetime.datetime.fromtimestamp(float(solve.date)).isoformat() + "Z" })
 			n_solved[1] += 1
 		result["correct_submissions"] = n_solved[0]
 		result["total_submissions"] = n_solved[1]

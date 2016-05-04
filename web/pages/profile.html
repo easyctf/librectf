@@ -90,7 +90,23 @@
 							<h4 class="panel-title">Top Solves</h4>
 						</div>
 						<div class="panel-body">
-							Hi.
+							<p ng-show="user['stats']['correct_submissions'] == 0"><b>{{ user['name'] }}</b> hasn't solved any problems!</p>
+							<table ng-show="user['stats']['correct_submissions'] > 0" class="table table-striped table-hover">
+								<thead>
+									<tr>
+										<th>Problem</th>
+										<th>Value</th>
+										<th>Time</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr ng-repeat="problem in user['stats']['problems'] | orderBy:'-value' ">
+										<td>{{ problem['title'] }}</td>
+										<td>{{ problem['value'] }}</td>
+										<td><time class="timeago" datetime="{{ problem['date'] }}"></time></td>
+									</tr>
+								</tbody>
+							</table>
 						</div>
 					</div>
 					<div class="panel panel-default">
