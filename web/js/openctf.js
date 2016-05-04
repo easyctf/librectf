@@ -295,14 +295,12 @@ app.controller("teamController", ["$controller", "$scope", "$http", "$routeParam
 		$scope.$apply();
 		$(".timeago").timeago();
 		
-		$("#teamname_edit").on("focus", function() {
-			$("#teamname_edit").attr("data-original-title", "Press enter to apply.").tooltip("fixTitle");
-		});
-		$("#teamname_edit").on("blur", function() {
-			$("#teamname_edit").attr("data-original-title", "Click to edit team name.").tooltip("fixTitle");
-		});
 		$("#teamname_edit").on("blur keyup paste", function() {
 			var data = { "new_teamname": $("#teamname_edit").text() }
+			api_call("POST", "/api/team/edit", data);
+		});
+		$("#school_edit").on("blur keyup paste", function() {
+			var data = { "new_school": $("#school_edit").text() }
 			api_call("POST", "/api/team/edit", data);
 		});
 	});

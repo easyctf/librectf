@@ -255,9 +255,13 @@ class Teams(db.Model):
 				return True
 		return False
 
-	def get_last_solved():
+	def get_last_solved(self):
 		latest = 0
 		return Solves.query.filter_by(tid=self.tid, correct=1).order_by(Solves.date.desc()).first().date
+
+	def update_info(self, to_update):
+		Teams.query.filter_by(tid=self.tid).update(to_update)
+		db.session.commit()
 
 class Problems(db.Model):
 	pid = db.Column(db.String(128), primary_key=True, autoincrement=False)

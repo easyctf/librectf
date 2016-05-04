@@ -288,10 +288,10 @@ def team_edit():
 		if params.get("new_teamname") is not None:
 			if get_team(teamname_lower=params["new_teamname"].lower()).first() is not None:
 				raise WebException("This team name is taken!")
-			_team.teamname = params["new_teamname"]
+			update["teamname"] = params["new_teamname"]
 		if params.get("new_school") is not None:
-			_team.school = params["new_school"]
-		db.session.commit()
+			update["school"] = params["new_school"]
+		_team.update_info(update)
 
 	return { "success": 1 }
 

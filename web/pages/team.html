@@ -22,7 +22,6 @@
 			<div ng-show="team['in_team']==true">
 				<div ng-show="team['is_owner']==true">
 					<h1><span data-toggle="tooltip" data-placement="top" title="Click to edit team name." id="teamname_edit" class="padded editable" contenteditable>{{ team['teamname'] }}</span></h1>
-					<!-- <input type="text" id="teamname_edit" data-toggle="tooltip" data-placement="top" title="Click to edit team name." autocomplete="off" value="{{ team['teamname'] }}" /> -->
 					<h4><i class="fa fa-fw fa-university"></i> <span data-toggle="tooltip" data-placement="top" title="Click to edit school." id="school_edit" class="padded editable" contenteditable>{{ team['school'] || 'Add School' }}</span></h4>
 				</div>
 				<div ng-show="team['is_owner']==false">
