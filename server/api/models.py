@@ -352,7 +352,7 @@ class TeamInvitations(db.Model):
 class Tickets(db.Model):
 	htid = db.Column(db.Integer, primary_key=True)
 	date = db.Column(db.Integer, default=utils.get_time_since_epoch())
-	opened = db.Column(db.Boolean, default=False)
+	opened = db.Column(db.Boolean, default=True)
 	author = db.Column(db.Integer, db.ForeignKey("users.uid"))
 	title = db.Column(db.Text)
 	body = db.Column(db.Text)
