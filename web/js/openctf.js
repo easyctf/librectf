@@ -164,7 +164,7 @@ app.controller("mainController", ["$scope", "$http", "$location", function($scop
 			document.title = result["ctf_name"];
 			$scope.$emit("loginStatus");
 
-			if (result["competition"] !== true) {
+			if (result["competition"] !== true && result["admin"] !== true) {
 				var path = $location.$$path.toLowerCase();
 				var competition_only_paths = [ "/problems", "/programming", "/shell" ];
 				if (competition_only_paths.indexOf(path) >= 0) {

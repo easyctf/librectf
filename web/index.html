@@ -53,7 +53,7 @@
 					<div ng-show="config.navbar['competition_started']==true">
 					</div>
 					<li><a href="/chat">Chat</a></li>
-					<li class="dropdown" ng-show="config.navbar['competition']==true">
+					<li class="dropdown" ng-show="config.navbar['competition']==true||config.navbar['admin']==true">
 						<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Competition <span class="caret"></span></a>
 						<ul class="dropdown-menu">
 							<li><a href="/problems">Problems</a></li>

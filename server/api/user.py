@@ -233,7 +233,7 @@ def user_status():
 		"success": 1,
 		"logged_in": logged_in,
 		"admin": is_admin(),
-		"competition": is_admin() or utils.is_ctf_time(),
+		"competition": utils.is_ctf_time(),
 		"in_team": in_team(get_user()),
 		"username": session["username"] if logged_in else "",
 		"ctf_name": utils.get_ctf_name()
