@@ -72,6 +72,8 @@ def team_remove_member():
 	team = Teams.query.filter_by(tid=tid).first()
 	usr = Users.query.filter_by(username=username).first()
 	owner = team.owner
+	if team.finalized:
+		raise WebException("This team is finalized.")
 	if usr.uid == owner or usr.admin:
 		params = utils.flat_multi(request.form)
 		user_to_remove = Users.query.filter_by(username=params.get("user"))
@@ -94,6 +96,8 @@ def team_invite():
 	_team = get_team(tid=_user.tid).first()
 	if _user.uid != _team.owner:
 		raise WebException("You must be the captain of your team to invite members!")
+	if _team.finalized:
+		raise WebException("This team is finalized.")
 
 	new_member = params.get("new_member")
 	if new_member is None:
@@ -125,6 +129,8 @@ def team_invite_rescind():
 	_team = get_team(tid=_user.tid).first()
 	if _user.uid != _team.owner:
 		raise WebException("You must be the captain of your team to rescind invitations!")
+	if _team.finalized:
+		raise WebException("This team is finalized.")
 
 	uid = params.get("uid")
 	if uid is None:
@@ -153,6 +159,8 @@ def team_invite_request():
 	_team = get_team(tid=tid).first()
 	if _team is None:
 		raise WebException("Team not found.")
+	if _team.finalized:
+		raise WebException("This team is finalized.")
 
 	if _team.get_invitation_requests(frid=_user.uid) is not None:
 		raise WebException("You've already requested to join this team!")
@@ -177,6 +185,8 @@ def team_accept_invite():
 	_team = get_team(tid=tid).first()
 	if _team is None:
 		raise WebException("Team not found.")
+	if _team.finalized:
+		raise WebException("This team is finalized.")
 
 	if len(_team.get_members()) >= utils.get_config("team_size"):
 		raise WebException("This team is full.")
@@ -208,6 +218,8 @@ def team_accept_invite_request():
 	tid = _team.tid
 	if _user.uid != _team.owner:
 		raise WebException("You must be the captain of your team to rescind invitations!")
+	if _team.finalized:
+		raise WebException("This team is finalized.")
 
 	if len(_team.get_members()) >= utils.get_config("team_size"):
 		raise WebException("Your team is full.")
@@ -282,6 +294,8 @@ def team_edit():
 	_team = get_team(tid=_user.tid).first()
 	if _user.uid != _team.owner:
 		raise WebException("You must be the captain of your team to edit information!")
+	if _team.finalized:
+		raise WebException("This team is finalized.")
 
 	with app.app_context():
 		update = {}

@@ -21,26 +21,36 @@
 		<center>
 			<div ng-show="team['in_team']==true">
 				<div ng-show="team['is_owner']==true">
-					<h1><span data-toggle="tooltip" data-placement="top" title="Click to edit team name." id="teamname_edit" class="padded editable" contenteditable>{{ team['teamname'] }}</span></h1>
-					<h4><i class="fa fa-fw fa-university"></i> <span data-toggle="tooltip" data-placement="top" title="Click to edit school." id="school_edit" class="padded editable" contenteditable>{{ team['school'] || 'Add School' }}</span></h4>
+					<div ng-show="team['finalized']!=true">
+						<h1><span data-toggle="tooltip" data-placement="top" title="Click to edit team name." id="teamname_edit" class="padded editable" contenteditable>{{ team['teamname'] }}</span></h1>
+						<h4><i class="fa fa-fw fa-university"></i> <span data-toggle="tooltip" data-placement="top" title="Click to edit school." id="school_edit" class="padded editable" contenteditable>{{ team['school'] || 'Add School' }}</span></h4>
+					</div>
+					<div ng-show="team['finalized']==true">
+						<h1><span class="padded">{{ team['teamname'] }}</span></h1>
+						<h4><i class="fa fa-fw fa-university"></i> <span class="padded">{{ team['school'] || 'Unknown Affiliation' }}</span></h4>
+					</div>
 				</div>
 				<div ng-show="team['is_owner']==false">
 					<h1><span class="padded">{{ team['teamname'] }}</span></h1>
 					<h4><i class="fa fa-fw fa-university"></i> <span class="padded">{{ team['school'] || 'Unknown Affiliation' }}</span></h4>
 				</div>
 				<div class="row">
-					<div class="label label-success">
-						<i class="fa fa-fw fa-flag"></i>
-						I'm in the team!
-					</div>
-					<div class="label label-warning" data-toggle="tooltip" data-placement="top" title="This team isn't eligible for prizes." ng-show="team['observer']==true">
-						<i class="fa fa-fw fa-globe"></i>
-						OBSERVER
-					</div>
-					<div class="label label-danger" data-toggle="tooltip" data-placement="top" title="This team isn't finalized yet." ng-show="team['finalized']!=true">
+					<p>
+						<div class="label label-success">
+							<i class="fa fa-fw fa-flag"></i>
+							I'm in the team!
+						</div>
+						<div class="label label-warning" data-toggle="tooltip" data-placement="top" title="This team isn't eligible for prizes." ng-show="team['observer']==true">
+							<i class="fa fa-fw fa-globe"></i>
+							OBSERVER
+						</div>
+					</p>
+				</div>
+				<div class="row" ng-show="team['is_owner']==true && team['finalized']!=true">
+					<button class="btn btn-danger" onclick="javascript:finalize_team();" data-toggle="tooltip" data-placement="bottom" title="Your team isn't ready to compete yet. Finalize your team details in order to compete. You won't be able to add members or change names after that.">
 						<i class="fa fa-exclamation-triangle"></i>
-						UNFINALIZED
-					</div>
+						Finalize Team
+					</button>
 				</div>
 			</div>
 			<div ng-show="team['in_team']!=true">
@@ -73,7 +83,7 @@
 						<p class="list-group-item-text"><a href="/profile/{{ member['username'] }}">@{{ member['username'] }}</a></p>
 					</div>
 				</div>
-				<div class="panel-footer" ng-show="team['is_owner']==true">
+				<div class="panel-footer" ng-show="team['is_owner']==true&&team['finalized']!=true">
 					<form id="add_member" onsubmit="add_member(); return false;" style="margin: 0;">
 						<div class="row">
 							<div class="col-xs-12">
