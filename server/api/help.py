@@ -22,8 +22,8 @@ def create_ticket():
 	if result is None:
 		raise WebException("User does not exist.")
 
-	user = result.first()
-	ticket = HelpTickets(title, body, user.uid)
+	_user = result.first()
+	ticket = HelpTickets(title, body, _user.uid)
 	with app.app_context():
 		db.session.add(ticket)
 		db.session.commit()
@@ -76,17 +76,17 @@ def open_ticket():
 @api_wrapper
 def ticket_data(htid=None):
 	data = []
-	result = user.get_user()
-
-	if result is None:
-		raise WebException("User does not exist.")
-
 	if htid is not None:
 		result = get_ticket(htid=htid)
 	elif user.is_admin():
 		result = get_ticket()
 	else:
-		result = get_ticket(author=user.uid)
+		result = user.get_user()
+		if result is None:
+			raise WebException("User does not exist.")
+
+		_user = result.first()
+		result = get_ticket(author=_user.uid)
 
 	if result is not None:
 		tickets = result.all()
@@ -112,7 +112,5 @@ def get_ticket(htid=None, author=None, opened=None):
 	if opened is not None:
 		match.update({ "opened": opened })
 	with app.app_context():
-		if len(match) == 0:
-			return None
 		result = HelpTickets.query.filter_by(**match)
 		return result
