@@ -418,12 +418,19 @@ app.controller("adminTeamsController", ["$controller", "$scope", "$http", functi
 	});
 }]);
 
-app.controller("settingsController", ["$controller", "$scope", "$http", function($controller, $scope, $http) {
+app.controller("settingsController", ["$controller", "$scope", "$http", "$location", "$anchorScroll", function($controller, $scope, $http, $location, $anchorScroll) {
 	$controller("loginController", { $scope: $scope });
 	api_call("GET", "/api/user/info", {}, function(result) {
 		if (result["success"] == 1) {
 			$scope.user = result["user"];
 		}
+		$scope.scrollTo = function(id) {
+			var old = $location.hash();
+			$location.hash(id);
+			$anchorScroll();
+			$location.hash(old);
+		}
+
 		$scope.$apply();
 		$(".timeago").timeago();
 	});
