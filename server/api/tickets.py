@@ -18,11 +18,9 @@ def create_ticket():
 	body = params.get("body")
 	username = session.get("username")
 
-	result = user.get_user(username=username)
-	if result is None:
+	_user = user.get_user().first()
+	if _user is None:
 		raise WebException("User does not exist.")
-
-	_user = result.first()
 
 	ticket = Tickets(title, body, _user.uid)
 	with app.app_context():
@@ -39,9 +37,10 @@ def close_ticket():
 
 	htid = params.get("htid")
 
-	result = get_ticket(htid=htid)
-	if result is None: raise WebException("Ticket does not exist.")
-	ticket = result.first()
+	ticket = get_ticket(htid=htid).first()
+	if ticket is None:
+		raise WebException("Ticket does not exist.")
+
 	ticket.opened = False
 	with app.app_context():
 		db.session.add(ticket)
@@ -57,11 +56,10 @@ def open_ticket():
 
 	htid = params.get("htid")
 
-	result = get_ticket(htid=htid)
-	if result is None:
+	ticket = get_ticket(htid=htid).first()
+	if ticket is None:
 		raise WebException("Ticket does not exist.")
 
-	ticket = result.first()
 	ticket.opened = True
 	with app.app_context():
 		db.session.add(ticket)
