@@ -69,6 +69,26 @@ def open_ticket():
 
 	return { "success": 1, "message": "Ticket opened." }
 
+@blueprint.route("/reply", methods=["POST"])
+@login_required
+@api_wrapper
+def reply_to_ticket():
+	params = utils.flat_multi(request.form)
+
+	htid = params.get("htid")
+	body = params.get("body")
+
+	_user = user.get_user().first()
+	if _user is None:
+		raise WebException("User does not exist.")
+
+	reply = TicketReplies(htid, body, _user.uid)
+	with app.app_context():
+		db.session.add(reply)
+		db.session.commit()
+
+	return { "success": 1, "message": "" }
+
 @blueprint.route("/data", methods=["GET"])
 @login_required
 @api_wrapper

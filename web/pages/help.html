@@ -31,7 +31,7 @@
 									<div class="col-sm-12 form-group">
 										<label class="col-sm-12" for="title"><small>Description</small></label>
 										<div class="col-sm-12">
-											<textarea class="form-control" type="text" required name="body" id="body" placeholder="Leave a comment" autocomplete="off" />
+											<textarea class="form-control" type="text" required name="ticket_body" id="ticket_body" placeholder="Leave a comment" autocomplete="off" />
 										</div>
 									</div>
 								</div>
@@ -97,6 +97,19 @@
 				<div>{{ reply.body }}</div>
 			</div>
 		</div>
+		<form class="form-horizontal" onsubmit="new_reply(); return false;" id="new_reply_form">
+			<div class="row">
+				<div id="new_reply_msg"/>
+				<input type="hidden" name="htid" value="{{ data.htid }}"/>
+				<div class="col-sm-12 form-group">
+					<label class="col-sm-12" for="title"><small>Reply</small></label>
+					<div class="col-sm-12">
+						<textarea class="form-control" type="text" required name="reply_body" id="reply_body" placeholder="Leave a comment" autocomplete="off" />
+					</div>
+				</div>
+			</div>
+			<input type="submit" class="btn btn-success" value="Reply"/>
+		</form>
 	</div>
 </div>
 <script>
@@ -104,7 +117,7 @@ var new_ticket = function() {
 	var input = "#new_ticket_form input";
 	var data = $(input).serializeObject();
 
-	var body = $("#body").val();
+	var body = $("#ticket_body").val();
 	data["body"] = body;
 
 	$(input).attr("disabled", "disabled");
@@ -121,6 +134,31 @@ var new_ticket = function() {
 	}, function(jqXHR) {
 		var result = jqXHR["responseText"];
 		display_message("new_ticket_msg", "danger", "Error " + jqXHR["status"] + ": " + result["message"], function() {
+			$(input).removeAttr("disabled");
+		});
+	});
+}
+
+var new_reply = function() {
+	var input = "#new_reply_form input";
+	var data = $(input).serializeObject();
+
+	var body = $("#reply_body").val();
+	data["body"] = body;
+
+	$(input).attr("disabled", "disabled");
+	api_call("POST", "/api/tickets/reply", data, function(result) {
+		if (result["success"] == 1) {
+			location.reload();
+			$(input).removeAttr("disabled");
+		} else {
+			display_message("new_reply_msg", "danger", result["message"], function() {
+				$(input).removeAttr("disabled");
+			});
+		}
+	}, function(jqXHR) {
+		var result = jqXHR["responseText"];
+		display_message("new_reply_msg", "danger", "Error " + jqXHR["status"] + ": " + result["message"], function() {
 			$(input).removeAttr("disabled");
 		});
 	});

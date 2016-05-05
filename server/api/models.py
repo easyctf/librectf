@@ -368,7 +368,7 @@ class Tickets(db.Model):
 			replies.append({
 				"trid": reply.trid,
 				"body": reply.body,
-				"date": reply.date,
+				"date": datetime.datetime.fromtimestamp(reply.date).isoformat() + "Z",
 				"uid": reply.author
 			})
 		return replies
@@ -380,6 +380,7 @@ class TicketReplies(db.Model):
 	author = db.Column(db.Integer, db.ForeignKey("users.uid"))
 	body = db.Column(db.Text)
 
-	def __init__(self, body, author):
+	def __init__(self, htid, body, author):
+		self.htid = htid
 		self.body = body
 		self.author = author
