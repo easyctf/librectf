@@ -30,3 +30,4 @@ rm /etc/nginx/sites-*/default
 sudo service nginx restart
 
 mysql -u root -p"$MYSQL_ROOT_PASSWORD" -e "CREATE DATABASE openctf;"
+mysql -u root -p"$MYSQL_ROOT_PASSWORD" -e "CREATE DATABASE openctf_tests;"

@@ -23,6 +23,7 @@ ROOT_FOLDER = os.path.abspath(os.path.join(os.path.realpath(__file__), '../..'))
 
 options = {
 	"SQLALCHEMY_DATABASE_URI": os.getenv("SQLALCHEMY_DATABASE_URI", ""),
+	"SQLALCHEMY_TEST_DATABASE_URI": os.getenv("SQLALCHEMY_DATABASE_URI", ""),
 	"SQLALCHEMY_TRACK_MODIFICATIONS": False,
 	"ROOT_FOLDER": ROOT_FOLDER,
 	"UPLOAD_FOLDER": os.path.abspath(os.path.join(ROOT_FOLDER, "web/files")),
