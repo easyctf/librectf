@@ -369,7 +369,7 @@ class Tickets(db.Model):
 				"trid": reply.trid,
 				"body": reply.body,
 				"date": reply.date,
-				"author": reply.author
+				"uid": reply.author
 			})
 		return replies
 

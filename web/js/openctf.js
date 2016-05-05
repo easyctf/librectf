@@ -306,8 +306,9 @@ app.controller("helpController", ["$controller", "$scope", "$http", "$routeParam
 	$controller("mainController", { $scope: $scope });
 	var data = {};
 	$scope.view = false;
+	$scope.angular = angular;
 	if ("ticket" in $routeParams) {
-		data["ticket"] = $routeParams["ticket"];
+		data["htid"] = $routeParams["ticket"];
 		$scope.view = true;
 	}
 	api_call("GET", "/api/tickets/data", data, function(result) {
@@ -316,8 +317,8 @@ app.controller("helpController", ["$controller", "$scope", "$http", "$routeParam
 		} else {
 			$scope.data = [[], []];
 		}
-		console.log(result);
 		$scope.$apply();
+		$(".timeago").timeago();
 	});
 }]);
 

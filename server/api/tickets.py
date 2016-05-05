@@ -3,9 +3,9 @@ from flask import current_app as app
 from decorators import api_wrapper, login_required, WebException
 from models import db, Tickets, TicketReplies
 
+import datetime
 import user
 import utils
-
 blueprint = Blueprint("tickets", __name__)
 
 @blueprint.route("/create", methods=["POST"])
@@ -40,7 +40,7 @@ def close_ticket():
 	htid = params.get("htid")
 
 	result = get_ticket(htid=htid)
-	if result is None: raise WebException("Ticket does not exist.") 
+	if result is None: raise WebException("Ticket does not exist.")
 	ticket = result.first()
 	ticket.opened = False
 	with app.app_context():
@@ -76,41 +76,61 @@ def ticket_data():
 	opened = []
 	closed = []
 
-	params = utils.flat_multi(request.form)
+	params = utils.flat_multi(request.args)
+	htid = params.get("htid")
 
-	if params.get("htid") is not None:
-		result = get_ticket(htid=htid)
+	if htid is not None:
+		result = get_ticket(htid=htid).first()
 	elif user.is_admin():
-		result = get_ticket()
+		result = get_ticket().all()
 	else:
-		result = user.get_user()
+		_user = user.get_user().first()
 
-		if result is None:
+		if _user is None:
 			raise WebException("User does not exist.")
 
-		_user = result.first()
-
-		result = get_ticket(author=_user.uid)
+		result = get_ticket(author=_user.uid).all()
 
 	if result is not None:
-		tickets = result.all()
+		if htid is not None:
+			tickets = [result]
+		else:
+			tickets = result
+
 		for ticket in tickets:
+			tmp = user.get_user(uid=ticket.author).first()
+
+			if tmp is not None:
+				username = tmp.username
+				uid = tmp.uid
+			else:
+				username = ""
+				uid = ""
+
 			d = {
 				"htid": ticket.htid,
-				"date": ticket.date,
+				"date": datetime.datetime.fromtimestamp(ticket.date).isoformat() + "Z",
 				"opened": ticket.opened,
-				"author": ticket.author,
+				"username": username,
+				"uid": uid,
 				"title": ticket.title,
 				"body": ticket.body,
 				"replies": ticket.get_replies()
 			}
 
-			if d["opened"] == True:
-				opened.append(d)
+			if htid is None:
+				if d["opened"] == True:
+					opened.append(d)
+				else:
+					closed.append(d)
 			else:
-				closed.append(d)
+				data = d
+	else:
+		data = {}
 
-	data = [opened, closed]
+	if htid is None:
+		data = [opened, closed]
+
 	return { "success": 1, "data": data }
 
 def get_ticket(htid=None, author=None, opened=None):
