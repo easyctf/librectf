@@ -134,4 +134,7 @@ def is_ctf_time():
 	if start < time and end == 0:
 		return True
 
+	if time < end and start == 0:
+		return True
+
 	return False
