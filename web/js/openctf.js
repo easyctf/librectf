@@ -1,9 +1,9 @@
 var app = angular.module("openctf", [ "ngRoute" ]);
 var $http = angular.injector(["ng"]).get("$http");
 
-app.config(["$compileProvider", function($compileProvider) {
+app.config(function($compileProvider) {
 	$compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|file|javascript):/);
-}]);
+});
 app.config(function($routeProvider, $locationProvider) {
 	$routeProvider.when("/", {
 		templateUrl: "pages/home.html",
@@ -187,7 +187,7 @@ function display_message(containerId, alertType, message, callback) {
 	});
 };
 
-app.controller("mainController", ["$scope", "$http", "$location", function($scope, $http, $location) {
+app.controller("mainController", function($scope, $http, $location) {
 	$scope.config = { navbar: { } };
 	$scope.timestamp = Date.now();
 	api_call("GET", "/api/user/status", {}, function(result) {
@@ -213,7 +213,7 @@ app.controller("mainController", ["$scope", "$http", "$location", function($scop
 		$scope.$apply();
 		permanent_message("site-message", "danger", "<div class='container'>The OpenCTF API is down. Please wait while we try to resolve this issue.</div>");
 	});
-}]);
+});
 
 app.controller("logoutController", function() {
 	api_call("GET", "/api/user/logout", {}, function(result) {
@@ -221,7 +221,7 @@ app.controller("logoutController", function() {
 	});
 });
 
-app.controller("problemsController", ["$controller", "$scope", "$http", function($controller, $scope, $http) {
+app.controller("problemsController", function($controller, $scope, $http) {
 	$controller("loginController", { $scope: $scope });
 	api_call("GET", "/api/problem/data", {}, function(result) {
 		if (result["success"] == 1) {
@@ -229,7 +229,7 @@ app.controller("problemsController", ["$controller", "$scope", "$http", function
 		}
 		$scope.$apply();
 	});
-}]);
+});
 
 app.controller("profileController", function($controller, $scope, $http, $routeParams, $sce, result) {
 	$controller("mainController", { $scope: $scope });
@@ -276,7 +276,7 @@ app.controller("profileController", function($controller, $scope, $http, $routeP
 });
 
 
-app.controller("programmingController", ["$controller", "$scope", "$http", function($controller, $scope, $http) {
+app.controller("programmingController", function($controller, $scope, $http) {
 	$controller("loginController", { $scope: $scope });
 	$("#editor").height($(window).height()/2);
 	var grader = ace.edit("editor");
@@ -288,7 +288,7 @@ app.controller("programmingController", ["$controller", "$scope", "$http", funct
 	});
 	grader.setValue("");
 
-}]);
+});
 
 app.controller("setupController", function($controller, $scope, $http, result) {
 	$controller("mainController", { $scope: $scope });
@@ -296,7 +296,7 @@ app.controller("setupController", function($controller, $scope, $http, result) {
 	if (result["verification"]) console.log("Verification code:", result["verification"]);
 });
 
-app.controller("loginController", ["$controller", "$scope", "$http", function($controller, $scope, $http) {
+app.controller("loginController", function($controller, $scope, $http) {
 	$controller("mainController", { $scope: $scope });
 	$scope.$on("loginStatus", function() {
 		if ($scope.config["navbar"].logged_in != true) {
@@ -304,7 +304,7 @@ app.controller("loginController", ["$controller", "$scope", "$http", function($c
 			return;
 		}
 	});
-}]);
+});
 
 app.controller("teamController", function($controller, $scope, $http, $routeParams, result) {
 	if (!("teamname" in $routeParams)) {
@@ -325,7 +325,7 @@ app.controller("teamController", function($controller, $scope, $http, $routePara
 	});
 });
 
-app.controller("helpController", ["$controller", "$scope", "$http", "$routeParams", function($controller, $scope, $http, $routeParams) {
+app.controller("helpController", function($controller, $scope, $http, $routeParams) {
 	$controller("mainController", { $scope: $scope });
 	var data = {};
 	$scope.view = false;
@@ -343,9 +343,9 @@ app.controller("helpController", ["$controller", "$scope", "$http", "$routeParam
 		$scope.$apply();
 		$(".timeago").timeago();
 	});
-}]);
+});
 
-app.controller("scoreboardController", ["$controller", "$scope", "$http", function($controller, $scope, $http) {
+app.controller("scoreboardController", function($controller, $scope, $http) {
 	$controller("mainController", { $scope: $scope });
 	api_call("GET", "/api/stats/scoreboard", { }, function(result) {
 		if (result["success"] == 1) {
@@ -353,9 +353,9 @@ app.controller("scoreboardController", ["$controller", "$scope", "$http", functi
 			$scope.$apply();
 		}
 	});
-}]);
+});
 
-app.controller("resetController", ["$controller", "$scope", "$http", "$routeParams", function($controller, $scope, $http, $routeParams) {
+app.controller("resetController", function($controller, $scope, $http, $routeParams) {
 	var data = { };
 	$scope.token = false;
 	data["csrf_token"] = $.cookie("csrf_token");
@@ -370,9 +370,9 @@ app.controller("resetController", ["$controller", "$scope", "$http", "$routePara
 	} else {
 		$controller("mainController", { $scope: $scope });
 	}
-}]);
+});
 
-app.controller("adminController", ["$controller", "$scope", "$http", function($controller, $scope, $http) {
+app.controller("adminController", function($controller, $scope, $http) {
 	$controller("mainController", { $scope: $scope });
 	$scope.$on("loginStatus", function() {
 		if ($scope.config["navbar"].logged_in != true) {
@@ -384,9 +384,9 @@ app.controller("adminController", ["$controller", "$scope", "$http", function($c
 			return;
 		}
 	});
-}]);
+});
 
-app.controller("adminProblemsController", ["$controller", "$scope", "$http", function($controller, $scope, $http) {
+app.controller("adminProblemsController", function($controller, $scope, $http) {
 	$controller("adminController", { $scope: $scope });
 	api_call("GET", "/api/problem/data", {}, function(result) {
 		if (result["success"] == 1) {
@@ -402,9 +402,9 @@ app.controller("adminProblemsController", ["$controller", "$scope", "$http", fun
 			grader.setValue(problem.grader_contents);
 		});
 	});
-}]);
+});
 
-app.controller("adminStatisticsController", ["$controller", "$scope", "$http", function($controller, $scope, $http) {
+app.controller("adminStatisticsController", function($controller, $scope, $http) {
 	$controller("adminController", { $scope: $scope });
 	api_call("GET", "/api/admin/stats/overview", {}, function(result) {
 		if (result["success"] == 1) {
@@ -414,9 +414,9 @@ app.controller("adminStatisticsController", ["$controller", "$scope", "$http", f
 		}
 		$scope.$apply();
 	});
-}]);
+});
 
-app.controller("adminSettingsController", ["$controller", "$scope", "$http", function($controller, $scope, $http) {
+app.controller("adminSettingsController", function($controller, $scope, $http) {
 	$controller("adminController", { $scope: $scope });
 	api_call("GET", "/api/admin/settings", {}, function(result) {
 		if (result["success"] == 1) {
@@ -427,9 +427,9 @@ app.controller("adminSettingsController", ["$controller", "$scope", "$http", fun
 		$scope.$apply();
 		handler();
 	});
-}]);
+});
 
-app.controller("adminTeamsController", ["$controller", "$scope", "$http", function($controller, $scope, $http) {
+app.controller("adminTeamsController", function($controller, $scope, $http) {
 	$controller("adminController", { $scope: $scope });
 	api_call("GET", "/api/admin/teams/overview", {}, function(result) {
 		if (result["success"] == 1) {
@@ -439,7 +439,7 @@ app.controller("adminTeamsController", ["$controller", "$scope", "$http", functi
 		}
 		$scope.$apply();
 	});
-}]);
+});
 
 app.controller("settingsController", function($controller, $scope, $http, $location, $anchorScroll, result) {
 	$controller("loginController", { $scope: $scope });
@@ -455,7 +455,7 @@ app.controller("settingsController", function($controller, $scope, $http, $locat
 	onContentLoaded(function() { $(".timeago").timeago(); });
 });
 
-app.controller("twofactorController", ["$controller", "$scope", "$http", function($controller, $scope, $http) {
+app.controller("twofactorController", function($controller, $scope, $http) {
 	$controller("loginController", { $scope: $scope });
 	api_call("GET", "/api/user/info", {}, function(result) {
 		if (result["success"] == 1) {
@@ -463,9 +463,9 @@ app.controller("twofactorController", ["$controller", "$scope", "$http", functio
 		}
 		$scope.$apply();
 	});
-}]);
+});
 
-app.controller("verifyEmailController", ["$controller", "$scope", "$http", "$location", "$window", function($controller, $scope, $http, $location, $window) {
+app.controller("verifyEmailController", function($controller, $scope, $http, $location, $window) {
 	$controller("loginController", { $scope: $scope });
 	var token = $location.search().token;
 	var data = { };
@@ -478,7 +478,7 @@ app.controller("verifyEmailController", ["$controller", "$scope", "$http", "$loc
 		$scope.success = result["success"]
 		$scope.$apply();
 	});
-}]);
+});
 
 $.fn.serializeObject = function() {
 	var a, o;
