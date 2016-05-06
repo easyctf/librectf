@@ -168,7 +168,7 @@ function api_call(method, url, data, callback_success, callback_fail) {
 		} else {
 			callback_success(result);
 		}
-	}).fail(function(jqXHR) {
+	}).error(function(jqXHR) {
 		callback_fail(jqXHR);
 	});
 }
