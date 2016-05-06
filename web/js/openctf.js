@@ -1,4 +1,5 @@
 var app = angular.module("openctf", [ "ngRoute" ]);
+var $http = angular.injector(["ng"]).get("$http");
 
 app.config(["$compileProvider", function($compileProvider) {
 	$compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|file|javascript):/);
@@ -42,11 +43,17 @@ app.config(function($routeProvider, $locationProvider) {
 	})
 	.when("/profile", {
 		templateUrl: "pages/profile.html",
-		controller: "profileController"
+		controller: "profileController",
+		resolve: {
+			"result": function() { return resolve_api_call("GET", "/api/user/info", {}); }
+		}
 	})
 	.when("/profile/:username", {
 		templateUrl: "pages/profile.html",
-		controller: "profileController"
+		controller: "profileController",
+		resolve: {
+			"result": function($route) { return resolve_api_call("GET", "/api/user/info", { "username": $route.current.params.username }); }
+		}
 	})
 	.when("/programming", {
 		templateUrl: "pages/programming.html",
@@ -62,7 +69,10 @@ app.config(function($routeProvider, $locationProvider) {
 	})
 	.when("/settings", {
 		templateUrl: "pages/settings.html",
-		controller: "settingsController"
+		controller: "settingsController",
+		resolve: {
+			"result": function($route) { return resolve_api_call("GET", "/api/user/info", { "username": $route.current.params.username }); }
+		}
 	})
 	.when("/settings/twofactor", {
 		templateUrl: "pages/twofactor.html",
@@ -74,7 +84,10 @@ app.config(function($routeProvider, $locationProvider) {
 	})
 	.when("/setup", {
 		templateUrl: "pages/setup.html",
-		controller: "setupController"
+		controller: "setupController",
+		resolve: {
+			"result": function() { return resolve_api_call("GET", "/api/admin/setup/init", {}); }
+		}
 	})
 	.when("/forgot", {
 		templateUrl: "pages/forgot.html",
@@ -86,11 +99,17 @@ app.config(function($routeProvider, $locationProvider) {
 	})
 	.when("/team", {
 		templateUrl: "pages/team.html",
-		controller: "teamController"
+		controller: "teamController",
+		resolve: {
+			"result": function() { return resolve_api_call("GET", "/api/team/info", {}); }
+		}
 	})
 	.when("/team/:teamname", {
 		templateUrl: "pages/team.html",
-		controller: "teamController"
+		controller: "teamController",
+		resolve: {
+			"result": function($route) { return resolve_api_call("GET", "/api/team/info", { "teamname": $route.current.params.teamname }); }
+		}
 	})
 	.when("/admin/problems", {
 		templateUrl: "pages/admin/problems.html",
@@ -114,6 +133,24 @@ app.config(function($routeProvider, $locationProvider) {
 	});
 	$locationProvider.html5Mode(true);
 });
+
+function onContentLoaded(callback) {
+	var appElement = document.querySelector('[ng-app=openctf]');
+	var appScope = angular.element(appElement).scope();
+	appScope.$on('$viewContentLoaded', function () {
+		setTimeout(callback, .1); // Run just after content gets loaded
+	});
+}
+
+function resolve_api_call(method, url, data) {
+	return $http({
+		method: method,
+		url: url,
+		params: data
+	}).then(function(result) {
+		return result["data"];
+	});
+}
 
 function api_call(method, url, data, callback_success, callback_fail) {
 	if (method.toLowerCase() == "post") {
@@ -194,19 +231,13 @@ app.controller("problemsController", ["$controller", "$scope", "$http", function
 	});
 }]);
 
-app.controller("profileController", ["$controller", "$scope", "$http", "$routeParams", "$sce", function($controller, $scope, $http, $routeParams, $sce) {
-	var data = { };
-	if ("username" in $routeParams) data["username"] = $routeParams["username"];
+app.controller("profileController", function($controller, $scope, $http, $routeParams, $sce, result) {
 	$controller("mainController", { $scope: $scope });
-	api_call("GET", "/api/user/info", data, function(result) {
-		if (result["success"] == 1) {
-			$scope.user = result["user"];
-			for(var i=0; i<$scope.user.activity.length; i++) {
-				$scope.user.activity[i].message_clean = $sce.trustAsHtml($scope.user.activity[i].message);
-			}
+	if (result["success"] == 1) {
+		$scope.user = result["user"];
+		for(var i=0; i<$scope.user.activity.length; i++) {
+			$scope.user.activity[i].message_clean = $sce.trustAsHtml($scope.user.activity[i].message);
 		}
-		$scope.$apply();
-		$(".timeago").timeago();
 		var category_chart = c3.generate({
 			bindto: "#category_chart",
 			data: {
@@ -240,8 +271,9 @@ app.controller("profileController", ["$controller", "$scope", "$http", "$routePa
 				type: "pie"
 			}
 		});
-	});
-}]);
+	}
+	onContentLoaded(function() { $(".timeago").timeago(); });
+});
 
 
 app.controller("programmingController", ["$controller", "$scope", "$http", function($controller, $scope, $http) {
@@ -258,14 +290,11 @@ app.controller("programmingController", ["$controller", "$scope", "$http", funct
 
 }]);
 
-app.controller("setupController", ["$controller", "$scope", "$http", function($controller, $scope, $http) {
+app.controller("setupController", function($controller, $scope, $http, result) {
 	$controller("mainController", { $scope: $scope });
-	api_call("GET", "/api/admin/setup/init", { }, function(result) {
-		$scope["ready"] = result["success"] == 1;
-		if (result["verification"]) console.log("Verification code:", result["verification"]);
-		$scope.$apply();
-	});
-}]);
+	$scope.ready = result["success"] == 1;
+	if (result["verification"]) console.log("Verification code:", result["verification"]);
+});
 
 app.controller("loginController", ["$controller", "$scope", "$http", function($controller, $scope, $http) {
 	$controller("mainController", { $scope: $scope });
@@ -277,30 +306,24 @@ app.controller("loginController", ["$controller", "$scope", "$http", function($c
 	});
 }]);
 
-app.controller("teamController", ["$controller", "$scope", "$http", "$routeParams", function($controller, $scope, $http, $routeParams) {
-	var data = { };
-	if ("teamname" in $routeParams) {
-		data["teamname"] = $routeParams["teamname"];
-	} else {
+app.controller("teamController", function($controller, $scope, $http, $routeParams, result) {
+	if (!("teamname" in $routeParams)) {
 		$controller("loginController", { $scope: $scope });
 	}
-	api_call("GET", "/api/team/info", data, function(result) {
-		if (result["success"] == 1) {
-			$scope.team = result["team"];
-		}
-		$scope.$apply();
-		$(".timeago").timeago();
-		
-		$("#teamname_edit").on("blur keyup paste", function() {
-			var data = { "new_teamname": $("#teamname_edit").text() }
-			api_call("POST", "/api/team/edit", data);
-		});
-		$("#school_edit").on("blur keyup paste", function() {
-			var data = { "new_school": $("#school_edit").text() }
-			api_call("POST", "/api/team/edit", data);
-		});
+	if (result["success"] == 1) {
+		$scope.team = result["team"];
+	}
+	onContentLoaded(function() { $(".timeago").timeago(); });
+
+	$("#teamname_edit").on("blur keyup paste", function() {
+		var data = { "new_teamname": $("#teamname_edit").text() }
+		api_call("POST", "/api/team/edit", data);
 	});
-}]);
+	$("#school_edit").on("blur keyup paste", function() {
+		var data = { "new_school": $("#school_edit").text() }
+		api_call("POST", "/api/team/edit", data);
+	});
+});
 
 app.controller("helpController", ["$controller", "$scope", "$http", "$routeParams", function($controller, $scope, $http, $routeParams) {
 	$controller("mainController", { $scope: $scope });
@@ -418,23 +441,19 @@ app.controller("adminTeamsController", ["$controller", "$scope", "$http", functi
 	});
 }]);
 
-app.controller("settingsController", ["$controller", "$scope", "$http", "$location", "$anchorScroll", function($controller, $scope, $http, $location, $anchorScroll) {
+app.controller("settingsController", function($controller, $scope, $http, $location, $anchorScroll, result) {
 	$controller("loginController", { $scope: $scope });
-	api_call("GET", "/api/user/info", {}, function(result) {
-		if (result["success"] == 1) {
-			$scope.user = result["user"];
-		}
-		$scope.scrollTo = function(id) {
-			var old = $location.hash();
-			$location.hash(id);
-			$anchorScroll();
-			$location.hash(old);
-		}
-
-		$scope.$apply();
-		$(".timeago").timeago();
-	});
-}]);
+	if (result["success"] == 1) {
+		$scope.user = result["user"];
+	}
+	$scope.scrollTo = function(id) {
+		var old = $location.hash();
+		$location.hash(id);
+		$anchorScroll();
+		$location.hash(old);
+	}
+	onContentLoaded(function() { $(".timeago").timeago(); });
+});
 
 app.controller("twofactorController", ["$controller", "$scope", "$http", function($controller, $scope, $http) {
 	$controller("loginController", { $scope: $scope });
