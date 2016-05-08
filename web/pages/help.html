@@ -87,14 +87,20 @@
 		<br>
 		<div class="panel panel-default">
 			<div class="panel-body">
-				<img ng-src="/api/user/avatar/{{ data.uid }}" id="avatar" style="max-width:64px;max-height:64px;"/>
-				<div>{{ data.body }}</div>
+				<a class="NO_HOVER_UNDERLINE_DAMMIT" ng-href="/profile/{{ data.username }}">{{ data.username }}</a> commented
+				<time class="timeago" style="color: gray;" datetime="{{ data.date }}"/>
+				<br>
+				<img align="left" ng-src="/api/user/avatar/{{ data.uid }}" id="avatar" style="max-width:64px;max-height:64px;"/>
+				<p>{{ data.body }}</p>
 			</div>
 		</div>
 		<div ng-repeat="reply in data.replies" class="panel panel-default">
 			<div class="panel-body">
-				<img ng-src="/api/user/avatar/{{ reply.uid }}" id="avatar" style="max-width:64px;max-height:64px;"/>
-				<div>{{ reply.body }}</div>
+				<a class="NO_HOVER_UNDERLINE_DAMMIT" ng-href="/profile/{{ data.username }}">{{ data.username }}</a> commented
+				<time class="timeago" style="color: gray;" datetime="{{ data.date }}"/>
+				<br>
+				<img align="left" ng-src="/api/user/avatar/{{ reply.uid }}" id="avatar" style="max-width:64px;max-height:64px;"/>
+				<p>{{ reply.body }}</p>
 			</div>
 		</div>
 		<form class="form-horizontal" onsubmit="new_reply(); return false;" id="new_reply_form">
