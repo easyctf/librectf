@@ -96,8 +96,8 @@
 		</div>
 		<div ng-repeat="reply in data.replies" class="panel panel-default">
 			<div class="panel-body">
-				<a class="NO_HOVER_UNDERLINE_DAMMIT" ng-href="/profile/{{ data.username }}">{{ data.username }}</a> commented
-				<time class="timeago" style="color: gray;" datetime="{{ data.date }}"/>
+				<a class="NO_HOVER_UNDERLINE_DAMMIT" ng-href="/profile/{{ reply.username }}">{{ reply.username }}</a> commented
+				<time class="timeago" style="color: gray;" datetime="{{ reply.date }}"/>
 				<br>
 				<img align="left" ng-src="/api/user/avatar/{{ reply.uid }}" id="avatar" style="max-width:64px;max-height:64px;"/>
 				<p>{{ reply.body }}</p>
