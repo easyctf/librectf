@@ -19,7 +19,7 @@
 			<div id="{{ problem['pid'] }}_body" class="panel-collapse collapse {{ problem['solved'] == 'Solved' ? '': 'in' }}">
 				<div class="panel-body">
 					<div hidden id="{{ problem['pid'] }}_status"/>
-					<p>{{ problem["description"] }}</p>
+					<p ng-bind-html="problem['description'] | render_html"/>
 					<form id="{{ problem['pid'] }}_form" class="horizontal-form" onsubmit="submit_problem(this.id); return false;">
 						<input hidden type="hidden" name="pid" value="{{ problem['pid'] }}"/>
 						<div class="input-group">
@@ -33,7 +33,7 @@
 						</div>
 					</form>
 					<div hidden id="{{ problem['pid'] }}_hint">
-						<p>{{ problem['hint'] }}</p>
+						<p ng-bind-html="problem['hint'] | render_html"/>
 					</div>
 				</div>
 			</div>

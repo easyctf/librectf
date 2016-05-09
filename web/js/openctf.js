@@ -1,6 +1,12 @@
 var app = angular.module("openctf", [ "ngRoute" ]);
 var $http = angular.injector(["ng"]).get("$http");
 
+app.filter("render_html", ['$sce', function($sce) {
+	return function(html){
+		return $sce.trustAsHtml(html);
+	}
+}]);
+
 app.config(function($compileProvider) {
 	$compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|file|javascript):/);
 });
