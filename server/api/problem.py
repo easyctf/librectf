@@ -218,7 +218,7 @@ def problem_data():
 			try:
 				data.update(grader.generate_problem(autogen.get_random(problem.pid, tid), problem.pid))
 			except Exception, e:
-				logger.log(__name__, "The grader for \"%s\" has thrown an error: %s" % (problem.name, e))
+				logger.log(__name__, "The grader for \"%s\" has thrown an error: %s" % (problem.title, e))
 		problems_return.append(data)
 	return { "success": 1, "problems": problems_return }
 
