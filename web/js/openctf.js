@@ -19,11 +19,17 @@ app.config(function($routeProvider, $locationProvider) {
 	})
 	.when("/help", {
 		templateUrl: "pages/help.html",
-		controller: "helpController"
+		controller: "helpController",
+		resolve: {
+			"result": function() { return resolve_api_call("GET", "/api/tickets/data", {}); }
+		}
 	})
 	.when("/help/:ticket", {
 		templateUrl: "pages/help.html",
-		controller: "helpController"
+		controller: "helpController",
+		resolve: {
+			"result": function($route) { return resolve_api_call("GET", "/api/tickets/data", { "htid": $route.current.params.ticket }); }
+		}
 	})
 	.when("/learn", {
 		templateUrl: "pages/learn.html",
@@ -325,24 +331,16 @@ app.controller("teamController", function($controller, $scope, $http, $routePara
 	});
 });
 
-app.controller("helpController", function($controller, $scope, $http, $routeParams) {
+app.controller("helpController", function($controller, $scope, $http, $routeParams, result) {
 	$controller("mainController", { $scope: $scope });
-	var data = {};
-	$scope.view = false;
+	$scope.view = "ticket" in $routeParams;
 	$scope.angular = angular;
-	if ("ticket" in $routeParams) {
-		data["htid"] = $routeParams["ticket"];
-		$scope.view = true;
+	if (result["success"] == 1) {
+		$scope.data = result["data"];
+	} else {
+		$scope.data = [[], []];
 	}
-	api_call("GET", "/api/tickets/data", data, function(result) {
-		if (result["success"] == 1) {
-			$scope.data = result["data"];
-		} else {
-			$scope.data = [[], []];
-		}
-		$scope.$apply();
-		$(".timeago").timeago();
-	});
+	onContentLoaded(function() { $(".timeago").timeago(); });
 });
 
 app.controller("scoreboardController", function($controller, $scope, $http) {

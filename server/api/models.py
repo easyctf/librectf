@@ -365,11 +365,19 @@ class Tickets(db.Model):
 	def get_replies(self):
 		replies = []
 		for reply in TicketReplies.query.filter_by(htid=self.htid).all():
+			uid = reply.author
+			user = Users.query.filter_by(uid=uid).first()
+			if user is not None:
+				username = user.username
+			else:
+				username = ""
+
 			replies.append({
 				"trid": reply.trid,
 				"body": reply.body,
 				"date": datetime.datetime.fromtimestamp(reply.date).isoformat() + "Z",
-				"uid": reply.author
+				"uid": uid,
+				"username": username
 			})
 		return replies
 
