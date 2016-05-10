@@ -14,6 +14,12 @@ import utils
 
 blueprint = Blueprint("programming", __name__)
 
+extensions = {
+	"python2": "py",
+	"python3": "py",
+	"java": "java"
+}
+
 @blueprint.route("/submissions", methods=["GET"])
 @api_wrapper
 @login_required
@@ -87,7 +93,7 @@ def submit_program():
 
 	os.makedirs(submission_folder)
 
-	submission_path = os.path.join(submission_folder, "program.submission")
+	submission_path = os.path.join(submission_folder, "program.%s" % extensions[language])
 
 	open(submission_path, "w").write(submission_contents)
 	message, log = judge(submission_path, language, pid)
@@ -164,7 +170,7 @@ def judge(submission_path, language, pid):
 			elif language == "python3":
 				subprocess.check_output("python3 %s" % submission_path, shell=True)
 			elif language == "java":
-				subprocess.check_output("java program" % submission_path, shell=True)
+				subprocess.check_output("java program", shell=True)
 		except subprocess.CalledProcessError as e:
 			#log += "Program threw an exception:\n%s\n" % str(e)
 			message = "Program crashed."
