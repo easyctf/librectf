@@ -1,6 +1,5 @@
 from flask.ext.sqlalchemy import SQLAlchemy
 
-import datetime
 import time
 import traceback
 import os
@@ -91,7 +90,7 @@ class Users(db.Model):
 		result = [ ]
 		for a in activity:
 			result.append({
-				"timestamp": datetime.datetime.fromtimestamp(a.timestamp).isoformat() + "Z",
+				"timestamp": utils.isoformat(a.timestamp),
 				"message": str(a)
 			})
 		return result
@@ -106,7 +105,7 @@ class Users(db.Model):
 			if solve.correct == True:
 				n_solved[0] += 1
 				problem = Problems.query.filter_by(pid=solve.pid).first()
-				result["problems"].append({ "title": problem.title, "value": problem.value, "category": problem.category, "date": datetime.datetime.fromtimestamp(float(solve.date)).isoformat() + "Z" })
+				result["problems"].append({ "title": problem.title, "value": problem.value, "category": problem.category, "date": utils.isoformat(float(solve.date)) })
 			n_solved[1] += 1
 		result["correct_submissions"] = n_solved[0]
 		result["total_submissions"] = n_solved[1]
@@ -375,7 +374,7 @@ class Tickets(db.Model):
 			replies.append({
 				"trid": reply.trid,
 				"body": reply.body,
-				"date": datetime.datetime.fromtimestamp(reply.date).isoformat() + "Z",
+				"date": utils.isoformat(reply.date),
 				"uid": uid,
 				"username": username
 			})
@@ -393,7 +392,7 @@ class TicketReplies(db.Model):
 		self.body = body
 		self.author = author
 
-class ProgrammingSubmission(db.Model):
+class ProgrammingSubmissions(db.Model):
 	psid = db.Column(db.Integer, primary_key=True)
 	pid = db.Column(db.String(128), db.ForeignKey("problems.pid"))
 	tid = db.Column(db.Integer, db.ForeignKey("teams.tid"))

@@ -1,7 +1,7 @@
 from flask import current_app as app, Blueprint, request, session
 
 from decorators import api_wrapper, login_required, team_required, WebException
-from models import db, Problems, ProgrammingSubmission, Solves
+from models import db, Problems, ProgrammingSubmissions, Solves
 
 import imp
 import os
@@ -13,6 +13,28 @@ import user
 import utils
 
 blueprint = Blueprint("programming", __name__)
+
+@blueprint.route("/submissions", methods=["GET"])
+@api_wrapper
+@login_required
+@team_required
+def get_submissions():
+	submissions_return = []
+	tid = session.get("tid")
+	submissions = ProgrammingSubmissions.query.filter_by(tid=tid).all()
+	if submissions is not None:
+		counter = 1
+		for submission in submissions:
+			_problem = problem.get_problem(pid=submission.pid).first()
+			submissions_return.append({
+				"title": _problem.title if _problem else "",
+				"message": submission.message,
+				"log": submission.log,
+				"date": utils.isoformat(submission.date),
+				"number": counter
+			})
+			counter += 1
+	return { "success": 1, "submissions": submissions_return }
 
 @blueprint.route("/problems", methods=["GET"])
 @api_wrapper
@@ -70,7 +92,7 @@ def submit_program():
 	open(submission_path, "w").write(submission_contents)
 	message, log = judge(submission_path, language, pid)
 
-	submission = ProgrammingSubmission(pid, tid, submission_path, message, log)
+	submission = ProgrammingSubmissions(pid, tid, submission_path, message, log)
 
 	with app.app_context():
 		if message == "Correct!":
@@ -108,9 +130,9 @@ def judge(submission_path, language, pid):
 		else:
 			message = "Not implemented."
 			return message, log
-	except subprocess.CalledProcessError, e:
-		log += "There was a problem with compiling.\n"
-		log += e.output + "\n"
+	except subprocess.CalledProcessError as e:
+		# TODO: Extract useful error messages from exceptions and add timeout
+		#log += "There was a problem with compiling.\n%s\n" % str(e)
 		message = "There was a problem with compiling."
 
 		return message, log
@@ -143,12 +165,9 @@ def judge(submission_path, language, pid):
 				subprocess.check_output("python3 %s" % submission_path, shell=True)
 			elif language == "java":
 				subprocess.check_output("java program" % submission_path, shell=True)
-		except subprocess.TimeoutExpired:
-			message = "Program timed out."
-			return message, log
-		except subprocess.CalledProcessError, e:
-			log += "Program threw an exception:\n%s" % e
-			log += "Program crashed."
+		except subprocess.CalledProcessError as e:
+			#log += "Program threw an exception:\n%s\n" % str(e)
+			message = "Program crashed."
 			return message, log
 
 		if not os.path.exists(_output):

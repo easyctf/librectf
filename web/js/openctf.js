@@ -305,6 +305,14 @@ app.controller("programmingController", function($controller, $scope, $http, res
 	if (result["success"] == 1) {
 		$scope.data = result;
 	}
+
+	api_call("GET", "/api/programming/submissions", {}, function(result) {
+		if (result["success"] == 1) {
+			$scope.submissions = result["submissions"];
+			$scope.$apply();
+			$(".timeago").timeago();
+		}
+	});
 });
 
 app.controller("setupController", function($controller, $scope, $http, result) {
