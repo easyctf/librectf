@@ -30,7 +30,7 @@ import utils # Prevent import loops
 
 class Users(db.Model):
 	uid = db.Column(db.Integer, unique=True, primary_key=True)
-	tid = db.Column(db.Integer, db.ForeignKey("teams.tid"))
+	tid = db.Column(db.Integer, db.ForeignKey("teams.tid"), default=-1)
 	name = db.Column(db.String(64))
 	username = db.Column(db.String(64), unique=True)
 	username_lower = db.Column(db.String(64), unique=True)
