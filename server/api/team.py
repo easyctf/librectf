@@ -289,6 +289,7 @@ def team_edit():
 			if get_team(teamname_lower=params["new_teamname"].lower()).first() is not None:
 				raise WebException("This team name is taken!")
 			update["teamname"] = params["new_teamname"]
+			update["teamname_lower"] = params["new_teamname"].lower()
 		if params.get("new_school") is not None:
 			update["school"] = params["new_school"]
 		_team.update_info(update)
