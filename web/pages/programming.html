@@ -5,7 +5,7 @@
 			<h4 class="panel-title">Code Editor
 				<div class="pull-right">
 					<select class="form-control" id="language-select" onchange="update_highlighting()">
-						<option value="python">Python 2</option>
+						<option value="python2">Python 2</option>
 						<option value="python3">Python 3</option>
 						<option value="java">Java</option>
 					</select>
@@ -17,9 +17,10 @@
 		</div>
 	</div>
 </div>
+<div id="programming_msg"/>
 <div class="input-group">
 	<select class="form-control" id="problem-select">
-		<option value="pid">Problem name</option>
+		<option ng-repeat="problem in data.problems" ng-value="problem.pid">{{ problem.title }}</option>
 	</select>
 	<span class="input-group-btn">
 		<button class="btn btn-success" type="button" onclick="submit(); return false;">Submit</button>
@@ -43,7 +44,19 @@ var submit = function() {
 	var program = editor.getValue();
 	data["pid"] = pid;
 	data["language"] = language;
-	data["program"] = program;
-	// api_call("POST", "/api/programming/submit", data, function(result) {});
+	data["submission"] = program;
+	api_call("POST", "/api/programming/submit", data, function(result) {
+		if (result["success"] == 1) {
+			display_message("programming_msg", "success", result["message"], function() {
+			});
+		} else {
+			display_message("programming_msg", "danger", result["message"], function() {
+			});
+		}
+	}, function(jqXHR, status, error) {
+		var result = jqXHR["responseText"];
+		display_message("programming_msg", "danger", "Error " + jqXHR["status"] + ": " + result["message"], function() {
+		});
+	});
 }
 </script>

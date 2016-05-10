@@ -392,3 +392,19 @@ class TicketReplies(db.Model):
 		self.htid = htid
 		self.body = body
 		self.author = author
+
+class ProgrammingSubmission(db.Model):
+	psid = db.Column(db.Integer, primary_key=True)
+	pid = db.Column(db.String(128), db.ForeignKey("problems.pid"))
+	tid = db.Column(db.Integer, db.ForeignKey("teams.tid"))
+	date = db.Column(db.Integer, default=utils.get_time_since_epoch())
+	message = db.Column(db.Text)
+	log = db.Column(db.Text)
+	submission_path = db.Column(db.Text)
+
+	def __init__(self, pid, tid, submission_path, message, log):
+		self.pid = pid
+		self.tid = tid
+		self.submission_path = submission_path
+		self.message = message
+		self.log = log

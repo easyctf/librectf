@@ -135,20 +135,21 @@ def problem_submit():
 	pid = request.form["pid"]
 	flag = request.form["flag"]
 	tid = session["tid"]
-	print session
 	_user = user.get_user().first()
 	username = _user.username
 
-	problem = Problems.query.filter_by(pid=pid).first()
+	_problem = Problems.query.filter_by(pid=pid).first()
 	team = Teams.query.filter_by(tid=tid).first()
 	solved = Solves.query.filter_by(pid=pid, tid=tid, correct=1).first()
 	if solved:
 		raise WebException("You already solved this problem.")
 
-	if problem:
+	if _problem:
+		if _problem.category == "Programming":
+			raise WebException("Please submit programming problems using the Programming interface.")
 		grader = imp.load_source("grader", problem.grader)
 		random = None
-		if problem.autogen:
+		if _problem.autogen:
 			random = autogen.get_random(pid, tid)
 		correct, response = grader.grade(random, flag)
 
@@ -173,10 +174,10 @@ def problem_submit():
 				db.session.add(activity)
 
 			db.session.commit()
-			logger.log(__name__, "%s has solved %s by submitting %s" % (team.teamname, problem.title, flag), level=logger.WARNING)
+			logger.log(__name__, "%s has solved %s by submitting %s" % (team.teamname, _problem.title, flag), level=logger.WARNING)
 			return { "success": 1, "message": response }
 		else:
-			logger.log(__name__, "%s has incorrectly submitted %s to %s" % (team.teamname, flag, problem.title), level=logger.WARNING)
+			logger.log(__name__, "%s has incorrectly submitted %s to %s" % (team.teamname, flag, _problem.title), level=logger.WARNING)
 			raise WebException(response)
 
 	else:
