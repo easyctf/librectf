@@ -198,3 +198,34 @@ def judge(submission_path, language, pid):
 	log += "All tests passed."
 
 	return message, log
+
+def validate_judge(judge_contents):
+	tmp_judge = "/tmp/judge.py"
+
+	open(tmp_judge, "w").write(judge_contents)
+
+	try:
+		judge = imp.load_source("judge", tmp_judge)
+	except Exception, e:
+		raise WebException("There is a syntax error in the judge: %s" % e)
+
+	try:
+		assert hasattr(judge, "INFILE"), "Judge missing INFILE."
+		assert hasattr(judge, "OUTFILE"), "Judge missing OUTFILE."
+
+		assert hasattr(judge, "TEST_COUNT"), "Judge missing TEST_COUNT."
+
+		assert type(judge.TEST_COUNT) == int, "TEST_COUNT must be an integer."
+		INFILE = "/tmp/%s" % judge.INFILE
+		if os.path.exists(INFILE):
+			os.remove(INFILE)
+
+		correct = judge.generate("/tmp")
+
+		assert correct is not None, "Judge did not generate a valid response."
+
+		assert os.path.exists(INFILE), "generate() did not produce submission input file."
+	except AssertionError, e:
+		raise WebException(e)
+	except Exception, e:
+		raise WebException(e)
