@@ -2,7 +2,7 @@ from flask import Blueprint, jsonify, session, request
 from flask import current_app as app
 from werkzeug import secure_filename
 
-from models import db, Files, Problems, Solves, Teams, Users, UserActivity
+from models import db, Files, Problems, ProgrammingSubmissions, Solves, Teams, Users, UserActivity
 from decorators import admins_only, api_wrapper, login_required, team_required, InternalException, WebException
 
 import hashlib
@@ -82,10 +82,11 @@ def problem_delete():
 	pid = request.form["pid"]
 	problem = Problems.query.filter_by(pid=pid).first()
 	if problem:
+		ProgrammingSubmissions.query.filter_by(pid=pid).delete()
 		Solves.query.filter_by(pid=pid).delete()
 		UserActivity.query.filter_by(pid=pid).delete()
 		Problems.query.filter_by(pid=pid).delete()
-		grader_folder = "/".join(problem.grader.split("/")[:-1])
+		grader_folder = os.path.dirname(problem.grader)
 		shutil.rmtree(grader_folder)
 		db.session.commit()
 		return { "success": 1, "message": "Success!" }
