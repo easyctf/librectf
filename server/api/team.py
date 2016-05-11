@@ -237,6 +237,7 @@ def team_accept_invite_request():
 @api_wrapper
 def team_info():
 	logged_in = user.is_logged_in()
+	my_team = -1
 	in_team = False
 	owner = False
 	_user = None
@@ -248,6 +249,7 @@ def team_info():
 	if logged_in:
 		_user = user.get_user().first()
 		if user.in_team(_user):
+			my_team = _user.tid
 			if "teamname_lower" not in search:
 				search.update({ "tid": _user.tid })
 				in_team = True
@@ -258,6 +260,7 @@ def team_info():
 			in_team = teamdata["tid"] == _user.tid
 			owner = teamdata["captain"] == _user.uid
 		teamdata["in_team"] = in_team
+		teamdata["my_team"] = my_team
 		if in_team:
 			teamdata["is_owner"] = owner
 			if owner:

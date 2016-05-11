@@ -16,7 +16,7 @@
 	}
 </style>
 
-<div ng-show="team['tid'] >= 0">
+<div ng-show="team['tid'] >= 1">
 	<div class="jumbotron">
 		<center>
 			<div ng-show="team['in_team']==true">
@@ -129,7 +129,7 @@
 		</div>
 	</div>
 </div>
-<div ng-show="!(team['tid'] >= 0) && config.navbar['logged_in']==true">
+<div ng-show="team['tid'] < 1 && config.navbar['logged_in']==true && team['my_team']==-1">
 	<div class="page-header">
 		<h1>Team</h1>
 	</div>
@@ -202,7 +202,7 @@
 		</div>
 	</div>
 </div>
-<div ng-show="!(team['tid'] >= 0) && config.navbar['logged_in']!=true">
+<div ng-show="team['tid'] < 1">
 	<div class="page-header">
 		<h1>Team Not Found</h1>
 	</div>
