@@ -16,6 +16,14 @@ def generate_user_link(username):
 def generate_team_link(teamname):
 	return "<a href='/team/%s'>%s</a>" % (teamname, teamname)
 
+bonuses = [
+	[0, 0, 0],
+	[3, 2, 1],
+	[5, 3, 1],
+	[8, 5, 3],
+	[10, 8, 6],
+	[20, 12, 8],
+]
 
 class Config(db.Model):
 	cfid = db.Column(db.Integer, primary_key=True)
@@ -106,7 +114,7 @@ class Users(db.Model):
 			if solve.correct == True:
 				n_solved[0] += 1
 				problem = Problems.query.filter_by(pid=solve.pid).first()
-				result["problems"].append({ "title": problem.title, "value": problem.value, "category": problem.category, "date": datetime.datetime.fromtimestamp(float(solve.date)).isoformat() + "Z" })
+				result["problems"].append({ "title": problem.title, "value": solve.get_value(), "category": problem.category, "date": datetime.datetime.fromtimestamp(float(solve.date)).isoformat() + "Z" })
 			n_solved[1] += 1
 		result["correct_submissions"] = n_solved[0]
 		result["total_submissions"] = n_solved[1]
@@ -180,14 +188,6 @@ class Teams(db.Model):
 		return members
 
 	def points(self):
-		bonuses = [
-			[0, 0, 0],
-			[3, 2, 1],
-			[5, 3, 1],
-			[8, 5, 3],
-			[10, 8, 6],
-			[20, 12, 8],
-		]
 		points = 0
 
 		# TODO: Make this better
@@ -269,6 +269,35 @@ class Teams(db.Model):
 		Teams.query.filter_by(tid=self.tid).update({ "finalized": True })
 		db.session.commit()
 
+	def get_solves(self):
+		solves = Solves.query.filter_by(tid=self.tid, correct=1).all()
+		result = []
+		for solve in solves:
+			prob = Problems.query.filter_by(pid=solve.pid).first()
+			result.append({
+				"date": datetime.datetime.fromtimestamp(float(solve.date)).isoformat() + "Z",
+				"problem": prob.title,
+				"value": solve.get_value()
+			})
+		return result
+
+	def get_info(self):
+		place_number, place = self.place()
+		result = {
+			"tid": self.tid,
+			"teamname": self.teamname,
+			"school": self.school,
+			"place": place,
+			"place_number": place_number,
+			"points": self.points(),
+			"members": self.get_members(),
+			"captain": self.owner,
+			"observer": self.is_observer(),
+			"finalized": self.finalized,
+			"solves": self.get_solves()
+		}
+		return result
+
 class Problems(db.Model):
 	pid = db.Column(db.String(128), primary_key=True, autoincrement=False)
 	title = db.Column(db.String(128))
@@ -320,6 +349,13 @@ class Solves(db.Model):
 		self.tid = tid
 		self.flag = flag
 		self.correct = correct
+
+	def get_value(self):
+		problem = Problems.query.filter_by(pid=self.pid).first()
+		multiplier = 1
+		if self.bonus != -1:
+			multiplier += bonuses[problem.bonus][self.bonus-1]/100.0
+		return problem.value * multiplier
 
 class LoginTokens(db.Model):
 	sid = db.Column(db.String(64), unique=True, primary_key=True)

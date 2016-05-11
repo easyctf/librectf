@@ -347,19 +347,7 @@ def get_team_info(tid=None, teamname=None, teamname_lower=None, owner=None):
 	if team is None:
 		raise WebException("Team not found.")
 
-	place_number, place = team.place()
-	result = {
-		"tid": team.tid,
-		"teamname": team.teamname,
-		"school": team.school,
-		"place": place,
-		"place_number": place_number,
-		"points": team.points(),
-		"members": team.get_members(),
-		"captain": team.owner,
-		"observer": team.is_observer(),
-		"finalized": team.finalized
-	}
+	result = team.get_info()
 	return result
 
 def get_team(tid=None, teamname=None, teamname_lower=None, owner=None):
@@ -386,3 +374,7 @@ def num_teams(include_observers=False):
 	if not include_observers:
 		teamlist = filter(lambda t: not t.is_observer(), teamlist)
 	return len(teamlist)
+
+def team_finalized(team):
+	if team is None: return False
+	return team.finalized == True

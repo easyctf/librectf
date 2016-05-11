@@ -417,6 +417,7 @@ app.controller("adminTeamsController", ["$controller", "$scope", "$http", functi
 			$scope.teams = {};
 		}
 		$scope.$apply();
+		$(".timeago").timeago();
 	});
 }]);
 

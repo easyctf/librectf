@@ -65,7 +65,16 @@ def team_required(f):
 		return f(*args, **kwds)
 	return wrapper
 
+def team_finalize_required(f):
+	@wraps(f)
+	def wrapper(*args, **kwds):
+		if not team.team_finalized(get_team().first()):
+			return { "success": 0, "message": "Your team must be finalized to view this content!" }
+		return f(*args, **kwds)
+	return wrapper
+
 import user # Must go below api_wrapper to prevent import loops
+import team
 
 def admins_only(f):
 	@wraps(f)

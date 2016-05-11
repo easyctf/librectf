@@ -114,14 +114,7 @@ def admin_settings_update():
 def admin_team_overview():
 	teams_return = []
 	teams = Teams.query.all()
-
-	for team in teams:
-		teams_return.append({
-			"tid": team.tid,
-			"teamname": team.teamname,
-			"members": team.get_members(),
-			"observer": team.is_observer(),
-			"points": team.points()
-		})
+	for _team in teams:
+		teams_return.append(_team.get_info())
 	teams_return.sort(key=itemgetter("points"), reverse=True)
 	return { "success": 1, "teams": teams_return }
