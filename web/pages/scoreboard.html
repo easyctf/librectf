@@ -14,7 +14,7 @@
 	<tbody>
 		<tr ng-repeat="team in scoreboard">
 			<td>{{ team['rank'] }}</td>
-			<td><a ng-href="/team/{{ team['teamname'] }}">{{ team['teamname'] }}</a></td>
+			<td><a ng-href="/team?teamname={{ team['teamname'] }}">{{ team['teamname'] }}</a></td>
 			<td>{{ team['school'] }}</td>
 			<td>{{ team['points'] }}</td>
 		</tr>
