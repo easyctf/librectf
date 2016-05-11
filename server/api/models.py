@@ -358,6 +358,8 @@ class Solves(db.Model):
 		return problem.value * multiplier
 
 class LoginTokens(db.Model):
+	TOKEN_LIFETIME = 5259492
+
 	sid = db.Column(db.String(64), unique=True, primary_key=True)
 	uid = db.Column(db.Integer, db.ForeignKey("users.uid"))
 	username = db.Column(db.String(32), db.ForeignKey("users.username"))
@@ -368,7 +370,7 @@ class LoginTokens(db.Model):
 	ip = db.Column(db.String(16))
 	location = db.Column(db.String(128))
 
-	def __init__(self, uid, username, expiry=int(time.time()) + 5259492, active=True, ua=None, ip=None, location=None):
+	def __init__(self, uid, username, expiry=int(time.time()) + TOKEN_LIFETIME, active=True, ua=None, ip=None, location=None):
 		self.sid = utils.generate_string()
 		self.uid = uid
 		self.username = username
