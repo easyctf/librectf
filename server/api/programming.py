@@ -8,6 +8,7 @@ import os
 import shutil
 import subprocess
 
+import cache
 import problem
 import user
 import utils
@@ -100,12 +101,21 @@ def submit_program():
 
 	submission = ProgrammingSubmissions(pid, tid, submission_path, message, log)
 
+	correct = message == "Correct!"
+
 	with app.app_context():
-		if message == "Correct!":
-			solve = Solves(pid, _user.uid, tid, "PLACEHOLDER", True)
-			db.session.add(solve)
+		solve = Solves(pid, _user.uid, tid, submission_path, correct)
+		db.session.add(solve)
 		db.session.add(submission)
 		db.session.commit()
+
+		if correct:
+			# Wait until after the solve has been added to the database before adding bonus
+			solves = problem.get_solves(pid=pid)
+			solve.bonus = [-1, solves][solves < 3]
+			db.session.add(solve)
+			cache.invalidate_memoization(problem.get_solves, pid)
+			db.session.commit()
 
 	shutil.rmtree(submission_folder)
 

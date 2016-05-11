@@ -162,13 +162,9 @@ def problem_submit():
 
 		if correct:
 			# Wait until after the solve has been added to the database before adding bonus
-			solves = Solves.query.filter_by(pid=pid, correct=1).count()
-			if solves < 4:
-				bonus = solves
-			else:
-				bonus = -1
+			solves = get_solves(pid)
+			solve.bonus = [-1, solves][solves < 3]
 
-			solve.bonus = bonus
 			db.session.add(solve)
 			cache.invalidate_memoization(get_solves, pid)
 
