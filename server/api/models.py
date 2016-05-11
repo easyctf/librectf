@@ -13,7 +13,7 @@ def generate_user_link(username):
 	return "<a href='/profile/%s'>%s</a>" % (username, username)
 
 def generate_team_link(teamname):
-	return "<a href='/team?teamname=%s'>%s</a>" % (teamname, teamname)
+	return "<a href='/team/%s'>%s</a>" % (teamname, teamname)
 
 
 class Config(db.Model):

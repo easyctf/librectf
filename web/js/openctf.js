@@ -116,14 +116,14 @@ app.config(function($routeProvider, $locationProvider) {
 		templateUrl: "pages/team.html",
 		controller: "teamController",
 		resolve: {
-			"result": function($location) {
-				data = {}
-				var teamname = $location.search().teamname;
-				if (teamname) {
-					data["teamname"] = teamname;
-				}
-				return resolve_api_call("GET", "/api/team/info", data);
-			}
+			"result": function() { return resolve_api_call("GET", "/api/team/info", {}); }
+		}
+	})
+	.when("/team/:teamname", {
+		templateUrl: "pages/team.html",
+		controller: "teamController",
+		resolve: {
+			"result": function($route) { return resolve_api_call("GET", "/api/team/info", { "teamname": $route.current.params.teamname }); }
 		}
 	})
 	.when("/admin/problems", {
@@ -331,7 +331,10 @@ app.controller("loginController", function($controller, $scope, $http) {
 	});
 });
 
-app.controller("teamController", function($controller, $scope, $http, result) {
+app.controller("teamController", function($controller, $scope, $http, $routeParams, result) {
+	if (!("teamname" in $routeParams)) {
+		$controller("loginController", { $scope: $scope });
+	}
 	if (result["success"] == 1) {
 		$scope.team = result["team"];
 	}
