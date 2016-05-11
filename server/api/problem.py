@@ -168,7 +168,7 @@ def problem_submit():
 			db.session.add(solve)
 			cache.invalidate_memoization(get_solves, pid)
 
-			if user:
+			if _user:
 				activity = UserActivity(_user.uid, 3, tid=tid, pid=pid)
 				db.session.add(activity)
 

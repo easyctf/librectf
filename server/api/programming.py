@@ -1,7 +1,7 @@
 from flask import current_app as app, Blueprint, request, session
 
 from decorators import api_wrapper, login_required, team_required, WebException
-from models import db, Problems, ProgrammingSubmissions, Solves
+from models import db, Problems, ProgrammingSubmissions, Solves, UserActivity
 
 import imp
 import os
@@ -115,6 +115,11 @@ def submit_program():
 			solve.bonus = [-1, solves][solves < 3]
 			db.session.add(solve)
 			cache.invalidate_memoization(problem.get_solves, pid)
+
+			if _user:
+				activity = UserActivity(_user.uid, 3, tid=tid, pid=pid)
+				db.session.add(activity)
+
 			db.session.commit()
 
 	shutil.rmtree(submission_folder)
