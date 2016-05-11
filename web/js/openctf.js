@@ -319,8 +319,10 @@ app.controller("loginController", function($controller, $scope, $http) {
 });
 
 app.controller("teamController", function($controller, $scope, $http, result) {
+	$scope.found = false;
 	if (result["success"] == 1) {
 		$scope.team = result["team"];
+		$scope.found = true;
 	}
 	onContentLoaded(function() { $(".timeago").timeago(); });
 

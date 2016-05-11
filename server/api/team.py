@@ -273,6 +273,9 @@ def team_info():
 	else:
 		if logged_in:
 			teamdata["invitations"] = _user.get_invitations()
+		else:
+			# Non-logged-in user viewing /team page
+			raise WebException()
 	return { "success": 1, "team": teamdata }
 
 @blueprint.route("/edit", methods=["POST"])
