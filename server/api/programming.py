@@ -46,7 +46,7 @@ def delete_submission():
 def get_submissions():
 	submissions_return = []
 	tid = session.get("tid")
-	submissions = ProgrammingSubmissions.query.filter_by(tid=tid).order_by(ProgrammingSubmissions.date.desc()).all()
+	submissions = ProgrammingSubmissions.query.filter_by(tid=tid).order_by(ProgrammingSubmissions.psid.desc()).all()
 	if submissions is not None:
 		counter = len(submissions)
 		for submission in submissions:
@@ -186,47 +186,39 @@ def judge(submission_path, language, pid):
 		log += "Could not load judge.\n"
 		return message, log
 
-	_input = os.path.join(submission_root, judge.INFILE)
-	_output = os.path.join(submission_root, judge.OUTFILE)
 	for i in range(judge.TEST_COUNT):
 		log += "Running test #%s\n" % i
 
 		try:
-			correct = judge.generate(submission_root)
+			_input, correct = judge.generate()
 		except Exception, e:
 			message = "An error occured. Please notify an admin immediately."
 			log += "Could not generate input for test #%s.\n" % i
 			return message, log
 
 		try:
+			command = ""
 			if language == "python2":
-				subprocess.check_output("python %s" % submission_path, shell=True)
+				command = "python %s <<< \"%s\"" % (submission_path, _input)
 			elif language == "python3":
-				subprocess.check_output("python3 %s" % submission_path, shell=True)
+				command = "python3 %s <<< \"%s\"" % (submission_path, _input)
 			elif language == "java":
-				subprocess.check_output("java program", shell=True)
+				command = "java program <<< \"%s\"" % _input
+			output = subprocess.check_output(command, shell=True, executable="/bin/bash").strip()
 		except subprocess.CalledProcessError as e:
 			#log += "Program threw an exception:\n%s\n" % str(e)
 			message = "Program crashed."
 			return message, log
 
-		if not os.path.exists(_output):
-			message = "Your program did not produce an output."
-			log += "Could not find program output.\n"
-			return message, log
-
-		program_output = open(_output, "r").read()
-		if correct != program_output:
+		if correct != output:
 			message = "Incorrect."
 			log += "Test #%s failed.\n\n" % i
-			log += "Input:\n%s\n\n" % open(_input, "r").read()
-			log += "Output:\n%s\n\n" % program_output
+			log += "Input:\n%s\n\n" % _input
+			log += "Output:\n%s\n\n" % output
 			log += "Expected:\n%s\n\n" % correct
 			return message, log
 		else:
 			log += "Test #%s passed!\n" % i
-
-		os.remove(_output)
 
 	message = "Correct!"
 	log += "All tests passed."
@@ -244,21 +236,14 @@ def validate_judge(judge_contents):
 		raise WebException("There is a syntax error in the judge: %s" % e)
 
 	try:
-		assert hasattr(judge, "INFILE"), "Judge missing INFILE."
-		assert hasattr(judge, "OUTFILE"), "Judge missing OUTFILE."
-
 		assert hasattr(judge, "TEST_COUNT"), "Judge missing TEST_COUNT."
 
 		assert type(judge.TEST_COUNT) == int, "TEST_COUNT must be an integer."
-		INFILE = "/tmp/%s" % judge.INFILE
-		if os.path.exists(INFILE):
-			os.remove(INFILE)
 
-		correct = judge.generate("/tmp")
+		_input, correct = judge.generate()
 
+		assert _input is not None, "Judge did not generate valid input."
 		assert correct is not None, "Judge did not generate a valid response."
-
-		assert os.path.exists(INFILE), "generate() did not produce submission input file."
 	except AssertionError, e:
 		raise WebException(e)
 	except Exception, e:
