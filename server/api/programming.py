@@ -191,7 +191,7 @@ def judge(submission_path, language, pid):
 		log += "Could not load judge.\n"
 		return message, log
 
-	for i in range(judge.TEST_COUNT):
+	for i in range(1, judge.TEST_COUNT + 1):
 		log += "Running test #%s\n" % i
 
 		try:
