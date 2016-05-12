@@ -145,10 +145,18 @@ def submit_program():
 				db.session.add(activity)
 
 			db.session.commit()
+		new = {
+			"psid": submission.psid,
+			"title": _problem.title,
+			"message": submission.message,
+			"log": submission.log,
+			"date": utils.isoformat(submission.date),
+			"number": submission.number
+		}
 
 	shutil.rmtree(submission_folder)
 
-	return { "success": message == "Correct!", "message": message }
+	return { "success": message == "Correct!", "message": message , "new_submission": new }
 
 def judge(submission_path, language, pid):
 

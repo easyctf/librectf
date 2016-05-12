@@ -313,6 +313,32 @@ app.controller("programmingController", function($controller, $scope, $http, res
 			$(".timeago").timeago();
 		}
 	});
+	$scope.submit = function() {
+		data = {};
+		var pid = $("#problem-select").val();
+		var language = $("#language-select").val();
+		var editor = ace.edit("editor");
+		var program = editor.getValue();
+		data["pid"] = pid;
+		data["language"] = language;
+		data["submission"] = program;
+		api_call("POST", "/api/programming/submit", data, function(result) {
+			if (result["success"] == 1) {
+				display_message("programming_msg", "success", result["message"], function() { });
+			} else {
+				display_message("programming_msg", "danger", result["message"], function() { });
+			}
+
+			$scope.submissions.unshift(result["new_submission"]);
+			$scope.$apply();
+			$(".timeago").timeago();
+
+		}, function(jqXHR, status, error) {
+			var result = jqXHR["responseText"];
+			display_message("programming_msg", "danger", "Error " + jqXHR["status"] + ": " + result["message"], function() {
+			});
+		});
+	}
 });
 
 app.controller("setupController", function($controller, $scope, $http, result) {

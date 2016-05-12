@@ -23,7 +23,7 @@
 		<option ng-repeat="problem in data.problems" ng-value="problem.pid">{{ problem.title }}</option>
 	</select>
 	<span class="input-group-btn">
-		<button class="btn btn-success" type="button" onclick="submit(); return false;">Submit</button>
+		<button class="btn btn-success" type="button" ng-click="submit();">Submit</button>
 	</span>
 </div>
 <br>
@@ -74,29 +74,6 @@ var update_highlighting = function() {
 	editor.getSession().setMode("ace/mode/" + language);
 }
 
-var submit = function() {
-	data = {};
-	var pid = $("#problem-select").val();
-	var language = $("#language-select").val();
-	var editor = ace.edit("editor");
-	var program = editor.getValue();
-	data["pid"] = pid;
-	data["language"] = language;
-	data["submission"] = program;
-	api_call("POST", "/api/programming/submit", data, function(result) {
-		if (result["success"] == 1) {
-			display_message("programming_msg", "success", result["message"], function() {
-			});
-		} else {
-			display_message("programming_msg", "danger", result["message"], function() {
-			});
-		}
-	}, function(jqXHR, status, error) {
-		var result = jqXHR["responseText"];
-		display_message("programming_msg", "danger", "Error " + jqXHR["status"] + ": " + result["message"], function() {
-		});
-	});
-}
 var delete_submission = function(psid) {
 	data = { "psid": psid };
 	var button = "#" + psid;
