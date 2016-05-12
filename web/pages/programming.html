@@ -41,7 +41,8 @@
 			<td><time class="timeago" datetime="{{ submission.date }}"/></td>
 			<td>{{ submission.title }}</td>
 			<td>{{ submission.message }}</td>
-			<td><button type="button" class="btn btn-sq-xs" data-toggle="modal" data-target="#{{ submission.number }}"><i class="fa fa-info-circle"></i></button></td>
+			<td><button type="button" class="btn btn-sq-xs" data-toggle="modal" data-target="#{{ submission.number }}"><i class="fa fa-info-circle"/></button></td>
+			<td><button type="button" class="btn btn-sq-xs" id="{{ submission.psid }}" onclick="delete_submission(this.id); return false;"><i class="fa fa-trash-o"/></button></td>
 		</tr>
 	</tbody>
 </table>
@@ -93,6 +94,28 @@ var submit = function() {
 	}, function(jqXHR, status, error) {
 		var result = jqXHR["responseText"];
 		display_message("programming_msg", "danger", "Error " + jqXHR["status"] + ": " + result["message"], function() {
+		});
+	});
+}
+var delete_submission = function(psid) {
+	data = { "psid": psid };
+	var button = "#" + psid;
+	var tr = $(button).closest("tr");
+	$(button).attr("disabled", "disabled");
+	api_call("POST", "/api/programming/submissions/delete", data, function(result) {
+		if (result["success"] == 1) {
+			tr.find("td").fadeOut("fast", function() {
+				tr.remove();
+			});
+		} else {
+			display_message("programming_msg", "danger", result["message"], function() {
+				$(button).removeAttr("disabled");
+			});
+
+		}
+	}, function(jqXHR, status, error) {
+		var result = jqXHR["responseText"];
+		display_message("programming_msg", "danger", "Error " + jqXHR["status"] + ": " + jqXHR["message"], function() {
 		});
 	});
 }

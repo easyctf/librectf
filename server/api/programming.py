@@ -21,6 +21,19 @@ extensions = {
 	"java": "java"
 }
 
+@blueprint.route("/submissions/delete", methods=["POST"])
+@api_wrapper
+@login_required
+@team_required
+def delete_submission():
+	psid = request.form.get("psid")
+	ProgrammingSubmissions.query.filter_by(psid=psid).delete()
+
+	with app.app_context():
+		db.session.commit()
+
+	return { "success": 1, "message": "Success!" }
+
 @blueprint.route("/submissions", methods=["GET"])
 @api_wrapper
 @login_required
@@ -34,6 +47,7 @@ def get_submissions():
 		for submission in submissions:
 			_problem = problem.get_problem(pid=submission.pid).first()
 			submissions_return.append({
+				"psid": submission.psid,
 				"title": _problem.title if _problem else "",
 				"message": submission.message,
 				"log": submission.log,
