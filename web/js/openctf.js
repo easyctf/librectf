@@ -69,7 +69,10 @@ app.config(function($routeProvider, $locationProvider) {
 	})
 	.when("/programming", {
 		templateUrl: "pages/programming.html",
-		controller: "programmingController"
+		controller: "programmingController",
+		resolve: {
+			"result": function() { return resolve_api_call("GET", "/api/programming/problems", {}); }
+		}
 	})
 	.when("/register", {
 		templateUrl: "pages/register.html",
@@ -288,7 +291,7 @@ app.controller("profileController", function($controller, $scope, $http, $routeP
 });
 
 
-app.controller("programmingController", function($controller, $scope, $http) {
+app.controller("programmingController", function($controller, $scope, $http, result) {
 	$controller("loginController", { $scope: $scope });
 	$("#editor").height($(window).height()/2);
 	var grader = ace.edit("editor");
@@ -299,7 +302,17 @@ app.controller("programmingController", function($controller, $scope, $http) {
 		fontSize: "10pt"
 	});
 	grader.setValue("");
+	if (result["success"] == 1) {
+		$scope.data = result;
+	}
 
+	api_call("GET", "/api/programming/submissions", {}, function(result) {
+		if (result["success"] == 1) {
+			$scope.submissions = result["submissions"];
+			$scope.$apply();
+			$(".timeago").timeago();
+		}
+	});
 });
 
 app.controller("setupController", function($controller, $scope, $http, result) {

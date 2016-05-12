@@ -26,9 +26,9 @@
 							<span class="input-group-btn">
 								<input onclick="toggle_hint(this.closest('form').id); return false;" type="button" class="btn btn-primary" value="Hint"/>
 							</span>
-							<input class="form-control" name="flag" ng-attr-placeholder="{{ problem['solved'] == 'Solved' ? 'Already solved!' : 'Enter flag...' }}" autocomplete="off" ng-disabled="problem['solved']=='Solved'" />
+							<input ng-show="problem.category!='Programming'" class="form-control" name="flag" ng-attr-placeholder="{{ problem['solved'] == 'Solved' ? 'Already solved!' : 'Enter flag...' }}" autocomplete="off" ng-disabled="problem['solved']=='Solved'||problem.category=='Programming'" />
 							<span class="input-group-btn">
-								<input type="submit" class="btn btn-success" value="Submit"/>
+								<input ng-show="problem.category!='Programming'" type="submit" class="btn btn-success" value="Submit"/>
 							</span>
 						</div>
 					</form>

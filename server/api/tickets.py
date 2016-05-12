@@ -3,7 +3,6 @@ from flask import current_app as app
 from decorators import api_wrapper, login_required, WebException
 from models import db, Tickets, TicketReplies
 
-import datetime
 import user
 import utils
 blueprint = Blueprint("tickets", __name__)
@@ -127,7 +126,7 @@ def ticket_data():
 
 			d = {
 				"htid": ticket.htid,
-				"date": datetime.datetime.fromtimestamp(ticket.date).isoformat() + "Z",
+				"date": utils.isoformat(ticket.date),
 				"opened": ticket.opened,
 				"username": username,
 				"uid": uid,

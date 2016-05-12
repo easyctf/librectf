@@ -5,7 +5,7 @@
 			<h4 class="panel-title">Code Editor
 				<div class="pull-right">
 					<select class="form-control" id="language-select" onchange="update_highlighting()">
-						<option value="python">Python 2</option>
+						<option value="python2">Python 2</option>
 						<option value="python3">Python 3</option>
 						<option value="java">Java</option>
 					</select>
@@ -17,13 +17,51 @@
 		</div>
 	</div>
 </div>
+<div id="programming_msg"/>
 <div class="input-group">
 	<select class="form-control" id="problem-select">
-		<option value="pid">Problem name</option>
+		<option ng-repeat="problem in data.problems" ng-value="problem.pid">{{ problem.title }}</option>
 	</select>
 	<span class="input-group-btn">
 		<button class="btn btn-success" type="button" onclick="submit(); return false;">Submit</button>
 	</span>
+</div>
+<br>
+<table class="table table-striped">
+	<thead>
+		<th>Submission #</th>
+		<th>Date</th>
+		<th>Problem title</th>
+		<th>Message</th>
+		<th>Log</th>
+	</thead>
+	<tbody>
+		<tr ng-repeat="submission in submissions">
+			<td>{{ submission.number }}</td>
+			<td><time class="timeago" datetime="{{ submission.date }}"/></td>
+			<td>{{ submission.title }}</td>
+			<td>{{ submission.message }}</td>
+			<td><button type="button" class="btn btn-sq-xs" data-toggle="modal" data-target="#{{ submission.number }}"><i class="fa fa-info-circle"></i></button></td>
+		</tr>
+	</tbody>
+</table>
+<div ng-repeat="submission in submissions">
+	<div id="{{ submission.number }}" class="modal fade" role="dialog">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<button type="button" class="close" data-dismiss="modal">&times;</button>
+					<h4 class="modal-title">[{{ submission.number }}] Log for "{{ submission.title }}"</h4>
+				</div>
+				<div class="modal-body">
+					<pre>{{ submission.log }}</pre>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
 </div>
 <script>
 var update_highlighting = function() {
@@ -43,7 +81,19 @@ var submit = function() {
 	var program = editor.getValue();
 	data["pid"] = pid;
 	data["language"] = language;
-	data["program"] = program;
-	// api_call("POST", "/api/programming/submit", data, function(result) {});
+	data["submission"] = program;
+	api_call("POST", "/api/programming/submit", data, function(result) {
+		if (result["success"] == 1) {
+			display_message("programming_msg", "success", result["message"], function() {
+			});
+		} else {
+			display_message("programming_msg", "danger", result["message"], function() {
+			});
+		}
+	}, function(jqXHR, status, error) {
+		var result = jqXHR["responseText"];
+		display_message("programming_msg", "danger", "Error " + jqXHR["status"] + ": " + result["message"], function() {
+		});
+	});
 }
 </script>
