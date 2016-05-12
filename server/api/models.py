@@ -37,7 +37,6 @@ class Users(db.Model):
 	password = db.Column(db.String(128))
 	admin = db.Column(db.Boolean)
 	utype = db.Column(db.Integer)
-	tid = db.Column(db.Integer)
 	registertime = db.Column(db.Integer)
 	reset_token = db.Column(db.String(64))
 	otp_secret = db.Column(db.String(16))
@@ -400,10 +399,12 @@ class ProgrammingSubmissions(db.Model):
 	message = db.Column(db.Text)
 	log = db.Column(db.Text)
 	submission_path = db.Column(db.Text)
+	number = db.Column(db.Integer)
 
-	def __init__(self, pid, tid, submission_path, message, log):
+	def __init__(self, pid, tid, submission_path, message, log, number):
 		self.pid = pid
 		self.tid = tid
 		self.submission_path = submission_path
 		self.message = message
 		self.log = log
+		self.number = number

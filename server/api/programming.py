@@ -48,7 +48,6 @@ def get_submissions():
 	tid = session.get("tid")
 	submissions = ProgrammingSubmissions.query.filter_by(tid=tid).order_by(ProgrammingSubmissions.psid.desc()).all()
 	if submissions is not None:
-		counter = len(submissions)
 		for submission in submissions:
 			_problem = problem.get_problem(pid=submission.pid).first()
 			submissions_return.append({
@@ -57,9 +56,8 @@ def get_submissions():
 				"message": submission.message,
 				"log": submission.log,
 				"date": utils.isoformat(submission.date),
-				"number": counter
+				"number": submission.number
 			})
-			counter -= 1
 	return { "success": 1, "submissions": submissions_return }
 
 @blueprint.route("/problems", methods=["GET"])
@@ -118,7 +116,14 @@ def submit_program():
 	open(submission_path, "w").write(submission_contents)
 	message, log = judge(submission_path, language, pid)
 
-	submission = ProgrammingSubmissions(pid, tid, submission_path, message, log)
+	number = ProgrammingSubmissions.query.filter_by(tid=tid).with_entities(ProgrammingSubmissions.number).order_by(ProgrammingSubmissions.number.desc()).first()
+
+	if number is None:
+		number = 1
+	else:
+		number = number[0] + 1
+
+	submission = ProgrammingSubmissions(pid, tid, submission_path, message, log, number)
 
 	correct = message == "Correct!"
 
