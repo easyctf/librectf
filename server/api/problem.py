@@ -45,7 +45,7 @@ def problem_add():
 	if category == "Programming":
 		programming.validate_judge(grader_contents)
 	else:
-		validate_grader(grader_contents, autogen=autogen)
+		validate_grader(grader_contents, autogen=int(autogen))
 
 	grader_folder = os.path.join(app.config["GRADER_FOLDER"], pid)
 	if not os.path.exists(grader_folder):
@@ -119,7 +119,7 @@ def problem_update():
 		if category == "Programming":
 			programming.validate_judge(grader_contents)
 		else:
-			validate_grader(grader_contents, autogen=autogen)
+			validate_grader(grader_contents, autogen=int(autogen))
 
 		with open(problem.grader, "w") as grader:
 			grader.write(grader_contents)

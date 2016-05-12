@@ -27,9 +27,14 @@ extensions = {
 @team_required
 def delete_submission():
 	psid = request.form.get("psid")
-	ProgrammingSubmissions.query.filter_by(psid=psid).delete()
+	tid = session.get("tid")
+	result = ProgrammingSubmissions.query.filter_by(psid=psid, tid=tid)
+
+	if result.first() is None:
+		raise WebException("Submission does not exist.")
 
 	with app.app_context():
+		result.delete()
 		db.session.commit()
 
 	return { "success": 1, "message": "Success!" }
@@ -41,9 +46,9 @@ def delete_submission():
 def get_submissions():
 	submissions_return = []
 	tid = session.get("tid")
-	submissions = ProgrammingSubmissions.query.filter_by(tid=tid).all()
+	submissions = ProgrammingSubmissions.query.filter_by(tid=tid).order_by(ProgrammingSubmissions.date.desc()).all()
 	if submissions is not None:
-		counter = 1
+		counter = len(submissions)
 		for submission in submissions:
 			_problem = problem.get_problem(pid=submission.pid).first()
 			submissions_return.append({
@@ -54,7 +59,7 @@ def get_submissions():
 				"date": utils.isoformat(submission.date),
 				"number": counter
 			})
-			counter += 1
+			counter -= 1
 	return { "success": 1, "submissions": submissions_return }
 
 @blueprint.route("/problems", methods=["GET"])
