@@ -50,15 +50,13 @@ def verify_email():
 		raise WebException("Invalid token.")
 	# Request to verify email
 	elif request.method == "POST":
-		username = session.get("username")
-		user = get_user(username=username)
+		user = get_user().first()
 		if user is None:
 			raise WebException("User with that username does not exist.")
 
-		user = user.first()
 		if user.email_verified:
 			raise WebException("Email is already verified.")
-		
+
 		token = utils.generate_string(length=64)
 		user.email_token = token
 		current_session = db.session.object_session(user)
@@ -351,7 +349,7 @@ def user_twofactor_verify():
 	if "token" not in params:
 		raise WebException("Invalid token.")
 	token = params.get("token")
-	
+
 	if not(_user.verify_totp(int(token))):
 		raise WebException("Invalid token. Current server time: " + time.strftime("%Y-%m-%d %H:%M:%S"))
 	with app.app_context():
@@ -502,7 +500,8 @@ def create_login_token(username):
 		session["sid"] = token.sid
 		session["username"] = token.username
 		session["admin"] = user.admin == True
-		if user.tid is not None and user.tid >= 0:
+		session.permanent = True
+		if user.tid is not None:
 			session["tid"] = user.tid
 
 	return True

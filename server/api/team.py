@@ -249,6 +249,7 @@ def team_accept_invite_request():
 @api_wrapper
 def team_info():
 	logged_in = user.is_logged_in()
+	my_team = -1
 	in_team = False
 	owner = False
 	_user = None
@@ -260,6 +261,7 @@ def team_info():
 	if logged_in:
 		_user = user.get_user().first()
 		if user.in_team(_user):
+			my_team = _user.tid
 			if "teamname_lower" not in search:
 				search.update({ "tid": _user.tid })
 				in_team = True
@@ -270,6 +272,7 @@ def team_info():
 			in_team = teamdata["tid"] == _user.tid
 			owner = teamdata["captain"] == _user.uid
 		teamdata["in_team"] = in_team
+		teamdata["my_team"] = my_team
 		if in_team:
 			teamdata["is_owner"] = owner
 			if owner:
@@ -282,6 +285,11 @@ def team_info():
 	else:
 		if logged_in:
 			teamdata["invitations"] = _user.get_invitations()
+			teamdata["my_team"] = my_team
+			teamdata["tid"] = -1
+		else:
+			# Non-logged-in user viewing /team page
+			raise WebException()
 	return { "success": 1, "team": teamdata }
 
 @blueprint.route("/edit", methods=["POST"])
@@ -303,6 +311,7 @@ def team_edit():
 			if get_team(teamname_lower=params["new_teamname"].lower()).first() is not None:
 				raise WebException("This team name is taken!")
 			update["teamname"] = params["new_teamname"]
+			update["teamname_lower"] = params["new_teamname"].lower()
 		if params.get("new_school") is not None:
 			update["school"] = params["new_school"]
 		_team.update_info(update)

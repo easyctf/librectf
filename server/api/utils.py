@@ -18,6 +18,9 @@ __check_email_format = lambda email: re.match(".+@.+\..{2,}", email) is not None
 __check_ascii = lambda s: all(c in string.printable for c in s)
 __check_alphanumeric = lambda s: all(c in string.digits + string.ascii_uppercase + string.ascii_lowercase for c in s)
 
+def isoformat(seconds):
+	return datetime.datetime.fromtimestamp(seconds).isoformat() + "Z"
+
 def unix_time_seconds(dt):
 	epoch = datetime.datetime.utcfromtimestamp(0)
 	return (dt - epoch).total_seconds()
@@ -132,6 +135,9 @@ def is_ctf_time():
 		return start < time < end
 
 	if start < time and end == 0:
+		return True
+
+	if time < end and start == 0:
 		return True
 
 	return False

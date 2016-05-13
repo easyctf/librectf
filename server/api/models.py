@@ -1,6 +1,5 @@
 from flask.ext.sqlalchemy import SQLAlchemy
 
-import datetime
 import time
 import traceback
 import os
@@ -14,7 +13,7 @@ def generate_user_link(username):
 	return "<a href='/profile/%s'>%s</a>" % (username, username)
 
 def generate_team_link(teamname):
-	return "<a href='/team/%s'>%s</a>" % (teamname, teamname)
+	return "<a href='/team?teamname=%s'>%s</a>" % (teamname, teamname)
 
 bonuses = [
 	[0, 0, 0],
@@ -38,7 +37,7 @@ import utils # Prevent import loops
 
 class Users(db.Model):
 	uid = db.Column(db.Integer, unique=True, primary_key=True)
-	tid = db.Column(db.Integer, db.ForeignKey("teams.tid"))
+	tid = db.Column(db.Integer, default=-1)
 	name = db.Column(db.String(64))
 	username = db.Column(db.String(64), unique=True)
 	username_lower = db.Column(db.String(64), unique=True)
@@ -46,7 +45,6 @@ class Users(db.Model):
 	password = db.Column(db.String(128))
 	admin = db.Column(db.Boolean)
 	utype = db.Column(db.Integer)
-	tid = db.Column(db.Integer)
 	registertime = db.Column(db.Integer)
 	reset_token = db.Column(db.String(64))
 	otp_secret = db.Column(db.String(16))
@@ -99,7 +97,7 @@ class Users(db.Model):
 		result = [ ]
 		for a in activity:
 			result.append({
-				"timestamp": datetime.datetime.fromtimestamp(a.timestamp).isoformat() + "Z",
+				"timestamp": utils.isoformat(a.timestamp),
 				"message": str(a)
 			})
 		return result
@@ -114,7 +112,7 @@ class Users(db.Model):
 			if solve.correct == True:
 				n_solved[0] += 1
 				problem = Problems.query.filter_by(pid=solve.pid).first()
-				result["problems"].append({ "title": problem.title, "value": solve.get_value(), "category": problem.category, "date": datetime.datetime.fromtimestamp(float(solve.date)).isoformat() + "Z" })
+				result["problems"].append({ "title": problem.title, "value": solve.get_value(), "category": problem.category, "date": utils.isoformat(float(solve.date)) })
 			n_solved[1] += 1
 		result["correct_submissions"] = n_solved[0]
 		result["total_submissions"] = n_solved[1]
@@ -396,7 +394,7 @@ class TeamInvitations(db.Model):
 class Tickets(db.Model):
 	htid = db.Column(db.Integer, primary_key=True)
 	date = db.Column(db.Integer, default=utils.get_time_since_epoch())
-	opened = db.Column(db.Boolean, default=False)
+	opened = db.Column(db.Boolean, default=True)
 	author = db.Column(db.Integer, db.ForeignKey("users.uid"))
 	title = db.Column(db.Text)
 	body = db.Column(db.Text)
@@ -408,12 +406,20 @@ class Tickets(db.Model):
 
 	def get_replies(self):
 		replies = []
-		for reply in TicketReplies.query.filter_by(htid=self.thid).all():
+		for reply in TicketReplies.query.filter_by(htid=self.htid).all():
+			uid = reply.author
+			user = Users.query.filter_by(uid=uid).first()
+			if user is not None:
+				username = user.username
+			else:
+				username = ""
+
 			replies.append({
 				"trid": reply.trid,
 				"body": reply.body,
-				"date": reply.date,
-				"author": reply.author
+				"date": utils.isoformat(reply.date),
+				"uid": uid,
+				"username": username
 			})
 		return replies
 
@@ -424,6 +430,25 @@ class TicketReplies(db.Model):
 	author = db.Column(db.Integer, db.ForeignKey("users.uid"))
 	body = db.Column(db.Text)
 
-	def __init__(self, body, author):
+	def __init__(self, htid, body, author):
+		self.htid = htid
 		self.body = body
 		self.author = author
+
+class ProgrammingSubmissions(db.Model):
+	psid = db.Column(db.Integer, primary_key=True)
+	pid = db.Column(db.String(128), db.ForeignKey("problems.pid"))
+	tid = db.Column(db.Integer, db.ForeignKey("teams.tid"))
+	date = db.Column(db.Integer, default=utils.get_time_since_epoch())
+	message = db.Column(db.Text)
+	log = db.Column(db.Text)
+	submission_path = db.Column(db.Text)
+	number = db.Column(db.Integer)
+
+	def __init__(self, pid, tid, submission_path, message, log, number):
+		self.pid = pid
+		self.tid = tid
+		self.submission_path = submission_path
+		self.message = message
+		self.log = log
+		self.number = number

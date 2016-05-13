@@ -4,6 +4,7 @@ import autogen
 import logger
 import models
 import problem
+import programming
 import stats
 import team
 import tickets

@@ -5,7 +5,6 @@ from models import db, Tickets, TicketReplies
 
 import user
 import utils
-
 blueprint = Blueprint("tickets", __name__)
 
 @blueprint.route("/create", methods=["POST"])
@@ -18,12 +17,11 @@ def create_ticket():
 	body = params.get("body")
 	username = session.get("username")
 
-	result = user.get_user(username=username)
-	if result is None:
+	_user = user.get_user().first()
+	if _user is None:
 		raise WebException("User does not exist.")
 
-	user = result.first()
-	ticket = Tickets(title, body, user.uid)
+	ticket = Tickets(title, body, _user.uid)
 	with app.app_context():
 		db.session.add(ticket)
 		db.session.commit()
@@ -38,9 +36,10 @@ def close_ticket():
 
 	htid = params.get("htid")
 
-	result = get_ticket(htid=htid)
-	if result is None: raise WebException("Ticket does not exist.") 
-	ticket = result.first()
+	ticket = get_ticket(htid=htid).first()
+	if ticket is None:
+		raise WebException("Ticket does not exist.")
+
 	ticket.opened = False
 	with app.app_context():
 		db.session.add(ticket)
@@ -56,11 +55,10 @@ def open_ticket():
 
 	htid = params.get("htid")
 
-	result = get_ticket(htid=htid)
-	if result is None:
+	ticket = get_ticket(htid=htid).first()
+	if ticket is None:
 		raise WebException("Ticket does not exist.")
 
-	ticket = result.first()
 	ticket.opened = True
 	with app.app_context():
 		db.session.add(ticket)
@@ -68,36 +66,87 @@ def open_ticket():
 
 	return { "success": 1, "message": "Ticket opened." }
 
-@blueprint.route("/data", methods=["GET"])
-@blueprint.route("/data/<htid>", methods=["GET"])
+@blueprint.route("/reply", methods=["POST"])
 @login_required
 @api_wrapper
-def ticket_data(htid=None):
-	data = []
-	result = user.get_user().first()
+def reply_to_ticket():
+	params = utils.flat_multi(request.form)
 
-	if result is None:
+	htid = params.get("htid")
+	body = params.get("body")
+
+	_user = user.get_user().first()
+	if _user is None:
 		raise WebException("User does not exist.")
 
+	reply = TicketReplies(htid, body, _user.uid)
+	with app.app_context():
+		db.session.add(reply)
+		db.session.commit()
+
+	return { "success": 1, "message": "" }
+
+@blueprint.route("/data", methods=["GET"])
+@login_required
+@api_wrapper
+def ticket_data():
+	opened = []
+	closed = []
+
+	params = utils.flat_multi(request.args)
+	htid = params.get("htid")
+
 	if htid is not None:
-		result = get_ticket(htid=htid)
+		result = get_ticket(htid=htid).first()
 	elif user.is_admin():
-		result = get_ticket()
+		result = get_ticket().all()
 	else:
-		result = get_ticket(author=result.uid)
+		_user = user.get_user().first()
+
+		if _user is None:
+			raise WebException("User does not exist.")
+
+		result = get_ticket(author=_user.uid).all()
 
 	if result is not None:
-		tickets = result.all()
+		if htid is not None:
+			tickets = [result]
+		else:
+			tickets = result
+
 		for ticket in tickets:
-			data.append({
+			tmp = user.get_user(uid=ticket.author).first()
+
+			if tmp is not None:
+				username = tmp.username
+				uid = tmp.uid
+			else:
+				username = ""
+				uid = ""
+
+			d = {
 				"htid": ticket.htid,
-				"date": ticket.date,
+				"date": utils.isoformat(ticket.date),
 				"opened": ticket.opened,
-				"author": ticket.author,
+				"username": username,
+				"uid": uid,
 				"title": ticket.title,
 				"body": ticket.body,
 				"replies": ticket.get_replies()
-			})
+			}
+
+			if htid is None:
+				if d["opened"] == True:
+					opened.append(d)
+				else:
+					closed.append(d)
+			else:
+				data = d
+	else:
+		data = {}
+
+	if htid is None:
+		data = [opened, closed]
 
 	return { "success": 1, "data": data }
 
@@ -110,7 +159,5 @@ def get_ticket(htid=None, author=None, opened=None):
 	if opened is not None:
 		match.update({ "opened": opened })
 	with app.app_context():
-		if len(match) == 0:
-			return None
 		result = Tickets.query.filter_by(**match)
 		return result

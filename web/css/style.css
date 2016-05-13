@@ -190,3 +190,8 @@ li a, .navbar-brand {
   text-align: left;
   vertical-align: middle;
 }
+.btn-sq-xs {
+  width: 25px !important;
+  height: 25px !important;
+  padding:2px;
+}

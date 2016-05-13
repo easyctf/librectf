@@ -17,3 +17,4 @@ echo "Installing pip dependencies..."
 pip install -r scripts/requirements.txt
 
 mysql -u root -p"$MYSQL_ROOT_PASSWORD" -e "CREATE DATABASE openctf;"
+mysql -u root -p"$MYSQL_ROOT_PASSWORD" -e "CREATE DATABASE openctf_tests;"
