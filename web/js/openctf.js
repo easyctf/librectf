@@ -329,9 +329,11 @@ app.controller("programmingController", function($controller, $scope, $http, res
 				display_message("programming_msg", "danger", result["message"], function() { });
 			}
 
-			$scope.submissions.unshift(result["new_submission"]);
-			$scope.$apply();
-			$(".timeago").timeago();
+			if (result["new_submission"]) {
+				$scope.submissions.unshift(result["new_submission"]);
+				$scope.$apply();
+				$(".timeago").timeago();
+			}
 
 		}, function(jqXHR, status, error) {
 			var result = jqXHR["responseText"];
