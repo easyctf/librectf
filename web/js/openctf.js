@@ -344,6 +344,7 @@ app.controller("programmingController", function($controller, $scope, $http, res
 		if (result["success"] == 1) {
 			$scope.submissions = result["submissions"];
 			$scope.$apply();
+			preselect();
 			$(".timeago").timeago();
 		}
 	});

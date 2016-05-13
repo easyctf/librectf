@@ -275,7 +275,8 @@ class Teams(db.Model):
 			result.append({
 				"date": utils.isoformat(float(solve.date)),
 				"problem": prob.title,
-				"value": solve.get_value()
+				"value": solve.get_value(),
+				"solved_by": Users.query.filter_by(uid=solve.uid).first().username
 			})
 		return result
 

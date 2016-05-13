@@ -71,7 +71,8 @@ def get_problems():
 		for _problem in problems:
 			data.append({
 				"title": _problem.title,
-				"pid": _problem.pid
+				"pid": _problem.pid,
+				"value": _problem.value
 			})
 
 	return { "success": 1, "problems": data }

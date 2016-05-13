@@ -68,15 +68,15 @@
 						<div id="{{ problem['pid'] }}_status" />
 						<form class="form-horizontal" onsubmit="update_problem(this.id); return false;" id="update_{{ problem['pid'] }}">
 							<input type="hidden" name="pid" value="{{ problem['pid'] }}" />
-							<input class="form-control" name="title" value="{{ problem['title'] }}" required/>
+							<input class="form-control" name="title" ng-value="problem['title']" required/>
 							<br>
 							<textarea class="form-control" name="description" required autocomplete="off">{{ problem["description"] }}</textarea>
 							<br>
-							<input class="form-control" name="category" value="{{ problem['category'] }}" required autocomplete="off" />
+							<input class="form-control" name="category" ng-value="problem['category']" required autocomplete="off" />
 							<br>
-							<input class="form-control" name="hint" value="{{ problem['hint'] }}" required autocomplete="off" />
+							<input class="form-control" name="hint" ng-value="problem['hint']" required autocomplete="off" />
 							<br>
-							<input class="form-control" type="number" name="value" value="{{ problem['value'] }}" required autocomplete="off" />
+							<input class="form-control" type="number" name="value" ng-value="problem['value']" required autocomplete="off" />
 							<br>
 							<label for="bonus">Speed bonuses (%)</label>
 							<select class="form-control" id="{{ problem.pid }}_bonus">

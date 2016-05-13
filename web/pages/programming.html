@@ -1,5 +1,8 @@
-<div class="fade_in text-center">
+<div class="fade_in text-center page-header">
 	<h1 class="heading1">Programming</h1>
+</div>
+<div class="row">
+	<div id="programming_msg" />
 	<div class="panel panel-default">
 		<div class="panel-heading clearfix">
 			<h4 class="panel-title">Code Editor
@@ -12,21 +15,21 @@
 				</div>
 			</h4>
 		</div>
-		<br>
 		<div style="text-align: left" class="panel-body" id="editor">
+		</div>
+		<div class="panel-footer">
+			<div class="input-group">
+				<select class="form-control" id="problem-select">
+					<option value="">Select Problem...</option>
+					<option ng-repeat="problem in data.problems" ng-value="problem.pid" title="{{ problem.title }}">{{ problem.title }} - {{ problem.value }} points</option>
+				</select>
+				<span class="input-group-btn">
+					<button class="btn btn-success" type="button" ng-click="submit();">Submit</button>
+				</span>
+			</div>
 		</div>
 	</div>
 </div>
-<div id="programming_msg"/>
-<div class="input-group">
-	<select class="form-control" id="problem-select">
-		<option ng-repeat="problem in data.problems" ng-value="problem.pid">{{ problem.title }}</option>
-	</select>
-	<span class="input-group-btn">
-		<button class="btn btn-success" type="button" ng-click="submit();">Submit</button>
-	</span>
-</div>
-<br>
 <table class="table table-striped">
 	<thead>
 		<th>Submission #</th>
@@ -65,35 +68,48 @@
 	</div>
 </div>
 <script>
-var update_highlighting = function() {
-	var language = $("#language-select").val();
-	if (language == "python3") {
-		language = "python";
-	}
-	var editor = ace.edit("editor");
-	editor.getSession().setMode("ace/mode/" + language);
-}
-
-var delete_submission = function(psid) {
-	data = { "psid": psid };
-	var button = "#" + psid;
-	var tr = $(button).closest("tr");
-	$(button).attr("disabled", "disabled");
-	api_call("POST", "/api/programming/submissions/delete", data, function(result) {
-		if (result["success"] == 1) {
-			tr.find("td").fadeOut("fast", function() {
-				tr.remove();
-			});
-		} else {
-			display_message("programming_msg", "danger", result["message"], function() {
-				$(button).removeAttr("disabled");
-			});
-
+	var update_highlighting = function() {
+		var language = $("#language-select").val();
+		if (language == "python3") {
+			language = "python";
 		}
-	}, function(jqXHR, status, error) {
-		var result = jqXHR["responseText"];
-		display_message("programming_msg", "danger", "Error " + jqXHR["status"] + ": " + jqXHR["message"], function() {
+		var editor = ace.edit("editor");
+		editor.getSession().setMode("ace/mode/" + language);
+	}
+
+	var delete_submission = function(psid) {
+		data = { "psid": psid };
+		var button = "#" + psid;
+		var tr = $(button).closest("tr");
+		$(button).attr("disabled", "disabled");
+		api_call("POST", "/api/programming/submissions/delete", data, function(result) {
+			if (result["success"] == 1) {
+				tr.find("td").fadeOut("fast", function() {
+					tr.remove();
+				});
+			} else {
+				display_message("programming_msg", "danger", result["message"], function() {
+					$(button).removeAttr("disabled");
+				});
+
+			}
+		}, function(jqXHR, status, error) {
+			var result = jqXHR["responseText"];
+			display_message("programming_msg", "danger", "Error " + jqXHR["status"] + ": " + jqXHR["message"], function() {
+			});
 		});
-	});
-}
+	}
+
+	var preselect = function() {
+		if (location.hash.length > 1) {
+			var _problems = $("#problem-select").children();
+			for(var i=0; i<_problems.length; i++) {
+				var _problem = _problems[i];
+				if (_problem.title == location.hash.substring(1)) {
+					$("#problem-select").val(_problem.value).change();
+					break;
+				}
+			}
+		}
+	};
 </script>
