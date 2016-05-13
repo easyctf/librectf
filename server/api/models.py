@@ -74,7 +74,7 @@ class Users(db.Model):
 			self.otp_secret = secret
 			Users.query.filter_by(uid=self.uid).update({ "otp_secret": secret })
 			db.session.commit()
-		service_name = "openctf"
+		service_name = utils.get_ctf_name()
 		return "otpauth://totp/%s:%s?secret=%s&issuer=%s" % (service_name, self.username, self.otp_secret, service_name)
 
 	def verify_totp(self, token):

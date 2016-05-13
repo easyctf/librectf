@@ -350,6 +350,9 @@ def get_team_info(tid=None, teamname=None, teamname_lower=None, owner=None):
 	result = team.get_info()
 	return result
 
+def get_team_of(uid):
+	return get_team(tid=user.get_user(uid=uid).tid).first()
+
 def get_team(tid=None, teamname=None, teamname_lower=None, owner=None):
 	match = {}
 	if teamname != None:

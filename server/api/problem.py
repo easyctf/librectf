@@ -3,7 +3,7 @@ from flask import current_app as app
 from werkzeug import secure_filename
 
 from models import db, Files, Problems, Solves, Teams, Users, UserActivity
-from decorators import admins_only, api_wrapper, login_required, team_required, InternalException, WebException
+from decorators import admins_only, api_wrapper, login_required, team_required, team_finalize_required, InternalException, WebException
 
 import autogen
 import hashlib
@@ -131,6 +131,7 @@ def problem_update():
 @api_wrapper
 @login_required
 @team_required
+@team_finalize_required
 def problem_submit():
 	pid = request.form["pid"]
 	flag = request.form["flag"]
@@ -185,6 +186,8 @@ def problem_submit():
 
 @blueprint.route("/data", methods=["GET"])
 @api_wrapper
+@team_required
+@team_finalize_required
 def problem_data():
 	problems = Problems.query.order_by(Problems.value).all()
 	problems_return = [ ]

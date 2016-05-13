@@ -68,7 +68,7 @@ def team_required(f):
 def team_finalize_required(f):
 	@wraps(f)
 	def wrapper(*args, **kwds):
-		if not team.team_finalized(get_team().first()):
+		if team.get_team(tid=session["tid"]).first().finalized != True:
 			return { "success": 0, "message": "Your team must be finalized to view this content!" }
 		return f(*args, **kwds)
 	return wrapper
