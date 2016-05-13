@@ -241,6 +241,12 @@ app.controller("problemsController", function($controller, $scope, $http) {
 	api_call("GET", "/api/problem/data", {}, function(result) {
 		if (result["success"] == 1) {
 			$scope.problems = result["problems"];
+		} else {
+			display_message("problems_data_msg", "danger", result["message"], function() {
+				if (result["message"].indexOf("finalized") > 0) {
+					location.href = "/team";
+				}
+			});
 		}
 		$scope.$apply();
 	});
@@ -482,6 +488,7 @@ app.controller("adminTeamsController", function($controller, $scope, $http) {
 			$scope.teams = {};
 		}
 		$scope.$apply();
+		$(".timeago").timeago();
 	});
 });
 
@@ -737,6 +744,16 @@ var accept_invitation_request = function(uid) {
 			location.reload(true);
 		}
 	});
+};
+
+var finalize_team = function() {
+	if (confirm("Are you sure you want to finalize your team? You won't be able to make changes or add members after this.")) {
+		api_call("POST", "/api/team/finalize", { }, function(result) {
+			if (result["success"] == 1) {
+				location.reload(true);
+			}
+		});
+	}
 };
 
 // twofactor page
