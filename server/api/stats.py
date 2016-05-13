@@ -18,6 +18,7 @@ def all_teams_stats():
 	result = [ ]
 	count = 0
 	for _team in teams:
+		if _team.finalized != True: continue
 		count += 1
 		result.append({
 			"rank": count,
