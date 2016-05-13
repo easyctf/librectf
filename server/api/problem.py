@@ -188,7 +188,6 @@ def problem_submit():
 @blueprint.route("/data", methods=["GET"])
 @api_wrapper
 @team_required
-@team_finalize_required
 def problem_data():
 	problems = Problems.query.order_by(Problems.value).all()
 	problems_return = [ ]
@@ -224,7 +223,10 @@ def problem_data():
 			except Exception, e:
 				logger.log(__name__, "The grader for \"%s\" has thrown an error: %s" % (problem.title, e))
 		problems_return.append(data)
-	return { "success": 1, "problems": problems_return }
+	if "admin" in session and session["admin"]:
+		return { "success": 1, "problems": problems_return }
+	else:
+		raise WebException("Your team is not finalized.")
 
 @cache.memoize(timeout=120)
 def get_solves(pid):

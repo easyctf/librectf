@@ -15,7 +15,7 @@
 				<form id="{{ team['tid'] }}_form">
 					<p>
 						<button onclick="toggle_finalized(this.closest('form').id); return false;" class="btn btn-warning btn-sm">
-							<span ng-show="team['finalized']==false"><i class="fa fa-fw fa-check"></i> Finalize</span>
+							<span ng-show="team['finalized']!=true"><i class="fa fa-fw fa-check"></i> Finalize</span>
 							<span ng-show="team['finalized']==true"><i class="fa fa-fw fa-ban"></i> Unfinalize</span>
 						</button>
 						<button onclick="delete_team(this.closest('form').id); return false;" class="btn btn-danger btn-sm"><i class="fa fa-fw fa-trash"></i> Delete</button>
