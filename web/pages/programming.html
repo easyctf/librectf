@@ -105,7 +105,7 @@
 			var _problems = $("#problem-select").children();
 			for(var i=0; i<_problems.length; i++) {
 				var _problem = _problems[i];
-				if (_problem.title == location.hash.substring(1)) {
+				if (_problem.title == decodeURIComponent(location.hash.substring(1))) {
 					$("#problem-select").val(_problem.value).change();
 					break;
 				}
