@@ -13,7 +13,7 @@ app.config(function($compileProvider) {
 app.config(function($routeProvider, $locationProvider) {
 	$routeProvider.when("/", {
 		templateUrl: "pages/home.html",
-		controller: "mainController"
+		controller: "homeController"
 	})
 	.when("/about", {
 		templateUrl: "pages/about.html",
@@ -233,6 +233,34 @@ app.controller("mainController", function($scope, $http, $location) {
 app.controller("logoutController", function() {
 	api_call("GET", "/api/user/logout", {}, function(result) {
 		location.href = "/";
+	});
+});
+
+app.controller("homeController", function($controller, $scope, $http) {
+	api_call("GET", "/api/admin/info", {}, function(result) {
+		if (result["success"] == 1) {
+			var now = Date.now() / 1000;
+			var target, state;
+			if (now < parseInt(result["info"]["start_time"])) {
+				target = parseInt(result["info"]["start_time"]) * 1000;
+				state = -1;
+			} else if (now < parseInt(result["info"]["end_time"])) {
+				target = parseInt(result["info"]["end_time"]) * 1000;
+				state = 0;
+			} else {
+				state = 1;
+			}
+			if (state <= 0) {
+				var update_clock = function() {
+					$("#countdown").html(countdown(target).toString() + " until " + (state < 0 ? "start" : "end") + "!");
+					requestAnimationFrame(update_clock);
+				}
+				update_clock();
+				$("#countdown_container").show();
+			}
+		} else {
+		}
+		$scope.$apply();
 	});
 });
 

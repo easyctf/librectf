@@ -85,11 +85,7 @@ def admin_stats_overview():
 @api_wrapper
 @admins_only
 def admin_settings():
-	settings_return = {}
-	settings = Config.query.all()
-	for setting in settings:
-		settings_return[setting.key] = setting.value
-	return { "success": 1, "settings": settings_return }
+	return { "success": 1, "settings": get_settings() }
 
 @blueprint.route("/settings/update", methods=["POST"])
 @api_wrapper
@@ -118,3 +114,21 @@ def admin_team_overview():
 		teams_return.append(_team.get_info())
 	teams_return.sort(key=itemgetter("points"), reverse=True)
 	return { "success": 1, "teams": teams_return }
+
+@blueprint.route("/info")
+@api_wrapper
+def admin_info():
+	settings = get_settings()
+	result = {
+		"start_time": settings["start_time"],
+		"end_time": settings["end_time"],
+		"team_size": settings["team_size"]
+	}
+	return { "success": 1, "info": result }
+
+def get_settings():
+	settings_return = {}
+	settings = Config.query.all()
+	for setting in settings:
+		settings_return[setting.key] = setting.value
+	return settings_return
