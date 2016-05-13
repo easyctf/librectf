@@ -23,13 +23,18 @@
 							<form class="form-horizontal" onsubmit="new_ticket(); return false;" id="new_ticket_form">
 								<div class="row">
 									<div class="col-sm-12 form-group">
-										<label class="col-sm-12" for="title"><small>Title</small></label>
+										<label class="col-sm-12" for="title">Title</label>
 										<div class="col-sm-12"> <input class="form-control" type="text" required name="title" id="title" placeholder="Title" autocomplete="off" /> </div>
 									</div>
 								</div>
 								<div class="row">
 									<div class="col-sm-12 form-group">
-										<label class="col-sm-12" for="title"><small>Description</small></label>
+										<label class="col-sm-12" for="ticket_body">
+											Description
+											<p class="pull-right">
+												<i class="fa fa-fw fa-pencil"></i> Markdown Enabled
+											</p>
+										</label>
 										<div class="col-sm-12">
 											<textarea class="form-control" type="text" required name="ticket_body" id="ticket_body" placeholder="Leave a comment" autocomplete="off" />
 										</div>
@@ -83,7 +88,7 @@
 <div ng-show="view==true">
 	<div ng-show="angular.equals({}, data)"><h1>Invalid ticket.</h1></div>
 	<div ng-show="!angular.equals({}, data)">
-		<h1><b>Ticket</b> {{ data.title }} <span ng-show="data.opened" class="label label-success">Open</span><span ng-show="!data.opened" class="label label-danger">Closed</span></h1>
+		<h1><a href="/help">&laquo; Help</a> {{ data.title }} <span ng-show="data.opened" class="label label-success">Open</span><span ng-show="!data.opened" class="label label-danger">Closed</span></h1>
 		<br>
 		<div class="panel panel-default">
 			<div class="panel-body">
@@ -124,7 +129,12 @@
 				<div id="new_reply_msg"/>
 				<input type="hidden" name="htid" value="{{ data.htid }}"/>
 				<div class="col-sm-12 form-group">
-					<label class="col-sm-12" for="title"><small>Reply</small></label>
+					<label class="col-sm-12" for="reply_body">
+						Reply
+						<p class="pull-right">
+							<i class="fa fa-fw fa-pencil"></i> Markdown Enabled
+						</p>
+					</label>
 					<div class="col-sm-12">
 						<textarea class="form-control" type="text" required name="reply_body" id="reply_body" placeholder="Leave a comment" autocomplete="off" />
 					</div>
