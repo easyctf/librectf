@@ -11,6 +11,7 @@ import json
 import os
 import random
 import shutil
+import markdown2
 
 import autogen
 import cache
@@ -200,13 +201,14 @@ def problem_data():
 			"pid": problem.pid,
 			"title": problem.title,
 			"category": problem.category,
-			"description": problem.description,
+			"description": markdown2.markdown(problem.description),
 			"hint": problem.hint,
 			"value": problem.value,
 			"solves": solves,
 			"solved": solved
 		}
 		admin_data = {
+			"description_source": problem.description,
 			"threshold": problem.threshold,
 			"weightmap": problem.weightmap,
 			"grader_contents": open(problem.grader, "r").read(),
