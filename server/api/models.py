@@ -273,7 +273,7 @@ class Teams(db.Model):
 		for solve in solves:
 			prob = Problems.query.filter_by(pid=solve.pid).first()
 			result.append({
-				"date": datetime.datetime.fromtimestamp(float(solve.date)).isoformat() + "Z",
+				"date": utils.isoformat(float(solve.date)),
 				"problem": prob.title,
 				"value": solve.get_value()
 			})
