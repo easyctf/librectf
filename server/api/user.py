@@ -501,7 +501,7 @@ def create_login_token(username):
 		session["username"] = token.username
 		session["admin"] = user.admin == True
 		session.permanent = True
-		if user.tid is not None and user.tid >= 0:
+		if user.tid is not None:
 			session["tid"] = user.tid
 
 	return True
