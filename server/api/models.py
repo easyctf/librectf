@@ -5,6 +5,7 @@ import traceback
 import os
 import base64
 import onetimepass
+import markdown2
 import cPickle as pickle
 
 db = SQLAlchemy()
@@ -417,7 +418,7 @@ class Tickets(db.Model):
 
 			replies.append({
 				"trid": reply.trid,
-				"body": reply.body,
+				"body": markdown2.markdown(reply.body),
 				"date": utils.isoformat(reply.date),
 				"uid": uid,
 				"username": username

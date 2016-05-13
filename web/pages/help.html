@@ -83,24 +83,40 @@
 <div ng-show="view==true">
 	<div ng-show="angular.equals({}, data)"><h1>Invalid ticket.</h1></div>
 	<div ng-show="!angular.equals({}, data)">
-		<h1>{{ data.title }} <span ng-show="data.opened" class="label label-success">Open</span><span ng-show="!data.opened" class="label label-danger">Closed</span></h1>
+		<h1><b>Ticket</b> {{ data.title }} <span ng-show="data.opened" class="label label-success">Open</span><span ng-show="!data.opened" class="label label-danger">Closed</span></h1>
 		<br>
 		<div class="panel panel-default">
 			<div class="panel-body">
-				<a class="NO_HOVER_UNDERLINE_DAMMIT" ng-href="/profile/{{ data.username }}">{{ data.username }}</a> commented
-				<time class="timeago" style="color: gray;" datetime="{{ data.date }}"/>
-				<br>
-				<img align="left" ng-src="/api/user/avatar/{{ data.uid }}" id="avatar" style="max-width:64px;max-height:64px;"/>
-				<p>{{ data.body }}</p>
+				<table>
+					<tr>
+						<td>
+							<img align="left" ng-src="/api/user/avatar/{{ data.uid }}" id="avatar" style="max-width:64px;max-height:64px;"/>
+						</td>
+						<td>
+							<a class="NO_HOVER_UNDERLINE_DAMMIT" ng-href="/profile/{{ data.username }}">@{{ data.username }}</a> commented
+							<small><time class="timeago" style="color: gray;" datetime="{{ data.date }}"/></small>
+							<br />
+							<p ng-bind-html="data['body'] | render_html"></p>
+						</td>
+					</tr>
+				</table>
 			</div>
 		</div>
 		<div ng-repeat="reply in data.replies" class="panel panel-default">
 			<div class="panel-body">
-				<a class="NO_HOVER_UNDERLINE_DAMMIT" ng-href="/profile/{{ reply.username }}">{{ reply.username }}</a> commented
-				<time class="timeago" style="color: gray;" datetime="{{ reply.date }}"/>
-				<br>
-				<img align="left" ng-src="/api/user/avatar/{{ reply.uid }}" id="avatar" style="max-width:64px;max-height:64px;"/>
-				<p>{{ reply.body }}</p>
+				<table>
+					<tr>
+						<td>
+							<img align="left" ng-src="/api/user/avatar/{{ reply.uid }}" id="avatar" style="max-width:64px;max-height:64px;"/>
+						</td>
+						<td>
+							<a class="NO_HOVER_UNDERLINE_DAMMIT" ng-href="/profile/{{ reply.username }}">@{{ reply.username }}</a> commented
+							<small><time class="timeago" style="color: gray;" datetime="{{ reply.date }}"/></small>
+							<br />
+							<p ng-bind-html="reply['body'] | render_html"></p>
+						</td>
+					</tr>
+				</table>
 			</div>
 		</div>
 		<form class="form-horizontal" onsubmit="new_reply(); return false;" id="new_reply_form">

@@ -3,6 +3,8 @@ from flask import current_app as app
 from decorators import api_wrapper, login_required, WebException
 from models import db, Tickets, TicketReplies
 
+import markdown2
+
 import user
 import utils
 blueprint = Blueprint("tickets", __name__)
@@ -131,7 +133,7 @@ def ticket_data():
 				"username": username,
 				"uid": uid,
 				"title": ticket.title,
-				"body": ticket.body,
+				"body": markdown2.markdown(ticket.body),
 				"replies": ticket.get_replies()
 			}
 
