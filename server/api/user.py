@@ -304,7 +304,10 @@ def user_avatar(user):
 	if user[0] in "0123456789":
 		uid = int(user)
 	else:
-		uid = get_user(username_lower=user.lower()).first().uid
+		_user = get_user(username_lower=user.lower()).first()
+		if _user is None:
+			return abort(404)
+		uid = _user.uid
 	try:
 		return send_file("pfp/%d.png" % uid, mimetype="image/png")
 	except:
