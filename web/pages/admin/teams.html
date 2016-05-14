@@ -1,13 +1,14 @@
 <div class="page-header">
 	<h1>Teams</h1>
+	<div id="team_overview_msg"/>
 </div>
 
 <div ng-repeat="team in teams">
-	<div class="panel-group">
+	<div id="{{ team['tid'] }}_panel" class="panel-group">
 		<div class="panel panel-default">
 			<div class="panel-heading" data-toggle="collapse" data-target="#{{ team['tid'] }}_body">
 				<h4 class="panel-title">
-					<a href="/team/{{ team['teamname'] }}" target="_blank">{{ team["teamname"] }}</a>
+					<a href="/team?teamname={{ team['teamname'] }}" target="_blank">{{ team["teamname"] }}</a>
 					({{ team["points"] }} points)
 				</h4>
 			</div>
@@ -70,3 +71,24 @@
 		</div>
 	</div>
 </div>
+<script>
+var delete_team = function(form) {
+	var data = {};
+	var tid = form.split("_")[0];
+	data["tid"] = tid;
+
+	api_call("POST", "/api/team/delete", data, function(result) {
+		if (result["success"] == 1) {
+			display_message("team_overview_msg", "success", result["message"], function() {
+				$("#" + tid + "_panel").slideUp("slow", "swing", null);
+			});
+		} else {
+			display_message("team_overview_msg", "danger", result["message"], null);
+		}
+	}, function(jqXHR) {
+		var result = jqXHR["responseText"];
+		display_message("team_overview_msg", "danger", "Error " + jqXHR["status"] + ": " + result["message"], function() {
+		});
+	});
+}
+</script>
