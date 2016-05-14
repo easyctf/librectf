@@ -88,60 +88,98 @@
 <div ng-show="view==true">
 	<div ng-show="angular.equals({}, data)"><h1>Invalid ticket.</h1></div>
 	<div ng-show="!angular.equals({}, data)">
-		<h1><a href="/help">&laquo; Help</a> {{ data.title }} <span ng-show="data.opened" class="label label-success">Open</span><span ng-show="!data.opened" class="label label-danger">Closed</span></h1>
-		<br>
-		<div class="panel panel-default">
-			<div class="panel-body">
+		<div class="page-header">
+			<h1><a href="/help">&laquo; Help</a> {{ data.title }}</h1>
+			<h4 style="display:inline;"><span ng-show="data.opened" class="label label-success">Open</span><span ng-show="!data.opened" class="label label-danger">Closed</span></h4>
+			<a class="NO_HOVER_UNDERLINE_DAMMIT" ng-href="/profile/{{ data.username }}">@{{ data.username }}</a> opened this issue <time class="timeago" datetime="{{ data.date }}" />
+		</div>
+		<div class="row">
+			<div class="col-md-8">
 				<table>
 					<tr>
-						<td>
-							<img align="left" ng-src="/api/user/avatar/{{ data.uid }}" id="avatar" style="max-width:64px;max-height:64px;"/>
+						<td style="vertical-align:top;">
+							<a ng-href="/profile/{{ data.username }}"><img align="left" ng-src="/api/user/avatar/{{ data.uid }}" id="avatar" style="max-width:64px;max-height:64px;"/></a>
 						</td>
-						<td>
-							<a class="NO_HOVER_UNDERLINE_DAMMIT" ng-href="/profile/{{ data.username }}">@{{ data.username }}</a> commented
-							<small><time class="timeago" style="color: gray;" datetime="{{ data.date }}"/></small>
-							<br />
-							<p ng-bind-html="data['body'] | render_html"></p>
+						<td style="width:100%">
+							<div class="panel panel-default">
+								<div class="panel-heading">
+									<h4 class="panel-title">
+										<a class="NO_HOVER_UNDERLINE_DAMMIT" ng-href="/profile/{{ data.username }}">@{{ data.username }}</a>
+										<small>commented <time class="timeago" style="color: gray;" datetime="{{ data.date }}"/></small>
+									</h4>
+								</div>
+								<div class="panel-body">
+									<p ng-bind-html="data['body'] | render_html"></p>
+								</div>
+							</div>
+						</td>
+					</tr>
+				</table>
+				<table ng-repeat="reply in data.replies">
+					<tr>
+						<td style="vertical-align:top;">
+							<a ng-href="/profile/{{ reply.username }}"><img align="left" ng-src="/api/user/avatar/{{ reply.uid }}" id="avatar" style="max-width:64px;max-height:64px;"/></a>
+						</td>
+						<td style="width:100%">
+							<div class="panel {{ reply.uid == data.you.uid ? 'panel-info' : 'panel-default' }}">
+								<div class="panel-heading">
+									<h4 class="panel-title">
+										<a class="NO_HOVER_UNDERLINE_DAMMIT" ng-href="/profile/{{ reply.username }}">@{{ reply.username }}</a>
+										<small>commented <time class="timeago" style="color: gray;" datetime="{{ reply.date }}"/></small>
+									</h4>
+								</div>
+								<div class="panel-body">
+									<p ng-bind-html="reply['body'] | render_html"></p>
+								</div>
+							</div>
+						</td>
+					</tr>
+				</table>
+				<hr />
+				<table>
+					<tr>
+						<td style="vertical-align:top;">
+							<a ng-href="/profile/{{ data.you.username }}"><img align="left" ng-src="/api/user/avatar/{{ data.you.uid }}" id="avatar" style="max-width:64px;max-height:64px;"/></a>
+						</td>
+						<td style="width:100%">
+							<form class="form-horizontal" onsubmit="new_reply(); return false;" id="new_reply_form">
+								<input type="hidden" name="htid" value="{{ data.htid }}" />
+								<div class="panel panel-default">
+									<div class="panel-heading">
+										<h4 class="panel-title">
+											Reply as
+											<a class="NO_HOVER_UNDERLINE_DAMMIT" ng-href="/profile/{{ data.you.username }}">@{{ data.you.username }}</a>
+											<p class="pull-right">
+												<i class="fa fa-fw fa-pencil"></i> Markdown Enabled
+											</p>
+										</h4>
+									</div>
+									<div class="panel-body">
+										<textarea class="form-control" type="text" required name="reply_body" id="reply_body" placeholder="Leave a comment" autocomplete="off" />
+									</div>
+									<div class="panel-footer" style="text-align:right;">
+										<input type="submit" class="btn btn-success" value="Reply"/>
+									</div>
+								</div>
+							</form>
 						</td>
 					</tr>
 				</table>
 			</div>
-		</div>
-		<div ng-repeat="reply in data.replies" class="panel panel-default">
-			<div class="panel-body">
-				<table>
-					<tr>
-						<td>
-							<img align="left" ng-src="/api/user/avatar/{{ reply.uid }}" id="avatar" style="max-width:64px;max-height:64px;"/>
-						</td>
-						<td>
-							<a class="NO_HOVER_UNDERLINE_DAMMIT" ng-href="/profile/{{ reply.username }}">@{{ reply.username }}</a> commented
-							<small><time class="timeago" style="color: gray;" datetime="{{ reply.date }}"/></small>
-							<br />
-							<p ng-bind-html="reply['body'] | render_html"></p>
-						</td>
-					</tr>
-				</table>
-			</div>
-		</div>
-		<form class="form-horizontal" onsubmit="new_reply(); return false;" id="new_reply_form">
-			<div class="row">
-				<div id="new_reply_msg"/>
-				<input type="hidden" name="htid" value="{{ data.htid }}"/>
-				<div class="col-sm-12 form-group">
-					<label class="col-sm-12" for="reply_body">
-						Reply
-						<p class="pull-right">
-							<i class="fa fa-fw fa-pencil"></i> Markdown Enabled
-						</p>
-					</label>
-					<div class="col-sm-12">
-						<textarea class="form-control" type="text" required name="reply_body" id="reply_body" placeholder="Leave a comment" autocomplete="off" />
+			<div class="col-md-4">
+				<div class="panel panel-default">
+					<div class="panel-heading">
+						<h4 class="panel-title">Participants</h4>
+					</div>
+					<div class="list-group">
+						<a class="list-group-item" ng-repeat="participant in data.participants | orderBy:'' " href="/profile/{{ participant }}">
+							<img src="/api/user/avatar/{{ participant }}" style="width:32px;height:32px;margin-right:16px;" style="vertical-align:middle;">
+							@{{ participant }}
+						</a>
 					</div>
 				</div>
 			</div>
-			<input type="submit" class="btn btn-success" value="Reply"/>
-		</form>
+		</div>
 	</div>
 </div>
 <script>

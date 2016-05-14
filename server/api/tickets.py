@@ -94,6 +94,9 @@ def reply_to_ticket():
 def ticket_data():
 	opened = []
 	closed = []
+	_user = user.get_user().first()
+	if _user is None:
+		raise WebException("User does not exist.")
 
 	params = utils.flat_multi(request.args)
 	htid = params.get("htid")
@@ -103,11 +106,6 @@ def ticket_data():
 	elif user.is_admin():
 		result = get_ticket().all()
 	else:
-		_user = user.get_user().first()
-
-		if _user is None:
-			raise WebException("User does not exist.")
-
 		result = get_ticket(author=_user.uid).all()
 
 	if result is not None:
@@ -126,6 +124,7 @@ def ticket_data():
 				username = ""
 				uid = ""
 
+			replies = ticket.get_replies()
 			d = {
 				"htid": ticket.htid,
 				"date": utils.isoformat(ticket.date),
@@ -134,7 +133,12 @@ def ticket_data():
 				"uid": uid,
 				"title": ticket.title,
 				"body": markdown2.markdown(ticket.body),
-				"replies": ticket.get_replies()
+				"replies": replies,
+				"participants": list(set([username] + [reply["username"] for reply in replies])),
+				"you": {
+					"username": _user.username,
+					"uid": _user.uid
+				}
 			}
 
 			if htid is None:

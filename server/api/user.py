@@ -299,9 +299,12 @@ def user_info():
 		userdata["sessions"] = session_data
 	return { "success": 1, "user": userdata }
 
-@blueprint.route("/avatar/<uid>", methods=["GET"])
-def user_avatar(uid):
-	uid = int(uid)
+@blueprint.route("/avatar/<user>", methods=["GET"])
+def user_avatar(user):
+	if user[0] in "0123456789":
+		uid = int(user)
+	else:
+		uid = get_user(username_lower=user.lower()).first().uid
 	try:
 		return send_file("pfp/%d.png" % uid, mimetype="image/png")
 	except:
