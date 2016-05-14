@@ -190,7 +190,6 @@ def problem_submit():
 @blueprint.route("/data", methods=["GET"])
 @api_wrapper
 def problem_data():
-
 	if "admin" in session and session["admin"]:
 		pass
 	elif "tid" not in session or session["tid"] <= 0:
