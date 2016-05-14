@@ -1,4 +1,3 @@
-from flask.ext.testing import TestCase
 import unittest
 import json
 
