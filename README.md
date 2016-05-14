@@ -3,6 +3,7 @@ OpenCTF
 
 [![Slack](http://slack.easyctf.com/badge.svg)](http://slack.easyctf.com)
 [![Build Status](https://travis-ci.org/EasyCTF/OpenCTF.svg?branch=master)](https://travis-ci.org/EasyCTF/OpenCTF)
+[![Docs](https://readthedocs.org/projects/openctf/badge/?version=latest)](http://openctf.readthedocs.io/)
 
 [![Online Demo](docs/screenshot1.png)](https://openctf.easyctf.com/)
 

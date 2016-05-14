@@ -26,7 +26,6 @@ vendor/
 # Documentation
 _site/*
 .yardoc/
-docs/_build
 
 # Python
 *.pyc
