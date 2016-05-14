@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # OpenCTF documentation build configuration file, created by
-# sphinx-quickstart on Sat May 14 01:08:12 2016.
+# sphinx-quickstart on Sat May 14 03:10:18 2016.
 #
 # This file is execfile()d with the current directory set to its
 # containing dir.
@@ -28,11 +28,7 @@ import os
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = [
-    'sphinx.ext.coverage',
-    'sphinx.ext.imgmath',
-    'sphinx.ext.viewcode',
-]
+extensions = []
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']

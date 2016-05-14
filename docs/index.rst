@@ -1,5 +1,5 @@
 .. OpenCTF documentation master file, created by
-   sphinx-quickstart on Sat May 14 01:08:12 2016.
+   sphinx-quickstart on Sat May 14 03:10:18 2016.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
