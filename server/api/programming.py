@@ -10,6 +10,7 @@ import subprocess
 
 import cache
 import problem
+import team
 import user
 import utils
 
@@ -63,8 +64,14 @@ def get_submissions():
 @blueprint.route("/problems", methods=["GET"])
 @api_wrapper
 @login_required
-@team_required
 def get_problems():
+	if "admin" in session and session["admin"]:
+		pass
+	elif "tid" not in session or session["tid"] <= 0:
+		raise WebException("You need a team.")
+	elif team.get_team(tid=session.get("tid")).first().finalized != True:
+		raise WebException("Your team is not finalized.")
+
 	data = []
 	problems = Problems.query.filter_by(category="Programming").all()
 	if problems is not None:

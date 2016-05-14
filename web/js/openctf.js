@@ -338,6 +338,12 @@ app.controller("programmingController", function($controller, $scope, $http, res
 	grader.setValue("");
 	if (result["success"] == 1) {
 		$scope.data = result;
+	} else {
+		display_message("programming_msg", "danger", result["message"], function() {
+			if (result["message"].indexOf("finalized") > 0) {
+				location.href = "/team";
+			}
+		});
 	}
 
 	api_call("GET", "/api/programming/submissions", {}, function(result) {
