@@ -17,6 +17,7 @@ import autogen
 import cache
 import logger
 import programming
+import team
 import user
 import utils
 
@@ -188,8 +189,15 @@ def problem_submit():
 
 @blueprint.route("/data", methods=["GET"])
 @api_wrapper
-@team_required
 def problem_data():
+
+	if "admin" in session and session["admin"]:
+		pass
+	elif "tid" not in session or session["tid"] <= 0:
+		raise WebException("You need a team.")
+	elif team.get_team(tid=session.get("tid")).first().finalized != True:
+		raise WebException("Your team is not finalized.")
+
 	problems = Problems.query.order_by(Problems.value).all()
 	problems_return = [ ]
 	for problem in problems:
@@ -225,10 +233,7 @@ def problem_data():
 			except Exception, e:
 				logger.log(__name__, "The grader for \"%s\" has thrown an error: %s" % (problem.title, e))
 		problems_return.append(data)
-	if "admin" in session and session["admin"]:
-		return { "success": 1, "problems": problems_return }
-	else:
-		raise WebException("Your team is not finalized.")
+	return { "success": 1, "problems": problems_return }
 
 @cache.memoize(timeout=120)
 def get_solves(pid):
