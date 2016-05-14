@@ -2,7 +2,7 @@ from flask import Blueprint, request, session
 from flask import current_app as app
 from voluptuous import Schema, Length, Required
 
-from models import db, Teams, Users, TeamInvitations, UserActivity
+from models import db, ProgrammingSubmissions, Solves, TeamInvitations, Teams, UserActivity, Users
 from decorators import api_wrapper, login_required, WebException, team_required
 from schemas import verify_to_schema, check
 
@@ -45,8 +45,13 @@ def team_create():
 @api_wrapper
 @login_required
 def team_delete():
+	params = utils.flat_multi(request.form)
+	if "tid" in params:
+		tid = params.get("tid")
+	else:
+		tid = session["tid"]
+
 	username = session["username"]
-	tid = session["tid"]
 	team = Teams.query.filter_by(tid=tid).first()
 	usr = Users.query.filter_by(username=username).first()
 	owner = team.owner
@@ -55,8 +60,11 @@ def team_delete():
 			for member in Users.query.filter_by(tid=tid).all():
 				member.tid = -1
 				db.session.add(member)
-				db.session.delete(team)
-				db.session.commit()
+			UserActivity.query.filter_by(tid=tid).delete()
+			Solves.query.filter_by(tid=tid).delete()
+			ProgrammingSubmissions.query.filter_by(tid=tid).delete()
+			db.session.delete(team)
+			db.session.commit()
 			db.session.close()
 			session.pop("tid")
 		return { "success": 1, "message": "Success!" }
