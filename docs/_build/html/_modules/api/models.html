@@ -1,0 +1,645 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>api.models &mdash; OpenCTF  documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="OpenCTF  documentation" href="../../index.html"/>
+        <link rel="up" title="api" href="../api.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> OpenCTF
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../gettingstarted.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">Python REST API</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">OpenCTF</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      
+          <li><a href="../api.html">api</a> &raquo;</li>
+      
+    <li>api.models</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for api.models</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">flask.ext.sqlalchemy</span> <span class="kn">import</span> <span class="n">SQLAlchemy</span>
+
+<span class="kn">import</span> <span class="nn">time</span>
+<span class="kn">import</span> <span class="nn">traceback</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">base64</span>
+<span class="kn">import</span> <span class="nn">onetimepass</span>
+<span class="kn">import</span> <span class="nn">markdown2</span>
+<span class="kn">import</span> <span class="nn">cPickle</span> <span class="kn">as</span> <span class="nn">pickle</span>
+
+<span class="n">db</span> <span class="o">=</span> <span class="n">SQLAlchemy</span><span class="p">()</span>
+
+<div class="viewcode-block" id="generate_user_link"><a class="viewcode-back" href="../../api.models.html#api.models.generate_user_link">[docs]</a><span class="k">def</span> <span class="nf">generate_user_link</span><span class="p">(</span><span class="n">username</span><span class="p">):</span>
+	<span class="k">return</span> <span class="s2">&quot;&lt;a href=&#39;/profile/</span><span class="si">%s</span><span class="s2">&#39;&gt;</span><span class="si">%s</span><span class="s2">&lt;/a&gt;&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">username</span><span class="p">,</span> <span class="n">username</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="generate_team_link"><a class="viewcode-back" href="../../api.models.html#api.models.generate_team_link">[docs]</a><span class="k">def</span> <span class="nf">generate_team_link</span><span class="p">(</span><span class="n">teamname</span><span class="p">):</span>
+	<span class="k">return</span> <span class="s2">&quot;&lt;a href=&#39;/team?teamname=</span><span class="si">%s</span><span class="s2">&#39;&gt;</span><span class="si">%s</span><span class="s2">&lt;/a&gt;&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">teamname</span><span class="p">,</span> <span class="n">teamname</span><span class="p">)</span></div>
+
+<span class="n">bonuses</span> <span class="o">=</span> <span class="p">[</span>
+	<span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+	<span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+	<span class="p">[</span><span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+	<span class="p">[</span><span class="mi">8</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span>
+	<span class="p">[</span><span class="mi">10</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">6</span><span class="p">],</span>
+	<span class="p">[</span><span class="mi">20</span><span class="p">,</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">8</span><span class="p">],</span>
+<span class="p">]</span>
+
+<div class="viewcode-block" id="Config"><a class="viewcode-back" href="../../api.models.html#api.models.Config">[docs]</a><span class="k">class</span> <span class="nc">Config</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+	<span class="n">cfid</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+	<span class="n">key</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="mi">32</span><span class="p">))</span>
+	<span class="n">value</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Text</span><span class="p">)</span>
+
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">key</span> <span class="o">=</span> <span class="n">key</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">value</span></div>
+
+<span class="kn">import</span> <span class="nn">utils</span> <span class="c1"># Prevent import loops</span>
+
+<div class="viewcode-block" id="Users"><a class="viewcode-back" href="../../api.models.html#api.models.Users">[docs]</a><span class="k">class</span> <span class="nc">Users</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+	<span class="n">uid</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">unique</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+	<span class="n">tid</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">default</span><span class="o">=-</span><span class="mi">1</span><span class="p">)</span>
+	<span class="n">name</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="mi">64</span><span class="p">))</span>
+	<span class="n">username</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="mi">64</span><span class="p">),</span> <span class="n">unique</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+	<span class="n">username_lower</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="mi">64</span><span class="p">),</span> <span class="n">unique</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+	<span class="n">email</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="mi">64</span><span class="p">),</span> <span class="n">unique</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+	<span class="n">password</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="mi">128</span><span class="p">))</span>
+	<span class="n">admin</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Boolean</span><span class="p">)</span>
+	<span class="n">utype</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">)</span>
+	<span class="n">registertime</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">)</span>
+	<span class="n">reset_token</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="mi">64</span><span class="p">))</span>
+	<span class="n">otp_secret</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="mi">16</span><span class="p">))</span>
+	<span class="n">otp_confirmed</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Boolean</span><span class="p">)</span>
+	<span class="n">email_verified</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Boolean</span><span class="p">)</span>
+	<span class="n">email_token</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="mi">64</span><span class="p">))</span>
+
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">email</span><span class="p">,</span> <span class="n">password</span><span class="p">,</span> <span class="n">utype</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">admin</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">username</span> <span class="o">=</span> <span class="n">username</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">username_lower</span> <span class="o">=</span> <span class="n">username</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">email</span> <span class="o">=</span> <span class="n">email</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">password</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">hash_password</span><span class="p">(</span><span class="n">password</span><span class="p">)</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">utype</span> <span class="o">=</span> <span class="n">utype</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">admin</span> <span class="o">=</span> <span class="n">admin</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">registertime</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">())</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">otp_confirmed</span> <span class="o">=</span> <span class="bp">False</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">otp_secret</span> <span class="o">=</span> <span class="bp">None</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">email_verified</span> <span class="o">=</span> <span class="bp">False</span>
+
+<div class="viewcode-block" id="Users.get_totp_uri"><a class="viewcode-back" href="../../api.models.html#api.models.Users.get_totp_uri">[docs]</a>	<span class="k">def</span> <span class="nf">get_totp_uri</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">otp_secret</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+			<span class="n">secret</span> <span class="o">=</span> <span class="n">base64</span><span class="o">.</span><span class="n">b32encode</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">urandom</span><span class="p">(</span><span class="mi">10</span><span class="p">))</span><span class="o">.</span><span class="n">decode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+			<span class="c1"># self.otp_secret = base64.b32encode(os.urandom(10)).decode(&quot;utf-8&quot;).lower()</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">otp_secret</span> <span class="o">=</span> <span class="n">secret</span>
+			<span class="n">Users</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">uid</span><span class="p">)</span><span class="o">.</span><span class="n">update</span><span class="p">({</span> <span class="s2">&quot;otp_secret&quot;</span><span class="p">:</span> <span class="n">secret</span> <span class="p">})</span>
+			<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+		<span class="n">service_name</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_ctf_name</span><span class="p">()</span>
+		<span class="k">return</span> <span class="s2">&quot;otpauth://totp/</span><span class="si">%s</span><span class="s2">:</span><span class="si">%s</span><span class="s2">?secret=</span><span class="si">%s</span><span class="s2">&amp;issuer=</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">service_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">username</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">otp_secret</span><span class="p">,</span> <span class="n">service_name</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Users.verify_totp"><a class="viewcode-back" href="../../api.models.html#api.models.Users.verify_totp">[docs]</a>	<span class="k">def</span> <span class="nf">verify_totp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">token</span><span class="p">):</span>
+		<span class="k">print</span> <span class="bp">self</span>
+		<span class="k">print</span> <span class="s2">&quot;SECRET&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">otp_secret</span>
+		<span class="k">return</span> <span class="n">onetimepass</span><span class="o">.</span><span class="n">valid_totp</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">otp_secret</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Users.get_invitations"><a class="viewcode-back" href="../../api.models.html#api.models.Users.get_invitations">[docs]</a>	<span class="k">def</span> <span class="nf">get_invitations</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="n">invitations</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">TeamInvitations</span><span class="p">)</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">rtype</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">toid</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">uid</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+		<span class="n">result</span> <span class="o">=</span> <span class="p">[</span> <span class="p">]</span>
+		<span class="k">for</span> <span class="n">inv</span> <span class="ow">in</span> <span class="n">invitations</span><span class="p">:</span>
+			<span class="n">team</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">Teams</span><span class="p">)</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">tid</span><span class="o">=</span><span class="n">inv</span><span class="o">.</span><span class="n">frid</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+			<span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+				<span class="s2">&quot;team&quot;</span><span class="p">:</span> <span class="n">team</span><span class="o">.</span><span class="n">teamname</span><span class="p">,</span>
+				<span class="s2">&quot;tid&quot;</span><span class="p">:</span> <span class="n">team</span><span class="o">.</span><span class="n">tid</span><span class="p">,</span>
+				<span class="s2">&quot;observer&quot;</span><span class="p">:</span> <span class="n">team</span><span class="o">.</span><span class="n">is_observer</span><span class="p">()</span>
+			<span class="p">})</span>
+		<span class="k">return</span> <span class="n">result</span></div>
+
+<div class="viewcode-block" id="Users.get_activity"><a class="viewcode-back" href="../../api.models.html#api.models.Users.get_activity">[docs]</a>	<span class="k">def</span> <span class="nf">get_activity</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="n">activity</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">UserActivity</span><span class="p">)</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">uid</span><span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="n">UserActivity</span><span class="o">.</span><span class="n">timestamp</span><span class="o">.</span><span class="n">desc</span><span class="p">())</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+		<span class="n">result</span> <span class="o">=</span> <span class="p">[</span> <span class="p">]</span>
+		<span class="k">for</span> <span class="n">a</span> <span class="ow">in</span> <span class="n">activity</span><span class="p">:</span>
+			<span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+				<span class="s2">&quot;timestamp&quot;</span><span class="p">:</span> <span class="n">utils</span><span class="o">.</span><span class="n">isoformat</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">timestamp</span><span class="p">),</span>
+				<span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="nb">str</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+			<span class="p">})</span>
+		<span class="k">return</span> <span class="n">result</span></div>
+
+<div class="viewcode-block" id="Users.tfa_enabled"><a class="viewcode-back" href="../../api.models.html#api.models.Users.tfa_enabled">[docs]</a>	<span class="k">def</span> <span class="nf">tfa_enabled</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">otp_confirmed</span> <span class="o">==</span> <span class="bp">True</span></div>
+
+<div class="viewcode-block" id="Users.get_stats"><a class="viewcode-back" href="../../api.models.html#api.models.Users.get_stats">[docs]</a>	<span class="k">def</span> <span class="nf">get_stats</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="n">result</span> <span class="o">=</span> <span class="p">{</span> <span class="s2">&quot;problems&quot;</span><span class="p">:</span> <span class="p">[]</span> <span class="p">}</span>
+		<span class="n">n_solved</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">]</span>
+		<span class="k">for</span> <span class="n">solve</span> <span class="ow">in</span> <span class="nb">list</span><span class="p">(</span><span class="n">Solves</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">uid</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()):</span>
+			<span class="k">if</span> <span class="n">solve</span><span class="o">.</span><span class="n">correct</span> <span class="o">==</span> <span class="bp">True</span><span class="p">:</span>
+				<span class="n">n_solved</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+				<span class="n">problem</span> <span class="o">=</span> <span class="n">Problems</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">pid</span><span class="o">=</span><span class="n">solve</span><span class="o">.</span><span class="n">pid</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+				<span class="n">result</span><span class="p">[</span><span class="s2">&quot;problems&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">({</span> <span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="n">problem</span><span class="o">.</span><span class="n">title</span><span class="p">,</span> <span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">solve</span><span class="o">.</span><span class="n">get_value</span><span class="p">(),</span> <span class="s2">&quot;category&quot;</span><span class="p">:</span> <span class="n">problem</span><span class="o">.</span><span class="n">category</span><span class="p">,</span> <span class="s2">&quot;date&quot;</span><span class="p">:</span> <span class="n">utils</span><span class="o">.</span><span class="n">isoformat</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">solve</span><span class="o">.</span><span class="n">date</span><span class="p">))</span> <span class="p">})</span>
+			<span class="n">n_solved</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+=</span> <span class="mi">1</span>
+		<span class="n">result</span><span class="p">[</span><span class="s2">&quot;correct_submissions&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">n_solved</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+		<span class="n">result</span><span class="p">[</span><span class="s2">&quot;total_submissions&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">n_solved</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+		<span class="k">return</span> <span class="n">result</span></div></div>
+
+<div class="viewcode-block" id="UserActivity"><a class="viewcode-back" href="../../api.models.html#api.models.UserActivity">[docs]</a><span class="k">class</span> <span class="nc">UserActivity</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+	<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">	Types of user activity:</span>
+<span class="sd">	- 0: User joins.</span>
+<span class="sd">	- 1: User created a team.</span>
+<span class="sd">	- 2: User left a team.</span>
+<span class="sd">	- 3: User solved a problem.</span>
+<span class="sd">	&quot;&quot;&quot;</span>
+	<span class="n">uaid</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">unique</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+	<span class="n">uid</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s2">&quot;users.uid&quot;</span><span class="p">))</span>
+	<span class="nb">type</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">)</span>
+	<span class="n">tid</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s2">&quot;teams.tid&quot;</span><span class="p">))</span>
+	<span class="n">timestamp</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">)</span>
+	<span class="n">pid</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="mi">128</span><span class="p">),</span> <span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s2">&quot;problems.pid&quot;</span><span class="p">))</span>
+
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uid</span><span class="p">,</span> <span class="n">atype</span><span class="p">,</span> <span class="n">tid</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">pid</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">uid</span> <span class="o">=</span> <span class="n">uid</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">=</span> <span class="n">atype</span>
+		<span class="k">if</span> <span class="n">tid</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">tid</span> <span class="o">=</span> <span class="n">tid</span>
+		<span class="k">if</span> <span class="n">pid</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+			<span class="bp">self</span><span class="o">.</span><span class="n">pid</span> <span class="o">=</span> <span class="n">pid</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">timestamp</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">())</span>
+
+	<span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="n">u</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">Users</span><span class="p">)</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">uid</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+		<span class="n">t</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">Teams</span><span class="p">)</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">tid</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tid</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+		<span class="n">p</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">Problems</span><span class="p">)</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">pid</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pid</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+			<span class="k">return</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> created an account!&quot;</span> <span class="o">%</span> <span class="n">generate_user_link</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">username</span><span class="p">)</span>
+		<span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+			<span class="k">return</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> created the team </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">generate_user_link</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">username</span><span class="p">),</span> <span class="n">generate_team_link</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">teamname</span><span class="p">))</span>
+		<span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+			<span class="k">return</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> has left team </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">generate_user_link</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">username</span><span class="p">),</span> <span class="n">generate_team_link</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">teamname</span><span class="p">))</span>
+		<span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">type</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+			<span class="k">return</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> has solved </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">generate_user_link</span><span class="p">(</span><span class="n">u</span><span class="o">.</span><span class="n">username</span><span class="p">),</span> <span class="n">p</span><span class="o">.</span><span class="n">title</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Teams"><a class="viewcode-back" href="../../api.models.html#api.models.Teams">[docs]</a><span class="k">class</span> <span class="nc">Teams</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+	<span class="n">tid</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+	<span class="n">teamname</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="mi">64</span><span class="p">),</span> <span class="n">unique</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+	<span class="n">teamname_lower</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="mi">64</span><span class="p">),</span> <span class="n">unique</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+	<span class="n">school</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Text</span><span class="p">)</span>
+	<span class="n">owner</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">)</span>
+	<span class="n">observer</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Boolean</span><span class="p">)</span>
+	<span class="n">finalized</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Boolean</span><span class="p">)</span>
+
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">teamname</span><span class="p">,</span> <span class="n">school</span><span class="p">,</span> <span class="n">owner</span><span class="p">,</span> <span class="n">observer</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">teamname</span> <span class="o">=</span> <span class="n">teamname</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">teamname_lower</span> <span class="o">=</span> <span class="n">teamname</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">school</span> <span class="o">=</span> <span class="n">school</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">owner</span> <span class="o">=</span> <span class="n">owner</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">observer</span> <span class="o">=</span> <span class="n">observer</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">finalized</span> <span class="o">=</span> <span class="bp">False</span>
+
+<div class="viewcode-block" id="Teams.get_members"><a class="viewcode-back" href="../../api.models.html#api.models.Teams.get_members">[docs]</a>	<span class="k">def</span> <span class="nf">get_members</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="n">members</span> <span class="o">=</span> <span class="p">[</span> <span class="p">]</span>
+		<span class="k">for</span> <span class="n">member</span> <span class="ow">in</span> <span class="n">Users</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">tid</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tid</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+			<span class="n">members</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+				<span class="s2">&quot;username&quot;</span><span class="p">:</span> <span class="n">member</span><span class="o">.</span><span class="n">username</span><span class="p">,</span>
+				<span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">member</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+				<span class="s2">&quot;captain&quot;</span><span class="p">:</span> <span class="n">member</span><span class="o">.</span><span class="n">uid</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">owner</span><span class="p">,</span>
+				<span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="n">member</span><span class="o">.</span><span class="n">utype</span><span class="p">,</span>
+				<span class="s2">&quot;admin&quot;</span><span class="p">:</span> <span class="n">member</span><span class="o">.</span><span class="n">admin</span> <span class="o">==</span> <span class="bp">True</span><span class="p">,</span>
+				<span class="s2">&quot;observer&quot;</span><span class="p">:</span> <span class="n">member</span><span class="o">.</span><span class="n">utype</span> <span class="o">==</span> <span class="mi">3</span>
+			<span class="p">})</span>
+		<span class="k">return</span> <span class="n">members</span></div>
+
+<div class="viewcode-block" id="Teams.points"><a class="viewcode-back" href="../../api.models.html#api.models.Teams.points">[docs]</a>	<span class="k">def</span> <span class="nf">points</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="n">points</span> <span class="o">=</span> <span class="mi">0</span>
+
+		<span class="c1"># TODO: Make this better</span>
+		<span class="n">solves</span> <span class="o">=</span> <span class="n">Solves</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">tid</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tid</span><span class="p">,</span> <span class="n">correct</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+		<span class="k">for</span> <span class="n">solve</span> <span class="ow">in</span> <span class="n">solves</span><span class="p">:</span>
+			<span class="n">problem</span> <span class="o">=</span> <span class="n">Problems</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">pid</span><span class="o">=</span><span class="n">solve</span><span class="o">.</span><span class="n">pid</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+			<span class="n">multiplier</span> <span class="o">=</span> <span class="mi">1</span>
+			<span class="k">if</span> <span class="n">solve</span><span class="o">.</span><span class="n">bonus</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+				<span class="n">multiplier</span> <span class="o">+=</span> <span class="n">bonuses</span><span class="p">[</span><span class="n">problem</span><span class="o">.</span><span class="n">bonus</span><span class="p">][</span><span class="n">solve</span><span class="o">.</span><span class="n">bonus</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="mf">100.0</span>
+			<span class="n">points</span> <span class="o">+=</span> <span class="nb">round</span><span class="p">(</span><span class="n">problem</span><span class="o">.</span><span class="n">value</span><span class="o">*</span><span class="n">multiplier</span><span class="p">)</span>
+
+		<span class="k">return</span> <span class="n">points</span></div>
+
+<div class="viewcode-block" id="Teams.place"><a class="viewcode-back" href="../../api.models.html#api.models.Teams.place">[docs]</a>	<span class="k">def</span> <span class="nf">place</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ranked</span><span class="o">=</span><span class="bp">True</span><span class="p">):</span>
+		<span class="n">score</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">func</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">Problems</span><span class="o">.</span><span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">label</span><span class="p">(</span><span class="s2">&quot;score&quot;</span><span class="p">)</span>
+		<span class="n">quickest</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">func</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">Solves</span><span class="o">.</span><span class="n">date</span><span class="p">)</span><span class="o">.</span><span class="n">label</span><span class="p">(</span><span class="s2">&quot;quickest&quot;</span><span class="p">)</span>
+		<span class="n">teams</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">Solves</span><span class="o">.</span><span class="n">tid</span><span class="p">)</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">Teams</span><span class="p">)</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">Problems</span><span class="p">)</span><span class="o">.</span><span class="n">filter</span><span class="p">()</span><span class="o">.</span><span class="n">group_by</span><span class="p">(</span><span class="n">Solves</span><span class="o">.</span><span class="n">tid</span><span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="n">score</span><span class="o">.</span><span class="n">desc</span><span class="p">(),</span> <span class="n">quickest</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+		<span class="k">try</span><span class="p">:</span>
+			<span class="n">i</span> <span class="o">=</span> <span class="n">teams</span><span class="o">.</span><span class="n">index</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">tid</span><span class="p">,))</span> <span class="o">+</span> <span class="mi">1</span>
+			<span class="n">k</span> <span class="o">=</span> <span class="n">i</span> <span class="o">%</span> <span class="mi">10</span>
+			<span class="k">return</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">%d%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="s2">&quot;tsnrhtdd&quot;</span><span class="p">[(</span><span class="n">i</span> <span class="o">/</span> <span class="mi">10</span> <span class="o">%</span> <span class="mi">10</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">k</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">)</span> <span class="o">*</span> <span class="n">k</span><span class="p">::</span><span class="mi">4</span><span class="p">]))</span>
+		<span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+			<span class="k">return</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;--&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Teams.get_invitation_requests"><a class="viewcode-back" href="../../api.models.html#api.models.Teams.get_invitation_requests">[docs]</a>	<span class="k">def</span> <span class="nf">get_invitation_requests</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">frid</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+		<span class="k">if</span> <span class="n">frid</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+			<span class="n">req</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">TeamInvitations</span><span class="p">)</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">rtype</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">frid</span><span class="o">=</span><span class="n">frid</span><span class="p">,</span> <span class="n">toid</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tid</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+			<span class="k">if</span> <span class="n">req</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+				<span class="k">return</span> <span class="bp">None</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">user</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">Users</span><span class="p">)</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="n">req</span><span class="o">.</span><span class="n">frid</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+				<span class="k">return</span> <span class="p">{</span> <span class="s2">&quot;username&quot;</span><span class="p">:</span> <span class="n">user</span><span class="o">.</span><span class="n">username</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">user</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="s2">&quot;uid&quot;</span><span class="p">:</span> <span class="n">user</span><span class="o">.</span><span class="n">uid</span> <span class="p">}</span>
+		<span class="n">result</span> <span class="o">=</span> <span class="p">[</span> <span class="p">]</span>
+		<span class="n">requests</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">TeamInvitations</span><span class="p">)</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">rtype</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">toid</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tid</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+		<span class="k">for</span> <span class="n">req</span> <span class="ow">in</span> <span class="n">requests</span><span class="p">:</span>
+			<span class="n">user</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">Users</span><span class="p">)</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="n">req</span><span class="o">.</span><span class="n">frid</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+			<span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+				<span class="s2">&quot;username&quot;</span><span class="p">:</span> <span class="n">user</span><span class="o">.</span><span class="n">username</span><span class="p">,</span>
+				<span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">user</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+				<span class="s2">&quot;uid&quot;</span><span class="p">:</span> <span class="n">user</span><span class="o">.</span><span class="n">uid</span>
+			<span class="p">})</span>
+		<span class="k">return</span> <span class="n">result</span></div>
+
+<div class="viewcode-block" id="Teams.get_pending_invitations"><a class="viewcode-back" href="../../api.models.html#api.models.Teams.get_pending_invitations">[docs]</a>	<span class="k">def</span> <span class="nf">get_pending_invitations</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">toid</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+		<span class="k">if</span> <span class="n">toid</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+			<span class="n">invitation</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">TeamInvitations</span><span class="p">)</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">rtype</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">frid</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tid</span><span class="p">,</span> <span class="n">toid</span><span class="o">=</span><span class="n">toid</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+			<span class="k">if</span> <span class="n">invitation</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+				<span class="k">return</span> <span class="bp">None</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">user</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">Users</span><span class="p">)</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="n">invitation</span><span class="o">.</span><span class="n">toid</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+				<span class="k">return</span> <span class="p">{</span> <span class="s2">&quot;username&quot;</span><span class="p">:</span> <span class="n">user</span><span class="o">.</span><span class="n">username</span><span class="p">,</span> <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">user</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="s2">&quot;uid&quot;</span><span class="p">:</span> <span class="n">user</span><span class="o">.</span><span class="n">uid</span> <span class="p">}</span>
+		<span class="n">result</span> <span class="o">=</span> <span class="p">[</span> <span class="p">]</span>
+		<span class="n">invitations</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">TeamInvitations</span><span class="p">)</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">rtype</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">frid</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tid</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+		<span class="k">for</span> <span class="n">invitation</span> <span class="ow">in</span> <span class="n">invitations</span><span class="p">:</span>
+			<span class="n">user</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">Users</span><span class="p">)</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="n">invitation</span><span class="o">.</span><span class="n">toid</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+			<span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+				<span class="s2">&quot;username&quot;</span><span class="p">:</span> <span class="n">user</span><span class="o">.</span><span class="n">username</span><span class="p">,</span>
+				<span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="n">user</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+				<span class="s2">&quot;uid&quot;</span><span class="p">:</span> <span class="n">user</span><span class="o">.</span><span class="n">uid</span>
+			<span class="p">})</span>
+		<span class="k">return</span> <span class="n">result</span></div>
+
+<div class="viewcode-block" id="Teams.is_observer"><a class="viewcode-back" href="../../api.models.html#api.models.Teams.is_observer">[docs]</a>	<span class="k">def</span> <span class="nf">is_observer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="n">members</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_members</span><span class="p">()</span>
+		<span class="k">for</span> <span class="n">member</span> <span class="ow">in</span> <span class="n">members</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">member</span><span class="p">[</span><span class="s2">&quot;observer&quot;</span><span class="p">]</span> <span class="ow">or</span> <span class="n">member</span><span class="p">[</span><span class="s2">&quot;admin&quot;</span><span class="p">]:</span>
+				<span class="k">return</span> <span class="bp">True</span>
+		<span class="k">return</span> <span class="bp">False</span></div>
+
+<div class="viewcode-block" id="Teams.get_last_solved"><a class="viewcode-back" href="../../api.models.html#api.models.Teams.get_last_solved">[docs]</a>	<span class="k">def</span> <span class="nf">get_last_solved</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="n">latest</span> <span class="o">=</span> <span class="mi">0</span>
+		<span class="k">return</span> <span class="n">Solves</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">tid</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tid</span><span class="p">,</span> <span class="n">correct</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="n">Solves</span><span class="o">.</span><span class="n">date</span><span class="o">.</span><span class="n">desc</span><span class="p">())</span><span class="o">.</span><span class="n">first</span><span class="p">()</span><span class="o">.</span><span class="n">date</span></div>
+
+<div class="viewcode-block" id="Teams.update_info"><a class="viewcode-back" href="../../api.models.html#api.models.Teams.update_info">[docs]</a>	<span class="k">def</span> <span class="nf">update_info</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">to_update</span><span class="p">):</span>
+		<span class="n">Teams</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">tid</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tid</span><span class="p">)</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">to_update</span><span class="p">)</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Teams.finalize"><a class="viewcode-back" href="../../api.models.html#api.models.Teams.finalize">[docs]</a>	<span class="k">def</span> <span class="nf">finalize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="n">Teams</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">tid</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tid</span><span class="p">)</span><span class="o">.</span><span class="n">update</span><span class="p">({</span> <span class="s2">&quot;finalized&quot;</span><span class="p">:</span> <span class="bp">True</span> <span class="p">})</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Teams.get_solves"><a class="viewcode-back" href="../../api.models.html#api.models.Teams.get_solves">[docs]</a>	<span class="k">def</span> <span class="nf">get_solves</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="n">solves</span> <span class="o">=</span> <span class="n">Solves</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">tid</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">tid</span><span class="p">,</span> <span class="n">correct</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+		<span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="k">for</span> <span class="n">solve</span> <span class="ow">in</span> <span class="n">solves</span><span class="p">:</span>
+			<span class="n">prob</span> <span class="o">=</span> <span class="n">Problems</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">pid</span><span class="o">=</span><span class="n">solve</span><span class="o">.</span><span class="n">pid</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+			<span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+				<span class="s2">&quot;date&quot;</span><span class="p">:</span> <span class="n">utils</span><span class="o">.</span><span class="n">isoformat</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">solve</span><span class="o">.</span><span class="n">date</span><span class="p">)),</span>
+				<span class="s2">&quot;problem&quot;</span><span class="p">:</span> <span class="n">prob</span><span class="o">.</span><span class="n">title</span><span class="p">,</span>
+				<span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">solve</span><span class="o">.</span><span class="n">get_value</span><span class="p">(),</span>
+				<span class="s2">&quot;solved_by&quot;</span><span class="p">:</span> <span class="n">Users</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="n">solve</span><span class="o">.</span><span class="n">uid</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span><span class="o">.</span><span class="n">username</span>
+			<span class="p">})</span>
+		<span class="k">return</span> <span class="n">result</span></div>
+
+<div class="viewcode-block" id="Teams.get_info"><a class="viewcode-back" href="../../api.models.html#api.models.Teams.get_info">[docs]</a>	<span class="k">def</span> <span class="nf">get_info</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="n">place_number</span><span class="p">,</span> <span class="n">place</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">place</span><span class="p">()</span>
+		<span class="n">result</span> <span class="o">=</span> <span class="p">{</span>
+			<span class="s2">&quot;tid&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">tid</span><span class="p">,</span>
+			<span class="s2">&quot;teamname&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">teamname</span><span class="p">,</span>
+			<span class="s2">&quot;school&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">school</span><span class="p">,</span>
+			<span class="s2">&quot;place&quot;</span><span class="p">:</span> <span class="n">place</span><span class="p">,</span>
+			<span class="s2">&quot;place_number&quot;</span><span class="p">:</span> <span class="n">place_number</span><span class="p">,</span>
+			<span class="s2">&quot;points&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">points</span><span class="p">(),</span>
+			<span class="s2">&quot;members&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_members</span><span class="p">(),</span>
+			<span class="s2">&quot;captain&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">owner</span><span class="p">,</span>
+			<span class="s2">&quot;observer&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_observer</span><span class="p">(),</span>
+			<span class="s2">&quot;finalized&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">finalized</span><span class="p">,</span>
+			<span class="s2">&quot;solves&quot;</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_solves</span><span class="p">()</span>
+		<span class="p">}</span>
+		<span class="k">return</span> <span class="n">result</span></div></div>
+
+<div class="viewcode-block" id="Problems"><a class="viewcode-back" href="../../api.models.html#api.models.Problems">[docs]</a><span class="k">class</span> <span class="nc">Problems</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+	<span class="n">pid</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="mi">128</span><span class="p">),</span> <span class="n">primary_key</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">autoincrement</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+	<span class="n">title</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="mi">128</span><span class="p">))</span>
+	<span class="n">category</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="mi">128</span><span class="p">))</span>
+	<span class="n">description</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Text</span><span class="p">)</span>
+	<span class="n">value</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">)</span>
+	<span class="n">hint</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Text</span><span class="p">)</span>
+	<span class="n">grader</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Text</span><span class="p">)</span>
+	<span class="n">autogen</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Boolean</span><span class="p">)</span>
+	<span class="n">bonus</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">)</span>
+	<span class="n">threshold</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">)</span>
+	<span class="n">weightmap</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">PickleType</span><span class="p">)</span>
+
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pid</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">category</span><span class="p">,</span> <span class="n">description</span><span class="p">,</span> <span class="n">value</span><span class="p">,</span> <span class="n">grader</span><span class="p">,</span> <span class="n">hint</span><span class="o">=</span><span class="s2">&quot;&quot;</span><span class="p">,</span> <span class="n">autogen</span><span class="o">=</span><span class="bp">False</span><span class="p">,</span> <span class="n">bonus</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">threshold</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">weightmap</span><span class="o">=</span><span class="p">{}):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pid</span> <span class="o">=</span> <span class="n">pid</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="n">title</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">category</span> <span class="o">=</span> <span class="n">category</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">description</span> <span class="o">=</span> <span class="n">description</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">value</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">hint</span> <span class="o">=</span> <span class="n">hint</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">grader</span> <span class="o">=</span> <span class="n">grader</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">autogen</span> <span class="o">=</span> <span class="n">autogen</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">bonus</span> <span class="o">=</span> <span class="n">bonus</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">threshold</span> <span class="o">=</span> <span class="n">threshold</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">weightmap</span> <span class="o">=</span> <span class="n">weightmap</span></div>
+
+<div class="viewcode-block" id="Files"><a class="viewcode-back" href="../../api.models.html#api.models.Files">[docs]</a><span class="k">class</span> <span class="nc">Files</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+	<span class="n">fid</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+	<span class="n">pid</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">)</span>
+	<span class="n">location</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Text</span><span class="p">)</span>
+
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pid</span><span class="p">,</span> <span class="n">location</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pid</span> <span class="o">=</span> <span class="n">pid</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">location</span> <span class="o">=</span> <span class="n">location</span></div>
+
+<div class="viewcode-block" id="Solves"><a class="viewcode-back" href="../../api.models.html#api.models.Solves">[docs]</a><span class="k">class</span> <span class="nc">Solves</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+	<span class="n">sid</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+	<span class="n">pid</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="mi">128</span><span class="p">),</span> <span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s2">&quot;problems.pid&quot;</span><span class="p">))</span>
+	<span class="n">tid</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s2">&quot;teams.tid&quot;</span><span class="p">))</span>
+	<span class="n">uid</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">)</span>
+	<span class="n">date</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="mi">64</span><span class="p">),</span> <span class="n">default</span><span class="o">=</span><span class="n">utils</span><span class="o">.</span><span class="n">get_time_since_epoch</span><span class="p">())</span>
+	<span class="n">correct</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Boolean</span><span class="p">)</span>
+	<span class="n">flag</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Text</span><span class="p">)</span>
+	<span class="n">bonus</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">)</span>
+
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pid</span><span class="p">,</span> <span class="n">uid</span><span class="p">,</span> <span class="n">tid</span><span class="p">,</span> <span class="n">flag</span><span class="p">,</span> <span class="n">correct</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pid</span> <span class="o">=</span> <span class="n">pid</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">uid</span> <span class="o">=</span> <span class="n">uid</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">tid</span> <span class="o">=</span> <span class="n">tid</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">flag</span> <span class="o">=</span> <span class="n">flag</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">correct</span> <span class="o">=</span> <span class="n">correct</span>
+
+<div class="viewcode-block" id="Solves.get_value"><a class="viewcode-back" href="../../api.models.html#api.models.Solves.get_value">[docs]</a>	<span class="k">def</span> <span class="nf">get_value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="n">problem</span> <span class="o">=</span> <span class="n">Problems</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">pid</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">pid</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+		<span class="n">multiplier</span> <span class="o">=</span> <span class="mi">1</span>
+		<span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">bonus</span> <span class="o">!=</span> <span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+			<span class="n">multiplier</span> <span class="o">+=</span> <span class="n">bonuses</span><span class="p">[</span><span class="n">problem</span><span class="o">.</span><span class="n">bonus</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">bonus</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">/</span><span class="mf">100.0</span>
+		<span class="k">return</span> <span class="n">problem</span><span class="o">.</span><span class="n">value</span> <span class="o">*</span> <span class="n">multiplier</span></div></div>
+
+<div class="viewcode-block" id="LoginTokens"><a class="viewcode-back" href="../../api.models.html#api.models.LoginTokens">[docs]</a><span class="k">class</span> <span class="nc">LoginTokens</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+	<span class="n">TOKEN_LIFETIME</span> <span class="o">=</span> <span class="mi">5259492</span>
+
+	<span class="n">sid</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="mi">64</span><span class="p">),</span> <span class="n">unique</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+	<span class="n">uid</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s2">&quot;users.uid&quot;</span><span class="p">))</span>
+	<span class="n">username</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="mi">32</span><span class="p">),</span> <span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s2">&quot;users.username&quot;</span><span class="p">))</span>
+	<span class="n">active</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Boolean</span><span class="p">)</span>
+	<span class="n">issued</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">)</span>
+	<span class="n">expiry</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">)</span>
+	<span class="n">ua</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="mi">128</span><span class="p">))</span>
+	<span class="n">ip</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="mi">16</span><span class="p">))</span>
+	<span class="n">location</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="mi">128</span><span class="p">))</span>
+
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">uid</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">expiry</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">())</span> <span class="o">+</span> <span class="n">TOKEN_LIFETIME</span><span class="p">,</span> <span class="n">active</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">ua</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">ip</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">location</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">sid</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">generate_string</span><span class="p">()</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">uid</span> <span class="o">=</span> <span class="n">uid</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">username</span> <span class="o">=</span> <span class="n">username</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">issued</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">())</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">expiry</span> <span class="o">=</span> <span class="n">expiry</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">active</span> <span class="o">=</span> <span class="n">active</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">ua</span> <span class="o">=</span> <span class="n">ua</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">ip</span> <span class="o">=</span> <span class="n">ip</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">location</span> <span class="o">=</span> <span class="n">location</span></div>
+
+<div class="viewcode-block" id="TeamInvitations"><a class="viewcode-back" href="../../api.models.html#api.models.TeamInvitations">[docs]</a><span class="k">class</span> <span class="nc">TeamInvitations</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+	<span class="n">rid</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+	<span class="n">rtype</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">)</span>
+	<span class="n">frid</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">)</span>
+	<span class="n">toid</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">)</span>
+	<span class="n">date</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">utils</span><span class="o">.</span><span class="n">get_time_since_epoch</span><span class="p">())</span>
+
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rtype</span><span class="p">,</span> <span class="n">frid</span><span class="p">,</span> <span class="n">toid</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">rtype</span> <span class="o">=</span> <span class="n">rtype</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">frid</span> <span class="o">=</span> <span class="n">frid</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">toid</span> <span class="o">=</span> <span class="n">toid</span></div>
+
+<div class="viewcode-block" id="Tickets"><a class="viewcode-back" href="../../api.models.html#api.models.Tickets">[docs]</a><span class="k">class</span> <span class="nc">Tickets</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+	<span class="n">htid</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+	<span class="n">date</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">utils</span><span class="o">.</span><span class="n">get_time_since_epoch</span><span class="p">())</span>
+	<span class="n">opened</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Boolean</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+	<span class="n">author</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s2">&quot;users.uid&quot;</span><span class="p">))</span>
+	<span class="n">title</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Text</span><span class="p">)</span>
+	<span class="n">body</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Text</span><span class="p">)</span>
+
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="p">,</span> <span class="n">body</span><span class="p">,</span> <span class="n">author</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">title</span> <span class="o">=</span> <span class="n">title</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">body</span> <span class="o">=</span> <span class="n">body</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">author</span> <span class="o">=</span> <span class="n">author</span>
+
+<div class="viewcode-block" id="Tickets.get_replies"><a class="viewcode-back" href="../../api.models.html#api.models.Tickets.get_replies">[docs]</a>	<span class="k">def</span> <span class="nf">get_replies</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+		<span class="n">replies</span> <span class="o">=</span> <span class="p">[]</span>
+		<span class="k">for</span> <span class="n">reply</span> <span class="ow">in</span> <span class="n">TicketReplies</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">htid</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">htid</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+			<span class="n">uid</span> <span class="o">=</span> <span class="n">reply</span><span class="o">.</span><span class="n">author</span>
+			<span class="n">user</span> <span class="o">=</span> <span class="n">Users</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="n">uid</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+			<span class="k">if</span> <span class="n">user</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+				<span class="n">username</span> <span class="o">=</span> <span class="n">user</span><span class="o">.</span><span class="n">username</span>
+			<span class="k">else</span><span class="p">:</span>
+				<span class="n">username</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+			<span class="n">replies</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+				<span class="s2">&quot;trid&quot;</span><span class="p">:</span> <span class="n">reply</span><span class="o">.</span><span class="n">trid</span><span class="p">,</span>
+				<span class="s2">&quot;body&quot;</span><span class="p">:</span> <span class="n">markdown2</span><span class="o">.</span><span class="n">markdown</span><span class="p">(</span><span class="n">reply</span><span class="o">.</span><span class="n">body</span><span class="p">),</span>
+				<span class="s2">&quot;date&quot;</span><span class="p">:</span> <span class="n">utils</span><span class="o">.</span><span class="n">isoformat</span><span class="p">(</span><span class="n">reply</span><span class="o">.</span><span class="n">date</span><span class="p">),</span>
+				<span class="s2">&quot;uid&quot;</span><span class="p">:</span> <span class="n">uid</span><span class="p">,</span>
+				<span class="s2">&quot;username&quot;</span><span class="p">:</span> <span class="n">username</span>
+			<span class="p">})</span>
+		<span class="k">return</span> <span class="n">replies</span></div></div>
+
+<div class="viewcode-block" id="TicketReplies"><a class="viewcode-back" href="../../api.models.html#api.models.TicketReplies">[docs]</a><span class="k">class</span> <span class="nc">TicketReplies</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+	<span class="n">trid</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+	<span class="n">htid</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s2">&quot;tickets.htid&quot;</span><span class="p">))</span>
+	<span class="n">date</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">utils</span><span class="o">.</span><span class="n">get_time_since_epoch</span><span class="p">())</span>
+	<span class="n">author</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s2">&quot;users.uid&quot;</span><span class="p">))</span>
+	<span class="n">body</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Text</span><span class="p">)</span>
+
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">htid</span><span class="p">,</span> <span class="n">body</span><span class="p">,</span> <span class="n">author</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">htid</span> <span class="o">=</span> <span class="n">htid</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">body</span> <span class="o">=</span> <span class="n">body</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">author</span> <span class="o">=</span> <span class="n">author</span></div>
+
+<div class="viewcode-block" id="ProgrammingSubmissions"><a class="viewcode-back" href="../../api.models.html#api.models.ProgrammingSubmissions">[docs]</a><span class="k">class</span> <span class="nc">ProgrammingSubmissions</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Model</span><span class="p">):</span>
+	<span class="n">psid</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">primary_key</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+	<span class="n">pid</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">String</span><span class="p">(</span><span class="mi">128</span><span class="p">),</span> <span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s2">&quot;problems.pid&quot;</span><span class="p">))</span>
+	<span class="n">tid</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">db</span><span class="o">.</span><span class="n">ForeignKey</span><span class="p">(</span><span class="s2">&quot;teams.tid&quot;</span><span class="p">))</span>
+	<span class="n">date</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">,</span> <span class="n">default</span><span class="o">=</span><span class="n">utils</span><span class="o">.</span><span class="n">get_time_since_epoch</span><span class="p">())</span>
+	<span class="n">message</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Text</span><span class="p">)</span>
+	<span class="n">log</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Text</span><span class="p">)</span>
+	<span class="n">submission_path</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Text</span><span class="p">)</span>
+	<span class="n">number</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">Column</span><span class="p">(</span><span class="n">db</span><span class="o">.</span><span class="n">Integer</span><span class="p">)</span>
+
+	<span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pid</span><span class="p">,</span> <span class="n">tid</span><span class="p">,</span> <span class="n">submission_path</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="n">log</span><span class="p">,</span> <span class="n">number</span><span class="p">):</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">pid</span> <span class="o">=</span> <span class="n">pid</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">tid</span> <span class="o">=</span> <span class="n">tid</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">submission_path</span> <span class="o">=</span> <span class="n">submission_path</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">message</span> <span class="o">=</span> <span class="n">message</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">log</span> <span class="o">=</span> <span class="n">log</span>
+		<span class="bp">self</span><span class="o">.</span><span class="n">number</span> <span class="o">=</span> <span class="n">number</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, EasyCTF Team.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

@@ -1,0 +1,303 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>api.team module &mdash; OpenCTF  documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="OpenCTF  documentation" href="index.html"/>
+        <link rel="up" title="api package" href="api.html"/>
+        <link rel="next" title="api.tickets module" href="api.tickets.html"/>
+        <link rel="prev" title="api.stats module" href="api.stats.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> OpenCTF
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="gettingstarted.html">Getting Started</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="api.html">Python REST API</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="api.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="api.activity.html">api.activity module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.admin.html">api.admin module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.autogen.html">api.autogen module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.cache.html">api.cache module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.decorators.html">api.decorators module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.logger.html">api.logger module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.models.html">api.models module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.problem.html">api.problem module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.programming.html">api.programming module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.schemas.html">api.schemas module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.stats.html">api.stats module</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">api.team module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.tickets.html">api.tickets module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.user.html">api.user module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.utils.html">api.utils module</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#module-api">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">OpenCTF</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="api.html">api package</a> &raquo;</li>
+      
+    <li>api.team module</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/api.team.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-api.team">
+<span id="api-team-module"></span><h1>api.team module<a class="headerlink" href="#module-api.team" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="api.team.get_team">
+<code class="descclassname">api.team.</code><code class="descname">get_team</code><span class="sig-paren">(</span><em>tid=None</em>, <em>teamname=None</em>, <em>teamname_lower=None</em>, <em>owner=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/api/team.html#get_team"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#api.team.get_team" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="api.team.get_team_info">
+<code class="descclassname">api.team.</code><code class="descname">get_team_info</code><span class="sig-paren">(</span><em>tid=None</em>, <em>teamname=None</em>, <em>teamname_lower=None</em>, <em>owner=None</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/api/team.html#get_team_info"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#api.team.get_team_info" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="api.team.get_team_of">
+<code class="descclassname">api.team.</code><code class="descname">get_team_of</code><span class="sig-paren">(</span><em>uid</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/api/team.html#get_team_of"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#api.team.get_team_of" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="api.team.num_teams">
+<code class="descclassname">api.team.</code><code class="descname">num_teams</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/api/team.html#num_teams"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#api.team.num_teams" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="api.team.team_accept_invite">
+<code class="descclassname">api.team.</code><code class="descname">team_accept_invite</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwds</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/api/team.html#team_accept_invite"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#api.team.team_accept_invite" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="api.team.team_accept_invite_request">
+<code class="descclassname">api.team.</code><code class="descname">team_accept_invite_request</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwds</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/api/team.html#team_accept_invite_request"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#api.team.team_accept_invite_request" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="api.team.team_create">
+<code class="descclassname">api.team.</code><code class="descname">team_create</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwds</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/api/team.html#team_create"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#api.team.team_create" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="api.team.team_delete">
+<code class="descclassname">api.team.</code><code class="descname">team_delete</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwds</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/api/team.html#team_delete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#api.team.team_delete" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="api.team.team_edit">
+<code class="descclassname">api.team.</code><code class="descname">team_edit</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwds</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/api/team.html#team_edit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#api.team.team_edit" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="api.team.team_finalize">
+<code class="descclassname">api.team.</code><code class="descname">team_finalize</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwds</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/api/team.html#team_finalize"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#api.team.team_finalize" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="api.team.team_finalized">
+<code class="descclassname">api.team.</code><code class="descname">team_finalized</code><span class="sig-paren">(</span><em>team</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/api/team.html#team_finalized"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#api.team.team_finalized" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="api.team.team_info">
+<code class="descclassname">api.team.</code><code class="descname">team_info</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwds</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/api/team.html#team_info"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#api.team.team_info" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="api.team.team_invite">
+<code class="descclassname">api.team.</code><code class="descname">team_invite</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwds</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/api/team.html#team_invite"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#api.team.team_invite" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="api.team.team_invite_request">
+<code class="descclassname">api.team.</code><code class="descname">team_invite_request</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwds</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/api/team.html#team_invite_request"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#api.team.team_invite_request" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="api.team.team_invite_rescind">
+<code class="descclassname">api.team.</code><code class="descname">team_invite_rescind</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwds</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/api/team.html#team_invite_rescind"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#api.team.team_invite_rescind" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="api.team.team_remove_member">
+<code class="descclassname">api.team.</code><code class="descname">team_remove_member</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwds</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/api/team.html#team_remove_member"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#api.team.team_remove_member" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="api.tickets.html" class="btn btn-neutral float-right" title="api.tickets module" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="api.stats.html" class="btn btn-neutral" title="api.stats module" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, EasyCTF Team.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

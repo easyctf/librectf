@@ -1,0 +1,285 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>api.utils module &mdash; OpenCTF  documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="OpenCTF  documentation" href="index.html"/>
+        <link rel="up" title="api package" href="api.html"/>
+        <link rel="prev" title="api.user module" href="api.user.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> OpenCTF
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="gettingstarted.html">Getting Started</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="api.html">Python REST API</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="api.html#submodules">Submodules</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="api.activity.html">api.activity module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.admin.html">api.admin module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.autogen.html">api.autogen module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.cache.html">api.cache module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.decorators.html">api.decorators module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.logger.html">api.logger module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.models.html">api.models module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.problem.html">api.problem module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.programming.html">api.programming module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.schemas.html">api.schemas module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.stats.html">api.stats module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.team.html">api.team module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.tickets.html">api.tickets module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="api.user.html">api.user module</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">api.utils module</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="api.html#module-api">Module contents</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">OpenCTF</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+ 
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="api.html">api package</a> &raquo;</li>
+      
+    <li>api.utils module</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+            <a href="_sources/api.utils.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-api.utils">
+<span id="api-utils-module"></span><h1>api.utils module<a class="headerlink" href="#module-api.utils" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="api.utils.check_password">
+<code class="descclassname">api.utils.</code><code class="descname">check_password</code><span class="sig-paren">(</span><em>hashed_password</em>, <em>try_password</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/api/utils.html#check_password"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#api.utils.check_password" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="api.utils.flat_multi">
+<code class="descclassname">api.utils.</code><code class="descname">flat_multi</code><span class="sig-paren">(</span><em>multidict</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/api/utils.html#flat_multi"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#api.utils.flat_multi" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="api.utils.generate_identicon">
+<code class="descclassname">api.utils.</code><code class="descname">generate_identicon</code><span class="sig-paren">(</span><em>email</em>, <em>filename</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/api/utils.html#generate_identicon"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#api.utils.generate_identicon" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="api.utils.generate_string">
+<code class="descclassname">api.utils.</code><code class="descname">generate_string</code><span class="sig-paren">(</span><em>length=32</em>, <em>alpha='0123456789abcdefABCDEF'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/api/utils.html#generate_string"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#api.utils.generate_string" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="api.utils.get_config">
+<code class="descclassname">api.utils.</code><code class="descname">get_config</code><span class="sig-paren">(</span><em>key</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/api/utils.html#get_config"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#api.utils.get_config" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="api.utils.get_ctf_name">
+<code class="descclassname">api.utils.</code><code class="descname">get_ctf_name</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/api/utils.html#get_ctf_name"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#api.utils.get_ctf_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="api.utils.get_time_since_epoch">
+<code class="descclassname">api.utils.</code><code class="descname">get_time_since_epoch</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/api/utils.html#get_time_since_epoch"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#api.utils.get_time_since_epoch" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="api.utils.hash_password">
+<code class="descclassname">api.utils.</code><code class="descname">hash_password</code><span class="sig-paren">(</span><em>s</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/api/utils.html#hash_password"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#api.utils.hash_password" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="api.utils.is_ctf_time">
+<code class="descclassname">api.utils.</code><code class="descname">is_ctf_time</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/api/utils.html#is_ctf_time"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#api.utils.is_ctf_time" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="api.utils.is_setup_complete">
+<code class="descclassname">api.utils.</code><code class="descname">is_setup_complete</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/api/utils.html#is_setup_complete"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#api.utils.is_setup_complete" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="api.utils.isoformat">
+<code class="descclassname">api.utils.</code><code class="descname">isoformat</code><span class="sig-paren">(</span><em>seconds</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/api/utils.html#isoformat"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#api.utils.isoformat" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="api.utils.send_email">
+<code class="descclassname">api.utils.</code><code class="descname">send_email</code><span class="sig-paren">(</span><em>recipient</em>, <em>subject</em>, <em>body</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/api/utils.html#send_email"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#api.utils.send_email" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="function">
+<dt id="api.utils.unix_time_seconds">
+<code class="descclassname">api.utils.</code><code class="descname">unix_time_seconds</code><span class="sig-paren">(</span><em>dt</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/api/utils.html#unix_time_seconds"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#api.utils.unix_time_seconds" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="api.user.html" class="btn btn-neutral" title="api.user module" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, EasyCTF Team.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

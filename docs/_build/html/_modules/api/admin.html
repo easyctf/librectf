@@ -1,0 +1,323 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>api.admin &mdash; OpenCTF  documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="OpenCTF  documentation" href="../../index.html"/>
+        <link rel="up" title="api" href="../api.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> OpenCTF
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../gettingstarted.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">Python REST API</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">OpenCTF</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      
+          <li><a href="../api.html">api</a> &raquo;</li>
+      
+    <li>api.admin</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for api.admin</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Blueprint</span><span class="p">,</span> <span class="n">jsonify</span><span class="p">,</span> <span class="n">request</span>
+<span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">current_app</span> <span class="k">as</span> <span class="n">app</span>
+<span class="kn">from</span> <span class="nn">decorators</span> <span class="kn">import</span> <span class="n">admins_only</span><span class="p">,</span> <span class="n">api_wrapper</span><span class="p">,</span> <span class="n">WebException</span>
+<span class="kn">from</span> <span class="nn">models</span> <span class="kn">import</span> <span class="n">db</span><span class="p">,</span> <span class="n">Config</span><span class="p">,</span> <span class="n">Problems</span><span class="p">,</span> <span class="n">Teams</span><span class="p">,</span> <span class="n">Users</span><span class="p">,</span> <span class="n">UserActivity</span>
+<span class="kn">from</span> <span class="nn">schemas</span> <span class="kn">import</span> <span class="n">verify_to_schema</span><span class="p">,</span> <span class="n">check</span>
+<span class="kn">from</span> <span class="nn">operator</span> <span class="kn">import</span> <span class="n">itemgetter</span>
+
+<span class="kn">import</span> <span class="nn">logger</span>
+<span class="kn">import</span> <span class="nn">problem</span>
+<span class="kn">import</span> <span class="nn">team</span>
+<span class="kn">import</span> <span class="nn">user</span>
+<span class="kn">import</span> <span class="nn">utils</span>
+
+<span class="n">blueprint</span> <span class="o">=</span> <span class="n">Blueprint</span><span class="p">(</span><span class="s2">&quot;admin&quot;</span><span class="p">,</span> <span class="n">__name__</span><span class="p">)</span>
+
+<span class="nd">@blueprint.route</span><span class="p">(</span><span class="s2">&quot;/setup/init&quot;</span><span class="p">)</span>
+<span class="nd">@api_wrapper</span>
+<div class="viewcode-block" id="admin_setup_init"><a class="viewcode-back" href="../../api.admin.html#api.admin.admin_setup_init">[docs]</a><span class="k">def</span> <span class="nf">admin_setup_init</span><span class="p">():</span>
+	<span class="k">if</span> <span class="n">utils</span><span class="o">.</span><span class="n">is_setup_complete</span><span class="p">():</span> <span class="k">raise</span> <span class="n">WebException</span><span class="p">(</span><span class="s2">&quot;Setup has already been complete.&quot;</span><span class="p">)</span>
+
+	<span class="n">verification</span> <span class="o">=</span> <span class="n">Config</span><span class="p">(</span><span class="s2">&quot;setup_verification&quot;</span><span class="p">,</span> <span class="n">utils</span><span class="o">.</span><span class="n">generate_string</span><span class="p">()</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span>
+	<span class="k">with</span> <span class="n">app</span><span class="o">.</span><span class="n">app_context</span><span class="p">():</span>
+		<span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">Config</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s2">&quot;setup_verification&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+			<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">verification</span><span class="p">)</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+		<span class="k">return</span> <span class="p">{</span> <span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;verification&quot;</span><span class="p">:</span> <span class="n">verification</span><span class="o">.</span><span class="n">value</span> <span class="p">}</span></div>
+
+<span class="nd">@blueprint.route</span><span class="p">(</span><span class="s2">&quot;/setup&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;POST&quot;</span><span class="p">])</span>
+<span class="nd">@api_wrapper</span>
+<div class="viewcode-block" id="admin_setup"><a class="viewcode-back" href="../../api.admin.html#api.admin.admin_setup">[docs]</a><span class="k">def</span> <span class="nf">admin_setup</span><span class="p">():</span>
+	<span class="k">global</span> <span class="n">user</span>
+	<span class="n">params</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">flat_multi</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">utils</span><span class="o">.</span><span class="n">is_setup_complete</span><span class="p">():</span> <span class="k">raise</span> <span class="n">WebException</span><span class="p">(</span><span class="s2">&quot;Setup has already been complete.&quot;</span><span class="p">)</span>
+
+	<span class="k">if</span> <span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;verification&quot;</span><span class="p">)</span> <span class="o">!=</span> <span class="n">Config</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="s2">&quot;setup_verification&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span><span class="o">.</span><span class="n">value</span><span class="p">:</span>
+		<span class="k">raise</span> <span class="n">WebException</span><span class="p">(</span><span class="s2">&quot;Verification does not match.&quot;</span><span class="p">)</span>
+
+	<span class="k">if</span> <span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;password&quot;</span><span class="p">)</span> <span class="o">!=</span> <span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;password_confirm&quot;</span><span class="p">):</span>
+		<span class="k">raise</span> <span class="n">WebException</span><span class="p">(</span><span class="s2">&quot;Passwords do not match.&quot;</span><span class="p">)</span>
+	<span class="n">verify_to_schema</span><span class="p">(</span><span class="n">user</span><span class="o">.</span><span class="n">UserSchema</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+
+	<span class="n">name</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;name&quot;</span><span class="p">)</span>
+	<span class="n">email</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;email&quot;</span><span class="p">)</span>
+	<span class="n">username</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;username&quot;</span><span class="p">)</span>
+	<span class="n">password</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;password&quot;</span><span class="p">)</span>
+	<span class="n">password_confirm</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;password_confirm&quot;</span><span class="p">)</span>
+	<span class="n">utype</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;type&quot;</span><span class="p">))</span>
+
+	<span class="n">setup_vars</span> <span class="o">=</span> <span class="p">[</span>
+		<span class="n">Config</span><span class="p">(</span><span class="s2">&quot;ctf_name&quot;</span><span class="p">,</span> <span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ctf_name&quot;</span><span class="p">)),</span>
+		<span class="n">Config</span><span class="p">(</span><span class="s2">&quot;start_time&quot;</span><span class="p">,</span> <span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;start_time&quot;</span><span class="p">)),</span>
+		<span class="n">Config</span><span class="p">(</span><span class="s2">&quot;end_time&quot;</span><span class="p">,</span> <span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;end_time&quot;</span><span class="p">)),</span>
+		<span class="n">Config</span><span class="p">(</span><span class="s2">&quot;team_size&quot;</span><span class="p">,</span> <span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;team_size&quot;</span><span class="p">)),</span>
+		<span class="n">Config</span><span class="p">(</span><span class="s2">&quot;setup_complete&quot;</span><span class="p">,</span> <span class="bp">True</span><span class="p">)</span>
+	<span class="p">]</span>
+
+	<span class="n">_user</span> <span class="o">=</span> <span class="n">Users</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">username</span><span class="p">,</span> <span class="n">email</span><span class="p">,</span> <span class="n">password</span><span class="p">,</span> <span class="n">utype</span><span class="o">=</span><span class="n">utype</span><span class="p">,</span> <span class="n">admin</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+	<span class="k">with</span> <span class="n">app</span><span class="o">.</span><span class="n">app_context</span><span class="p">():</span>
+		<span class="k">for</span> <span class="n">var</span> <span class="ow">in</span> <span class="n">setup_vars</span><span class="p">:</span>
+			<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">var</span><span class="p">)</span>
+
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">_user</span><span class="p">)</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+		<span class="n">join_activity</span> <span class="o">=</span> <span class="n">UserActivity</span><span class="p">(</span><span class="n">_user</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">join_activity</span><span class="p">)</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+
+	<span class="n">logger</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">__name__</span><span class="p">,</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2"> registered with </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">name</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">),</span> <span class="n">email</span><span class="o">.</span><span class="n">encode</span><span class="p">(</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)))</span>
+	<span class="n">user</span><span class="o">.</span><span class="n">login_user</span><span class="p">(</span><span class="n">username</span><span class="p">,</span> <span class="n">password</span><span class="p">)</span>
+
+	<span class="k">return</span> <span class="p">{</span> <span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Success!&quot;</span> <span class="p">}</span></div>
+
+<span class="nd">@blueprint.route</span><span class="p">(</span><span class="s2">&quot;/stats/overview&quot;</span><span class="p">)</span>
+<span class="nd">@api_wrapper</span>
+<span class="nd">@admins_only</span>
+<div class="viewcode-block" id="admin_stats_overview"><a class="viewcode-back" href="../../api.admin.html#api.admin.admin_stats_overview">[docs]</a><span class="k">def</span> <span class="nf">admin_stats_overview</span><span class="p">():</span>
+	<span class="n">overview</span> <span class="o">=</span> <span class="p">{</span> <span class="p">}</span>
+	<span class="n">overview</span><span class="p">[</span><span class="s2">&quot;num_users&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">user</span><span class="o">.</span><span class="n">num_users</span><span class="p">(),</span> <span class="n">user</span><span class="o">.</span><span class="n">num_users</span><span class="p">(</span><span class="n">include_observers</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+	<span class="n">overview</span><span class="p">[</span><span class="s2">&quot;num_teams&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">team</span><span class="o">.</span><span class="n">num_teams</span><span class="p">(),</span> <span class="n">team</span><span class="o">.</span><span class="n">num_teams</span><span class="p">(</span><span class="n">include_observers</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+	<span class="n">overview</span><span class="p">[</span><span class="s2">&quot;num_problems&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">num_problems</span><span class="p">()</span>
+	<span class="k">return</span> <span class="p">{</span> <span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;overview&quot;</span><span class="p">:</span> <span class="n">overview</span> <span class="p">}</span></div>
+
+<span class="nd">@blueprint.route</span><span class="p">(</span><span class="s2">&quot;/settings&quot;</span><span class="p">)</span>
+<span class="nd">@api_wrapper</span>
+<span class="nd">@admins_only</span>
+<div class="viewcode-block" id="admin_settings"><a class="viewcode-back" href="../../api.admin.html#api.admin.admin_settings">[docs]</a><span class="k">def</span> <span class="nf">admin_settings</span><span class="p">():</span>
+	<span class="k">return</span> <span class="p">{</span> <span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;settings&quot;</span><span class="p">:</span> <span class="n">get_settings</span><span class="p">()</span> <span class="p">}</span></div>
+
+<span class="nd">@blueprint.route</span><span class="p">(</span><span class="s2">&quot;/settings/update&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;POST&quot;</span><span class="p">])</span>
+<span class="nd">@api_wrapper</span>
+<span class="nd">@admins_only</span>
+<div class="viewcode-block" id="admin_settings_update"><a class="viewcode-back" href="../../api.admin.html#api.admin.admin_settings_update">[docs]</a><span class="k">def</span> <span class="nf">admin_settings_update</span><span class="p">():</span>
+	<span class="n">params</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">flat_multi</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">)</span>
+	<span class="n">params</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;csrf_token&quot;</span><span class="p">)</span>
+	<span class="k">with</span> <span class="n">app</span><span class="o">.</span><span class="n">app_context</span><span class="p">():</span>
+		<span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
+			<span class="n">config</span> <span class="o">=</span> <span class="n">Config</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">key</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+			<span class="n">new</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+			<span class="k">if</span> <span class="n">config</span><span class="o">.</span><span class="n">value</span> <span class="o">!=</span> <span class="n">new</span><span class="p">:</span>
+				<span class="n">config</span><span class="o">.</span><span class="n">value</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+				<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">config</span><span class="p">)</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+
+	<span class="k">return</span> <span class="p">{</span> <span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Success!&quot;</span> <span class="p">}</span></div>
+
+<span class="nd">@blueprint.route</span><span class="p">(</span><span class="s2">&quot;/teams/overview&quot;</span><span class="p">)</span>
+<span class="nd">@api_wrapper</span>
+<span class="nd">@admins_only</span>
+<div class="viewcode-block" id="admin_team_overview"><a class="viewcode-back" href="../../api.admin.html#api.admin.admin_team_overview">[docs]</a><span class="k">def</span> <span class="nf">admin_team_overview</span><span class="p">():</span>
+	<span class="n">teams_return</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="n">teams</span> <span class="o">=</span> <span class="n">Teams</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+	<span class="k">for</span> <span class="n">_team</span> <span class="ow">in</span> <span class="n">teams</span><span class="p">:</span>
+		<span class="n">teams_return</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">_team</span><span class="o">.</span><span class="n">get_info</span><span class="p">())</span>
+	<span class="n">teams_return</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">key</span><span class="o">=</span><span class="n">itemgetter</span><span class="p">(</span><span class="s2">&quot;points&quot;</span><span class="p">),</span> <span class="n">reverse</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+	<span class="k">return</span> <span class="p">{</span> <span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;teams&quot;</span><span class="p">:</span> <span class="n">teams_return</span> <span class="p">}</span></div>
+
+<span class="nd">@blueprint.route</span><span class="p">(</span><span class="s2">&quot;/info&quot;</span><span class="p">)</span>
+<span class="nd">@api_wrapper</span>
+<div class="viewcode-block" id="admin_info"><a class="viewcode-back" href="../../api.admin.html#api.admin.admin_info">[docs]</a><span class="k">def</span> <span class="nf">admin_info</span><span class="p">():</span>
+	<span class="n">settings</span> <span class="o">=</span> <span class="n">get_settings</span><span class="p">()</span>
+	<span class="n">result</span> <span class="o">=</span> <span class="p">{</span>
+		<span class="s2">&quot;start_time&quot;</span><span class="p">:</span> <span class="n">settings</span><span class="p">[</span><span class="s2">&quot;start_time&quot;</span><span class="p">],</span>
+		<span class="s2">&quot;end_time&quot;</span><span class="p">:</span> <span class="n">settings</span><span class="p">[</span><span class="s2">&quot;end_time&quot;</span><span class="p">],</span>
+		<span class="s2">&quot;team_size&quot;</span><span class="p">:</span> <span class="n">settings</span><span class="p">[</span><span class="s2">&quot;team_size&quot;</span><span class="p">]</span>
+	<span class="p">}</span>
+	<span class="k">return</span> <span class="p">{</span> <span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;info&quot;</span><span class="p">:</span> <span class="n">result</span> <span class="p">}</span></div>
+
+<div class="viewcode-block" id="get_settings"><a class="viewcode-back" href="../../api.admin.html#api.admin.get_settings">[docs]</a><span class="k">def</span> <span class="nf">get_settings</span><span class="p">():</span>
+	<span class="n">settings_return</span> <span class="o">=</span> <span class="p">{}</span>
+	<span class="n">settings</span> <span class="o">=</span> <span class="n">Config</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+	<span class="k">for</span> <span class="n">setting</span> <span class="ow">in</span> <span class="n">settings</span><span class="p">:</span>
+		<span class="n">settings_return</span><span class="p">[</span><span class="n">setting</span><span class="o">.</span><span class="n">key</span><span class="p">]</span> <span class="o">=</span> <span class="n">setting</span><span class="o">.</span><span class="n">value</span>
+	<span class="k">return</span> <span class="n">settings_return</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, EasyCTF Team.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

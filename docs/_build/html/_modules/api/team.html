@@ -1,0 +1,589 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>api.team &mdash; OpenCTF  documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="OpenCTF  documentation" href="../../index.html"/>
+        <link rel="up" title="api" href="../api.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> OpenCTF
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../gettingstarted.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">Python REST API</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">OpenCTF</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      
+          <li><a href="../api.html">api</a> &raquo;</li>
+      
+    <li>api.team</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for api.team</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">Blueprint</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">session</span>
+<span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">current_app</span> <span class="k">as</span> <span class="n">app</span>
+<span class="kn">from</span> <span class="nn">voluptuous</span> <span class="kn">import</span> <span class="n">Schema</span><span class="p">,</span> <span class="n">Length</span><span class="p">,</span> <span class="n">Required</span>
+
+<span class="kn">from</span> <span class="nn">models</span> <span class="kn">import</span> <span class="n">db</span><span class="p">,</span> <span class="n">ProgrammingSubmissions</span><span class="p">,</span> <span class="n">Solves</span><span class="p">,</span> <span class="n">TeamInvitations</span><span class="p">,</span> <span class="n">Teams</span><span class="p">,</span> <span class="n">UserActivity</span><span class="p">,</span> <span class="n">Users</span>
+<span class="kn">from</span> <span class="nn">decorators</span> <span class="kn">import</span> <span class="n">api_wrapper</span><span class="p">,</span> <span class="n">login_required</span><span class="p">,</span> <span class="n">WebException</span><span class="p">,</span> <span class="n">team_required</span>
+<span class="kn">from</span> <span class="nn">schemas</span> <span class="kn">import</span> <span class="n">verify_to_schema</span><span class="p">,</span> <span class="n">check</span>
+
+<span class="kn">import</span> <span class="nn">user</span>
+<span class="kn">import</span> <span class="nn">utils</span>
+<span class="kn">import</span> <span class="nn">cache</span>
+
+<span class="n">blueprint</span> <span class="o">=</span> <span class="n">Blueprint</span><span class="p">(</span><span class="s2">&quot;team&quot;</span><span class="p">,</span> <span class="n">__name__</span><span class="p">)</span>
+
+<span class="c1">###############</span>
+<span class="c1"># TEAM ROUTES #</span>
+<span class="c1">###############</span>
+
+<span class="nd">@blueprint.route</span><span class="p">(</span><span class="s2">&quot;/create&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;POST&quot;</span><span class="p">])</span>
+<span class="nd">@api_wrapper</span>
+<span class="nd">@login_required</span>
+<div class="viewcode-block" id="team_create"><a class="viewcode-back" href="../../api.team.html#api.team.team_create">[docs]</a><span class="k">def</span> <span class="nf">team_create</span><span class="p">():</span>
+	<span class="n">params</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">flat_multi</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">)</span>
+	<span class="n">_user</span> <span class="o">=</span> <span class="n">user</span><span class="o">.</span><span class="n">get_user</span><span class="p">()</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+	<span class="k">if</span> <span class="p">(</span><span class="n">_user</span><span class="o">.</span><span class="n">tid</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span> <span class="ow">and</span> <span class="n">_user</span><span class="o">.</span><span class="n">tid</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">)</span> <span class="ow">or</span> <span class="n">get_team</span><span class="p">(</span><span class="n">owner</span><span class="o">=</span><span class="n">_user</span><span class="o">.</span><span class="n">uid</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+		<span class="k">raise</span> <span class="n">WebException</span><span class="p">(</span><span class="s2">&quot;You&#39;re already in a team!&quot;</span><span class="p">)</span>
+
+	<span class="n">verify_to_schema</span><span class="p">(</span><span class="n">TeamSchema</span><span class="p">,</span> <span class="n">params</span><span class="p">)</span>
+	<span class="n">teamname</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;teamname&quot;</span><span class="p">)</span>
+	<span class="n">school</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;school&quot;</span><span class="p">)</span>
+
+	<span class="n">team</span> <span class="o">=</span> <span class="n">Teams</span><span class="p">(</span><span class="n">teamname</span><span class="p">,</span> <span class="n">school</span><span class="p">,</span> <span class="n">_user</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span> <span class="n">_user</span><span class="o">.</span><span class="n">utype</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">)</span>
+	<span class="k">with</span> <span class="n">app</span><span class="o">.</span><span class="n">app_context</span><span class="p">():</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">team</span><span class="p">)</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+		<span class="n">Users</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="n">_user</span><span class="o">.</span><span class="n">uid</span><span class="p">)</span><span class="o">.</span><span class="n">update</span><span class="p">({</span> <span class="s2">&quot;tid&quot;</span><span class="p">:</span> <span class="n">team</span><span class="o">.</span><span class="n">tid</span> <span class="p">})</span>
+		<span class="n">team_activity</span> <span class="o">=</span> <span class="n">UserActivity</span><span class="p">(</span><span class="n">_user</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">tid</span><span class="o">=</span><span class="n">team</span><span class="o">.</span><span class="n">tid</span><span class="p">)</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">team_activity</span><span class="p">)</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+
+		<span class="n">session</span><span class="p">[</span><span class="s2">&quot;tid&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">team</span><span class="o">.</span><span class="n">tid</span>
+	<span class="k">return</span> <span class="p">{</span> <span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Success!&quot;</span> <span class="p">}</span></div>
+
+<span class="nd">@blueprint.route</span><span class="p">(</span><span class="s2">&quot;/delete&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;POST&quot;</span><span class="p">])</span>
+<span class="nd">@api_wrapper</span>
+<span class="nd">@login_required</span>
+<div class="viewcode-block" id="team_delete"><a class="viewcode-back" href="../../api.team.html#api.team.team_delete">[docs]</a><span class="k">def</span> <span class="nf">team_delete</span><span class="p">():</span>
+	<span class="n">params</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">flat_multi</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">)</span>
+	<span class="k">if</span> <span class="s2">&quot;tid&quot;</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
+		<span class="n">tid</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;tid&quot;</span><span class="p">)</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="n">tid</span> <span class="o">=</span> <span class="n">session</span><span class="p">[</span><span class="s2">&quot;tid&quot;</span><span class="p">]</span>
+
+	<span class="n">username</span> <span class="o">=</span> <span class="n">session</span><span class="p">[</span><span class="s2">&quot;username&quot;</span><span class="p">]</span>
+	<span class="n">team</span> <span class="o">=</span> <span class="n">Teams</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">tid</span><span class="o">=</span><span class="n">tid</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+	<span class="n">usr</span> <span class="o">=</span> <span class="n">Users</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="n">username</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+	<span class="n">owner</span> <span class="o">=</span> <span class="n">team</span><span class="o">.</span><span class="n">owner</span>
+	<span class="k">if</span> <span class="n">usr</span><span class="o">.</span><span class="n">uid</span> <span class="o">==</span> <span class="n">owner</span> <span class="ow">or</span> <span class="n">usr</span><span class="o">.</span><span class="n">admin</span><span class="p">:</span>
+		<span class="k">with</span> <span class="n">app</span><span class="o">.</span><span class="n">app_context</span><span class="p">():</span>
+			<span class="k">for</span> <span class="n">member</span> <span class="ow">in</span> <span class="n">Users</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">tid</span><span class="o">=</span><span class="n">tid</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+				<span class="n">member</span><span class="o">.</span><span class="n">tid</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+				<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">member</span><span class="p">)</span>
+			<span class="n">UserActivity</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">tid</span><span class="o">=</span><span class="n">tid</span><span class="p">)</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+			<span class="n">Solves</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">tid</span><span class="o">=</span><span class="n">tid</span><span class="p">)</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+			<span class="n">ProgrammingSubmissions</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">tid</span><span class="o">=</span><span class="n">tid</span><span class="p">)</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+			<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">team</span><span class="p">)</span>
+			<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+			<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+			<span class="n">session</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s2">&quot;tid&quot;</span><span class="p">)</span>
+		<span class="k">return</span> <span class="p">{</span> <span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Success!&quot;</span> <span class="p">}</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="k">raise</span> <span class="n">WebException</span><span class="p">(</span><span class="s2">&quot;Not authorized.&quot;</span><span class="p">)</span></div>
+
+<span class="nd">@blueprint.route</span><span class="p">(</span><span class="s2">&quot;/remove_member&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;POST&quot;</span><span class="p">])</span>
+<span class="nd">@api_wrapper</span>
+<span class="nd">@login_required</span>
+<div class="viewcode-block" id="team_remove_member"><a class="viewcode-back" href="../../api.team.html#api.team.team_remove_member">[docs]</a><span class="k">def</span> <span class="nf">team_remove_member</span><span class="p">():</span>
+	<span class="n">username</span> <span class="o">=</span> <span class="n">session</span><span class="p">[</span><span class="s2">&quot;username&quot;</span><span class="p">]</span>
+	<span class="n">tid</span> <span class="o">=</span> <span class="n">session</span><span class="p">[</span><span class="s2">&quot;tid&quot;</span><span class="p">]</span>
+	<span class="n">team</span> <span class="o">=</span> <span class="n">Teams</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">tid</span><span class="o">=</span><span class="n">tid</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+	<span class="n">usr</span> <span class="o">=</span> <span class="n">Users</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="n">username</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+	<span class="n">owner</span> <span class="o">=</span> <span class="n">team</span><span class="o">.</span><span class="n">owner</span>
+	<span class="k">if</span> <span class="n">team</span><span class="o">.</span><span class="n">finalized</span><span class="p">:</span>
+		<span class="k">raise</span> <span class="n">WebException</span><span class="p">(</span><span class="s2">&quot;This team is finalized.&quot;</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">usr</span><span class="o">.</span><span class="n">uid</span> <span class="o">==</span> <span class="n">owner</span> <span class="ow">or</span> <span class="n">usr</span><span class="o">.</span><span class="n">admin</span><span class="p">:</span>
+		<span class="n">params</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">flat_multi</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">)</span>
+		<span class="n">user_to_remove</span> <span class="o">=</span> <span class="n">Users</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">username</span><span class="o">=</span><span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;user&quot;</span><span class="p">))</span>
+		<span class="n">user_to_remove</span><span class="o">.</span><span class="n">tid</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+		<span class="k">with</span> <span class="n">app</span><span class="o">.</span><span class="n">app_context</span><span class="p">():</span>
+			<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">user_to_remove</span><span class="p">)</span>
+			<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+			<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+		<span class="k">return</span> <span class="p">{</span> <span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Success!&quot;</span> <span class="p">}</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="k">raise</span> <span class="n">WebException</span><span class="p">(</span><span class="s2">&quot;Not authorized.&quot;</span><span class="p">)</span></div>
+
+<span class="nd">@blueprint.route</span><span class="p">(</span><span class="s2">&quot;/invite&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;POST&quot;</span><span class="p">])</span>
+<span class="nd">@api_wrapper</span>
+<span class="nd">@login_required</span>
+<span class="nd">@team_required</span>
+<div class="viewcode-block" id="team_invite"><a class="viewcode-back" href="../../api.team.html#api.team.team_invite">[docs]</a><span class="k">def</span> <span class="nf">team_invite</span><span class="p">():</span>
+	<span class="n">params</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">flat_multi</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">)</span>
+	<span class="n">_user</span> <span class="o">=</span> <span class="n">user</span><span class="o">.</span><span class="n">get_user</span><span class="p">()</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+	<span class="n">_team</span> <span class="o">=</span> <span class="n">get_team</span><span class="p">(</span><span class="n">tid</span><span class="o">=</span><span class="n">_user</span><span class="o">.</span><span class="n">tid</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+	<span class="k">if</span> <span class="n">_user</span><span class="o">.</span><span class="n">uid</span> <span class="o">!=</span> <span class="n">_team</span><span class="o">.</span><span class="n">owner</span><span class="p">:</span>
+		<span class="k">raise</span> <span class="n">WebException</span><span class="p">(</span><span class="s2">&quot;You must be the captain of your team to invite members!&quot;</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">_team</span><span class="o">.</span><span class="n">finalized</span><span class="p">:</span>
+		<span class="k">raise</span> <span class="n">WebException</span><span class="p">(</span><span class="s2">&quot;This team is finalized.&quot;</span><span class="p">)</span>
+
+	<span class="n">new_member</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;new_member&quot;</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">new_member</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+		<span class="k">raise</span> <span class="n">WebException</span><span class="p">(</span><span class="s2">&quot;Please provide a username!&quot;</span><span class="p">)</span>
+	<span class="n">_user2</span> <span class="o">=</span> <span class="n">user</span><span class="o">.</span><span class="n">get_user</span><span class="p">(</span><span class="n">username_lower</span><span class="o">=</span><span class="n">new_member</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+	<span class="k">if</span> <span class="n">_user2</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+		<span class="k">raise</span> <span class="n">WebException</span><span class="p">(</span><span class="s2">&quot;User doesn&#39;t exist!&quot;</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">_user2</span><span class="o">.</span><span class="n">tid</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+		<span class="k">raise</span> <span class="n">WebException</span><span class="p">(</span><span class="s2">&quot;This user is already a part of a team!&quot;</span><span class="p">)</span>
+
+	<span class="k">if</span> <span class="n">_team</span><span class="o">.</span><span class="n">get_pending_invitations</span><span class="p">(</span><span class="n">toid</span><span class="o">=</span><span class="n">_user2</span><span class="o">.</span><span class="n">uid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+		<span class="k">raise</span> <span class="n">WebException</span><span class="p">(</span><span class="s2">&quot;You&#39;ve already invited this member!&quot;</span><span class="p">)</span>
+
+	<span class="n">req</span> <span class="o">=</span> <span class="n">TeamInvitations</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">_team</span><span class="o">.</span><span class="n">tid</span><span class="p">,</span> <span class="n">_user2</span><span class="o">.</span><span class="n">uid</span><span class="p">)</span>
+	<span class="k">with</span> <span class="n">app</span><span class="o">.</span><span class="n">app_context</span><span class="p">():</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">req</span><span class="p">)</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+	<span class="k">return</span> <span class="p">{</span> <span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Success!&quot;</span> <span class="p">}</span></div>
+
+<span class="nd">@blueprint.route</span><span class="p">(</span><span class="s2">&quot;/invite/rescind&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;POST&quot;</span><span class="p">])</span>
+<span class="nd">@api_wrapper</span>
+<span class="nd">@login_required</span>
+<span class="nd">@team_required</span>
+<div class="viewcode-block" id="team_invite_rescind"><a class="viewcode-back" href="../../api.team.html#api.team.team_invite_rescind">[docs]</a><span class="k">def</span> <span class="nf">team_invite_rescind</span><span class="p">():</span>
+	<span class="n">params</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">flat_multi</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">)</span>
+	<span class="n">_user</span> <span class="o">=</span> <span class="n">user</span><span class="o">.</span><span class="n">get_user</span><span class="p">()</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+	<span class="n">_team</span> <span class="o">=</span> <span class="n">get_team</span><span class="p">(</span><span class="n">tid</span><span class="o">=</span><span class="n">_user</span><span class="o">.</span><span class="n">tid</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+	<span class="k">if</span> <span class="n">_user</span><span class="o">.</span><span class="n">uid</span> <span class="o">!=</span> <span class="n">_team</span><span class="o">.</span><span class="n">owner</span><span class="p">:</span>
+		<span class="k">raise</span> <span class="n">WebException</span><span class="p">(</span><span class="s2">&quot;You must be the captain of your team to rescind invitations!&quot;</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">_team</span><span class="o">.</span><span class="n">finalized</span><span class="p">:</span>
+		<span class="k">raise</span> <span class="n">WebException</span><span class="p">(</span><span class="s2">&quot;This team is finalized.&quot;</span><span class="p">)</span>
+
+	<span class="n">uid</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;uid&quot;</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">uid</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+		<span class="k">raise</span> <span class="n">WebException</span><span class="p">(</span><span class="s2">&quot;Please provide a user.&quot;</span><span class="p">)</span>
+	<span class="n">invitation</span> <span class="o">=</span> <span class="n">TeamInvitations</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">rtype</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">frid</span><span class="o">=</span><span class="n">_team</span><span class="o">.</span><span class="n">tid</span><span class="p">,</span> <span class="n">toid</span><span class="o">=</span><span class="n">uid</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+	<span class="k">if</span> <span class="n">invitation</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+		<span class="k">raise</span> <span class="n">WebException</span><span class="p">(</span><span class="s2">&quot;Invitation doesn&#39;t exist.&quot;</span><span class="p">)</span>
+
+	<span class="k">with</span> <span class="n">app</span><span class="o">.</span><span class="n">app_context</span><span class="p">():</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">invitation</span><span class="p">)</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+	<span class="k">return</span> <span class="p">{</span> <span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Success!&quot;</span> <span class="p">}</span></div>
+
+<span class="nd">@blueprint.route</span><span class="p">(</span><span class="s2">&quot;/invite/request&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;POST&quot;</span><span class="p">])</span>
+<span class="nd">@api_wrapper</span>
+<span class="nd">@login_required</span>
+<div class="viewcode-block" id="team_invite_request"><a class="viewcode-back" href="../../api.team.html#api.team.team_invite_request">[docs]</a><span class="k">def</span> <span class="nf">team_invite_request</span><span class="p">():</span>
+	<span class="n">params</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">flat_multi</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">)</span>
+	<span class="n">_user</span> <span class="o">=</span> <span class="n">user</span><span class="o">.</span><span class="n">get_user</span><span class="p">()</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+	<span class="k">if</span> <span class="n">user</span><span class="o">.</span><span class="n">in_team</span><span class="p">(</span><span class="n">_user</span><span class="p">):</span>
+		<span class="k">raise</span> <span class="n">WebException</span><span class="p">(</span><span class="s2">&quot;You&#39;re already in a team!&quot;</span><span class="p">)</span>
+
+	<span class="n">tid</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;tid&quot;</span><span class="p">)</span>
+	<span class="n">_team</span> <span class="o">=</span> <span class="n">get_team</span><span class="p">(</span><span class="n">tid</span><span class="o">=</span><span class="n">tid</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+	<span class="k">if</span> <span class="n">_team</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+		<span class="k">raise</span> <span class="n">WebException</span><span class="p">(</span><span class="s2">&quot;Team not found.&quot;</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">_team</span><span class="o">.</span><span class="n">finalized</span><span class="p">:</span>
+		<span class="k">raise</span> <span class="n">WebException</span><span class="p">(</span><span class="s2">&quot;This team is finalized.&quot;</span><span class="p">)</span>
+
+	<span class="k">if</span> <span class="n">_team</span><span class="o">.</span><span class="n">get_invitation_requests</span><span class="p">(</span><span class="n">frid</span><span class="o">=</span><span class="n">_user</span><span class="o">.</span><span class="n">uid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+		<span class="k">raise</span> <span class="n">WebException</span><span class="p">(</span><span class="s2">&quot;You&#39;ve already requested to join this team!&quot;</span><span class="p">)</span>
+
+	<span class="n">req</span> <span class="o">=</span> <span class="n">TeamInvitations</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">_user</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span> <span class="n">_team</span><span class="o">.</span><span class="n">tid</span><span class="p">)</span>
+	<span class="k">with</span> <span class="n">app</span><span class="o">.</span><span class="n">app_context</span><span class="p">():</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">req</span><span class="p">)</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+	<span class="k">return</span> <span class="p">{</span> <span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Success!&quot;</span> <span class="p">}</span></div>
+
+<span class="nd">@blueprint.route</span><span class="p">(</span><span class="s2">&quot;/invite/accept&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;POST&quot;</span><span class="p">])</span>
+<span class="nd">@api_wrapper</span>
+<div class="viewcode-block" id="team_accept_invite"><a class="viewcode-back" href="../../api.team.html#api.team.team_accept_invite">[docs]</a><span class="k">def</span> <span class="nf">team_accept_invite</span><span class="p">():</span>
+	<span class="n">params</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">flat_multi</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">)</span>
+	<span class="n">_user</span> <span class="o">=</span> <span class="n">user</span><span class="o">.</span><span class="n">get_user</span><span class="p">()</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+	<span class="k">if</span> <span class="n">user</span><span class="o">.</span><span class="n">in_team</span><span class="p">(</span><span class="n">_user</span><span class="p">):</span>
+		<span class="k">raise</span> <span class="n">WebException</span><span class="p">(</span><span class="s2">&quot;You&#39;re already in a team!&quot;</span><span class="p">)</span>
+
+	<span class="n">tid</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;tid&quot;</span><span class="p">)</span>
+	<span class="n">_team</span> <span class="o">=</span> <span class="n">get_team</span><span class="p">(</span><span class="n">tid</span><span class="o">=</span><span class="n">tid</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+	<span class="k">if</span> <span class="n">_team</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+		<span class="k">raise</span> <span class="n">WebException</span><span class="p">(</span><span class="s2">&quot;Team not found.&quot;</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">_team</span><span class="o">.</span><span class="n">finalized</span><span class="p">:</span>
+		<span class="k">raise</span> <span class="n">WebException</span><span class="p">(</span><span class="s2">&quot;This team is finalized.&quot;</span><span class="p">)</span>
+
+	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">_team</span><span class="o">.</span><span class="n">get_members</span><span class="p">())</span> <span class="o">&gt;=</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_config</span><span class="p">(</span><span class="s2">&quot;team_size&quot;</span><span class="p">):</span>
+		<span class="k">raise</span> <span class="n">WebException</span><span class="p">(</span><span class="s2">&quot;This team is full.&quot;</span><span class="p">)</span>
+
+	<span class="n">invitation</span> <span class="o">=</span> <span class="n">TeamInvitations</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">rtype</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">frid</span><span class="o">=</span><span class="n">tid</span><span class="p">,</span> <span class="n">toid</span><span class="o">=</span><span class="n">_user</span><span class="o">.</span><span class="n">uid</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+	<span class="k">if</span> <span class="n">invitation</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+		<span class="k">raise</span> <span class="n">WebException</span><span class="p">(</span><span class="s2">&quot;Invitation doesn&#39;t exist.&quot;</span><span class="p">)</span>
+
+	<span class="k">with</span> <span class="n">app</span><span class="o">.</span><span class="n">app_context</span><span class="p">():</span>
+		<span class="n">_user</span> <span class="o">=</span> <span class="n">Users</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="n">_user</span><span class="o">.</span><span class="n">uid</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+		<span class="n">_user</span><span class="o">.</span><span class="n">tid</span> <span class="o">=</span> <span class="n">tid</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">invitation</span><span class="p">)</span>
+		<span class="n">invitation2</span> <span class="o">=</span> <span class="n">TeamInvitations</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">rtype</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">frid</span><span class="o">=</span><span class="n">_user</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span> <span class="n">toid</span><span class="o">=</span><span class="n">tid</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+		<span class="k">if</span> <span class="n">invitation2</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+			<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">invitation2</span><span class="p">)</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+	<span class="k">return</span> <span class="p">{</span> <span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Success!&quot;</span> <span class="p">}</span></div>
+
+<span class="nd">@blueprint.route</span><span class="p">(</span><span class="s2">&quot;/invite/request/accept&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;POST&quot;</span><span class="p">])</span>
+<span class="nd">@api_wrapper</span>
+<div class="viewcode-block" id="team_accept_invite_request"><a class="viewcode-back" href="../../api.team.html#api.team.team_accept_invite_request">[docs]</a><span class="k">def</span> <span class="nf">team_accept_invite_request</span><span class="p">():</span>
+	<span class="n">params</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">flat_multi</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">)</span>
+	<span class="n">_user</span> <span class="o">=</span> <span class="n">user</span><span class="o">.</span><span class="n">get_user</span><span class="p">()</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+	<span class="k">if</span> <span class="ow">not</span> <span class="n">user</span><span class="o">.</span><span class="n">in_team</span><span class="p">(</span><span class="n">_user</span><span class="p">):</span>
+		<span class="k">raise</span> <span class="n">WebException</span><span class="p">(</span><span class="s2">&quot;You must be in a team!&quot;</span><span class="p">)</span>
+	<span class="n">_team</span> <span class="o">=</span> <span class="n">get_team</span><span class="p">(</span><span class="n">tid</span><span class="o">=</span><span class="n">_user</span><span class="o">.</span><span class="n">tid</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+	<span class="n">tid</span> <span class="o">=</span> <span class="n">_team</span><span class="o">.</span><span class="n">tid</span>
+	<span class="k">if</span> <span class="n">_user</span><span class="o">.</span><span class="n">uid</span> <span class="o">!=</span> <span class="n">_team</span><span class="o">.</span><span class="n">owner</span><span class="p">:</span>
+		<span class="k">raise</span> <span class="n">WebException</span><span class="p">(</span><span class="s2">&quot;You must be the captain of your team to rescind invitations!&quot;</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">_team</span><span class="o">.</span><span class="n">finalized</span><span class="p">:</span>
+		<span class="k">raise</span> <span class="n">WebException</span><span class="p">(</span><span class="s2">&quot;This team is finalized.&quot;</span><span class="p">)</span>
+
+	<span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">_team</span><span class="o">.</span><span class="n">get_members</span><span class="p">())</span> <span class="o">&gt;=</span> <span class="n">utils</span><span class="o">.</span><span class="n">get_config</span><span class="p">(</span><span class="s2">&quot;team_size&quot;</span><span class="p">):</span>
+		<span class="k">raise</span> <span class="n">WebException</span><span class="p">(</span><span class="s2">&quot;Your team is full.&quot;</span><span class="p">)</span>
+
+	<span class="n">uid</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;uid&quot;</span><span class="p">)</span>
+	<span class="n">_user2</span> <span class="o">=</span> <span class="n">user</span><span class="o">.</span><span class="n">get_user</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="n">uid</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+	<span class="k">if</span> <span class="n">user</span><span class="o">.</span><span class="n">in_team</span><span class="p">(</span><span class="n">_user2</span><span class="p">):</span>
+		<span class="k">raise</span> <span class="n">WebException</span><span class="p">(</span><span class="s2">&quot;This user is already in a team!&quot;</span><span class="p">)</span>
+
+	<span class="n">invitation</span> <span class="o">=</span> <span class="n">TeamInvitations</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">rtype</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">frid</span><span class="o">=</span><span class="n">_user2</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span> <span class="n">toid</span><span class="o">=</span><span class="n">tid</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+	<span class="k">if</span> <span class="n">invitation</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+		<span class="k">raise</span> <span class="n">WebException</span><span class="p">(</span><span class="s2">&quot;Invitation doesn&#39;t exist.&quot;</span><span class="p">)</span>
+
+	<span class="k">with</span> <span class="n">app</span><span class="o">.</span><span class="n">app_context</span><span class="p">():</span>
+		<span class="n">_user2</span> <span class="o">=</span> <span class="n">Users</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="n">_user2</span><span class="o">.</span><span class="n">uid</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+		<span class="n">_user2</span><span class="o">.</span><span class="n">tid</span> <span class="o">=</span> <span class="n">tid</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">invitation</span><span class="p">)</span>
+		<span class="n">invitation2</span> <span class="o">=</span> <span class="n">TeamInvitations</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">rtype</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">frid</span><span class="o">=</span><span class="n">tid</span><span class="p">,</span> <span class="n">toid</span><span class="o">=</span><span class="n">_user2</span><span class="o">.</span><span class="n">uid</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+		<span class="k">if</span> <span class="n">invitation2</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+			<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="n">invitation2</span><span class="p">)</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+
+	<span class="k">return</span> <span class="p">{</span> <span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Success!&quot;</span> <span class="p">}</span></div>
+
+<span class="nd">@blueprint.route</span><span class="p">(</span><span class="s2">&quot;/info&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;GET&quot;</span><span class="p">])</span>
+<span class="nd">@api_wrapper</span>
+<div class="viewcode-block" id="team_info"><a class="viewcode-back" href="../../api.team.html#api.team.team_info">[docs]</a><span class="k">def</span> <span class="nf">team_info</span><span class="p">():</span>
+	<span class="n">logged_in</span> <span class="o">=</span> <span class="n">user</span><span class="o">.</span><span class="n">is_logged_in</span><span class="p">()</span>
+	<span class="n">my_team</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+	<span class="n">in_team</span> <span class="o">=</span> <span class="bp">False</span>
+	<span class="n">owner</span> <span class="o">=</span> <span class="bp">False</span>
+	<span class="n">_user</span> <span class="o">=</span> <span class="bp">None</span>
+	<span class="n">teamdata</span> <span class="o">=</span> <span class="p">{</span> <span class="p">}</span>
+	<span class="n">search</span> <span class="o">=</span> <span class="p">{</span> <span class="p">}</span>
+	<span class="n">teamname</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">flat_multi</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">args</span><span class="p">)</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;teamname&quot;</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">teamname</span><span class="p">:</span>
+		<span class="n">search</span><span class="o">.</span><span class="n">update</span><span class="p">({</span> <span class="s2">&quot;teamname_lower&quot;</span><span class="p">:</span> <span class="n">teamname</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="p">})</span>
+	<span class="k">if</span> <span class="n">logged_in</span><span class="p">:</span>
+		<span class="n">_user</span> <span class="o">=</span> <span class="n">user</span><span class="o">.</span><span class="n">get_user</span><span class="p">()</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+		<span class="k">if</span> <span class="n">user</span><span class="o">.</span><span class="n">in_team</span><span class="p">(</span><span class="n">_user</span><span class="p">):</span>
+			<span class="n">my_team</span> <span class="o">=</span> <span class="n">_user</span><span class="o">.</span><span class="n">tid</span>
+			<span class="k">if</span> <span class="s2">&quot;teamname_lower&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">search</span><span class="p">:</span>
+				<span class="n">search</span><span class="o">.</span><span class="n">update</span><span class="p">({</span> <span class="s2">&quot;tid&quot;</span><span class="p">:</span> <span class="n">_user</span><span class="o">.</span><span class="n">tid</span> <span class="p">})</span>
+				<span class="n">in_team</span> <span class="o">=</span> <span class="bp">True</span>
+	<span class="k">if</span> <span class="nb">bool</span><span class="p">(</span><span class="n">search</span><span class="p">)</span> <span class="o">!=</span> <span class="bp">False</span><span class="p">:</span>
+		<span class="n">team</span> <span class="o">=</span> <span class="n">get_team</span><span class="p">(</span><span class="o">**</span><span class="n">search</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+		<span class="n">teamdata</span> <span class="o">=</span> <span class="n">get_team_info</span><span class="p">(</span><span class="o">**</span><span class="n">search</span><span class="p">)</span>
+		<span class="k">if</span> <span class="n">logged_in</span><span class="p">:</span>
+			<span class="n">in_team</span> <span class="o">=</span> <span class="n">teamdata</span><span class="p">[</span><span class="s2">&quot;tid&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">_user</span><span class="o">.</span><span class="n">tid</span>
+			<span class="n">owner</span> <span class="o">=</span> <span class="n">teamdata</span><span class="p">[</span><span class="s2">&quot;captain&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="n">_user</span><span class="o">.</span><span class="n">uid</span>
+		<span class="n">teamdata</span><span class="p">[</span><span class="s2">&quot;in_team&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">in_team</span>
+		<span class="n">teamdata</span><span class="p">[</span><span class="s2">&quot;my_team&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">my_team</span>
+		<span class="k">if</span> <span class="n">in_team</span><span class="p">:</span>
+			<span class="n">teamdata</span><span class="p">[</span><span class="s2">&quot;is_owner&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">owner</span>
+			<span class="k">if</span> <span class="n">owner</span><span class="p">:</span>
+				<span class="n">teamdata</span><span class="p">[</span><span class="s2">&quot;pending_invitations&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">team</span><span class="o">.</span><span class="n">get_pending_invitations</span><span class="p">()</span>
+				<span class="n">teamdata</span><span class="p">[</span><span class="s2">&quot;invitation_requests&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">team</span><span class="o">.</span><span class="n">get_invitation_requests</span><span class="p">()</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">logged_in</span><span class="p">:</span>
+				<span class="n">teamdata</span><span class="p">[</span><span class="s2">&quot;invited&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">team</span><span class="o">.</span><span class="n">get_pending_invitations</span><span class="p">(</span><span class="n">toid</span><span class="o">=</span><span class="n">_user</span><span class="o">.</span><span class="n">uid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span>
+				<span class="n">teamdata</span><span class="p">[</span><span class="s2">&quot;requested&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">team</span><span class="o">.</span><span class="n">get_invitation_requests</span><span class="p">(</span><span class="n">frid</span><span class="o">=</span><span class="n">_user</span><span class="o">.</span><span class="n">uid</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="k">if</span> <span class="n">logged_in</span><span class="p">:</span>
+			<span class="n">teamdata</span><span class="p">[</span><span class="s2">&quot;invitations&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">_user</span><span class="o">.</span><span class="n">get_invitations</span><span class="p">()</span>
+			<span class="n">teamdata</span><span class="p">[</span><span class="s2">&quot;my_team&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">my_team</span>
+			<span class="n">teamdata</span><span class="p">[</span><span class="s2">&quot;tid&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="c1"># Non-logged-in user viewing /team page</span>
+			<span class="k">raise</span> <span class="n">WebException</span><span class="p">()</span>
+	<span class="k">return</span> <span class="p">{</span> <span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;team&quot;</span><span class="p">:</span> <span class="n">teamdata</span> <span class="p">}</span></div>
+
+<span class="nd">@blueprint.route</span><span class="p">(</span><span class="s2">&quot;/edit&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;POST&quot;</span><span class="p">])</span>
+<span class="nd">@api_wrapper</span>
+<span class="nd">@login_required</span>
+<span class="nd">@team_required</span>
+<div class="viewcode-block" id="team_edit"><a class="viewcode-back" href="../../api.team.html#api.team.team_edit">[docs]</a><span class="k">def</span> <span class="nf">team_edit</span><span class="p">():</span>
+	<span class="n">params</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">flat_multi</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">)</span>
+	<span class="n">_user</span> <span class="o">=</span> <span class="n">user</span><span class="o">.</span><span class="n">get_user</span><span class="p">()</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+	<span class="n">_team</span> <span class="o">=</span> <span class="n">get_team</span><span class="p">(</span><span class="n">tid</span><span class="o">=</span><span class="n">_user</span><span class="o">.</span><span class="n">tid</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+	<span class="k">if</span> <span class="n">_user</span><span class="o">.</span><span class="n">uid</span> <span class="o">!=</span> <span class="n">_team</span><span class="o">.</span><span class="n">owner</span><span class="p">:</span>
+		<span class="k">raise</span> <span class="n">WebException</span><span class="p">(</span><span class="s2">&quot;You must be the captain of your team to edit information!&quot;</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">_team</span><span class="o">.</span><span class="n">finalized</span><span class="p">:</span>
+		<span class="k">raise</span> <span class="n">WebException</span><span class="p">(</span><span class="s2">&quot;This team is finalized.&quot;</span><span class="p">)</span>
+
+	<span class="k">with</span> <span class="n">app</span><span class="o">.</span><span class="n">app_context</span><span class="p">():</span>
+		<span class="n">update</span> <span class="o">=</span> <span class="p">{}</span>
+		<span class="k">if</span> <span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;new_teamname&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+			<span class="k">if</span> <span class="n">get_team</span><span class="p">(</span><span class="n">teamname_lower</span><span class="o">=</span><span class="n">params</span><span class="p">[</span><span class="s2">&quot;new_teamname&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span><span class="o">.</span><span class="n">first</span><span class="p">()</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+				<span class="k">raise</span> <span class="n">WebException</span><span class="p">(</span><span class="s2">&quot;This team name is taken!&quot;</span><span class="p">)</span>
+			<span class="n">update</span><span class="p">[</span><span class="s2">&quot;teamname&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;new_teamname&quot;</span><span class="p">]</span>
+			<span class="n">update</span><span class="p">[</span><span class="s2">&quot;teamname_lower&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;new_teamname&quot;</span><span class="p">]</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+		<span class="k">if</span> <span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;new_school&quot;</span><span class="p">)</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+			<span class="n">update</span><span class="p">[</span><span class="s2">&quot;school&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="s2">&quot;new_school&quot;</span><span class="p">]</span>
+		<span class="n">_team</span><span class="o">.</span><span class="n">update_info</span><span class="p">(</span><span class="n">update</span><span class="p">)</span>
+
+	<span class="k">return</span> <span class="p">{</span> <span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="mi">1</span> <span class="p">}</span></div>
+
+<span class="nd">@blueprint.route</span><span class="p">(</span><span class="s2">&quot;/finalize&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;POST&quot;</span><span class="p">])</span>
+<span class="nd">@api_wrapper</span>
+<span class="nd">@login_required</span>
+<span class="nd">@team_required</span>
+<div class="viewcode-block" id="team_finalize"><a class="viewcode-back" href="../../api.team.html#api.team.team_finalize">[docs]</a><span class="k">def</span> <span class="nf">team_finalize</span><span class="p">():</span>
+	<span class="n">_user</span> <span class="o">=</span> <span class="n">user</span><span class="o">.</span><span class="n">get_user</span><span class="p">()</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+	<span class="n">_team</span> <span class="o">=</span> <span class="n">get_team</span><span class="p">(</span><span class="n">tid</span><span class="o">=</span><span class="n">_user</span><span class="o">.</span><span class="n">tid</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+	<span class="k">if</span> <span class="n">_user</span><span class="o">.</span><span class="n">uid</span> <span class="o">!=</span> <span class="n">_team</span><span class="o">.</span><span class="n">owner</span><span class="p">:</span>
+		<span class="k">raise</span> <span class="n">WebException</span><span class="p">(</span><span class="s2">&quot;You must be the captain of your team to finalize the team!&quot;</span><span class="p">)</span>
+	<span class="k">if</span> <span class="n">_team</span><span class="o">.</span><span class="n">finalized</span><span class="p">:</span>
+		<span class="k">raise</span> <span class="n">WebException</span><span class="p">(</span><span class="s2">&quot;This team is already finalized.&quot;</span><span class="p">)</span>
+
+	<span class="n">_team</span><span class="o">.</span><span class="n">finalize</span><span class="p">()</span>
+	<span class="k">return</span> <span class="p">{</span> <span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="mi">1</span> <span class="p">}</span></div>
+
+<span class="c1">##################</span>
+<span class="c1"># TEAM FUNCTIONS #</span>
+<span class="c1">##################</span>
+
+<span class="n">__check_teamname</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">teamname</span><span class="p">:</span> <span class="n">get_team</span><span class="p">(</span><span class="n">teamname_lower</span><span class="o">=</span><span class="n">teamname</span><span class="o">.</span><span class="n">lower</span><span class="p">())</span><span class="o">.</span><span class="n">first</span><span class="p">()</span> <span class="ow">is</span> <span class="bp">None</span>
+
+<span class="n">TeamSchema</span> <span class="o">=</span> <span class="n">Schema</span><span class="p">({</span>
+	<span class="n">Required</span><span class="p">(</span><span class="s2">&quot;teamname&quot;</span><span class="p">):</span> <span class="n">check</span><span class="p">(</span>
+		<span class="p">([</span><span class="nb">str</span><span class="p">,</span> <span class="n">Length</span><span class="p">(</span><span class="nb">min</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">32</span><span class="p">)],</span> <span class="s2">&quot;Your teamname should be between 4 and 32 characters long.&quot;</span><span class="p">),</span>
+		<span class="p">([</span><span class="n">utils</span><span class="o">.</span><span class="n">__check_ascii</span><span class="p">],</span> <span class="s2">&quot;Please only use ASCII characters in your teamname.&quot;</span><span class="p">),</span>
+		<span class="p">([</span><span class="n">__check_teamname</span><span class="p">],</span> <span class="s2">&quot;This teamname is taken, did you forget your password?&quot;</span><span class="p">)</span>
+	<span class="p">),</span>
+	<span class="n">Required</span><span class="p">(</span><span class="s2">&quot;school&quot;</span><span class="p">):</span> <span class="n">check</span><span class="p">(</span>
+		<span class="p">([</span><span class="nb">str</span><span class="p">,</span> <span class="n">Length</span><span class="p">(</span><span class="nb">min</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="nb">max</span><span class="o">=</span><span class="mi">40</span><span class="p">)],</span> <span class="s2">&quot;Your school name should be between 4 and 40 characters long.&quot;</span><span class="p">),</span>
+		<span class="p">([</span><span class="n">utils</span><span class="o">.</span><span class="n">__check_ascii</span><span class="p">],</span> <span class="s2">&quot;Please only use ASCII characters in your school name.&quot;</span><span class="p">),</span>
+	<span class="p">),</span>
+<span class="p">},</span> <span class="n">extra</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+
+<div class="viewcode-block" id="get_team_info"><a class="viewcode-back" href="../../api.team.html#api.team.get_team_info">[docs]</a><span class="k">def</span> <span class="nf">get_team_info</span><span class="p">(</span><span class="n">tid</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">teamname</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">teamname_lower</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">owner</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+	<span class="n">team</span> <span class="o">=</span> <span class="n">get_team</span><span class="p">(</span><span class="n">tid</span><span class="o">=</span><span class="n">tid</span><span class="p">,</span> <span class="n">teamname</span><span class="o">=</span><span class="n">teamname</span><span class="p">,</span> <span class="n">teamname_lower</span><span class="o">=</span><span class="n">teamname_lower</span><span class="p">,</span> <span class="n">owner</span><span class="o">=</span><span class="n">owner</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+	<span class="k">if</span> <span class="n">team</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+		<span class="k">raise</span> <span class="n">WebException</span><span class="p">(</span><span class="s2">&quot;Team not found.&quot;</span><span class="p">)</span>
+
+	<span class="n">result</span> <span class="o">=</span> <span class="n">team</span><span class="o">.</span><span class="n">get_info</span><span class="p">()</span>
+	<span class="k">return</span> <span class="n">result</span></div>
+
+<div class="viewcode-block" id="get_team_of"><a class="viewcode-back" href="../../api.team.html#api.team.get_team_of">[docs]</a><span class="k">def</span> <span class="nf">get_team_of</span><span class="p">(</span><span class="n">uid</span><span class="p">):</span>
+	<span class="k">return</span> <span class="n">get_team</span><span class="p">(</span><span class="n">tid</span><span class="o">=</span><span class="n">user</span><span class="o">.</span><span class="n">get_user</span><span class="p">(</span><span class="n">uid</span><span class="o">=</span><span class="n">uid</span><span class="p">)</span><span class="o">.</span><span class="n">tid</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="get_team"><a class="viewcode-back" href="../../api.team.html#api.team.get_team">[docs]</a><span class="k">def</span> <span class="nf">get_team</span><span class="p">(</span><span class="n">tid</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">teamname</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">teamname_lower</span><span class="o">=</span><span class="bp">None</span><span class="p">,</span> <span class="n">owner</span><span class="o">=</span><span class="bp">None</span><span class="p">):</span>
+	<span class="n">match</span> <span class="o">=</span> <span class="p">{}</span>
+	<span class="k">if</span> <span class="n">teamname</span> <span class="o">!=</span> <span class="bp">None</span><span class="p">:</span>
+		<span class="n">match</span><span class="o">.</span><span class="n">update</span><span class="p">({</span> <span class="s2">&quot;teamname&quot;</span><span class="p">:</span> <span class="n">teamname</span> <span class="p">})</span>
+	<span class="k">elif</span> <span class="n">teamname_lower</span> <span class="o">!=</span> <span class="bp">None</span><span class="p">:</span>
+		<span class="n">match</span><span class="o">.</span><span class="n">update</span><span class="p">({</span> <span class="s2">&quot;teamname_lower&quot;</span><span class="p">:</span> <span class="n">teamname_lower</span> <span class="p">})</span>
+	<span class="k">elif</span> <span class="n">tid</span> <span class="o">!=</span> <span class="bp">None</span><span class="p">:</span>
+		<span class="n">match</span><span class="o">.</span><span class="n">update</span><span class="p">({</span> <span class="s2">&quot;tid&quot;</span><span class="p">:</span> <span class="n">tid</span> <span class="p">})</span>
+	<span class="k">elif</span> <span class="n">owner</span> <span class="o">!=</span> <span class="bp">None</span><span class="p">:</span>
+		<span class="n">match</span><span class="o">.</span><span class="n">update</span><span class="p">({</span> <span class="s2">&quot;owner&quot;</span><span class="p">:</span> <span class="n">owner</span> <span class="p">})</span>
+	<span class="c1">#elif user.is_logged_in():</span>
+	<span class="c1">#	_user = user.get_user().first()</span>
+	<span class="c1">#	if _user.tid is not None:</span>
+	<span class="c1">#		match.update({ &quot;tid&quot;: _user.tid })</span>
+	<span class="k">with</span> <span class="n">app</span><span class="o">.</span><span class="n">app_context</span><span class="p">():</span>
+		<span class="n">result</span> <span class="o">=</span> <span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">query</span><span class="p">(</span><span class="n">Teams</span><span class="p">)</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="o">**</span><span class="n">match</span><span class="p">)</span>
+		<span class="k">return</span> <span class="n">result</span></div>
+
+<span class="nd">@cache.memoize</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mi">120</span><span class="p">)</span>
+<div class="viewcode-block" id="num_teams"><a class="viewcode-back" href="../../api.team.html#api.team.num_teams">[docs]</a><span class="k">def</span> <span class="nf">num_teams</span><span class="p">(</span><span class="n">include_observers</span><span class="o">=</span><span class="bp">False</span><span class="p">):</span>
+	<span class="n">teamlist</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">get_team</span><span class="p">()</span><span class="o">.</span><span class="n">all</span><span class="p">())</span>
+	<span class="k">if</span> <span class="ow">not</span> <span class="n">include_observers</span><span class="p">:</span>
+		<span class="n">teamlist</span> <span class="o">=</span> <span class="nb">filter</span><span class="p">(</span><span class="k">lambda</span> <span class="n">t</span><span class="p">:</span> <span class="ow">not</span> <span class="n">t</span><span class="o">.</span><span class="n">is_observer</span><span class="p">(),</span> <span class="n">teamlist</span><span class="p">)</span>
+	<span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">teamlist</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="team_finalized"><a class="viewcode-back" href="../../api.team.html#api.team.team_finalized">[docs]</a><span class="k">def</span> <span class="nf">team_finalized</span><span class="p">(</span><span class="n">team</span><span class="p">):</span>
+	<span class="k">if</span> <span class="n">team</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span> <span class="k">return</span> <span class="bp">False</span>
+	<span class="k">return</span> <span class="n">team</span><span class="o">.</span><span class="n">finalized</span> <span class="o">==</span> <span class="bp">True</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, EasyCTF Team.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

@@ -1,0 +1,460 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>api.programming &mdash; OpenCTF  documentation</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="OpenCTF  documentation" href="../../index.html"/>
+        <link rel="up" title="api" href="../api.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> OpenCTF
+          
+
+          
+          </a>
+
+          
+            
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../gettingstarted.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api.html">Python REST API</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="../../index.html">OpenCTF</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../index.html">Docs</a> &raquo;</li>
+      
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+      
+          <li><a href="../api.html">api</a> &raquo;</li>
+      
+    <li>api.programming</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for api.programming</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">flask</span> <span class="kn">import</span> <span class="n">current_app</span> <span class="k">as</span> <span class="n">app</span><span class="p">,</span> <span class="n">Blueprint</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">session</span>
+
+<span class="kn">from</span> <span class="nn">decorators</span> <span class="kn">import</span> <span class="n">api_wrapper</span><span class="p">,</span> <span class="n">login_required</span><span class="p">,</span> <span class="n">team_required</span><span class="p">,</span> <span class="n">WebException</span>
+<span class="kn">from</span> <span class="nn">models</span> <span class="kn">import</span> <span class="n">db</span><span class="p">,</span> <span class="n">Problems</span><span class="p">,</span> <span class="n">ProgrammingSubmissions</span><span class="p">,</span> <span class="n">Solves</span><span class="p">,</span> <span class="n">UserActivity</span>
+
+<span class="kn">import</span> <span class="nn">imp</span>
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">shutil</span>
+<span class="kn">import</span> <span class="nn">subprocess</span>
+
+<span class="kn">import</span> <span class="nn">cache</span>
+<span class="kn">import</span> <span class="nn">problem</span>
+<span class="kn">import</span> <span class="nn">team</span>
+<span class="kn">import</span> <span class="nn">user</span>
+<span class="kn">import</span> <span class="nn">utils</span>
+
+<span class="n">blueprint</span> <span class="o">=</span> <span class="n">Blueprint</span><span class="p">(</span><span class="s2">&quot;programming&quot;</span><span class="p">,</span> <span class="n">__name__</span><span class="p">)</span>
+
+<span class="n">extensions</span> <span class="o">=</span> <span class="p">{</span>
+	<span class="s2">&quot;python2&quot;</span><span class="p">:</span> <span class="s2">&quot;py&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;python3&quot;</span><span class="p">:</span> <span class="s2">&quot;py&quot;</span><span class="p">,</span>
+	<span class="s2">&quot;java&quot;</span><span class="p">:</span> <span class="s2">&quot;java&quot;</span>
+<span class="p">}</span>
+
+<span class="nd">@blueprint.route</span><span class="p">(</span><span class="s2">&quot;/submissions/delete&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;POST&quot;</span><span class="p">])</span>
+<span class="nd">@api_wrapper</span>
+<span class="nd">@login_required</span>
+<span class="nd">@team_required</span>
+<div class="viewcode-block" id="delete_submission"><a class="viewcode-back" href="../../api.programming.html#api.programming.delete_submission">[docs]</a><span class="k">def</span> <span class="nf">delete_submission</span><span class="p">():</span>
+	<span class="n">psid</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;psid&quot;</span><span class="p">)</span>
+	<span class="n">tid</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;tid&quot;</span><span class="p">)</span>
+	<span class="n">result</span> <span class="o">=</span> <span class="n">ProgrammingSubmissions</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">psid</span><span class="o">=</span><span class="n">psid</span><span class="p">,</span> <span class="n">tid</span><span class="o">=</span><span class="n">tid</span><span class="p">)</span>
+
+	<span class="k">if</span> <span class="n">result</span><span class="o">.</span><span class="n">first</span><span class="p">()</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+		<span class="k">raise</span> <span class="n">WebException</span><span class="p">(</span><span class="s2">&quot;Submission does not exist.&quot;</span><span class="p">)</span>
+
+	<span class="k">with</span> <span class="n">app</span><span class="o">.</span><span class="n">app_context</span><span class="p">():</span>
+		<span class="n">result</span><span class="o">.</span><span class="n">delete</span><span class="p">()</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+
+	<span class="k">return</span> <span class="p">{</span> <span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="s2">&quot;Success!&quot;</span> <span class="p">}</span></div>
+
+<span class="nd">@blueprint.route</span><span class="p">(</span><span class="s2">&quot;/submissions&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;GET&quot;</span><span class="p">])</span>
+<span class="nd">@api_wrapper</span>
+<span class="nd">@login_required</span>
+<span class="nd">@team_required</span>
+<div class="viewcode-block" id="get_submissions"><a class="viewcode-back" href="../../api.programming.html#api.programming.get_submissions">[docs]</a><span class="k">def</span> <span class="nf">get_submissions</span><span class="p">():</span>
+	<span class="n">submissions_return</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="n">tid</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;tid&quot;</span><span class="p">)</span>
+	<span class="n">submissions</span> <span class="o">=</span> <span class="n">ProgrammingSubmissions</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">tid</span><span class="o">=</span><span class="n">tid</span><span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="n">ProgrammingSubmissions</span><span class="o">.</span><span class="n">psid</span><span class="o">.</span><span class="n">desc</span><span class="p">())</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+	<span class="k">if</span> <span class="n">submissions</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+		<span class="k">for</span> <span class="n">submission</span> <span class="ow">in</span> <span class="n">submissions</span><span class="p">:</span>
+			<span class="n">_problem</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">get_problem</span><span class="p">(</span><span class="n">pid</span><span class="o">=</span><span class="n">submission</span><span class="o">.</span><span class="n">pid</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+			<span class="n">submissions_return</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+				<span class="s2">&quot;psid&quot;</span><span class="p">:</span> <span class="n">submission</span><span class="o">.</span><span class="n">psid</span><span class="p">,</span>
+				<span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="n">_problem</span><span class="o">.</span><span class="n">title</span> <span class="k">if</span> <span class="n">_problem</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span><span class="p">,</span>
+				<span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="n">submission</span><span class="o">.</span><span class="n">message</span><span class="p">,</span>
+				<span class="s2">&quot;log&quot;</span><span class="p">:</span> <span class="n">submission</span><span class="o">.</span><span class="n">log</span><span class="p">,</span>
+				<span class="s2">&quot;date&quot;</span><span class="p">:</span> <span class="n">utils</span><span class="o">.</span><span class="n">isoformat</span><span class="p">(</span><span class="n">submission</span><span class="o">.</span><span class="n">date</span><span class="p">),</span>
+				<span class="s2">&quot;number&quot;</span><span class="p">:</span> <span class="n">submission</span><span class="o">.</span><span class="n">number</span>
+			<span class="p">})</span>
+	<span class="k">return</span> <span class="p">{</span> <span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;submissions&quot;</span><span class="p">:</span> <span class="n">submissions_return</span> <span class="p">}</span></div>
+
+<span class="nd">@blueprint.route</span><span class="p">(</span><span class="s2">&quot;/problems&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;GET&quot;</span><span class="p">])</span>
+<span class="nd">@api_wrapper</span>
+<span class="nd">@login_required</span>
+<div class="viewcode-block" id="get_problems"><a class="viewcode-back" href="../../api.programming.html#api.programming.get_problems">[docs]</a><span class="k">def</span> <span class="nf">get_problems</span><span class="p">():</span>
+	<span class="k">if</span> <span class="s2">&quot;admin&quot;</span> <span class="ow">in</span> <span class="n">session</span> <span class="ow">and</span> <span class="n">session</span><span class="p">[</span><span class="s2">&quot;admin&quot;</span><span class="p">]:</span>
+		<span class="k">pass</span>
+	<span class="k">elif</span> <span class="s2">&quot;tid&quot;</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">session</span> <span class="ow">or</span> <span class="n">session</span><span class="p">[</span><span class="s2">&quot;tid&quot;</span><span class="p">]</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+		<span class="k">raise</span> <span class="n">WebException</span><span class="p">(</span><span class="s2">&quot;You need a team.&quot;</span><span class="p">)</span>
+	<span class="k">elif</span> <span class="n">team</span><span class="o">.</span><span class="n">get_team</span><span class="p">(</span><span class="n">tid</span><span class="o">=</span><span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;tid&quot;</span><span class="p">))</span><span class="o">.</span><span class="n">first</span><span class="p">()</span><span class="o">.</span><span class="n">finalized</span> <span class="o">!=</span> <span class="bp">True</span><span class="p">:</span>
+		<span class="k">raise</span> <span class="n">WebException</span><span class="p">(</span><span class="s2">&quot;Your team is not finalized.&quot;</span><span class="p">)</span>
+
+	<span class="n">data</span> <span class="o">=</span> <span class="p">[]</span>
+	<span class="n">problems</span> <span class="o">=</span> <span class="n">Problems</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">category</span><span class="o">=</span><span class="s2">&quot;Programming&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">()</span>
+	<span class="k">if</span> <span class="n">problems</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">:</span>
+		<span class="k">for</span> <span class="n">_problem</span> <span class="ow">in</span> <span class="n">problems</span><span class="p">:</span>
+			<span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">({</span>
+				<span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="n">_problem</span><span class="o">.</span><span class="n">title</span><span class="p">,</span>
+				<span class="s2">&quot;pid&quot;</span><span class="p">:</span> <span class="n">_problem</span><span class="o">.</span><span class="n">pid</span><span class="p">,</span>
+				<span class="s2">&quot;value&quot;</span><span class="p">:</span> <span class="n">_problem</span><span class="o">.</span><span class="n">value</span>
+			<span class="p">})</span>
+
+	<span class="k">return</span> <span class="p">{</span> <span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s2">&quot;problems&quot;</span><span class="p">:</span> <span class="n">data</span> <span class="p">}</span></div>
+
+<span class="nd">@blueprint.route</span><span class="p">(</span><span class="s2">&quot;/submit&quot;</span><span class="p">,</span> <span class="n">methods</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;POST&quot;</span><span class="p">])</span>
+<span class="nd">@api_wrapper</span>
+<span class="nd">@login_required</span>
+<span class="nd">@team_required</span>
+<div class="viewcode-block" id="submit_program"><a class="viewcode-back" href="../../api.programming.html#api.programming.submit_program">[docs]</a><span class="k">def</span> <span class="nf">submit_program</span><span class="p">():</span>
+	<span class="n">params</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">flat_multi</span><span class="p">(</span><span class="n">request</span><span class="o">.</span><span class="n">form</span><span class="p">)</span>
+
+	<span class="n">pid</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;pid&quot;</span><span class="p">)</span>
+	<span class="n">tid</span> <span class="o">=</span> <span class="n">session</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;tid&quot;</span><span class="p">)</span>
+	<span class="n">_user</span> <span class="o">=</span> <span class="n">user</span><span class="o">.</span><span class="n">get_user</span><span class="p">()</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+
+	<span class="n">language</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;language&quot;</span><span class="p">)</span>
+	<span class="n">submission_contents</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;submission&quot;</span><span class="p">)</span>
+
+	<span class="n">_problem</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">get_problem</span><span class="p">(</span><span class="n">pid</span><span class="o">=</span><span class="n">pid</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+	<span class="k">if</span> <span class="n">_problem</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+		<span class="k">raise</span> <span class="n">WebException</span><span class="p">(</span><span class="s2">&quot;Problem does not exist.&quot;</span><span class="p">)</span>
+
+	<span class="k">if</span> <span class="n">_problem</span><span class="o">.</span><span class="n">category</span> <span class="o">!=</span> <span class="s2">&quot;Programming&quot;</span><span class="p">:</span>
+		<span class="k">raise</span> <span class="n">WebException</span><span class="p">(</span><span class="s2">&quot;Can&#39;t judge this problem.&quot;</span><span class="p">)</span>
+
+	<span class="n">solved</span> <span class="o">=</span> <span class="n">Solves</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">pid</span><span class="o">=</span><span class="n">pid</span><span class="p">,</span> <span class="n">tid</span><span class="o">=</span><span class="n">tid</span><span class="p">,</span> <span class="n">correct</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+	<span class="k">if</span> <span class="n">solved</span><span class="p">:</span>
+		<span class="k">raise</span> <span class="n">WebException</span><span class="p">(</span><span class="s2">&quot;You already solved this problem.&quot;</span><span class="p">)</span>
+
+	<span class="n">judge_folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">app</span><span class="o">.</span><span class="n">config</span><span class="p">[</span><span class="s2">&quot;GRADER_FOLDER&quot;</span><span class="p">],</span> <span class="n">pid</span><span class="p">)</span>
+	<span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">judge_folder</span><span class="p">):</span>
+		<span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">judge_folder</span><span class="p">)</span>
+
+	<span class="n">submission_folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">judge_folder</span><span class="p">,</span> <span class="n">utils</span><span class="o">.</span><span class="n">generate_string</span><span class="p">())</span>
+	<span class="k">while</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">submission_folder</span><span class="p">):</span>
+		<span class="n">submission_folder</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">judge_folder</span><span class="p">,</span> <span class="n">utils</span><span class="o">.</span><span class="n">generate_string</span><span class="p">())</span>
+
+	<span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="n">submission_folder</span><span class="p">)</span>
+
+	<span class="n">submission_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">submission_folder</span><span class="p">,</span> <span class="s2">&quot;program.</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">extensions</span><span class="p">[</span><span class="n">language</span><span class="p">])</span>
+
+	<span class="nb">open</span><span class="p">(</span><span class="n">submission_path</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">submission_contents</span><span class="p">)</span>
+	<span class="n">message</span><span class="p">,</span> <span class="n">log</span> <span class="o">=</span> <span class="n">judge</span><span class="p">(</span><span class="n">submission_path</span><span class="p">,</span> <span class="n">language</span><span class="p">,</span> <span class="n">pid</span><span class="p">)</span>
+
+	<span class="n">number</span> <span class="o">=</span> <span class="n">ProgrammingSubmissions</span><span class="o">.</span><span class="n">query</span><span class="o">.</span><span class="n">filter_by</span><span class="p">(</span><span class="n">tid</span><span class="o">=</span><span class="n">tid</span><span class="p">)</span><span class="o">.</span><span class="n">with_entities</span><span class="p">(</span><span class="n">ProgrammingSubmissions</span><span class="o">.</span><span class="n">number</span><span class="p">)</span><span class="o">.</span><span class="n">order_by</span><span class="p">(</span><span class="n">ProgrammingSubmissions</span><span class="o">.</span><span class="n">number</span><span class="o">.</span><span class="n">desc</span><span class="p">())</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+
+	<span class="k">if</span> <span class="n">number</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+		<span class="n">number</span> <span class="o">=</span> <span class="mi">1</span>
+	<span class="k">else</span><span class="p">:</span>
+		<span class="n">number</span> <span class="o">=</span> <span class="n">number</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span>
+
+	<span class="n">submission</span> <span class="o">=</span> <span class="n">ProgrammingSubmissions</span><span class="p">(</span><span class="n">pid</span><span class="p">,</span> <span class="n">tid</span><span class="p">,</span> <span class="n">submission_path</span><span class="p">,</span> <span class="n">message</span><span class="p">,</span> <span class="n">log</span><span class="p">,</span> <span class="n">number</span><span class="p">)</span>
+
+	<span class="n">correct</span> <span class="o">=</span> <span class="n">message</span> <span class="o">==</span> <span class="s2">&quot;Correct!&quot;</span>
+
+	<span class="k">with</span> <span class="n">app</span><span class="o">.</span><span class="n">app_context</span><span class="p">():</span>
+		<span class="n">solve</span> <span class="o">=</span> <span class="n">Solves</span><span class="p">(</span><span class="n">pid</span><span class="p">,</span> <span class="n">_user</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span> <span class="n">tid</span><span class="p">,</span> <span class="n">submission_path</span><span class="p">,</span> <span class="n">correct</span><span class="p">)</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">solve</span><span class="p">)</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">submission</span><span class="p">)</span>
+		<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+
+		<span class="k">if</span> <span class="n">correct</span><span class="p">:</span>
+			<span class="c1"># Wait until after the solve has been added to the database before adding bonus</span>
+			<span class="n">solves</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">get_solves</span><span class="p">(</span><span class="n">pid</span><span class="o">=</span><span class="n">pid</span><span class="p">)</span>
+			<span class="n">solve</span><span class="o">.</span><span class="n">bonus</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">solves</span><span class="p">][</span><span class="n">solves</span> <span class="o">&lt;</span> <span class="mi">3</span><span class="p">]</span>
+			<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">solve</span><span class="p">)</span>
+			<span class="n">cache</span><span class="o">.</span><span class="n">invalidate_memoization</span><span class="p">(</span><span class="n">problem</span><span class="o">.</span><span class="n">get_solves</span><span class="p">,</span> <span class="n">pid</span><span class="p">)</span>
+
+			<span class="k">if</span> <span class="n">_user</span><span class="p">:</span>
+				<span class="n">activity</span> <span class="o">=</span> <span class="n">UserActivity</span><span class="p">(</span><span class="n">_user</span><span class="o">.</span><span class="n">uid</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">tid</span><span class="o">=</span><span class="n">tid</span><span class="p">,</span> <span class="n">pid</span><span class="o">=</span><span class="n">pid</span><span class="p">)</span>
+				<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">activity</span><span class="p">)</span>
+
+			<span class="n">db</span><span class="o">.</span><span class="n">session</span><span class="o">.</span><span class="n">commit</span><span class="p">()</span>
+		<span class="n">new</span> <span class="o">=</span> <span class="p">{</span>
+			<span class="s2">&quot;psid&quot;</span><span class="p">:</span> <span class="n">submission</span><span class="o">.</span><span class="n">psid</span><span class="p">,</span>
+			<span class="s2">&quot;title&quot;</span><span class="p">:</span> <span class="n">_problem</span><span class="o">.</span><span class="n">title</span><span class="p">,</span>
+			<span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="n">submission</span><span class="o">.</span><span class="n">message</span><span class="p">,</span>
+			<span class="s2">&quot;log&quot;</span><span class="p">:</span> <span class="n">submission</span><span class="o">.</span><span class="n">log</span><span class="p">,</span>
+			<span class="s2">&quot;date&quot;</span><span class="p">:</span> <span class="n">utils</span><span class="o">.</span><span class="n">isoformat</span><span class="p">(</span><span class="n">submission</span><span class="o">.</span><span class="n">date</span><span class="p">),</span>
+			<span class="s2">&quot;number&quot;</span><span class="p">:</span> <span class="n">submission</span><span class="o">.</span><span class="n">number</span>
+		<span class="p">}</span>
+
+	<span class="n">shutil</span><span class="o">.</span><span class="n">rmtree</span><span class="p">(</span><span class="n">submission_folder</span><span class="p">)</span>
+
+	<span class="k">return</span> <span class="p">{</span> <span class="s2">&quot;success&quot;</span><span class="p">:</span> <span class="n">message</span> <span class="o">==</span> <span class="s2">&quot;Correct!&quot;</span><span class="p">,</span> <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="n">message</span> <span class="p">,</span> <span class="s2">&quot;new_submission&quot;</span><span class="p">:</span> <span class="n">new</span> <span class="p">}</span></div>
+
+<div class="viewcode-block" id="judge"><a class="viewcode-back" href="../../api.programming.html#api.programming.judge">[docs]</a><span class="k">def</span> <span class="nf">judge</span><span class="p">(</span><span class="n">submission_path</span><span class="p">,</span> <span class="n">language</span><span class="p">,</span> <span class="n">pid</span><span class="p">):</span>
+
+	<span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="n">submission_path</span><span class="p">):</span>
+		<span class="k">raise</span> <span class="n">WebException</span><span class="p">(</span><span class="s2">&quot;Program is missing.&quot;</span><span class="p">)</span>
+
+	<span class="n">_problem</span> <span class="o">=</span> <span class="n">problem</span><span class="o">.</span><span class="n">get_problem</span><span class="p">(</span><span class="n">pid</span><span class="o">=</span><span class="n">pid</span><span class="p">)</span><span class="o">.</span><span class="n">first</span><span class="p">()</span>
+	<span class="k">if</span> <span class="n">_problem</span> <span class="ow">is</span> <span class="bp">None</span><span class="p">:</span>
+		<span class="k">raise</span> <span class="n">WebException</span><span class="p">(</span><span class="s2">&quot;Problem does not exist.&quot;</span><span class="p">)</span>
+
+	<span class="n">submission_root</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">submission_path</span><span class="p">)</span>
+	<span class="n">os</span><span class="o">.</span><span class="n">chdir</span><span class="p">(</span><span class="n">submission_root</span><span class="p">)</span>
+	<span class="n">log</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+	<span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+	<span class="n">log</span> <span class="o">+=</span> <span class="s2">&quot;Compiling...</span><span class="se">\n</span><span class="s2">&quot;</span>
+	<span class="k">try</span><span class="p">:</span>
+		<span class="k">if</span> <span class="n">language</span> <span class="o">==</span> <span class="s2">&quot;python2&quot;</span><span class="p">:</span>
+			<span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">(</span><span class="s2">&quot;python -m py_compile </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">submission_path</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+		<span class="k">elif</span> <span class="n">language</span> <span class="o">==</span> <span class="s2">&quot;python3&quot;</span><span class="p">:</span>
+			<span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">(</span><span class="s2">&quot;python3 -m py_compile </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">submission_path</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+		<span class="k">elif</span> <span class="n">language</span> <span class="o">==</span> <span class="s2">&quot;java&quot;</span><span class="p">:</span>
+			<span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">(</span><span class="s2">&quot;javac </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">submission_path</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="bp">True</span><span class="p">)</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Not implemented.&quot;</span>
+			<span class="k">return</span> <span class="n">message</span><span class="p">,</span> <span class="n">log</span>
+	<span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+		<span class="c1"># TODO: Extract useful error messages from exceptions and add timeout</span>
+		<span class="c1">#log += &quot;There was a problem with compiling.\n%s\n&quot; % str(e)</span>
+		<span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;There was a problem with compiling.&quot;</span>
+
+		<span class="k">return</span> <span class="n">message</span><span class="p">,</span> <span class="n">log</span>
+
+	<span class="n">log</span> <span class="o">+=</span> <span class="s2">&quot;Compiled.</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+	<span class="k">try</span><span class="p">:</span>
+		<span class="n">judge</span> <span class="o">=</span> <span class="n">imp</span><span class="o">.</span><span class="n">load_source</span><span class="p">(</span><span class="s2">&quot;judge&quot;</span><span class="p">,</span> <span class="n">_problem</span><span class="o">.</span><span class="n">grader</span><span class="p">)</span>
+	<span class="k">except</span> <span class="ne">Exception</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span>
+		<span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;An error occured. Please notify an admin immediately.&quot;</span>
+		<span class="n">log</span> <span class="o">+=</span> <span class="s2">&quot;Could not load judge.</span><span class="se">\n</span><span class="s2">&quot;</span>
+		<span class="k">return</span> <span class="n">message</span><span class="p">,</span> <span class="n">log</span>
+
+	<span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">judge</span><span class="o">.</span><span class="n">TEST_COUNT</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+		<span class="n">log</span> <span class="o">+=</span> <span class="s2">&quot;Running test #</span><span class="si">%s</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">i</span>
+
+		<span class="k">try</span><span class="p">:</span>
+			<span class="n">_input</span><span class="p">,</span> <span class="n">correct</span> <span class="o">=</span> <span class="n">judge</span><span class="o">.</span><span class="n">generate</span><span class="p">()</span>
+		<span class="k">except</span> <span class="ne">Exception</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span>
+			<span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;An error occured. Please notify an admin immediately.&quot;</span>
+			<span class="n">log</span> <span class="o">+=</span> <span class="s2">&quot;Could not generate input for test #</span><span class="si">%s</span><span class="s2">.</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">i</span>
+			<span class="k">return</span> <span class="n">message</span><span class="p">,</span> <span class="n">log</span>
+
+		<span class="k">try</span><span class="p">:</span>
+			<span class="n">command</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+			<span class="k">if</span> <span class="n">language</span> <span class="o">==</span> <span class="s2">&quot;python2&quot;</span><span class="p">:</span>
+				<span class="n">command</span> <span class="o">=</span> <span class="s2">&quot;python </span><span class="si">%s</span><span class="s2"> &lt;&lt;&lt; </span><span class="se">\&quot;</span><span class="si">%s</span><span class="se">\&quot;</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">submission_path</span><span class="p">,</span> <span class="n">_input</span><span class="p">)</span>
+			<span class="k">elif</span> <span class="n">language</span> <span class="o">==</span> <span class="s2">&quot;python3&quot;</span><span class="p">:</span>
+				<span class="n">command</span> <span class="o">=</span> <span class="s2">&quot;python3 </span><span class="si">%s</span><span class="s2"> &lt;&lt;&lt; </span><span class="se">\&quot;</span><span class="si">%s</span><span class="se">\&quot;</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">submission_path</span><span class="p">,</span> <span class="n">_input</span><span class="p">)</span>
+			<span class="k">elif</span> <span class="n">language</span> <span class="o">==</span> <span class="s2">&quot;java&quot;</span><span class="p">:</span>
+				<span class="n">command</span> <span class="o">=</span> <span class="s2">&quot;java program &lt;&lt;&lt; </span><span class="se">\&quot;</span><span class="si">%s</span><span class="se">\&quot;</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">_input</span>
+			<span class="n">output</span> <span class="o">=</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">check_output</span><span class="p">(</span><span class="n">command</span><span class="p">,</span> <span class="n">shell</span><span class="o">=</span><span class="bp">True</span><span class="p">,</span> <span class="n">executable</span><span class="o">=</span><span class="s2">&quot;/bin/bash&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+		<span class="k">except</span> <span class="n">subprocess</span><span class="o">.</span><span class="n">CalledProcessError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+			<span class="c1">#log += &quot;Program threw an exception:\n%s\n&quot; % str(e)</span>
+			<span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Program crashed.&quot;</span>
+			<span class="k">return</span> <span class="n">message</span><span class="p">,</span> <span class="n">log</span>
+
+		<span class="k">if</span> <span class="n">correct</span> <span class="o">!=</span> <span class="n">output</span><span class="p">:</span>
+			<span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Incorrect.&quot;</span>
+			<span class="n">log</span> <span class="o">+=</span> <span class="s2">&quot;Test #</span><span class="si">%s</span><span class="s2"> failed.</span><span class="se">\n\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">i</span>
+			<span class="n">log</span> <span class="o">+=</span> <span class="s2">&quot;Input:</span><span class="se">\n</span><span class="si">%s</span><span class="se">\n\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">_input</span>
+			<span class="n">log</span> <span class="o">+=</span> <span class="s2">&quot;Output:</span><span class="se">\n</span><span class="si">%s</span><span class="se">\n\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">output</span>
+			<span class="n">log</span> <span class="o">+=</span> <span class="s2">&quot;Expected:</span><span class="se">\n</span><span class="si">%s</span><span class="se">\n\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">correct</span>
+			<span class="k">return</span> <span class="n">message</span><span class="p">,</span> <span class="n">log</span>
+		<span class="k">else</span><span class="p">:</span>
+			<span class="n">log</span> <span class="o">+=</span> <span class="s2">&quot;Test #</span><span class="si">%s</span><span class="s2"> passed!</span><span class="se">\n</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">i</span>
+
+	<span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Correct!&quot;</span>
+	<span class="n">log</span> <span class="o">+=</span> <span class="s2">&quot;All tests passed.&quot;</span>
+
+	<span class="k">return</span> <span class="n">message</span><span class="p">,</span> <span class="n">log</span></div>
+
+<div class="viewcode-block" id="validate_judge"><a class="viewcode-back" href="../../api.programming.html#api.programming.validate_judge">[docs]</a><span class="k">def</span> <span class="nf">validate_judge</span><span class="p">(</span><span class="n">judge_contents</span><span class="p">):</span>
+	<span class="n">tmp_judge</span> <span class="o">=</span> <span class="s2">&quot;/tmp/judge.py&quot;</span>
+
+	<span class="nb">open</span><span class="p">(</span><span class="n">tmp_judge</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">judge_contents</span><span class="p">)</span>
+
+	<span class="k">try</span><span class="p">:</span>
+		<span class="n">judge</span> <span class="o">=</span> <span class="n">imp</span><span class="o">.</span><span class="n">load_source</span><span class="p">(</span><span class="s2">&quot;judge&quot;</span><span class="p">,</span> <span class="n">tmp_judge</span><span class="p">)</span>
+	<span class="k">except</span> <span class="ne">Exception</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span>
+		<span class="k">raise</span> <span class="n">WebException</span><span class="p">(</span><span class="s2">&quot;There is a syntax error in the judge: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">e</span><span class="p">)</span>
+
+	<span class="k">try</span><span class="p">:</span>
+		<span class="k">assert</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">judge</span><span class="p">,</span> <span class="s2">&quot;TEST_COUNT&quot;</span><span class="p">),</span> <span class="s2">&quot;Judge missing TEST_COUNT.&quot;</span>
+
+		<span class="k">assert</span> <span class="nb">type</span><span class="p">(</span><span class="n">judge</span><span class="o">.</span><span class="n">TEST_COUNT</span><span class="p">)</span> <span class="o">==</span> <span class="nb">int</span><span class="p">,</span> <span class="s2">&quot;TEST_COUNT must be an integer.&quot;</span>
+
+		<span class="n">_input</span><span class="p">,</span> <span class="n">correct</span> <span class="o">=</span> <span class="n">judge</span><span class="o">.</span><span class="n">generate</span><span class="p">()</span>
+
+		<span class="k">assert</span> <span class="n">_input</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">,</span> <span class="s2">&quot;Judge did not generate valid input.&quot;</span>
+		<span class="k">assert</span> <span class="n">correct</span> <span class="ow">is</span> <span class="ow">not</span> <span class="bp">None</span><span class="p">,</span> <span class="s2">&quot;Judge did not generate a valid response.&quot;</span>
+	<span class="k">except</span> <span class="ne">AssertionError</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span>
+		<span class="k">raise</span> <span class="n">WebException</span><span class="p">(</span><span class="n">e</span><span class="p">)</span>
+	<span class="k">except</span> <span class="ne">Exception</span><span class="p">,</span> <span class="n">e</span><span class="p">:</span>
+		<span class="k">raise</span> <span class="n">WebException</span><span class="p">(</span><span class="n">e</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016, EasyCTF Team.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

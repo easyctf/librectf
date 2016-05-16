@@ -465,6 +465,15 @@ UserSchema = Schema({
 }, extra=True)
 
 def login_user(username, password, token=None):
+	"""
+	Logs in the user and creates a login-token with the specified username and password.
+
+	:param username: The username of the user.
+	:param password: The password of the user.
+	:param token: (Optional) If the user has enabled two-factor authentication, this *must* be passed along with username and password. Otherwise, it may be left as None.
+	:returns: Whether the login succeeded or not.
+	:rtype: boolean
+	"""
 	user = get_user(username_lower=username.lower()).first()
 	if user is None: return False
 	correct = utils.check_password(user.password, password)
