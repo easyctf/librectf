@@ -7,6 +7,7 @@ import imp
 import os
 import shutil
 import subprocess
+import time
 
 import cache
 import problem
@@ -57,7 +58,8 @@ def get_submissions():
 				"message": submission.message,
 				"log": submission.log,
 				"date": utils.isoformat(submission.date),
-				"number": submission.number
+				"number": submission.number,
+				"duration": submission.duration
 			})
 	return { "success": 1, "submissions": submissions_return }
 
@@ -122,7 +124,7 @@ def submit_program():
 	submission_path = os.path.join(submission_folder, "program.%s" % extensions[language])
 
 	open(submission_path, "w").write(submission_contents)
-	message, log = judge(submission_path, language, pid)
+	message, log, duration = judge(submission_path, language, pid)
 
 	number = ProgrammingSubmissions.query.filter_by(tid=tid).with_entities(ProgrammingSubmissions.number).order_by(ProgrammingSubmissions.number.desc()).first()
 
@@ -131,7 +133,7 @@ def submit_program():
 	else:
 		number = number[0] + 1
 
-	submission = ProgrammingSubmissions(pid, tid, submission_path, message, log, number)
+	submission = ProgrammingSubmissions(pid, tid, submission_path, message, log, number, duration)
 
 	correct = message == "Correct!"
 
@@ -217,6 +219,7 @@ def judge(submission_path, language, pid):
 			log += "Could not generate input for test #%s.\n" % i
 			return message, log
 
+		start_time = time.time()
 		try:
 			command = ""
 			if language == "python2":
@@ -230,6 +233,7 @@ def judge(submission_path, language, pid):
 			#log += "Program threw an exception:\n%s\n" % str(e)
 			message = "Program crashed."
 			return message, log
+		end_time = time.time()
 
 		if correct != output:
 			message = "Incorrect."
@@ -244,7 +248,7 @@ def judge(submission_path, language, pid):
 	message = "Correct!"
 	log += "All tests passed."
 
-	return message, log
+	return message, log, end_time - start_time
 
 def validate_judge(judge_contents):
 	tmp_judge = "/tmp/judge.py"

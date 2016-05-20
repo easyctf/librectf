@@ -21,7 +21,7 @@
 			<div class="input-group">
 				<select class="form-control" id="problem-select">
 					<option value="">Select Problem...</option>
-					<option ng-repeat="problem in data.problems" ng-value="problem.pid" title="{{ problem.title }}">{{ problem.title }} - {{ problem.value }} points</option>
+					<option ng-repeat="problem in data.problems" ng-value="problem.pid" title="{{ problem.title }}">{{ problem.title }}</option>
 				</select>
 				<span class="input-group-btn">
 					<button class="btn btn-success" type="button" ng-click="submit();">Submit</button>
@@ -36,6 +36,7 @@
 		<th>Date</th>
 		<th>Problem title</th>
 		<th>Message</th>
+		<th>Duration (s)</th>
 		<th>Log</th>
 	</thead>
 	<tbody>
@@ -44,6 +45,7 @@
 			<td><time class="timeago" datetime="{{ submission.date }}"/></td>
 			<td>{{ submission.title }}</td>
 			<td>{{ submission.message }}</td>
+			<td>{{ submission.duration }}</td>
 			<td><button type="button" class="btn btn-sq-xs" data-toggle="modal" data-target="#{{ submission.number }}_log"><i class="fa fa-info-circle"/></button></td>
 			<td><button type="button" class="btn btn-sq-xs" id="{{ submission.psid }}" onclick="delete_submission(this.id); return false;"><i class="fa fa-trash-o"/></button></td>
 		</tr>

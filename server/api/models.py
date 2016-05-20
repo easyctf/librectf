@@ -446,11 +446,13 @@ class ProgrammingSubmissions(db.Model):
 	log = db.Column(db.Text)
 	submission_path = db.Column(db.Text)
 	number = db.Column(db.Integer)
+	duration = db.Column(db.Float)
 
-	def __init__(self, pid, tid, submission_path, message, log, number):
+	def __init__(self, pid, tid, submission_path, message, log, number, duration):
 		self.pid = pid
 		self.tid = tid
 		self.submission_path = submission_path
 		self.message = message
 		self.log = log
 		self.number = number
+		self.duration = duration
