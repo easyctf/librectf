@@ -183,6 +183,7 @@ def judge(submission_path, language, pid):
 	message = ""
 
 	log += "Compiling...\n"
+	start_time = time.time()
 	try:
 		if language == "python2":
 			subprocess.check_output("python -m py_compile %s" % submission_path, shell=True)
@@ -192,13 +193,13 @@ def judge(submission_path, language, pid):
 			subprocess.check_output("javac %s" % submission_path, shell=True)
 		else:
 			message = "Not implemented."
-			return message, log
+			return message, log, time.time() - start_time
 	except subprocess.CalledProcessError as e:
 		# TODO: Extract useful error messages from exceptions and add timeout
 		#log += "There was a problem with compiling.\n%s\n" % str(e)
 		message = "There was a problem with compiling."
 
-		return message, log
+		return message, log, time.time() - start_time
 
 	log += "Compiled.\n"
 
@@ -207,7 +208,7 @@ def judge(submission_path, language, pid):
 	except Exception, e:
 		message = "An error occured. Please notify an admin immediately."
 		log += "Could not load judge.\n"
-		return message, log
+		return message, log, time.time() - start_time
 
 	for i in range(1, judge.TEST_COUNT + 1):
 		log += "Running test #%s\n" % i
@@ -217,9 +218,8 @@ def judge(submission_path, language, pid):
 		except Exception, e:
 			message = "An error occured. Please notify an admin immediately."
 			log += "Could not generate input for test #%s.\n" % i
-			return message, log
+			return message, log, time.time() - start_time
 
-		start_time = time.time()
 		try:
 			command = ""
 			if language == "python2":
@@ -232,8 +232,7 @@ def judge(submission_path, language, pid):
 		except subprocess.CalledProcessError as e:
 			#log += "Program threw an exception:\n%s\n" % str(e)
 			message = "Program crashed."
-			return message, log
-		end_time = time.time()
+			return message, log, time.time() - start_time
 
 		if correct != output:
 			message = "Incorrect."
@@ -241,14 +240,14 @@ def judge(submission_path, language, pid):
 			log += "Input:\n%s\n\n" % _input
 			log += "Output:\n%s\n\n" % output
 			log += "Expected:\n%s\n\n" % correct
-			return message, log
+			return message, log, time.time() - start_time
 		else:
 			log += "Test #%s passed!\n" % i
 
 	message = "Correct!"
 	log += "All tests passed."
 
-	return message, log, end_time - start_time
+	return message, log, time.time() - start_time
 
 def validate_judge(judge_contents):
 	tmp_judge = "/tmp/judge.py"
