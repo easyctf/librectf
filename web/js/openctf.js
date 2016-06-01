@@ -198,7 +198,7 @@ function display_message(containerId, alertType, message, callback) {
 	$("#" + containerId).hide().slideDown("fast", "swing", function() {
 		window.setTimeout(function () {
 			$("#" + containerId).slideUp("fast", "swing", callback);
-		}, message.length * 55);
+		}, message.length * 45);
 	});
 };
 
