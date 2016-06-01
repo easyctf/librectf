@@ -108,7 +108,7 @@ def submit_program():
 	if _problem.category != "Programming":
 		raise WebException("Can't judge this problem.")
 
-	if not language < len(extensions):
+	if language not in extensions:
 		raise WebException("Language not supported.")
 
 	solved = Solves.query.filter_by(pid=pid, tid=tid, correct=1).first()
