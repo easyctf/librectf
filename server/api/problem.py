@@ -27,14 +27,15 @@ blueprint = Blueprint("problem", __name__)
 @admins_only
 @api_wrapper
 def problem_add():
-	title = request.form["title"]
-	category = request.form["category"]
-	description = request.form["description"]
-	hint = request.form["hint"]
-	value = request.form["value"]
-	grader_contents = request.form["grader_contents"]
-	bonus = request.form["bonus"]
-	autogen = request.form["autogen"]
+	params = utils.flat_multi(request.form)
+	title = params.get("title")
+	category = params.get("category")
+	description = params.get("description")
+	hint = params.get("hint")
+	value = params.get("value")
+	grader_contents = params.get("grader_contents")
+	bonus = params.get("bonus")
+	autogen = params.get("autogen")
 
 	title_exists = Problems.query.filter_by(title=title).first()
 	if title_exists:
@@ -81,7 +82,8 @@ def problem_add():
 @admins_only
 @api_wrapper
 def problem_delete():
-	pid = request.form["pid"]
+	params = utils.flat_multi(request.form)
+	pid = params.get("pid")
 	problem = Problems.query.filter_by(pid=pid).first()
 	if problem:
 		ProgrammingSubmissions.query.filter_by(pid=pid).delete()
@@ -98,15 +100,16 @@ def problem_delete():
 @admins_only
 @api_wrapper
 def problem_update():
-	pid = request.form["pid"]
-	title = request.form["title"]
-	category = request.form["category"]
-	description = request.form["description"]
-	hint = request.form["hint"]
-	value = request.form["value"]
-	bonus = request.form["bonus"]
-	grader_contents = request.form["grader_contents"]
-	autogen = request.form["autogen"]
+	params = utils.flat_multi(request.form)
+	pid = params.get("pid")
+	title = params.get("title")
+	category = params.get("category")
+	description = params.get("description")
+	hint = params.get("hint")
+	value = params.get("value")
+	bonus = params.get("bonus")
+	grader_contents = params.get("grader_contents")
+	autogen = params.get("autogen")
 
 	problem = Problems.query.filter_by(pid=pid).first()
 	if problem:
@@ -139,9 +142,10 @@ def problem_update():
 @team_required
 @team_finalize_required
 def problem_submit():
-	pid = request.form["pid"]
-	flag = request.form["flag"]
-	tid = session["tid"]
+	params = utils.flat_multi(request.form)
+	pid = params.get("pid")
+	flag = params.get("flag")
+	tid = session.get("tid")
 	_user = user.get_user().first()
 	username = _user.username
 

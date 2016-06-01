@@ -28,7 +28,8 @@ extensions = {
 @login_required
 @team_required
 def delete_submission():
-	psid = request.form.get("psid")
+	params = utils.flat_multi(request.form)
+	psid = params.get("psid")
 	tid = session.get("tid")
 	result = ProgrammingSubmissions.query.filter_by(psid=psid, tid=tid)
 
@@ -67,9 +68,9 @@ def get_submissions():
 @api_wrapper
 @login_required
 def get_problems():
-	if "admin" in session and session["admin"]:
+	if session.get("admin"):
 		pass
-	elif "tid" not in session or session["tid"] <= 0:
+	elif session.get("tid") <= 0:
 		raise WebException("You need a team.")
 	elif team.get_team(tid=session.get("tid")).first().finalized != True:
 		raise WebException("Your team is not finalized.")
@@ -106,6 +107,9 @@ def submit_program():
 
 	if _problem.category != "Programming":
 		raise WebException("Can't judge this problem.")
+
+	if not language < len(extensions):
+		raise WebException("Language not supported.")
 
 	solved = Solves.query.filter_by(pid=pid, tid=tid, correct=1).first()
 	if solved:
