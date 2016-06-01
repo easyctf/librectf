@@ -95,7 +95,8 @@
 							</div>
 							<br>
 							<input type="submit" class="btn btn-success" value="Update" />
-							<input onclick="delete_problem(this.closest('form').id); return false;" class="btn btn-danger" value="Delete" />
+							<input type="button" onclick="delete_problem(this.closest('form').id); return false;" class="btn btn-danger" value="Delete" />
+							<input type="button" onclick="clear_submissions(this.closest('form').id); return false;" class="btn btn-danger" value="Clear submissions" />
 						</form>
 					</div>
 				</div>
@@ -107,9 +108,9 @@
 <div id="confirm" class="modal fade">
 	<div class="modal-dialog">
 		<div class="modal-content">
-			<div class="modal-body">Are you sure you want to delete this problem?</div>
+			<div class="modal-body">Are you sure you want to do this?</div>
 			<div class="modal-footer">
-				<button type="button" data-dismiss="modal" class="btn btn-primary" id="delete">Delete</button>
+				<button type="button" data-dismiss="modal" class="btn btn-primary" id="yes">Yes</button>
 				<button type="button" data-dismiss="modal" class="btn">Cancel</button>
 			</div>
 		</div>

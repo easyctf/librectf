@@ -2,7 +2,7 @@ from flask import Blueprint, jsonify, session, request
 from flask import current_app as app
 from werkzeug import secure_filename
 
-from models import db, Files, Problems, Solves, Teams, Users, UserActivity
+from models import db, Files, Problems, ProgrammingSubmissions, Solves, Teams, Users, UserActivity
 from decorators import admins_only, api_wrapper, login_required, team_required, team_finalize_required, InternalException, WebException
 
 import hashlib
@@ -232,6 +232,20 @@ def problem_data():
 				logger.log(__name__, "The grader for \"%s\" has thrown an error: %s" % (problem.title, e))
 		problems_return.append(data)
 	return { "success": 1, "problems": problems_return }
+
+@blueprint.route("/clear_submissions", methods=["POST"])
+@api_wrapper
+@admins_only
+def clear_solves():
+	params = utils.flat_multi(request.form)
+
+	pid = params.get("pid")
+	Solves.query.filter_by(pid=pid).delete()
+	ProgrammingSubmissions.query.filter_by(pid=pid).delete()
+	cache.invalidate_memoization(get_solves, pid)
+	db.session.commit()
+
+	return { "success": 1, "message": "Submissions cleared." }
 
 @cache.memoize(timeout=120)
 def get_solves(pid):
