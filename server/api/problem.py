@@ -151,6 +151,10 @@ def problem_submit():
 	if solved:
 		raise WebException("You already solved this problem.")
 
+	flag_tried = Solves.query.filter_by(pid=pid, flag=flag).first()
+	if flag_tried:
+		raise WebException("Your team has already tried this solution.")
+
 	if problem:
 		if problem.category == "Programming":
 			raise WebException("Please submit programming problems using the Programming interface.")
