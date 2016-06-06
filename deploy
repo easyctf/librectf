@@ -17,7 +17,7 @@ find . -type f -exec dos2unix {} \; &> /dev/null
 rm d2utmp*
 
 echo "Starting the server..."
-sudo cp -r web/* /srv/http/ctf/*
+sudo cp -r web/* /srv/http/ctf
 cd $CTFDIR/server
 sudo service nginx start
 sudo service memcached start
