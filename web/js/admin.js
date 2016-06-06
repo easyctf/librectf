@@ -71,7 +71,7 @@ var update_problem = function(form_id) {
 
 var delete_problem = function(form_id) {
 	$('#confirm').modal("show", { backdrop: 'static', keyboard: false })
-        .one('click', '#delete', function() {
+        .one('click', '#yes', function() {
 		var input = "#" + form_id + " input";
 		var pid = form_id.split("_")[1];
 		$(input).attr("disabled", "disabled");
@@ -98,7 +98,6 @@ var delete_problem = function(form_id) {
 var update_settings = function() {
 	var input = $("#update_settings_form input");
 	var data = $(input).serializeObject();
-	data["csrf_token"] = $.cookie("csrf_token");
 	$(input).attr("disabled", "disabled");
 	api_call("POST", "/api/admin/settings/update", data, function(result) {
 		if (result["success"] == 1) {
@@ -116,4 +115,30 @@ var update_settings = function() {
 			$(input).removeAttr("disabled");
 		});
 	});
+}
+
+function clear_submissions(form_id) {
+	$('#confirm').modal("show", { backdrop: 'static', keyboard: false })
+        .one('click', '#yes', function() {
+		var input = "#" + form_id + " input";
+		var pid = form_id.split("_")[1];
+		$(input).attr("disabled", "disabled");
+		api_call("POST", "/api/problem/clear_submissions", {"pid": pid}, function(result) {
+			if (result["success"] == 1) {
+				display_message(pid + "_status", "success", result["message"], function() {
+					$(input).removeAttr("disabled");
+				});
+			} else {
+				display_message(pid + "_status", "danger", result["message"], function() {
+					$(input).removeAttr("disabled");
+				});
+			}
+		}, function(jqXHR) {
+			var result = jqXHR["responseText"];
+			display_message(pid + "_status", "danger", "Error " + jqXHR["status"] + ": " + result["message"], function() {
+				$(input).removeAttr("disabled");
+			});
+		});
+
+        });
 }

@@ -2,7 +2,7 @@ from flask import Blueprint, jsonify, session, request
 from flask import current_app as app
 from werkzeug import secure_filename
 
-from models import db, Files, Problems, Solves, Teams, Users, UserActivity
+from models import db, Files, Problems, ProgrammingSubmissions, Solves, Teams, Users, UserActivity
 from decorators import admins_only, api_wrapper, login_required, team_required, team_finalize_required, InternalException, WebException
 
 import hashlib
@@ -27,14 +27,15 @@ blueprint = Blueprint("problem", __name__)
 @admins_only
 @api_wrapper
 def problem_add():
-	title = request.form["title"]
-	category = request.form["category"]
-	description = request.form["description"]
-	hint = request.form["hint"]
-	value = request.form["value"]
-	grader_contents = request.form["grader_contents"]
-	bonus = request.form["bonus"]
-	autogen = request.form["autogen"]
+	params = utils.flat_multi(request.form)
+	title = params.get("title")
+	category = params.get("category")
+	description = params.get("description")
+	hint = params.get("hint")
+	value = params.get("value")
+	grader_contents = params.get("grader_contents")
+	bonus = params.get("bonus")
+	autogen = params.get("autogen")
 
 	title_exists = Problems.query.filter_by(title=title).first()
 	if title_exists:
@@ -81,7 +82,8 @@ def problem_add():
 @admins_only
 @api_wrapper
 def problem_delete():
-	pid = request.form["pid"]
+	params = utils.flat_multi(request.form)
+	pid = params.get("pid")
 	problem = Problems.query.filter_by(pid=pid).first()
 	if problem:
 		ProgrammingSubmissions.query.filter_by(pid=pid).delete()
@@ -98,15 +100,16 @@ def problem_delete():
 @admins_only
 @api_wrapper
 def problem_update():
-	pid = request.form["pid"]
-	title = request.form["title"]
-	category = request.form["category"]
-	description = request.form["description"]
-	hint = request.form["hint"]
-	value = request.form["value"]
-	bonus = request.form["bonus"]
-	grader_contents = request.form["grader_contents"]
-	autogen = request.form["autogen"]
+	params = utils.flat_multi(request.form)
+	pid = params.get("pid")
+	title = params.get("title")
+	category = params.get("category")
+	description = params.get("description")
+	hint = params.get("hint")
+	value = params.get("value")
+	bonus = params.get("bonus")
+	grader_contents = params.get("grader_contents")
+	autogen = params.get("autogen")
 
 	problem = Problems.query.filter_by(pid=pid).first()
 	if problem:
@@ -139,9 +142,10 @@ def problem_update():
 @team_required
 @team_finalize_required
 def problem_submit():
-	pid = request.form["pid"]
-	flag = request.form["flag"]
-	tid = session["tid"]
+	params = utils.flat_multi(request.form)
+	pid = params.get("pid")
+	flag = params.get("flag")
+	tid = session.get("tid")
 	_user = user.get_user().first()
 	username = _user.username
 
@@ -150,6 +154,10 @@ def problem_submit():
 	solved = Solves.query.filter_by(pid=pid, tid=tid, correct=1).first()
 	if solved:
 		raise WebException("You already solved this problem.")
+
+	flag_tried = Solves.query.filter_by(pid=pid, flag=flag).first()
+	if flag_tried:
+		raise WebException("Your team has already tried this solution.")
 
 	if problem:
 		if problem.category == "Programming":
@@ -167,9 +175,8 @@ def problem_submit():
 		if correct:
 			# Wait until after the solve has been added to the database before adding bonus
 			solves = get_solves(pid)
-			solve.bonus = [-1, solves][solves < 3]
+			solve.bonus = [-1, solves][solves < 4]
 
-			db.session.add(solve)
 			cache.invalidate_memoization(get_solves, pid)
 
 			if _user:
@@ -233,6 +240,20 @@ def problem_data():
 				logger.log(__name__, "The grader for \"%s\" has thrown an error: %s" % (problem.title, e))
 		problems_return.append(data)
 	return { "success": 1, "problems": problems_return }
+
+@blueprint.route("/clear_submissions", methods=["POST"])
+@api_wrapper
+@admins_only
+def clear_solves():
+	params = utils.flat_multi(request.form)
+
+	pid = params.get("pid")
+	Solves.query.filter_by(pid=pid).delete()
+	ProgrammingSubmissions.query.filter_by(pid=pid).delete()
+	cache.invalidate_memoization(get_solves, pid)
+	db.session.commit()
+
+	return { "success": 1, "message": "Submissions cleared." }
 
 @cache.memoize(timeout=120)
 def get_solves(pid):

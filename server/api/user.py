@@ -188,8 +188,8 @@ def user_register():
 @blueprint.route("/logout", methods=["GET"])
 @api_wrapper
 def user_logout():
-	sid = session["sid"]
-	username = session["username"]
+	sid = session.get("sid")
+	username = session.get("username")
 	with app.app_context():
 		expired = LoginTokens.query.filter_by(username=username).all()
 		for expired_token in expired:
@@ -536,8 +536,8 @@ def send_verification(username, email, token):
 
 def is_logged_in():
 	if not("sid" in session and "username" in session): return False
-	sid = session["sid"]
-	username = session["username"]
+	sid = session.get("sid")
+	username = session.get("username")
 	token = LoginTokens.query.filter_by(sid=sid, active=True).first()
 	if token is None: return False
 
@@ -569,7 +569,7 @@ def get_user(username=None, username_lower=None, email=None, uid=None, reset_tok
 		return result
 
 def is_admin():
-	return is_logged_in() and "admin" in session and session["admin"]
+	return is_logged_in() and session.get("admin")
 
 def in_team(user):
 	return hasattr(user, "tid") and user.tid >= 0

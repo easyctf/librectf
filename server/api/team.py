@@ -49,7 +49,7 @@ def team_delete():
 	if "tid" in params:
 		tid = params.get("tid")
 	else:
-		tid = session["tid"]
+		tid = session.get("tid")
 
 	username = session["username"]
 	team = Teams.query.filter_by(tid=tid).first()
@@ -75,8 +75,8 @@ def team_delete():
 @api_wrapper
 @login_required
 def team_remove_member():
-	username = session["username"]
-	tid = session["tid"]
+	username = session.get("username")
+	tid = session.get("tid")
 	team = Teams.query.filter_by(tid=tid).first()
 	usr = Users.query.filter_by(username=username).first()
 	owner = team.owner
