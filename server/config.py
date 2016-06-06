@@ -20,16 +20,17 @@ secret.close()
 
 SECRET_KEY = key
 ROOT_FOLDER = os.path.abspath(os.path.join(os.path.realpath(__file__), '../..'))
+DEFAULT_DATABASE_URI = "mysql://root:i_hate_passwords@localhost/openctf"
 
 options = {
-	"SQLALCHEMY_DATABASE_URI": os.getenv("SQLALCHEMY_DATABASE_URI", ""),
-	"SQLALCHEMY_TEST_DATABASE_URI": os.getenv("SQLALCHEMY_TEST_DATABASE_URI", ""),
+	"SQLALCHEMY_DATABASE_URI": os.getenv("SQLALCHEMY_DATABASE_URI", DEFAULT_DATABASE_URI),
+	"SQLALCHEMY_TEST_DATABASE_URI": os.getenv("SQLALCHEMY_TEST_DATABASE_URI", DEFAULT_DATABASE_URI),
 	"SQLALCHEMY_TRACK_MODIFICATIONS": False,
 	"ROOT_FOLDER": ROOT_FOLDER,
 	"UPLOAD_FOLDER": os.path.abspath(os.path.join(ROOT_FOLDER, "web/files")),
 	"MAILGUN_URL": os.getenv("MAILGUN_URL", ""),
 	"MAILGUN_KEY": os.getenv("MAILGUN_KEY", ""),
-	"ADMIN_EMAIL": os.getenv("ADMIN_EMAIL", ""),
+	"ADMIN_EMAIL": os.getenv("ADMIN_EMAIL", "admin@openctf.com"),
 	"GRADER_FOLDER": os.path.abspath(os.path.join(ROOT_FOLDER, "server/graders")),
 	"PROBLEM_DIR": os.path.abspath(os.path.join(ROOT_FOLDER, "problems"))
 }
