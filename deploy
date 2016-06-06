@@ -9,7 +9,7 @@ sudo service nginx stop
 sudo service memcached stop
 tmux kill-session -t ctf 2> /dev/null
 sudo mkdir -p /srv/http/ctf
-sudo rm /srv/http/ctf/*
+sudo rm -rf /srv/http/ctf/*
 
 # Convert line ends
 cd $CTFDIR
