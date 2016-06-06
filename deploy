@@ -1,5 +1,8 @@
 #!/bin/bash
 
+source /etc/profile
+echo $CTFDIR
+
 echo "Stopping the server..."
 pkill gunicorn
 sudo service nginx stop
@@ -7,11 +10,12 @@ sudo service memcached stop
 tmux kill-session -t ctf 2> /dev/null
 
 # Convert line ends
-cd /vagrant
+cd $CTFDIR
 find . -type f -exec dos2unix {} \; &> /dev/null
+rm d2utmp*
 
 echo "Starting the server..."
-cd /vagrant/server
+cd $CTFDIR/server
 sudo service nginx start
 sudo service memcached start
-tmux new-session -s ctf -d 'tmux set remain-on-exit on && cd /vagrant/server && ./app.py run'
+tmux new-session -s ctf -d "tmux set remain-on-exit on && cd $CTFDIR/server && ./app.py run"

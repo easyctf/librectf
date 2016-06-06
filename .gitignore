@@ -56,3 +56,8 @@ pfp/
 logs/
 graders/
 d2utmp*
+.mysql_history
+.viminfo
+.bash_history
+.cache
+.my.cnf
