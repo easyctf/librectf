@@ -31,3 +31,5 @@ sudo service nginx restart
 
 echo "Setting up MySQL..."
 mysql -u root -p"$MYSQL_ROOT_PASSWORD" -e "CREATE DATABASE openctf; CREATE DATABASE openctf_tests;"
+
+find . -type f -exec dos2unix {} \; &> /dev/null
