@@ -10,4 +10,4 @@ markdown2
 onetimepass
 pyqrcode
 python-memcached
-nose
+pytest
