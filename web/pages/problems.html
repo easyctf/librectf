@@ -14,7 +14,7 @@
 			<div class="panel-heading" data-toggle="collapse" data-target="#{{ problem['pid'] }}_body">
 				<h4 class="panel-title">
 					<b>{{ problem["title"] }}</b> {{ problem["value"] }} points
-					<div class="pull-right">{{ problem["category"] }} - {{ problem["solved"] }} ({{ problem["solves"] }} {{ problem["solves"] === 1 ? "solve" : "solves" }})</div>
+					<div class="pull-right">{{ problem["cateogry"] }} - <span id = "{{ problem['pid'] }}_solved">{{ problem["solved"] }}</span> (<span id = "{{ problem['pid'] }}_solves">{{ problem["solves"] }} {{ problem["solves"] === 1 ? "solve" : "solves" }}</span>) </div>
 				</h4>
 			</div>
 			<div id="{{ problem['pid'] }}_body" class="panel-collapse collapse {{ problem['solved'] == 'Solved' ? '': 'in' }}">
@@ -61,6 +61,11 @@ var submit_problem = function(form) {
 			display_message(pid + "_status", "success", result["message"], function() {
 				$(input).removeAttr("disabled");
 			});
+			$("#" + pid + "_body").collapse('hide');
+			$("#" + pid + "_solved").text("Solved");
+			var solves = $("#" + pid + "_solves").text();
+			solves = parseInt(solves.split(" ")[0]) + 1;
+			$("#" + pid + "_solves").text(solves + " " + (solves === 1 ? "solve" : "solves"));
 		} else {
 			display_message(pid + "_status", "danger", result["message"], function() {
 				$(input).removeAttr("disabled");
