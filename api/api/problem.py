@@ -159,14 +159,15 @@ def problem_submit():
 
 
 @blueprint.route("/data", methods=["GET"])
+@login_required
 @api_wrapper
 def problem_data():
-	if "admin" in session and session["admin"]:
-		pass
-	elif "tid" not in session or session["tid"] <= 0:
-		raise WebException("You need a team.")
-	elif team.get_team(tid=session.get("tid")).first().finalized != True:
-		raise WebException("Your team is not finalized.")
+	_user = user.get_user()
+	if not user.is_admin():
+		if not user.in_team(_user):
+			raise WebException("You need a team.")
+		elif team.team_finalized(team.get_team_of(_user.uid))
+			raise WebException("Your team is not finalized.")
 
 	problems = Problems.query.order_by(Problems.value).all()
 	problems_return = [ ]
