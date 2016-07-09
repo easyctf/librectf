@@ -89,42 +89,36 @@
 						<div class="panel-heading">
 							<h4 class="panel-title">Top Solves</h4>
 						</div>
-						<div class="panel-body">
-							<p ng-show="user['stats']['correct_submissions'] == 0"><b>{{ user['name'] }}</b> hasn't solved any problems!</p>
-							<table ng-show="user['stats']['correct_submissions'] > 0" class="table table-striped table-hover">
-								<thead>
-									<tr>
-										<th>Problem</th>
-										<th>Value</th>
-										<th>Time</th>
-									</tr>
-								</thead>
-								<tbody>
-									<tr ng-repeat="problem in user['stats']['problems'] | orderBy:'-value' ">
-										<td>{{ problem['title'] }}</td>
-										<td>{{ problem['value'] }}</td>
-										<td><time class="timeago" datetime="{{ problem['date'] }}"></time></td>
-									</tr>
-								</tbody>
-							</table>
+						<div class="panel-body" ng-show="user['stats']['correct_submissions'] == 0">
+							<p><b>{{ user['name'] }}</b> hasn't solved any problems!</p>
 						</div>
-					</div>
-					<div class="panel panel-default">
-						<div class="panel-heading">
-							<h4 class="panel-title">Achievements</h4>
-						</div>
-						<div class="panel-body">
-							Hi.
-						</div>
+						<table ng-show="user['stats']['correct_submissions'] > 0" class="table table-striped table-hover">
+							<thead>
+								<tr>
+									<th>Problem</th>
+									<th>Value</th>
+									<th>Time</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="problem in user['stats']['problems'] | orderBy: '-date' | orderBy: '-value' | limitTo: 5">
+									<td>{{ problem['title'] }}</td>
+									<td>{{ problem['value'] }}</td>
+									<td><time class="timeago" datetime="{{ problem['date'] }}"></time></td>
+								</tr>
+							</tbody>
+						</table>
 					</div>
 				</div>
 				<div role="tabpanel" class="tab-pane" id="activity">
-					<table class="table">
-						<tr ng-repeat="event in user['activity']">
-							<td><time class="timeago" datetime="{{ event['timestamp'] }}"></time></td>
-							<td ng-bind-html="event['message_clean']"></td>
-						</tr>
-					</table>
+					<div class="panel panel-default">
+						<table class="table">
+							<tr ng-repeat="event in user['activity']">
+								<td><time class="timeago" datetime="{{ event['timestamp'] }}"></time></td>
+								<td ng-bind-html="event['message_clean']"></td>
+							</tr>
+						</table>
+					</div>
 				</div>
 			</div>
 		</div>

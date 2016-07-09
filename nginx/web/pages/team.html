@@ -79,20 +79,17 @@
 				<div class="panel-heading">
 					<h4 class="panel-title">Statistics</h4>
 				</div>
-				<table class="table">
-					<tr>
-						<th>Place</th>
-						<td>{{ team['place'] }}</td>
-					</tr>
-					<tr>
-						<th>Points</th>
-						<td>{{ team['points'] }}</td>
-					</tr>
-					<tr>
-						<th>Members</th>
-						<td>{{ team['members'].length }}</td>
-					</tr>
-				</table>
+				<div class="list-group">
+					<p class="list-group-item">
+						<b class="large-number">{{ team['place'] }}</b> place
+					</p>
+					<p class="list-group-item">
+						<b class="large-number">{{ team['points'] }}</b> point{{ team['points'] == 1 ? '' : 's' }}
+					</p>
+					<p class="list-group-item">
+						<b class="large-number">{{ team['members'].length }}</b> member{{ team['members'].length == 1 ? '' : 's' }}
+					</p>
+				</div>
 			</div>
 			<div class="panel panel-default">
 				<div class="panel-heading">

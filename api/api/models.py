@@ -148,13 +148,13 @@ class Activity(db.Model):
 		t = db.session.query(Teams).filter_by(tid=self.tid).first()
 		p = db.session.query(Problems).filter_by(pid=self.pid).first()
 		if self.type == 0:
-			return "%s created an account!" % generate_user_link(u.username)
+			return "<b>%s</b> created an account!" % generate_user_link(u.username)
 		elif self.type == 1:
-			return "%s created the team %s" % (generate_user_link(u.username), generate_team_link(t.teamname))
+			return "<b>%s</b> created the team <b>%s</b>" % (generate_user_link(u.username), generate_team_link(t.teamname))
 		elif self.type == 2:
-			return "%s has left team %s" % (generate_user_link(u.username), generate_team_link(t.teamname))
+			return "<b>%s</b> has left team <b>%s</b>" % (generate_user_link(u.username), generate_team_link(t.teamname))
 		elif self.type == 3:
-			return u"%s from team %s has solved %s" % (generate_user_link(u.username), generate_team_link(t.teamname), p.title)
+			return "<b>%s</b> from team <b>%s</b> has solved <b>%s</b>" % (generate_user_link(u.username), generate_team_link(t.teamname), p.title)
 
 class Teams(db.Model):
 	tid = db.Column(db.Integer, primary_key=True)

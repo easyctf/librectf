@@ -1,6 +1,7 @@
 var app = angular.module("openctf", [ "ngRoute" ]);
 var $http = angular.injector(["ng"]).get("$http");
 var stylesheet_loaded = false;
+var CHART_HEIGHT = 208;
 
 app.filter("render_html", ['$sce', function($sce) {
 	return function(html){
@@ -298,6 +299,9 @@ app.controller("profileController", function($controller, $scope, $http, $routeP
 			$scope.user.activity[i].message_clean = $sce.trustAsHtml($scope.user.activity[i].message);
 		}
 		var category_chart = c3.generate({
+			size: {
+				height: CHART_HEIGHT
+			},
 			bindto: "#category_chart",
 			data: {
 				columns: (function() {
@@ -317,6 +321,9 @@ app.controller("profileController", function($controller, $scope, $http, $routeP
 			}
 		});
 		var submissions_chart = c3.generate({
+			size: {
+				height: CHART_HEIGHT
+			},
 			bindto: "#submissions_chart",
 			data: {
 				columns: [

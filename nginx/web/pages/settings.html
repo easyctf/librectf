@@ -106,26 +106,24 @@
 					<div class="panel-heading">
 						<h4 class="panel-title">Active Sessions</h4>
 					</div>
-					<div class="panel-body">
-						<table class="table table-striped table-hover">
-							<thead>
-								<tr>
-									<th>IP</th>
-									<th>Location</th>
-									<th>Since</th>
-									<th></th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr ng-repeat="session in user['sessions']">
-									<td>{{ session["ip"] }}<span ng-show="session['me']==true"> (you)</span></td>
-									<td>{{ session["location"] }}</td>
-									<td><time class="timeago" datetime="{{ session['since'] }}"></time></td>
-									<td>(<a href="javascript:delete_session('{{ session['sid'] }}');">Remove</a>)</td>
-								</tr>
-							</tbody>
-						</table>
-					</div>
+					<table class="table table-striped table-hover">
+						<thead>
+							<tr>
+								<th>IP</th>
+								<th>Location</th>
+								<th>Since</th>
+								<th></th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr ng-repeat="session in user['sessions']">
+								<td>{{ session["ip"] }}<span ng-show="session['me']==true"> (you)</span></td>
+								<td>{{ session["location"] }}</td>
+								<td><time class="timeago" datetime="{{ session['since'] }}"></time></td>
+								<td>(<a href="javascript:delete_session('{{ session['sid'] }}');">Remove</a>)</td>
+							</tr>
+						</tbody>
+					</table>
 				</div>
 				<div class="panel panel-default">
 					<div class="panel-heading">
