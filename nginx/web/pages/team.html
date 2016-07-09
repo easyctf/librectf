@@ -139,20 +139,74 @@
 		</div>
 		<div class="col-sm-9 col-xs-12">
 			<ul class="nav nav-tabs" role="tablist">
-				<li role="presentation" class="active"><a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">Profile</a></li>
+				<li role="presentation" class="active"><a href="#overview" aria-controls="overview" role="tab" data-toggle="tab">Overview</a></li>
 				<li role="presentation"><a href="#activity" aria-controls="activity" role="tab" data-toggle="tab">Activity</a></li>
+				<li role="presentation"><a href="#solves" aria-controls="solves" role="tab" data-toggle="tab">Solves</a></li>
 			</ul>
 			<div class="tab-content">
-				<div role="tabpanel" class="tab-pane active" id="profile">
-
+				<div role="tabpanel" class="tab-pane active" id="overview">
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<h4 class="panel-title">Recent Activity</h4>
+						</div>
+						<table class="table">
+							<tr ng-repeat="event in team['activity'] | limitTo: 5">
+								<td><time class="timeago" datetime="{{ event['timestamp'] }}"></time></td>
+								<td ng-bind-html="event['message_clean']"></td>
+							</tr>
+						</table>
+					</div>
+					<div class="panel panel-default">
+						<div class="panel-heading">
+							<h4 class="panel-title">Top Solves</h4>
+						</div>
+						<table class="table">
+							<thead>
+								<tr>
+									<th>Time</th>
+									<th>Problem</th>
+									<th>Value</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="solve in team['solves'] | orderBy: '-date' | orderBy: '-value' | limitTo: 5">
+									<td><time class="timeago" datetime="{{ solve['date'] }}"></time></td>
+									<td>{{ solve['problem'] }}</td>
+									<td>{{ solve['value'] }}</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
 				</div>
 				<div role="tabpanel" class="tab-pane" id="activity">
-					<table class="table">
-						<tr ng-repeat="event in team['activity']">
-							<td><time class="timeago" datetime="{{ event['timestamp'] }}"></time></td>
-							<td ng-bind-html="event['message_clean']"></td>
-						</tr>
-					</table>
+					<div class="panel panel-default">
+						<table class="table">
+							<tr ng-repeat="event in team['activity']">
+								<td><time class="timeago" datetime="{{ event['timestamp'] }}"></time></td>
+								<td ng-bind-html="event['message_clean']"></td>
+							</tr>
+						</table>
+					</div>
+				</div>
+				<div role="tabpanel" class="tab-pane" id="solves">
+					<div class="panel panel-default">
+						<table class="table">
+							<thead>
+								<tr>
+									<th>Time</th>
+									<th>Problem</th>
+									<th>Value</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr ng-repeat="solve in team['solves'] | orderBy: '-date' | orderBy: '-value'">
+									<td><time class="timeago" datetime="{{ solve['date'] }}"></time></td>
+									<td>{{ solve['problem'] }}</td>
+									<td>{{ solve['value'] }}</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
 				</div>
 			</div>
 		</div>

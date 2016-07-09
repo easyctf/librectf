@@ -99,7 +99,7 @@ class Users(db.Model):
 		for a in activity:
 			result.append({
 				"timestamp": utils.isoformat(a.timestamp),
-				"message": str(a)
+				"message": a.get_message()
 			})
 		return result
 
@@ -143,7 +143,7 @@ class Activity(db.Model):
 			self.pid = pid
 		self.timestamp = int(time.time())
 
-	def __str__(self):
+	def get_message(self):
 		u = db.session.query(Users).filter_by(uid=self.uid).first()
 		t = db.session.query(Teams).filter_by(tid=self.tid).first()
 		p = db.session.query(Problems).filter_by(pid=self.pid).first()
@@ -154,7 +154,7 @@ class Activity(db.Model):
 		elif self.type == 2:
 			return "%s has left team %s" % (generate_user_link(u.username), generate_team_link(t.teamname))
 		elif self.type == 3:
-			return "%s from team %s has solved %s" % (generate_user_link(u.username), generate_team_link(t.teamname), p.title)
+			return u"%s from team %s has solved %s" % (generate_user_link(u.username), generate_team_link(t.teamname), p.title)
 
 class Teams(db.Model):
 	tid = db.Column(db.Integer, primary_key=True)
@@ -192,7 +192,7 @@ class Teams(db.Model):
 		for a in activity:
 			result.append({
 				"timestamp": utils.isoformat(a.timestamp),
-				"message": str(a)
+				"message": a.get_message()
 			})
 		return result
 
