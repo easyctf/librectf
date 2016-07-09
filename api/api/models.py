@@ -348,7 +348,7 @@ class Solves(db.Model):
 	pid = db.Column(db.String(128), db.ForeignKey("problems.pid"))
 	tid = db.Column(db.Integer, db.ForeignKey("teams.tid"))
 	uid = db.Column(db.Integer)
-	date = db.Column(db.String(64), default=utils.get_time_since_epoch())
+	date = db.Column(db.String(64), default=int(time.time()))
 	correct = db.Column(db.Boolean)
 	flag = db.Column(db.Text)
 	bonus = db.Column(db.Integer)
@@ -359,6 +359,7 @@ class Solves(db.Model):
 		self.tid = tid
 		self.flag = flag
 		self.correct = correct
+		self.date = int(time.time())
 
 	def get_value(self):
 		problem = Problems.query.filter_by(pid=self.pid).first()

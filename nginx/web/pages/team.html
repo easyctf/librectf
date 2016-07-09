@@ -75,6 +75,25 @@
 	</div>
 	<div class="row">
 		<div class="col-sm-3 col-xs-12">
+			<div class="panel panel-default" ng-show="team['finalized']==true">
+				<div class="panel-heading">
+					<h4 class="panel-title">Statistics</h4>
+				</div>
+				<table class="table">
+					<tr>
+						<th>Place</th>
+						<td>{{ team['place'] }}</td>
+					</tr>
+					<tr>
+						<th>Points</th>
+						<td>{{ team['points'] }}</td>
+					</tr>
+					<tr>
+						<th>Members</th>
+						<td>{{ team['members'].length }}</td>
+					</tr>
+				</table>
+			</div>
 			<div class="panel panel-default">
 				<div class="panel-heading">
 					<h4 class="panel-title">Team Members</h4>
