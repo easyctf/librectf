@@ -38,7 +38,7 @@ def problem_add():
 	autogen = params.get("autogen")
 	try:
 		add_problem(title, category, description, value, grader_contents, hint=hint, bonus=bonus, autogen=autogen)
-	except e:
+	except Exception, e:
 		raise WebException(str(e))
 	return { "success": 1, "message": "Success!" }
 
