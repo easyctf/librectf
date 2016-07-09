@@ -4,7 +4,7 @@ from flask import current_app as app
 from voluptuous import Schema, Length, Required
 from StringIO import StringIO
 
-from models import db, LoginTokens, Users, UserActivity, Config
+from models import db, LoginTokens, Users, Activity, Config
 from decorators import api_wrapper, WebException, login_required
 from schemas import verify_to_schema, check
 
@@ -465,7 +465,7 @@ def register_user(name, username, email, password, utype, admin=False):
 	with app.app_context():
 		db.session.add(user)
 		db.session.commit()
-		join_activity = UserActivity(user.uid, 0)
+		join_activity = Activity(user.uid, 0)
 		db.session.add(join_activity)
 		db.session.commit()
 		db.session.close()

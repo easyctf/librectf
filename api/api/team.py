@@ -2,7 +2,7 @@ from flask import Blueprint, request, session
 from flask import current_app as app
 from voluptuous import Schema, Length, Required
 
-from models import db, ProgrammingSubmissions, Solves, TeamInvitations, Teams, UserActivity, Users
+from models import db, ProgrammingSubmissions, Solves, TeamInvitations, Teams, Activity, Users
 from decorators import api_wrapper, login_required, WebException, team_required
 from schemas import verify_to_schema, check
 
@@ -34,7 +34,7 @@ def team_create():
 		db.session.add(team)
 		db.session.commit()
 		Users.query.filter_by(uid=_user.uid).update({ "tid": team.tid })
-		team_activity = UserActivity(_user.uid, 1, tid=team.tid)
+		team_activity = Activity(_user.uid, 1, tid=team.tid)
 		db.session.add(team_activity)
 		db.session.commit()
 
@@ -60,7 +60,7 @@ def team_delete():
 			for member in Users.query.filter_by(tid=tid).all():
 				member.tid = -1
 				db.session.add(member)
-			UserActivity.query.filter_by(tid=tid).delete()
+			Activity.query.filter_by(tid=tid).delete()
 			Solves.query.filter_by(tid=tid).delete()
 			ProgrammingSubmissions.query.filter_by(tid=tid).delete()
 			db.session.delete(team)

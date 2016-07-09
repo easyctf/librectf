@@ -94,7 +94,7 @@ class Users(db.Model):
 		return result
 
 	def get_activity(self):
-		activity = db.session.query(UserActivity).filter_by(uid=self.uid).order_by(UserActivity.timestamp.desc()).all()
+		activity = db.session.query(Activity).filter_by(uid=self.uid).order_by(Activity.timestamp.desc()).all()
 		result = [ ]
 		for a in activity:
 			result.append({
@@ -119,7 +119,7 @@ class Users(db.Model):
 		result["total_submissions"] = n_solved[1]
 		return result
 
-class UserActivity(db.Model):
+class Activity(db.Model):
 	"""
 	Types of user activity:
 	- 0: User joins.

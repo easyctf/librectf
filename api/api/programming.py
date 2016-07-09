@@ -1,7 +1,7 @@
 from flask import current_app as app, Blueprint, request, session
 
 from decorators import api_wrapper, login_required, team_required, WebException
-from models import db, Problems, ProgrammingSubmissions, Solves, UserActivity
+from models import db, Problems, ProgrammingSubmissions, Solves, Activity
 
 import imp
 import os
@@ -155,7 +155,7 @@ def submit_program():
 			cache.invalidate_memoization(problem.get_solves, pid)
 
 			if _user:
-				activity = UserActivity(_user.uid, 3, tid=tid, pid=pid)
+				activity = Activity(_user.uid, 3, tid=tid, pid=pid)
 				db.session.add(activity)
 
 			db.session.commit()

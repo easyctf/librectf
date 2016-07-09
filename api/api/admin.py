@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request
 from flask import current_app as app
 from decorators import admins_only, api_wrapper, webhook_wrapper, WebException
-from models import db, Config, Problems, Teams, Users, UserActivity
+from models import db, Config, Problems, Teams, Users, Activity
 from schemas import verify_to_schema, check
 from operator import itemgetter
 from StringIO import StringIO
@@ -228,7 +228,7 @@ def import_problem(path, pid):
 		title = metadata.get("title")
 		category = metadata.get("category")
 		value = int(metadata.get("value"))
-		hint = metadata.get("hint")
+		hint = metadata.get("hint", "")
 		description = open(os.path.join(path, "description.md")).read()
 		grader = open(os.path.join(path, "grader.py")).read()
 

@@ -2,7 +2,7 @@ from flask import Blueprint, jsonify, session, request
 from flask import current_app as app
 from werkzeug import secure_filename
 
-from models import db, Files, Problems, ProgrammingSubmissions, Solves, Teams, Users, UserActivity
+from models import db, Files, Problems, ProgrammingSubmissions, Solves, Teams, Users, Activity
 from decorators import admins_only, api_wrapper, login_required, team_required, team_finalize_required, InternalException, WebException
 
 import hashlib
@@ -52,7 +52,7 @@ def problem_delete():
 	if problem:
 		ProgrammingSubmissions.query.filter_by(pid=pid).delete()
 		Solves.query.filter_by(pid=pid).delete()
-		UserActivity.query.filter_by(pid=pid).delete()
+		Activity.query.filter_by(pid=pid).delete()
 		Problems.query.filter_by(pid=pid).delete()
 		grader_folder = os.path.dirname(problem.grader)
 		shutil.rmtree(grader_folder)
@@ -144,7 +144,7 @@ def problem_submit():
 			cache.invalidate_memoization(get_solves, pid)
 
 			if _user:
-				activity = UserActivity(_user.uid, 3, tid=tid, pid=pid)
+				activity = Activity(_user.uid, 3, tid=tid, pid=pid)
 				db.session.add(activity)
 
 			db.session.commit()

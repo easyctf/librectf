@@ -19,7 +19,7 @@ if not os.path.exists(app.config["PFP_FOLDER"]):
 	os.makedirs(app.config["PFP_FOLDER"])
 
 with app.app_context():
-	from api.models import db, Config, Users, UserActivity, Teams, Problems, Files, Solves, LoginTokens, TeamInvitations, Tickets, TicketReplies, ProgrammingSubmissions
+	from api.models import db, Config, Users, Activity, Teams, Problems, Files, Solves, LoginTokens, TeamInvitations, Tickets, TicketReplies, ProgrammingSubmissions
 	db.init_app(app)
 	try:
 		db.create_all()
