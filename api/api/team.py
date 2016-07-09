@@ -374,7 +374,7 @@ def get_team_info(tid=None, teamname=None, teamname_lower=None, owner=None):
 	return result
 
 def get_team_of(uid):
-	return get_team(tid=user.get_user(uid=uid).tid).first()
+	return get_team(tid=user.get_user(uid=uid).first().tid).first()
 
 def get_team(tid=None, teamname=None, teamname_lower=None, owner=None):
 	match = {}

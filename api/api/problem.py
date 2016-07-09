@@ -162,11 +162,11 @@ def problem_submit():
 @login_required
 @api_wrapper
 def problem_data():
-	_user = user.get_user()
+	_user = user.get_user().first()
 	if not user.is_admin():
 		if not user.in_team(_user):
-			raise WebException("You need a team.")
-		elif not team.team_finalized(team.get_team_of(_user.uid)):
+			raise WebException("You need a team. (uid: %s, tid: %s)" % (_user.uid, _user.tid))
+		if not team.team_finalized(team.get_team_of(_user.uid)):
 			raise WebException("Your team is not finalized.")
 
 	problems = Problems.query.order_by(Problems.value).all()
