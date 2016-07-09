@@ -215,6 +215,7 @@ def import_repository(path, problems):
 		problem_path = os.path.join(path, problem)
 		if os.path.isdir(problem_path):
 			import_problem(problem_path, problem)
+	shutil.rmtree(path)
 
 def import_problem(path, pid):
 	with app.app_context():
