@@ -280,7 +280,7 @@ app.controller("problemsController", function($controller, $scope, $http) {
 		if (result["success"] == 1) {
 			$scope.problems = result["problems"];
 		} else {
-			display_message("problems_data_msg", "danger", result["message"], function() {
+			permanent_message("problems_data_msg", "danger", result["message"], function() {
 				if (result["message"].indexOf("finalized") > 0) {
 					location.href = "/team";
 				}

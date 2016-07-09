@@ -166,7 +166,7 @@ def problem_data():
 	if not user.is_admin():
 		if not user.in_team(_user):
 			raise WebException("You need a team.")
-		elif team.team_finalized(team.get_team_of(_user.uid))
+		elif not team.team_finalized(team.get_team_of(_user.uid)):
 			raise WebException("Your team is not finalized.")
 
 	problems = Problems.query.order_by(Problems.value).all()
