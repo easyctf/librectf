@@ -204,9 +204,9 @@ def clone_repository(payload):
 				if required_key not in metadata:
 					raise WebException("Expected required key %s in 'problem.yml'." % required_key)
 			problems.append(problem)
-		thread = threading.Thread(target=import_repository, args=(GIT_REPO, problems))
-		thread.start()
-		# import_repository(GIT_REPO, problems)
+		# thread = threading.Thread(target=import_repository, args=(GIT_REPO, problems))
+		# thread.start()
+		import_repository(GIT_REPO, problems)
 	else:
 		raise WebException("Failed to pull from remote.")
 
@@ -245,6 +245,7 @@ def import_problem(path, pid):
 
 		try:
 			problem.add_problem(title, category, description, value, grader, pid=pid, hint=hint)
+			logger.log(__name__, "Successfully imported '%s'." % pid)
 		except Exception, e:
 			logger.log(__name__, "Error when importing problem '%s': %s" % (pid, str(e)))
 
