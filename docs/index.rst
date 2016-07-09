@@ -16,6 +16,7 @@ Contents:
    :maxdepth: 4
 
    Getting Started <gettingstarted>
+   Github Webhook Integration <webhooks>
    Python REST API <api>
 
 
