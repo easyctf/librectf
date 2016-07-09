@@ -9,6 +9,7 @@ openctf:
 
 api:
   build: api
+  env_file: .env
   links:
     - db
   expose:
@@ -19,8 +20,6 @@ api:
 
 db:
   build: mysql
-  environment:
-    - MYSQL_ROOT_PASSWORD=password
-    - MYSQL_DATABASE=openctf
+  env_file: .env
   expose:
     - 3306

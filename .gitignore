@@ -9,3 +9,4 @@ logs
 graders
 files
 _build
+.env
