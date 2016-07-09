@@ -154,7 +154,7 @@ class Activity(db.Model):
 		elif self.type == 2:
 			return "%s has left team %s" % (generate_user_link(u.username), generate_team_link(t.teamname))
 		elif self.type == 3:
-			return "%s has solved %s" % (generate_user_link(u.username), p.title)
+			return "%s from team %s has solved %s" % (generate_user_link(u.username), generate_team_link(t.teamname), p.title)
 
 class Teams(db.Model):
 	tid = db.Column(db.Integer, primary_key=True)
@@ -185,6 +185,16 @@ class Teams(db.Model):
 				"observer": member.utype == 3
 			})
 		return members
+
+	def get_activity(self):
+		activity = db.session.query(Activity).filter_by(tid=self.tid).order_by(Activity.timestamp.desc()).all()
+		result = [ ]
+		for a in activity:
+			result.append({
+				"timestamp": utils.isoformat(a.timestamp),
+				"message": str(a)
+			})
+		return result
 
 	def points(self):
 		points = 0

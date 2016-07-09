@@ -296,6 +296,7 @@ def team_info():
 			if logged_in:
 				teamdata["invited"] = team.get_pending_invitations(toid=_user.uid) is not None
 				teamdata["requested"] = team.get_invitation_requests(frid=_user.uid) is not None
+		teamdata["activity"] = team.get_activity()
 	else:
 		if logged_in:
 			teamdata["invitations"] = _user.get_invitations()

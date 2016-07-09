@@ -410,11 +410,14 @@ app.controller("loginController", function($controller, $scope, $http) {
 	});
 });
 
-app.controller("teamController", function($controller, $scope, $http, result) {
+app.controller("teamController", function($controller, $scope, $http, $routeParams, $sce, result) {
 	$scope.found = false;
 	if (result["success"] == 1) {
 		$scope.team = result["team"];
 		$scope.found = true;
+	}
+	for(var i=0; i<$scope.team.activity.length; i++) {
+		$scope.team.activity[i].message_clean = $sce.trustAsHtml($scope.team.activity[i].message);
 	}
 	onContentLoaded(function() { $(".timeago").timeago(); });
 

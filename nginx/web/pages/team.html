@@ -147,6 +147,12 @@
 
 				</div>
 				<div role="tabpanel" class="tab-pane" id="activity">
+					<table class="table">
+						<tr ng-repeat="event in team['activity']">
+							<td><time class="timeago" datetime="{{ event['timestamp'] }}"></time></td>
+							<td ng-bind-html="event['message_clean']"></td>
+						</tr>
+					</table>
 				</div>
 			</div>
 		</div>
