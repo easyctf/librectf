@@ -1,63 +1,10 @@
-# OS-specific
-.DS_Store
-
-# Editor swapfiles
-.*.sw?
-*~
-
-# Vagrant stuff
-acceptance_config.yml
-boxes/*
-/.vagrant
-/website/.vagrant
-/website/build
-/vagrant-spec.config.rb
-
-# Bundler/Rubygems
-*.gem
-.bundle
-pkg/*
-tags
-/Gemfile.lock
-test/tmp/
-vendor/
-/exec
-
-# Documentation
-_site/*
-.yardoc/
-
-# Python
 *.pyc
-
-# Rubinius
-*.rbc
-
-# IDE junk
-.idea/*
-*.iml
-.project
-
-# Ruby Managers
-.rbenv
-.ruby-gemset
-.ruby-version
-.rvmrc
-
-# c9
-.c9
-.c9*
-
-#env
-.env
-
 .secret_key
-pfp/
-logs/
-graders/
-d2utmp*
-.mysql_history
-.viminfo
-.bash_history
+pfp
+logs
+.vagrant
 .cache
-.my.cnf
+*.log
+.coverage
+graders
+files

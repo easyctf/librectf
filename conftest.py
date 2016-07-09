@@ -1,17 +1,58 @@
+from sqlalchemy.engine import reflection
+from sqlalchemy.schema import (MetaData, Table, DropTable, ForeignKeyConstraint, DropConstraint)
+
 import pytest
 
-from server.app import app as openctf_app
-from server.config import options
-from server.api.models import db as app_db
+from api import api as ctf_api
+from api.app import app as ctf_app
+from api.config import options
+from api.api.models import db as ctf_db
 
+def db_DropEverything(db):
+	# From http://www.sqlalchemy.org/trac/wiki/UsageRecipes/DropEverything
 
-@pytest.fixture(scope='session')
+	conn=db.engine.connect()
+
+	# the transaction only applies if the DB supports
+	# transactional DDL, i.e. Postgresql, MS SQL Server
+	trans = conn.begin()
+
+	inspector = reflection.Inspector.from_engine(db.engine)
+
+	# gather all data first before dropping anything.
+	# some DBs lock after things have been dropped in 
+	# a transaction.
+	metadata = MetaData()
+
+	tbs = []
+	all_fks = []
+
+	for table_name in inspector.get_table_names():
+		fks = []
+		for fk in inspector.get_foreign_keys(table_name):
+			if not fk['name']:
+				continue
+			fks.append(
+				ForeignKeyConstraint((),(),name=fk['name'])
+				)
+		t = Table(table_name,metadata,*fks)
+		tbs.append(t)
+		all_fks.extend(fks)
+
+	for fkc in all_fks:
+		conn.execute(DropConstraint(fkc))
+
+	for table in tbs:
+		conn.execute(DropTable(table))
+
+	trans.commit()
+
+@pytest.fixture(scope="session")
 def app(request):
-	app = openctf_app
+	app = ctf_app
 	app.config.from_object(options)
 	app.config["TESTING"] = True
 
-	# Establish a request context before running the tests.
 	ctx = app.test_request_context()
 	ctx.push()
 
@@ -21,28 +62,25 @@ def app(request):
 	request.addfinalizer(teardown)
 	return app
 
-
-@pytest.fixture(scope='session')
+@pytest.fixture(scope="session")
 def client(app):
 	return app.test_client()
 
-
-@pytest.fixture(scope='class')
+@pytest.fixture(scope="class")
 def db(request, app):
-	app_db.reflect()  # Weird hack
-	app_db.drop_all()
-
-	app_db.create_all()
+	ctf_db.reflect()
+	db_DropEverything(ctf_db)
+	ctf_db.create_all()
 
 	def teardown():
-		app_db.session.close()
-		app_db.drop_all()
+		ctf_db.session.close_all()
+		ctf_db.reflect()
+		db_DropEverything(ctf_db)
 
 	request.addfinalizer(teardown)
-	return app_db
+	return ctf_db
 
-
-@pytest.fixture(scope='class')
+@pytest.fixture(scope="class")
 def session(request, db):
 	connection = db.engine.connect()
 	transaction = connection.begin()

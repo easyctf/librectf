@@ -1,0 +1,26 @@
+openctf:
+  build: nginx
+  links:
+    - api
+  ports:
+    - "80:80"
+  volumes:
+    - ./nginx/web:/srv/http/ctf
+
+api:
+  build: api
+  links:
+    - db
+  expose:
+    - 8000
+  volumes:
+    - ./api:/openctf
+  entrypoint: ./wait-for-it.sh db_1
+
+db:
+  build: mysql
+  environment:
+    - MYSQL_ROOT_PASSWORD=password
+    - MYSQL_DATABASE=openctf
+  expose:
+    - 3306
