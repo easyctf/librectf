@@ -1,7 +1,0 @@
-OpenCTF
-=======
-
-.. toctree::
-   :maxdepth: 4
-
-   api
