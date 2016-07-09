@@ -5,32 +5,34 @@ OpenCTF
 [![Build Status](https://travis-ci.org/EasyCTF/OpenCTF.svg?branch=master)](https://travis-ci.org/EasyCTF/OpenCTF)
 [![Docs](https://readthedocs.org/projects/openctf/badge/?version=latest)](http://openctf.readthedocs.io/)
 
-[![Online Demo](docs/screenshot1.png)](https://openctf.easyctf.com/)
-
-Demo
-------
-
-A demo copy of this platform is up at [OpenCTF](https://openctf.easyctf.com/). The server is running a cron job that resets the site every 2 hours. Report issues [here](https://github.com/EasyCTF/OpenCTF/issues).
+[![Home Page](docs/screenshot1.png)](https://openctf.easyctf.com/)
 
 Installation
 ------
 
-You'll need [Vagrant](https://www.vagrantup.com/) to set up OpenCTF. Make sure Vagrant is working correctly from the command line before you continue.
+You'll need [Docker](https://docker.com/) to set up OpenCTF. Make sure Docker is working correctly from the command line before you continue. This project uses Docker Compose to set up the platform. So to start the platform, simply run:
 
-To set up the server, clone this repository, and `vagrant up` from it. The setup script should automatically begin the installation process. After the installation is complete, use `vagrant ssh` to log into the box. All the server files will be available at `/vagrant`.
+    docker-compose up -d
 
-You need to provide the following environmental variables:
+from the root folder of your project. This will bring up three Docker containers: `openctf`, the main controller that runs Nginx; `api`, the API server that runs a Flask API; and `mysql`, the database server that runs MySQL. If no problems occurred, you should be able to just navigate to the IP of your Docker machine in your browser, and it should greet you with the installation page. If you're unsure of what the IP of your Docker machine is, run `docker-machine env`.
 
-  - `SQLALCHEMY_DATABASE_URI`: The SQL URI for your database. It may look like `mysql://user:password@host:port/database` or `sqlite:///database.db`.
-  - `MAILGUN_URL`: The Mailgun API URL that the application must connect to.
-  - `MAILGUN_KEY`: Your secret API key.
-  - `ADMIN_EMAIL`: An email in the format `John Doe <john@doe.com>`. This will be your "from" address.
+Simply complete the in-browser installation, and you should be good to go! Note that you'll need to connect to your MySQL container to retrieve the verification code. Run `docker ps -a` to figure out the name of the machine running the MySQL instance, and then run
 
-Instead of setting environment variables, you can also place a `.env` file in `/vagrant/server`. The `config.py` will read the variables from that file instead, but will not set the environmental variables. Here is an example demonstrating the format required for the `.env` file.
+    docker exec -it <container_name> mysql -u"root" -p
 
-    SQLALCHEMY_DATABASE_URI=mysql://root:i_hate_passwords@localhost/openctf
-    MAILGUN_URL=https://api.mailgun.net/v3/example.com
-    MAILGUN_KEY=key-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
-    ADMIN_EMAIL=OpenCTF Administrator <admin@openctf.com>
+replacing `<container_name>` with the name of the container you identified when you ran `docker ps -a`.
 
-In order to deploy the server, run `deploy` (from anywhere). Then you can view the site at `http://localhost:8080`.
+Tests
+------
+
+To run the tests, make sure you have the dependencies installed, and then run `py.test` in the root directory of the project to start the tests. Check `.travis.yml` for more details.
+
+Issues
+------
+
+Please report issues in our [issue tracker](https://github.com/EasyCTF/OpenCTF/issues).
+
+Contact
+------
+
+Please contact us through email at <team@easyctf.com>. You may optionally visit our [public Slack](http://slack.easyctf.com).
