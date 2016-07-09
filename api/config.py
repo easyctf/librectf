@@ -20,7 +20,7 @@ secret.close()
 
 SECRET_KEY = key
 ROOT_FOLDER = os.path.abspath(os.path.join(os.path.realpath(__file__), ".."))
-DEFAULT_DATABASE_URI = "mysql://root:password@db_1/openctf"
+DEFAULT_DATABASE_URI = "mysql://root:password@db/openctf"
 
 options = {
 	"SQLALCHEMY_DATABASE_URI": os.getenv("SQLALCHEMY_DATABASE_URI", DEFAULT_DATABASE_URI),
