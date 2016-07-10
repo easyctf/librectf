@@ -39,13 +39,61 @@
 					<div hidden id="{{ problem['pid'] }}_hint">
 						<p ng-bind-html="problem['hint'] | render_html"/>
 					</div>
+					<center>
+						<button pid="{{ problem.pid }}" onclick="view_solves($(this).attr('pid'));" type="button" class="btn btn-primary " data-toggle="modal" data-target="#solves">View Solves</button>
+					</center>
 				</div>
 			</div>
 		</div>
 	</div>
 </div>
 
+<div id="solves" class="modal fade" tabindex="-1" role="dialog">
+	<div class="modal-dialog" role="document">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+				<h4 class="modal-title" id="solves_title">Solves</h4>
+			</div>
+			<div class="modal-body">
+				<table class="table table-striped">
+					<thead>
+						<tr>
+							<th>Team</th>
+							<th>Date</th>
+						</tr>
+					</thead>
+					<tbody id="solves_body">
+					</tbody>
+				</table>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+
 <script>
+var view_solves = function(pid) {
+	var data = {};
+	data["pid"] = pid;
+	api_call("POST", "/api/problem/solves", data, function(result) {
+		if (result["success"] == 1) {
+			var table = $("#solves_body");
+			var solves = result["solves"];
+			table.empty();
+			for (var i = 0; i < solves.length; i++) {
+				var teamname = solves[i].teamname;
+				var timestamp = solves[i].date;
+				table.append("<tr><td><a href='/team?teamname="+teamname+"'>"+teamname+"</a></td><td>"+timestamp+"</td>");
+			}
+		}
+	});
+}
+
 var toggle_hint = function(form) {
 	pid = form.split("_")[0];
 	$("#" + pid + "_hint").slideToggle("fast", function() {});
@@ -55,7 +103,7 @@ var submit_problem = function(form) {
 	var input = "#" + form + " input";
 	var data = $("#" + form).serializeObject();
 	pid = data["pid"];
-	$(input).attr("disabled", "disabed");
+	$(input).attr("disabled", "disabled");
 	api_call("POST", "/api/problem/submit", data, function(result) {
 		if (result["success"] == 1) {
 			display_message(pid + "_status", "success", result["message"], function() {
