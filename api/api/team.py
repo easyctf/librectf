@@ -216,6 +216,7 @@ def team_accept_invite():
 		invitation2 = TeamInvitations.query.filter_by(rtype=1, frid=_user.uid, toid=tid).first()
 		if invitation2 is not None:
 			db.session.delete(invitation2)
+		db.session.add(Activity(_user.uid, 6, _team.tid, -1))
 		db.session.commit()
 		db.session.close()
 
@@ -254,6 +255,7 @@ def team_accept_invite_request():
 		invitation2 = TeamInvitations.query.filter_by(rtype=0, frid=tid, toid=_user2.uid).first()
 		if invitation2 is not None:
 			db.session.delete(invitation2)
+		db.session.add(Activity(_user2.uid, 6, _team.tid, -1))
 		db.session.commit()
 		db.session.close()
 

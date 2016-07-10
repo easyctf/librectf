@@ -122,12 +122,13 @@ class Users(db.Model):
 class Activity(db.Model):
 	"""
 	Types of user activity:
-	- 0: User joins.
+	- 0: User made an account.
 	- 1: User created a team.
 	- 2: User left a team.
 	- 3: User solved a problem.
 	- 4: Team has taken 1st place.
 	- 5: Team has lost 1st place.
+	- 6: User joined a team.
 	"""
 	uaid = db.Column(db.Integer, unique=True, primary_key=True)
 	uid = db.Column(db.Integer)
@@ -152,15 +153,17 @@ class Activity(db.Model):
 		if self.type == 0:
 			return "<b>%s</b> created an account!" % generate_user_link(u.username)
 		elif self.type == 1:
-			return "<b>%s</b> created the team <b>%s</b>" % (generate_user_link(u.username), generate_team_link(t.teamname))
+			return "<b>%s</b> created the team <b>%s</b>." % (generate_user_link(u.username), generate_team_link(t.teamname))
 		elif self.type == 2:
-			return "<b>%s</b> has left team <b>%s</b>" % (generate_user_link(u.username), generate_team_link(t.teamname))
+			return "<b>%s</b> has left team <b>%s</b>." % (generate_user_link(u.username), generate_team_link(t.teamname))
 		elif self.type == 3:
-			return "<b>%s</b> from team <b>%s</b> has solved <b>%s</b>" % (generate_user_link(u.username), generate_team_link(t.teamname), p.title)
+			return "<b>%s</b> from team <b>%s</b> has solved <b>%s</b>." % (generate_user_link(u.username), generate_team_link(t.teamname), p.title)
 		elif self.type == 4:
 			return "<b>%s</b> has taken 1st place!" % generate_team_link(t.teamname)
 		elif self.type == 5:
 			return "<b>%s</b> has lost 1st place!" % generate_team_link(t.teamname)
+		elif self.type == 6:
+			return "<b>%s</b> joined team <b>%s</b>." % (generate_user_link(u.username), generate_team_link(t.teamname))
 
 class Teams(db.Model):
 	tid = db.Column(db.Integer, primary_key=True)
