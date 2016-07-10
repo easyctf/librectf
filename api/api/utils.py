@@ -13,6 +13,7 @@ import random
 import re
 import requests
 import string
+import time
 import traceback
 import unicodedata
 
@@ -29,7 +30,7 @@ def unix_time_seconds(dt):
 	return (dt - epoch).total_seconds()
 
 def get_time_since_epoch():
-	return unix_time_seconds(datetime.datetime.now())
+	return int(time.time()) # unix_time_seconds(datetime.datetime.now())
 
 def hash_password(s):
 	return generate_password_hash(s)
