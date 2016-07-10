@@ -422,9 +422,11 @@ app.controller("teamController", function($controller, $scope, $http, $routePara
 	if (result["success"] == 1) {
 		$scope.team = result["team"];
 		$scope.found = true;
-	}
-	for(var i=0; i<$scope.team.activity.length; i++) {
-		$scope.team.activity[i].message_clean = $sce.trustAsHtml($scope.team.activity[i].message);
+		if ($scope.team.activity) {
+			for(var i=0; i<$scope.team.activity.length; i++) {
+				$scope.team.activity[i].message_clean = $sce.trustAsHtml($scope.team.activity[i].message);
+			}
+		}
 	}
 	onContentLoaded(function() { $(".timeago").timeago(); });
 

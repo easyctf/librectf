@@ -126,13 +126,15 @@ class Activity(db.Model):
 	- 1: User created a team.
 	- 2: User left a team.
 	- 3: User solved a problem.
+	- 4: Team has taken 1st place.
+	- 5: Team has lost 1st place.
 	"""
 	uaid = db.Column(db.Integer, unique=True, primary_key=True)
-	uid = db.Column(db.Integer, db.ForeignKey("users.uid"))
+	uid = db.Column(db.Integer)
 	type = db.Column(db.Integer)
-	tid = db.Column(db.Integer, db.ForeignKey("teams.tid"))
+	tid = db.Column(db.Integer)
 	timestamp = db.Column(db.Integer)
-	pid = db.Column(db.String(128), db.ForeignKey("problems.pid"))
+	pid = db.Column(db.String(128))
 
 	def __init__(self, uid, atype, tid=None, pid=None):
 		self.uid = uid
@@ -155,6 +157,10 @@ class Activity(db.Model):
 			return "<b>%s</b> has left team <b>%s</b>" % (generate_user_link(u.username), generate_team_link(t.teamname))
 		elif self.type == 3:
 			return "<b>%s</b> from team <b>%s</b> has solved <b>%s</b>" % (generate_user_link(u.username), generate_team_link(t.teamname), p.title)
+		elif self.type == 4:
+			return "<b>%s</b> has taken 1st place!" % generate_team_link(t.teamname)
+		elif self.type == 5:
+			return "<b>%s</b> has lost 1st place!" % generate_team_link(t.teamname)
 
 class Teams(db.Model):
 	tid = db.Column(db.Integer, primary_key=True)
@@ -204,22 +210,17 @@ class Teams(db.Model):
 		for solve in solves:
 			problem = Problems.query.filter_by(pid=solve.pid).first()
 			multiplier = 1
-			if solve.bonus != -1:
+			if solve.bonus and solve.bonus != -1:
 				multiplier += bonuses[problem.bonus][solve.bonus-1]/100.0
 			points += round(problem.value*multiplier)
 
 		return points
 
 	def place(self, ranked=True):
-		score = db.func.sum(Problems.value).label("score")
-		quickest = db.func.max(Solves.date).label("quickest")
-		teams = db.session.query(Solves.tid).join(Teams).join(Problems).filter().group_by(Solves.tid).order_by(score.desc(), quickest).all()
-		try:
-			i = teams.index((self.tid,)) + 1
-			k = i % 10
-			return (i, "%d%s" % (i, "tsnrhtdd"[(i / 10 % 10 != 1) * (k < 4) * k::4]))
-		except ValueError:
-			return (-1, "--")
+		import stats
+		i = dict([(b, a) for a, b in stats.get_leaderboard_tids()])[self.tid]
+		k = i % 10
+		return (i, "%d%s" % (i, "tsnrhtdd"[(i / 10 % 10 != 1) * (k < 4) * k::4]))
 
 	def get_invitation_requests(self, frid=None):
 		if frid is not None:
@@ -267,8 +268,8 @@ class Teams(db.Model):
 		return False
 
 	def get_last_solved(self):
-		latest = 0
-		return Solves.query.filter_by(tid=self.tid, correct=1).order_by(Solves.date.desc()).first().date
+		solve = Solves.query.filter_by(tid=self.tid, correct=True).order_by(Solves.date.desc()).first()
+		return int(solve.date) if solve is not None else 0
 
 	def update_info(self, to_update):
 		Teams.query.filter_by(tid=self.tid).update(to_update)
@@ -279,7 +280,7 @@ class Teams(db.Model):
 		db.session.commit()
 
 	def get_solves(self):
-		solves = Solves.query.filter_by(tid=self.tid, correct=1).all()
+		solves = Solves.query.filter_by(tid=self.tid, correct=True).all()
 		result = []
 		for solve in solves:
 			prob = Problems.query.filter_by(pid=solve.pid).first()

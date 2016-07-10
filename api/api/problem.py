@@ -17,6 +17,7 @@ import autogen
 import cache
 import logger
 import programming
+import stats
 import team
 import user
 import utils
@@ -114,16 +115,18 @@ def problem_submit():
 	username = _user.username
 
 	problem = Problems.query.filter_by(pid=pid).first()
-	team = Teams.query.filter_by(tid=tid).first()
+	_team = Teams.query.filter_by(tid=tid).first()
 	solved = Solves.query.filter_by(pid=pid, tid=tid, correct=1).first()
 	if solved:
 		raise WebException("You already solved this problem.")
 
-	flag_tried = Solves.query.filter_by(pid=pid, flag=flag).first()
+	flag_tried = Solves.query.filter_by(tid=tid, pid=pid, flag=flag).first()
 	if flag_tried:
 		raise WebException("Your team has already tried this solution.")
 
 	if problem:
+		old_rank, dummy = _team.place()
+		dummy, old_leader = stats.get_leaderboard()[0]
 		if problem.category == "Programming":
 			raise WebException("Please submit programming problems using the Programming interface.")
 		grader = imp.load_source("grader", problem.grader)
@@ -140,18 +143,23 @@ def problem_submit():
 			# Wait until after the solve has been added to the database before adding bonus
 			solves = get_solves(pid)
 			solve.bonus = [-1, solves][solves < 4]
-
 			cache.invalidate_memoization(get_solves, pid)
-
 			if _user:
 				activity = Activity(_user.uid, 3, tid=tid, pid=pid)
 				db.session.add(activity)
-
 			db.session.commit()
-			logger.log(__name__, "%s has solved %s by submitting %s" % (team.teamname, problem.title, flag), level=logger.WARNING)
+			logger.log(__name__, "%s has solved %s by submitting %s" % (_team.teamname, problem.title, flag), level=logger.WARNING)
+
+			new_rank, dummy = _team.place()
+			if new_rank == 1 and old_rank > 1:
+				activity = Activity(-1, 4, tid=_team.tid, pid=-1)
+				db.session.add(activity)
+				activity = Activity(-1, 5, tid=old_leader.tid, pid=-1)
+				db.session.add(activity)
+				db.session.commit()
 			return { "success": 1, "message": response }
 		else:
-			logger.log(__name__, "%s has incorrectly submitted %s to %s" % (team.teamname, flag, problem.title), level=logger.WARNING)
+			logger.log(__name__, "%s has incorrectly submitted %s to %s" % (_team.teamname, flag, problem.title), level=logger.WARNING)
 			raise WebException(response)
 
 	else:
@@ -165,7 +173,7 @@ def problem_data():
 	_user = user.get_user().first()
 	if not user.is_admin():
 		if not user.in_team(_user):
-			raise WebException("You need a team. (uid: %s, tid: %s)" % (_user.uid, _user.tid))
+			raise WebException("You need a team.")
 		if not team.team_finalized(team.get_team_of(_user.uid)):
 			raise WebException("Your team is not finalized.")
 
