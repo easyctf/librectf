@@ -5,6 +5,7 @@ from werkzeug import secure_filename
 from models import db, Files, Problems, ProgrammingSubmissions, Solves, Teams, Users, Activity
 from decorators import admins_only, api_wrapper, login_required, team_required, team_finalize_required, InternalException, WebException
 
+import datetime
 import hashlib
 import imp
 import json
@@ -214,6 +215,24 @@ def problem_data():
 				logger.log(__name__, "The grader for \"%s\" has thrown an error: %s" % (problem.title, e))
 		problems_return.append(data)
 	return { "success": 1, "problems": problems_return }
+
+@blueprint.route("/solves", methods=["POST"])
+@api_wrapper
+@login_required
+@team_required
+@team_finalize_required
+def problem_solves():
+	params = utils.flat_multi(request.form)
+	pid = params.get("pid")
+	solves_return = []
+	solves = Solves.query.filter_by(pid=pid).order_by("date asc").all()
+	for solve in solves:
+		data = {
+			"teamname": Teams.query.filter_by(tid=solve.tid).first().teamname,
+			"date": datetime.datetime.fromtimestamp(int(solve.date)).strftime("%B %d, %Y %I:%M %p")
+		}
+		solves_return.append(data)
+	return { "success": 1, "solves": solves_return }
 
 @blueprint.route("/clear_submissions", methods=["POST"])
 @api_wrapper
