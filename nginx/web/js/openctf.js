@@ -222,13 +222,15 @@ app.controller("mainController", function($scope, $http, $location) {
 				}
 			}
 			if (!stylesheet_loaded && "stylesheet" in result) {
-				var style = document.createElement("link");
-				style.rel = "stylesheet";
-				style.id = "bootstrap_css";
-				style.href = result["stylesheet"];
-				$("link#bootstrap_css").remove();
-				document.body.appendChild(style);
-				stylesheet_loaded = true;
+				$.get(result["stylesheet"], function(css) {
+					var style = document.createElement("link");
+					style.rel = "stylesheet";
+					style.id = "bootstrap_new_css";
+					style.href = "data:text/css;base64," + btoa(css); // result["stylesheet"];
+					document.body.appendChild(style);
+					$("link#bootstrap_css").remove();
+					stylesheet_loaded = true;
+				});
 			}
 		} else {
 			$scope.config.navbar.logged_in = false;
