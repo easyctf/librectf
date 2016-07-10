@@ -221,7 +221,7 @@ app.controller("mainController", function($scope, $http, $location) {
 					location.href = "/team";
 				}
 			}
-			if (!stylesheet_loaded && "stylesheet" in result) {
+			if (!stylesheet_loaded && "stylesheet" in result && result["stylesheet"].length > 1) {
 				$.get(result["stylesheet"], function(css) {
 					var style = document.createElement("link");
 					style.rel = "stylesheet";
