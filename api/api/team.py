@@ -302,6 +302,7 @@ def team_info():
 			teamdata["invitations"] = _user.get_invitations()
 			teamdata["my_team"] = my_team
 			teamdata["tid"] = -1
+			teamdata["activity"] = []
 		else:
 			# Non-logged-in user viewing /team page
 			raise WebException()
