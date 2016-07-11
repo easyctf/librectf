@@ -45,7 +45,6 @@ def admin_setup_init():
 			db.session.delete(item)
 		db.session.add(verification)
 		db.session.commit()
-
 		db.session.close()
 	return { "success": 1 }
 
@@ -86,7 +85,7 @@ def admin_setup():
 			db.session.add(var)
 			db.session.commit()
 			db.session.close()
-
+			
 	logger.log(__name__, "%s registered with %s" % (name.encode("utf-8"), email.encode("utf-8")))
 	user.login_user(username, password)
 
@@ -133,6 +132,7 @@ def admin_settings_update():
 					config.value = params[key]
 			db.session.add(config)
 		db.session.commit()
+		db.session.close()
 
 	return { "success": 1, "message": "Success!" }
 
@@ -249,7 +249,7 @@ def import_problem(path, pid):
 				src = os.path.join(path, file)
 				if os.path.exists(src):
 					shutil.copyfile(src, os.path.join(files_dir, file))
-
+		db.session.close()
 		try:
 			problem.add_problem(title, category, description, value, grader, pid=pid, hint=hint)
 			logger.log(__name__, "Successfully imported '%s'." % pid)

@@ -27,7 +27,7 @@ def create_ticket():
 	with app.app_context():
 		db.session.add(ticket)
 		db.session.commit()
-
+		db.session.close()
 	return { "success": 1, "message": "Ticket created." }
 
 @blueprint.route("/close", methods=["POST"])
@@ -46,7 +46,7 @@ def close_ticket():
 	with app.app_context():
 		db.session.add(ticket)
 		db.session.commit()
-
+		db.session.close()
 	return { "success": 1, "message": "Ticket closed." }
 
 @blueprint.route("/open", methods=["POST"])
@@ -65,7 +65,7 @@ def open_ticket():
 	with app.app_context():
 		db.session.add(ticket)
 		db.session.commit()
-
+		db.session.close()
 	return { "success": 1, "message": "Ticket opened." }
 
 @blueprint.route("/reply", methods=["POST"])
@@ -85,7 +85,7 @@ def reply_to_ticket():
 	with app.app_context():
 		db.session.add(reply)
 		db.session.commit()
-
+		db.session.close()
 	return { "success": 1, "message": "" }
 
 @blueprint.route("/data", methods=["GET"])

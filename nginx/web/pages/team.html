@@ -50,10 +50,14 @@
 						</div>
 					</p>
 				</div>
-				<div class="row" ng-show="team['is_owner']==true && team['finalized']!=true">
-					<button class="btn btn-danger" onclick="javascript:finalize_team();" data-toggle="tooltip" data-placement="bottom" title="Your team isn't ready to compete yet. Finalize your team details in order to compete. You won't be able to add members or change names after that.">
+				<div class="row">
+					<button class="btn btn-danger" onclick="javascript:finalize_team();" data-toggle="tooltip" data-placement="bottom" title="Your team isn't ready to compete yet. Finalize your team details in order to compete. You won't be able to add members or change names after that." ng-show="team['is_owner']==true && team['finalized']!=true">
 						<i class="fa fa-exclamation-triangle"></i>
 						Finalize Team
+					</button>
+					<button class="btn btn-danger" onclick="javascript:leave_team();" data-toggle="tooltip" data-placement="bottom" title="You will need an invitation to re-join this team. If you are the captain, the team will be disbanded." ng-show="team['finalized']!=true">
+						<i class="fa fa-exit"></i>
+						Leave Team
 					</button>
 				</div>
 			</div>
