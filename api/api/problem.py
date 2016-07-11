@@ -229,7 +229,7 @@ def problem_solves():
 	for solve in solves:
 		data = {
 			"teamname": Teams.query.filter_by(tid=solve.tid).first().teamname,
-			"date": datetime.datetime.fromtimestamp(int(solve.date)).strftime("%B %d, %Y %I:%M %p")
+			"date": utils.isoformat(float(solve.date))
 		}
 		solves_return.append(data)
 	return { "success": 1, "solves": solves_return }

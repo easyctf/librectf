@@ -8,40 +8,40 @@
 	<h1>Problems</h1>
 </div>
 <div id="problems_data_msg"></div>
-<div ng-repeat="problem in problems">
-	<div class="panel-group">
-		<div class="panel panel-default">
-			<div class="panel-heading" data-toggle="collapse" data-target="#{{ problem['pid'] }}_body">
-				<h4 class="panel-title">
-					<b>{{ problem["title"] }}</b> {{ problem["value"] }} points
-					<div class="pull-right">{{ problem["category"] }} - {{ problem["solved"] }} ({{ problem["solves"] }} {{ problem["solves"] === 1 ? "solve" : "solves" }})</div>
-				</h4>
-			</div>
-			<div id="{{ problem['pid'] }}_body" class="panel-collapse collapse {{ problem['solved'] == 'Solved' ? '': 'in' }}">
-				<div class="panel-body">
-					<div hidden id="{{ problem['pid'] }}_status"/>
-					<p ng-bind-html="problem['description'] | render_html"/>
-					<form id="{{ problem['pid'] }}_form" class="horizontal-form" onsubmit="submit_problem(this.id); return false;">
-						<input hidden type="hidden" name="pid" value="{{ problem['pid'] }}"/>
-						<div class="input-group">
-							<span class="input-group-btn">
-								<input onclick="toggle_hint(this.closest('form').id); return false;" type="button" class="btn btn-primary" value="Hint"/>
-							</span>
-							<input class="form-control" name="flag" ng-attr-placeholder="{{ problem['solved'] == 'Solved' ? 'Already solved!' : (problem['category']=='Programming' ? 'Solve in programming editor' : 'Enter flag...') }}" autocomplete="off" ng-disabled="problem['solved']=='Solved'||problem.category=='Programming'" />
-							<span class="input-group-btn" ng-show="problem.category=='Programming'">
-								<a ng-href="/programming#{{ problem['title'] }}" class="btn btn-info">Open in Programming <i class="fa fa-fw fa-external-link"></i></a>
-							</span>
-							<span class="input-group-btn" ng-show="problem.category!='Programming'">
-								<input type="submit" class="btn btn-success" value="Submit" />
-							</span>
+<div class="panel-group">
+	<div class="panel panel-default" ng-repeat="problem in problems">
+		<div class="panel-heading" data-toggle="collapse" data-target="#{{ problem['pid'] }}_body">
+			<h4 class="panel-title">
+				<b>{{ problem["title"] }}</b> {{ problem["value"] }} points
+				<div class="pull-right">{{ problem["category"] }} - {{ problem["solved"] }} ({{ problem["solves"] }} {{ problem["solves"] === 1 ? "solve" : "solves" }})</div>
+			</h4>
+		</div>
+		<div id="{{ problem['pid'] }}_body" class="panel-collapse collapse {{ problem['solved'] == 'Solved' ? '': 'in' }}">
+			<div class="panel-body">
+				<div hidden id="{{ problem['pid'] }}_status"/>
+				<p ng-bind-html="problem['description'] | render_html"/>
+				<form id="{{ problem['pid'] }}_form" class="horizontal-form" onsubmit="submit_problem(this.id); return false;">
+					<input hidden type="hidden" name="pid" value="{{ problem['pid'] }}"/>
+					<div class="row">
+						<div class="col-md-6">
+							<div class="input-group">
+								<span class="input-group-btn">
+									<input onclick="toggle_hint(this.closest('form').id); return false;" type="button" class="btn btn-primary" value="Hint"/>
+								</span>
+								<input class="form-control" name="flag" ng-attr-placeholder="{{ problem['solved'] == 'Solved' ? 'Already solved!' : (problem['category']=='Programming' ? 'Solve in programming editor' : 'Enter flag...') }}" autocomplete="off" ng-disabled="problem['solved']=='Solved'||problem.category=='Programming'" />
+								<span class="input-group-btn" ng-show="problem.category=='Programming'">
+									<a ng-href="/programming#{{ problem['title'] }}" class="btn btn-info">Open in Programming <i class="fa fa-fw fa-external-link"></i></a>
+								</span>
+								<span class="input-group-btn" ng-show="problem.category!='Programming'">
+									<button type="submit" class="btn btn-success">Submit <i class="fa fa-fw fa-arrow-right"></i></button>
+									<button pid="{{ problem.pid }}" onclick="view_solves($(this).attr('pid'));" type="button" class="btn btn-primary " data-toggle="modal" data-target="#solves">View Solves</button>
+								</span>
+							</div>
 						</div>
-					</form>
-					<div hidden id="{{ problem['pid'] }}_hint">
-						<p ng-bind-html="problem['hint'] | render_html"/>
 					</div>
-					<center>
-						<button pid="{{ problem.pid }}" onclick="view_solves($(this).attr('pid'));" type="button" class="btn btn-primary " data-toggle="modal" data-target="#solves">View Solves</button>
-					</center>
+				</form>
+				<div hidden id="{{ problem['pid'] }}_hint" class="well">
+					<div ng-bind-html="problem['hint'] | render_html"></div>
 				</div>
 			</div>
 		</div>
@@ -88,8 +88,9 @@ var view_solves = function(pid) {
 			for (var i = 0; i < solves.length; i++) {
 				var teamname = solves[i].teamname;
 				var timestamp = solves[i].date;
-				table.append("<tr><td><a href='/team?teamname="+teamname+"'>"+teamname+"</a></td><td>"+timestamp+"</td>");
+				table.append("<tr><td><a href='/team?teamname="+teamname+"'>"+teamname+"</a></td><td><time class='timeago' datetime='"+timestamp+"'></time></td>");
 			}
+			$(".timeago").timeago();
 		}
 	});
 }
