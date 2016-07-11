@@ -1,0 +1,12 @@
+Hey $username!
+
+You recently signed up for $ctf_name with this email. To prove you're legit,
+please click on the following link (or copy-paste it into your browser your
+email client didn't render a link).
+
+$link
+
+Thanks for proving you're legit!
+
+__
+$ctf_name Administrator

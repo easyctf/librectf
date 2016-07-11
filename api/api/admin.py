@@ -99,7 +99,14 @@ def admin_stats_overview():
 	overview = { }
 	overview["num_users"] = user.num_users(), user.num_users(include_observers=True)
 	overview["num_teams"] = team.num_teams(), team.num_teams(include_observers=True)
-	overview["num_problems"] = problem.num_problems()
+
+	problems = list(Problems.query.all())
+	overview["problems"] = []
+	for problem in problems:
+		overview["problems"].append({
+			"title": problem.title,
+			"category": problem.category
+		})
 
 	return { "success": 1, "overview": overview }
 

@@ -524,6 +524,25 @@ app.controller("adminStatisticsController", function($controller, $scope, $http)
 	api_call("GET", "/api/admin/stats/overview", {}, function(result) {
 		if (result["success"] == 1) {
 			$scope.overview = result["overview"];
+			var category_chart = c3.generate({
+				bindto: "#category_chart",
+				data: {
+					columns: (function() {
+						var categories = { };
+						for(var i=0; i<result["overview"]["problems"].length; i++) {
+							var problem = result["overview"]["problems"][i];
+							if (!(problem["category"] in categories)) categories[problem["category"]] = 0;
+							categories[problem["category"]] += 1;
+						}
+						var result2 = [ ];
+						for(var key in categories) {
+							result2.push([ key, categories[key] ]);
+						}
+						return result2;
+					})(),
+					type: "pie"
+				}
+			});
 		} else {
 			$scope.overview = [];
 		}

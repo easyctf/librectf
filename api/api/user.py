@@ -65,9 +65,9 @@ def verify_email():
 		current_session.commit()
 
 		try:
-			send_verification(user.username, user.email, token)
-		except:
-			return { "success": 0, "message": "Failed." }
+			send_verification(request.url_root, user.username, user.email, token)
+		except Exception, e:
+			raise WebException(str(e))
 		return { "success": 1, "message": "Verification email sent to %s" % user.email }
 
 @blueprint.route("/update_profile", methods=["POST"])
@@ -176,10 +176,10 @@ def user_register():
 	logger.log(__name__, "%s registered with %s" % (name.encode("utf-8"), email.encode("utf-8")))
 
 	try:
-		send_verification(username, email, token)
-	except:
-		return { "success": 1, "message": "Verification email sent to %s" % email }
-	return { "success": 0, "message": "Failed." }
+		send_verification(request.url_root, username, email, token)
+	except Exception, e:
+		pass # raise WebException(str(e))
+	return { "success": 1, "message": "Verification email sent to %s" % email }
 
 @blueprint.route("/logout", methods=["GET", "POST"])
 @api_wrapper
@@ -540,10 +540,12 @@ def create_login_token(username):
 
 	return True
 
-def send_verification(username, email, token):
-	verification_link = "%s/settings/verify?token=%s" % ("127.0.0.1:8080", token)
+def send_verification(url_root, username, email, token):
+	verification_link = "%ssettings/verify?token=%s" % (url_root, token)
 	subject = utils.get_ctf_name() + " Email Verification"
-	body = """Hi %s!\n\nHelp us secure your %s account by verifying your email below:\n\n%s\n\nIf believe this is a mistake, you may safely ignore this email and delete it.\n\nGood luck!\n\n- OpenCTF Administrator""" % (username, utils.get_config("ctf_name"), verification_link)
+	# body = """Hi %s!\n\nHelp us secure your %s account by verifying your email below:\n\n%s\n\nIf believe this is a mistake, you may safely ignore this email and delete it.\n\nGood luck!\n\n- OpenCTF Administrator""" % (username, utils.get_config("ctf_name"), verification_link)
+	template = string.Template(open("email.txt").read())
+	body = template.substitute({ "link": verification_link, "ctf_name": utils.get_ctf_name(), "username": username })
 	response = utils.send_email(email, subject, body)
 	if response.status_code != 200:
 		raise WebException("Could not send email.")
