@@ -80,15 +80,16 @@
 					<h4 class="panel-title">Statistics</h4>
 				</div>
 				<div class="list-group">
-					<p class="list-group-item">
+					<div class="list-group-item">
 						<b class="large-number">{{ team['place'] }}</b> place
-					</p>
-					<p class="list-group-item">
+						<small ng-show="team['observer']==true"><div class="label label-warning"><i class="fa fa-fw fa-globe"></i> OBSERVER</div></small>
+					</div>
+					<div class="list-group-item">
 						<b class="large-number">{{ team['points'] }}</b> point{{ team['points'] == 1 ? '' : 's' }}
-					</p>
-					<p class="list-group-item">
+					</div>
+					<div class="list-group-item">
 						<b class="large-number">{{ team['members'].length }}</b> member{{ team['members'].length == 1 ? '' : 's' }}
-					</p>
+					</div>
 				</div>
 			</div>
 			<div class="panel panel-default">

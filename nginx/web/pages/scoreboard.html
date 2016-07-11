@@ -2,24 +2,65 @@
 	<h1>Scoreboard</h1>
 </div>
 
-<table class="table table-striped">
-	<thead>
-		<tr>
-			<th>Rank</th>
-			<th>Team Name</th>
-			<th>School</th>
-			<th>Points</th>
-		</tr>
-	</thead>
-	<tbody>
-		<tr ng-repeat="team in scoreboard">
-			<td>{{ team['rank'] }}</td>
-			<td>
-				<a ng-href="/team?teamname={{ team['teamname'] }}">{{ team['teamname'] }}</a>
-				<small ng-show="team['observer']==true"><div class="label label-warning"><i class="fa fa-fw fa-globe"></i> OBSERVER</div></small>
-			</td>
-			<td>{{ team['school'] }}</td>
-			<td>{{ team['points'] }}</td>
-		</tr>
-	</tbody>
-</table>
+
+<ul class="nav nav-tabs" role="tablist">
+	<li role="presentation" class="active"><a href="#ranked" aria-controls="ranked" role="tab" data-toggle="tab">Ranked</a></li>
+	<li role="presentation"><a href="#unranked" aria-controls="unranked" role="tab" data-toggle="tab">Unranked</a></li>
+</ul>
+<div class="tab-content">
+	<div role="tabpanel" class="tab-pane active" id="ranked">
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th>Rank</th>
+					<th>Team Name</th>
+					<th>School</th>
+					<th>Points</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="team in scoreboard | filter: { observer: false }">
+					<td>{{ team['rank'] }}</td>
+					<td>
+						<a ng-href="/team?teamname={{ team['teamname'] }}">{{ team['teamname'] }}</a>
+						<small ng-show="team['observer']==true"><div class="label label-warning"><i class="fa fa-fw fa-globe"></i> OBSERVER</div></small>
+					</td>
+					<td>{{ team['school'] }}</td>
+					<td>{{ team['points'] }}</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+	<div role="tabpanel" class="tab-pane" id="unranked">
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th>Rank</th>
+					<th>Team Name</th>
+					<th>School</th>
+					<th>Points</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="team in scoreboard">
+					<td>{{ team['rank_all'] }}</td>
+					<td>
+						<a ng-href="/team?teamname={{ team['teamname'] }}">{{ team['teamname'] }}</a>
+						<small ng-show="team['observer']==true"><div class="label label-warning"><i class="fa fa-fw fa-globe"></i> OBSERVER</div></small>
+					</td>
+					<td>{{ team['school'] }}</td>
+					<td>{{ team['points'] }}</td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
+</div>
+
+<script type="text/javascript">
+	$(document).ready(function() {
+		$("ul[role=tablist]").tab();
+		$("a[role=tab]").click(function(e) {
+			e.preventDefault();
+		});
+	});
+</script>

@@ -221,7 +221,8 @@ class Teams(db.Model):
 
 	def place(self, ranked=True):
 		import stats
-		i = dict([(b, a) for a, b in stats.get_leaderboard_tids()])[self.tid]
+		if self.is_observer(): ranked = False
+		i = dict([(b, a) for a, b in stats.get_leaderboard_tids(ranked)])[self.tid]
 		k = i % 10
 		return (i, "%d%s" % (i, "tsnrhtdd"[(i / 10 % 10 != 1) * (k < 4) * k::4]))
 

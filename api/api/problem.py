@@ -127,7 +127,7 @@ def problem_submit():
 
 	if problem:
 		old_rank, dummy = _team.place()
-		dummy, old_leader = stats.get_leaderboard()[0]
+		dummy, dummy2, old_leader = stats.get_leaderboard()[0]
 		if problem.category == "Programming":
 			raise WebException("Please submit programming problems using the Programming interface.")
 		grader = imp.load_source("grader", problem.grader)
