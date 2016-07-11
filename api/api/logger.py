@@ -28,5 +28,5 @@ def initialize_logs():
 
 def log(logname, message, level=INFO):
 	logger = logging.getLogger(logname)
-	message = "[%s] %s" % (datetime.datetime.now().strftime("%m/%d/%Y %X"), message)
+	message = "[%s] %s" % (utils.get_time_since_epoch(), message)
 	logger.log(level, message)

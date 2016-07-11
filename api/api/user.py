@@ -347,13 +347,11 @@ def user_twofactor_verify():
 	token = params.get("token")
 
 	if not(_user.verify_totp(int(token))):
-		raise WebException("Invalid token. Current server time: " + time.strftime("%Y-%m-%d %H:%M:%S"))
+		raise WebException("Invalid token. Current server time: %s" % utils.isoformat(float(utils.get_time_since_epoch())))
 	with app.app_context():
 		Users.query.filter_by(uid=_user.uid).update({ "otp_confirmed": True })
 		db.session.commit()
-
-	print "CONFIRMED"
-
+		db.session.close()
 	return { "success": 1, "message": "Confirmed!" }
 
 @blueprint.route("/avatar/upload", methods=["POST"])
@@ -418,7 +416,7 @@ def user_session_delete():
 			raise WebException("That's not your token!")
 		LoginTokens.query.filter_by(sid=sid).update({ "active": False })
 		db.session.commit()
-
+		db.session.close()
 	assert(LoginTokens.query.filter_by(sid=sid).first().active == False)
 
 	return { "success": 1, "message": "Deleted." }
@@ -499,8 +497,8 @@ def logout_user():
 		for expired_token in expired:
 			expired_token.active = False
 		db.session.commit()
+		db.session.close()
 	session.clear()
-
 def create_login_token(username):
 	user = get_user(username_lower=username.lower()).first()
 	useragent = request.headers.get("User-Agent")
@@ -535,7 +533,6 @@ def create_login_token(username):
 		session.permanent = True
 		if user.tid is not None:
 			session["tid"] = user.tid
-
 		db.session.close()
 
 	return True

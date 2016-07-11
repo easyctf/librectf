@@ -73,6 +73,7 @@ class Users(db.Model):
 			self.otp_secret = secret
 			Users.query.filter_by(uid=self.uid).update({ "otp_secret": secret })
 			db.session.commit()
+			db.session.close()
 		service_name = utils.get_ctf_name()
 		return "otpauth://totp/%s:%s?secret=%s&issuer=%s" % (service_name, self.username, self.otp_secret, service_name)
 
@@ -195,6 +196,16 @@ class Teams(db.Model):
 			})
 		return members
 
+	def remove_member(self, uid):
+		Users.query.filter_by(uid=uid).update({ "tid": -1 })
+		db.session.commit()
+		db.session.close()
+
+	def remove_all_members(self):
+		Users.query.filter_by(tid=self.tid).update({ "tid": -1 })
+		db.session.commit()
+		db.session.close()
+
 	def get_activity(self):
 		activity = db.session.query(Activity).filter_by(tid=self.tid).order_by(Activity.timestamp.desc()).all()
 		result = [ ]
@@ -278,10 +289,12 @@ class Teams(db.Model):
 	def update_info(self, to_update):
 		Teams.query.filter_by(tid=self.tid).update(to_update)
 		db.session.commit()
+		db.session.close()
 
 	def finalize(self):
 		Teams.query.filter_by(tid=self.tid).update({ "finalized": True })
 		db.session.commit()
+		db.session.close()
 
 	def get_solves(self):
 		solves = Solves.query.filter_by(tid=self.tid, correct=True).all()
