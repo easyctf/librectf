@@ -58,4 +58,4 @@ app.register_blueprint(api.user.blueprint, url_prefix="/api/user")
 api.logger.initialize_logs()
 
 if __name__ == "__main__":
-	app.run(host="0.0.0.0", port=8000)
+	pass
