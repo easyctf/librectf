@@ -1,6 +1,7 @@
 import datetime
 import logging
 import logging.handlers
+import time
 import os
 import pkgutil
 
@@ -28,5 +29,7 @@ def initialize_logs():
 
 def log(logname, message, level=INFO):
 	logger = logging.getLogger(logname)
-	message = "[%s] %s" % (datetime.datetime.now().strftime("%m/%d/%Y %X"), message)
+	message = "[%s] %s" % (utils.isoformat(float(time.time())), message)
 	logger.log(level, message)
+
+import utils

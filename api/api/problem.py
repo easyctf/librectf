@@ -59,6 +59,7 @@ def problem_delete():
 		grader_folder = os.path.dirname(problem.grader)
 		shutil.rmtree(grader_folder)
 		db.session.commit()
+		db.session.close()
 		return { "success": 1, "message": "Success!" }
 	raise WebException("Problem does not exist!")
 
@@ -98,6 +99,7 @@ def problem_update():
 
 		db.session.add(problem)
 		db.session.commit()
+		db.session.close()
 
 		return { "success": 1, "message": "Success!" }
 	raise WebException("Problem does not exist!")
@@ -158,6 +160,7 @@ def problem_submit():
 				activity = Activity(-1, 5, tid=old_leader.tid, pid=-1)
 				db.session.add(activity)
 				db.session.commit()
+				db.session.close()
 			return { "success": 1, "message": response }
 		else:
 			logger.log(__name__, "%s has incorrectly submitted %s to %s" % (_team.teamname, flag, problem.title), level=logger.WARNING)
@@ -245,6 +248,7 @@ def clear_solves():
 	ProgrammingSubmissions.query.filter_by(pid=pid).delete()
 	cache.invalidate_memoization(get_solves, pid)
 	db.session.commit()
+	db.session.close()
 
 	return { "success": 1, "message": "Submissions cleared." }
 
@@ -262,7 +266,6 @@ def insert_problem(data, force=False):
 				db.session.commit()
 			else:
 				raise InternalException("Problem already exists.")
-
 		insert = Problems(data["pid"], data["title"], data["category"], data["description"], data["value"])
 		if "hint" in data: insert.hint = data["hint"]
 		if "autogen" in data: insert.autogen = data["autogen"]
@@ -271,7 +274,7 @@ def insert_problem(data, force=False):
 		if "weightmap" in data: insert.weightmap = data["weightmap"]
 		db.session.add(insert)
 		db.session.commit()
-
+		db.session.close()
 	return True
 
 def get_problem(title=None, pid=None):

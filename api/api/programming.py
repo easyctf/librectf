@@ -39,6 +39,7 @@ def delete_submission():
 	with app.app_context():
 		result.delete()
 		db.session.commit()
+		db.session.close()
 
 	return { "success": 1, "message": "Success!" }
 
@@ -159,6 +160,7 @@ def submit_program():
 				db.session.add(activity)
 
 			db.session.commit()
+			db.session.close()
 		new = {
 			"psid": submission.psid,
 			"title": _problem.title,

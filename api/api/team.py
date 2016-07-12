@@ -37,6 +37,7 @@ def team_create():
 		team_activity = Activity(_user.uid, 1, tid=team.tid)
 		db.session.add(team_activity)
 		db.session.commit()
+		db.session.close()
 
 		session["tid"] = team.tid
 	return { "success": 1, "message": "Success!" }
@@ -92,10 +93,7 @@ def team_remove_member():
 			return { "success": 0, "message": "User not found." }
 		if user_to_remove.tid != tid:
 			return { "success": 0, "message": "This user is not on your team!" }
-		with app.app_context():
-			Users.query.filter_by(uid=user_to_remove.uid).update({ "tid": -1 })
-			db.session.commit()
-			db.session.close()
+		team.remove_member(user_to_remove.uid)
 		return { "success": 1, "message": "Success!" }
 	else:
 		raise WebException("Not authorized.")
@@ -349,6 +347,24 @@ def team_finalize():
 		raise WebException("This team is already finalized.")
 
 	_team.finalize()
+	return { "success": 1 }
+
+@blueprint.route("/leave", methods=["POST"])
+@api_wrapper
+@login_required
+@team_required
+def team_leave():
+	_user = user.get_user().first()
+	_team = get_team(tid=_user.tid).first()
+	with app.app_context():
+		if _user.uid == _team.owner:
+			_team.remove_all_members()
+			db.session.delete(_team)
+		else:
+			_team.remove_member(_user.uid)
+			db.session.add(Activity(_user.uid, 2, tid=_team.tid, pid=-1))
+		db.session.commit()
+		db.session.close()
 	return { "success": 1 }
 
 ##################

@@ -850,6 +850,16 @@ var finalize_team = function() {
 	}
 };
 
+var leave_team = function() {
+	if (confirm("Are you sure you want to leave your team? You will need an invitation to join this team again. (If you are the captain, the team will be disbanded.)")) {
+		api_call("POST", "/api/team/leave", { }, function(result) {
+			if (result["success"] == 1) {
+				location.reload(true);
+			}
+		});
+	}
+};
+
 // twofactor page
 
 var twofactor_form = function() {
