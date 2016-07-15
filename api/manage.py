@@ -4,8 +4,7 @@ from flask_script import Manager
 
 from app import app
 
-db = SQLAlchemy(app)
-migrate = Migrate(app, db)
+migrate = Migrate(app, app.db)
 
 manager = Manager(app)
 manager.add_command("db", MigrateCommand)
