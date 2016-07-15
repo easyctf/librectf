@@ -350,8 +350,8 @@ class Files(db.Model):
 
 class Solves(db.Model):
 	sid = db.Column(db.Integer, primary_key=True)
-	pid = db.Column(db.String(128), db.ForeignKey("problems.pid"))
-	tid = db.Column(db.Integer, db.ForeignKey("teams.tid"))
+	pid = db.Column(db.String(128))
+	tid = db.Column(db.Integer)
 	uid = db.Column(db.Integer)
 	date = db.Column(db.String(64), default=int(time.time()))
 	correct = db.Column(db.Boolean)
@@ -377,8 +377,8 @@ class LoginTokens(db.Model):
 	TOKEN_LIFETIME = 5259492
 
 	sid = db.Column(db.String(64), unique=True, primary_key=True)
-	uid = db.Column(db.Integer, db.ForeignKey("users.uid"))
-	username = db.Column(db.String(32), db.ForeignKey("users.username"))
+	uid = db.Column(db.Integer)
+	username = db.Column(db.String(32))
 	active = db.Column(db.Boolean)
 	issued = db.Column(db.Integer)
 	expiry = db.Column(db.Integer)
@@ -413,7 +413,7 @@ class Tickets(db.Model):
 	htid = db.Column(db.Integer, primary_key=True)
 	date = db.Column(db.Integer, default=utils.get_time_since_epoch())
 	opened = db.Column(db.Boolean, default=True)
-	author = db.Column(db.Integer, db.ForeignKey("users.uid"))
+	author = db.Column(db.Integer)
 	title = db.Column(db.Text)
 	body = db.Column(db.Text)
 
@@ -443,9 +443,9 @@ class Tickets(db.Model):
 
 class TicketReplies(db.Model):
 	trid = db.Column(db.Integer, primary_key=True)
-	htid = db.Column(db.Integer, db.ForeignKey("tickets.htid"))
+	htid = db.Column(db.Integer)
 	date = db.Column(db.Integer, default=utils.get_time_since_epoch())
-	author = db.Column(db.Integer, db.ForeignKey("users.uid"))
+	author = db.Column(db.Integer)
 	body = db.Column(db.Text)
 
 	def __init__(self, htid, body, author):
@@ -455,8 +455,8 @@ class TicketReplies(db.Model):
 
 class ProgrammingSubmissions(db.Model):
 	psid = db.Column(db.Integer, primary_key=True)
-	pid = db.Column(db.String(128), db.ForeignKey("problems.pid"))
-	tid = db.Column(db.Integer, db.ForeignKey("teams.tid"))
+	pid = db.Column(db.String(128))
+	tid = db.Column(db.Integer)
 	date = db.Column(db.Integer, default=utils.get_time_since_epoch())
 	message = db.Column(db.Text)
 	log = db.Column(db.Text)
