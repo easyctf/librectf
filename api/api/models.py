@@ -27,7 +27,7 @@ bonuses = [
 
 class Config(db.Model):
 	cfid = db.Column(db.Integer, primary_key=True)
-	key = db.Column(db.String(32))
+	key = db.Column(db.String(32), index=True)
 	value = db.Column(db.Text)
 
 	def __init__(self, key, value):
@@ -37,11 +37,11 @@ class Config(db.Model):
 import utils # Prevent import loops
 
 class Users(db.Model):
-	uid = db.Column(db.Integer, unique=True, primary_key=True)
+	uid = db.Column(db.Integer, unique=True, index=True, primary_key=True)
 	tid = db.Column(db.Integer, default=-1)
 	name = db.Column(db.String(64))
 	username = db.Column(db.String(64), unique=True)
-	username_lower = db.Column(db.String(64), unique=True)
+	username_lower = db.Column(db.String(64), unique=True, index=True)
 	email = db.Column(db.String(64), unique=True)
 	password = db.Column(db.String(128))
 	admin = db.Column(db.Boolean)
@@ -131,7 +131,7 @@ class Activity(db.Model):
 	- 5: Team has lost 1st place.
 	- 6: User joined a team.
 	"""
-	uaid = db.Column(db.Integer, unique=True, primary_key=True)
+	uaid = db.Column(db.Integer, unique=True, index=True, primary_key=True)
 	uid = db.Column(db.Integer)
 	type = db.Column(db.Integer)
 	tid = db.Column(db.Integer)
@@ -167,9 +167,9 @@ class Activity(db.Model):
 			return "<b>%s</b> joined team <b>%s</b>." % (generate_user_link(u.username), generate_team_link(t.teamname))
 
 class Teams(db.Model):
-	tid = db.Column(db.Integer, primary_key=True)
+	tid = db.Column(db.Integer, primary_key=True, index=True)
 	teamname = db.Column(db.String(64), unique=True)
-	teamname_lower = db.Column(db.String(64), unique=True)
+	teamname_lower = db.Column(db.String(64), unique=True, index=True)
 	school = db.Column(db.Text)
 	owner = db.Column(db.Integer)
 	observer = db.Column(db.Boolean)
@@ -327,7 +327,7 @@ class Teams(db.Model):
 		return result
 
 class Problems(db.Model):
-	pid = db.Column(db.String(128), primary_key=True, autoincrement=False)
+	pid = db.Column(db.String(128), primary_key=True, index=True, autoincrement=False)
 	title = db.Column(db.String(128))
 	category = db.Column(db.String(128))
 	description = db.Column(db.Text)
@@ -353,7 +353,7 @@ class Problems(db.Model):
 		self.weightmap = weightmap
 
 class Files(db.Model):
-	fid = db.Column(db.Integer, primary_key=True)
+	fid = db.Column(db.Integer, index=True, primary_key=True)
 	pid = db.Column(db.Integer)
 	location = db.Column(db.Text)
 
@@ -362,9 +362,9 @@ class Files(db.Model):
 		self.location = location
 
 class Solves(db.Model):
-	sid = db.Column(db.Integer, primary_key=True)
-	pid = db.Column(db.String(128), db.ForeignKey("problems.pid"))
-	tid = db.Column(db.Integer, db.ForeignKey("teams.tid"))
+	sid = db.Column(db.Integer, index=True, primary_key=True)
+	pid = db.Column(db.String(128))
+	tid = db.Column(db.Integer)
 	uid = db.Column(db.Integer)
 	date = db.Column(db.String(64), default=int(time.time()))
 	correct = db.Column(db.Boolean)
@@ -389,9 +389,9 @@ class Solves(db.Model):
 class LoginTokens(db.Model):
 	TOKEN_LIFETIME = 5259492
 
-	sid = db.Column(db.String(64), unique=True, primary_key=True)
-	uid = db.Column(db.Integer, db.ForeignKey("users.uid"))
-	username = db.Column(db.String(32), db.ForeignKey("users.username"))
+	sid = db.Column(db.String(64), unique=True, index=True, primary_key=True)
+	uid = db.Column(db.Integer)
+	username = db.Column(db.String(32))
 	active = db.Column(db.Boolean)
 	issued = db.Column(db.Integer)
 	expiry = db.Column(db.Integer)
@@ -411,7 +411,7 @@ class LoginTokens(db.Model):
 		self.location = location
 
 class TeamInvitations(db.Model):
-	rid = db.Column(db.Integer, primary_key=True)
+	rid = db.Column(db.Integer, index=True, primary_key=True)
 	rtype = db.Column(db.Integer)
 	frid = db.Column(db.Integer)
 	toid = db.Column(db.Integer)
@@ -423,10 +423,10 @@ class TeamInvitations(db.Model):
 		self.toid = toid
 
 class Tickets(db.Model):
-	htid = db.Column(db.Integer, primary_key=True)
+	htid = db.Column(db.Integer, index=True, primary_key=True)
 	date = db.Column(db.Integer, default=utils.get_time_since_epoch())
 	opened = db.Column(db.Boolean, default=True)
-	author = db.Column(db.Integer, db.ForeignKey("users.uid"))
+	author = db.Column(db.Integer)
 	title = db.Column(db.Text)
 	body = db.Column(db.Text)
 
@@ -455,10 +455,10 @@ class Tickets(db.Model):
 		return replies
 
 class TicketReplies(db.Model):
-	trid = db.Column(db.Integer, primary_key=True)
-	htid = db.Column(db.Integer, db.ForeignKey("tickets.htid"))
+	trid = db.Column(db.Integer, index=True, primary_key=True)
+	htid = db.Column(db.Integer)
 	date = db.Column(db.Integer, default=utils.get_time_since_epoch())
-	author = db.Column(db.Integer, db.ForeignKey("users.uid"))
+	author = db.Column(db.Integer)
 	body = db.Column(db.Text)
 
 	def __init__(self, htid, body, author):
@@ -467,9 +467,9 @@ class TicketReplies(db.Model):
 		self.author = author
 
 class ProgrammingSubmissions(db.Model):
-	psid = db.Column(db.Integer, primary_key=True)
-	pid = db.Column(db.String(128), db.ForeignKey("problems.pid"))
-	tid = db.Column(db.Integer, db.ForeignKey("teams.tid"))
+	psid = db.Column(db.Integer, index=True, primary_key=True)
+	pid = db.Column(db.String(128))
+	tid = db.Column(db.Integer)
 	date = db.Column(db.Integer, default=utils.get_time_since_epoch())
 	message = db.Column(db.Text)
 	log = db.Column(db.Text)
@@ -487,7 +487,7 @@ class ProgrammingSubmissions(db.Model):
 		self.duration = duration
 
 class Pages(db.Model):
-	pgid = db.Column(db.Integer, primary_key=True)
+	pgid = db.Column(db.Integer, index=True, primary_key=True)
 	pvid = db.Column(db.Integer)
 	title = db.Column(db.String(256))
 	content = db.Column(db.Text)
