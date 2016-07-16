@@ -41,9 +41,11 @@ def get_leaderboard():
 	prevPoints = 0
 	for team in teams:
 		points = team.points()
-		if count > 0 and points == prevPoints and points == 0:
-			ranked_count -= 1
-			count -= 1
+		if points == prevPoints and points == 0:
+			if count > 0:
+				count -= 1
+			if ranked_count > 0:
+				ranked_count -= 1
 		if team.is_observer():
 			ranked_count -= 1
 		ranked_count += 1
