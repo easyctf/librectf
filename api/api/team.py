@@ -35,11 +35,10 @@ def team_create():
 		db.session.commit()
 		Users.query.filter_by(uid=_user.uid).update({ "tid": team.tid })
 		team_activity = Activity(_user.uid, 1, tid=team.tid)
+		session["tid"] = team.tid
 		db.session.add(team_activity)
 		db.session.commit()
 		db.session.close()
-
-		session["tid"] = team.tid
 	return { "success": 1, "message": "Success!" }
 
 @blueprint.route("/delete", methods=["POST"])
