@@ -44,7 +44,7 @@
 							<table class="table table-bordered">
 								<tr>
 									<th>Team Name</th>
-									<td><a ng-href="/team?teamname={{ user.team['teamname'] }}">{{ user.team['teamname'] }}</a></td>
+									<td><a ng-href="/team?teamname={{ user.team['teamname'] | escape }}">{{ user.team['teamname'] }}</a></td>
 								</tr>
 								<tr>
 									<th>School</th>
@@ -73,7 +73,7 @@
 						<div class="panel-body">
 							<div ng-show="user['me']!=true&&user['in_team']==true">
 								<div class="alert alert-info">
-									You're viewing statistics for <b>{{ user['username'] }}</b>'s solves. <a ng-href="/team?teamname={{ user.team['teamname'] }}">Click here to view <b>{{ user.team['teamname'] }}</b>'s statistics.</a>
+									You're viewing statistics for <b>{{ user['username'] }}</b>'s solves. <a ng-href="/team?teamname={{ user.team['teamname'] | escape }}">Click here to view <b>{{ user.team['teamname'] }}</b>'s statistics.</a>
 								</div>
 							</div>
 							<div class="row">

@@ -6,6 +6,7 @@ import os
 import base64
 import onetimepass
 import markdown2
+import urllib
 import cPickle as pickle
 
 db = SQLAlchemy()
@@ -14,7 +15,7 @@ def generate_user_link(username):
 	return "<a href='/profile/%s'>%s</a>" % (username, username)
 
 def generate_team_link(teamname):
-	return "<a href='/team?teamname=%s'>%s</a>" % (teamname, teamname)
+	return "<a href='/team?teamname=%s'>%s</a>" % (urllib.quote_plus(teamname), teamname)
 
 bonuses = [
 	[0, 0, 0],

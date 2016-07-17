@@ -88,7 +88,7 @@ var view_solves = function(pid) {
 			for (var i = 0; i < solves.length; i++) {
 				var teamname = solves[i].teamname;
 				var timestamp = solves[i].date;
-				table.append("<tr><td><a href='/team?teamname="+teamname+"'>"+teamname+"</a></td><td><time class='timeago' datetime='"+timestamp+"'></time></td>");
+				table.append("<tr><td><a href='/team?teamname="+encodeURIComponent(teamname)+"'>"+teamname+"</a></td><td><time class='timeago' datetime='"+timestamp+"'></time></td>");
 			}
 			$(".timeago").timeago();
 		}
