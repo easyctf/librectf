@@ -80,7 +80,7 @@ def login_required(f):
 def team_required(f):
 	@wraps(f)
 	def wrapper(*args, **kwds):
-		if "tid" not in session or session["tid"] < 0:
+		if user.in_team(user.get_user()):
 			return { "success": 0, "message": "You need a team." }
 		return f(*args, **kwds)
 	return wrapper
