@@ -228,7 +228,7 @@ def problem_solves():
 	params = utils.flat_multi(request.form)
 	pid = params.get("pid")
 	solves_return = []
-	solves = Solves.query.filter_by(pid=pid).order_by("date asc").all()
+	solves = Solves.query.filter_by(pid=pid,correct=True).order_by("date asc").all()
 	for solve in solves:
 		data = {
 			"teamname": Teams.query.filter_by(tid=solve.tid).first().teamname,
