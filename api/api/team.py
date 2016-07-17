@@ -358,10 +358,10 @@ def team_leave():
 	with app.app_context():
 		if _user.uid == _team.owner:
 			_team.remove_all_members()
-			db.session.delete(_team)
 		else:
 			_team.remove_member(_user.uid)
 			db.session.add(Activity(_user.uid, 2, tid=_team.tid, pid=-1))
+		db.session.delete(_team)
 		db.session.commit()
 		db.session.close()
 	return { "success": 1 }
