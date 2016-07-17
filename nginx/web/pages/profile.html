@@ -71,7 +71,7 @@
 							<h4 class="panel-title">Statistics</h4>
 						</div>
 						<div class="panel-body">
-							<div ng-show="user['me']!=true">
+							<div ng-show="user['me']!=true&&user['in_team']==true">
 								<div class="alert alert-info">
 									You're viewing statistics for <b>{{ user['username'] }}</b>'s solves. <a ng-href="/team?teamname={{ user.team['teamname'] }}">Click here to view <b>{{ user.team['teamname'] }}</b>'s statistics.</a>
 								</div>
