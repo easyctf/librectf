@@ -15,7 +15,7 @@ def generate_user_link(username):
 	return "<a href='/profile/%s'>%s</a>" % (username, username)
 
 def generate_team_link(teamname):
-	return "<a href='/team?teamname=%s'>%s</a>" % (urllib.quote_plus(teamname), teamname)
+	return "<a href='/team?teamname=%s'>%s</a>" % (urllib.quote(teamname.encode("utf-8")), teamname)
 
 bonuses = [
 	[0, 0, 0],
@@ -178,7 +178,7 @@ class Teams(db.Model):
 
 	def __init__(self, teamname, school, owner, observer):
 		self.teamname = teamname
-		self.teamname_lower = teamname.lower()
+		self.teamname_lower = utils.escape_teamname(teamname)
 		self.school = school
 		self.owner = owner
 		self.observer = observer

@@ -48,6 +48,9 @@ def flat_multi(multidict):
 		flat[key] = value.encode("utf-8")
 	return flat
 
+def escape_teamname(teamname):
+	return teamname.decode("unicode-escape").lower()
+
 def send_email(recipient, subject, body):
 	with app.app_context():
 		api_key = app.config["MAILGUN_KEY"]
