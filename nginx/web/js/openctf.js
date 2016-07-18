@@ -3,6 +3,14 @@ var $http = angular.injector(["ng"]).get("$http");
 var stylesheet_loaded = false;
 var CHART_HEIGHT = 208;
 
+app.filter("escape", function() {
+	return function(input) {
+		if(input) {
+			return window.encodeURIComponent(input); 
+		}
+		return "";
+	}
+});
 app.filter("render_html", ['$sce', function($sce) {
 	return function(html){
 		return $sce.trustAsHtml(html);

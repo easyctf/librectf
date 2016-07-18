@@ -7,7 +7,7 @@
 	<div class="panel panel-default" id="{{ team['tid'] }}_panel" ng-repeat="team in teams">
 		<div class="panel-heading" data-toggle="collapse" data-target="#{{ team['tid'] }}_body">
 			<h4 class="panel-title">
-				<a href="/team?teamname={{ team['teamname'] }}" target="_blank">{{ team["teamname"] }}</a>
+				<a href="/team?teamname={{ team['teamname'] | escape }}" target="_blank">{{ team["teamname"] }}</a>
 				({{ team["points"] }} points)
 			</h4>
 		</div>

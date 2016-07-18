@@ -35,11 +35,10 @@ def team_create():
 		db.session.commit()
 		Users.query.filter_by(uid=_user.uid).update({ "tid": team.tid })
 		team_activity = Activity(_user.uid, 1, tid=team.tid)
+		session["tid"] = team.tid
 		db.session.add(team_activity)
 		db.session.commit()
 		db.session.close()
-
-		session["tid"] = team.tid
 	return { "success": 1, "message": "Success!" }
 
 @blueprint.route("/delete", methods=["POST"])
@@ -271,7 +270,7 @@ def team_info():
 	search = { }
 	teamname = utils.flat_multi(request.args).get("teamname")
 	if teamname:
-		search.update({ "teamname_lower": teamname.lower() })
+		search.update({ "teamname_lower": utils.escape_teamname(teamname) })
 	if logged_in:
 		_user = user.get_user().first()
 		if user.in_team(_user):
@@ -324,10 +323,10 @@ def team_edit():
 	with app.app_context():
 		update = {}
 		if params.get("new_teamname") is not None:
-			if get_team(teamname_lower=params["new_teamname"].lower()).first() is not None:
+			if get_team(teamname_lower=utils.escape_teamname(params["new_teamname"])).first() is not None:
 				raise WebException("This team name is taken!")
 			update["teamname"] = params["new_teamname"]
-			update["teamname_lower"] = params["new_teamname"].lower()
+			update["teamname_lower"] = utils.escape_teamname(params["new_teamname"])
 		if params.get("new_school") is not None:
 			update["school"] = params["new_school"]
 		_team.update_info(update)
@@ -359,10 +358,10 @@ def team_leave():
 	with app.app_context():
 		if _user.uid == _team.owner:
 			_team.remove_all_members()
-			db.session.delete(_team)
 		else:
 			_team.remove_member(_user.uid)
 			db.session.add(Activity(_user.uid, 2, tid=_team.tid, pid=-1))
+		db.session.delete(_team)
 		db.session.commit()
 		db.session.close()
 	return { "success": 1 }
@@ -371,17 +370,15 @@ def team_leave():
 # TEAM FUNCTIONS #
 ##################
 
-__check_teamname = lambda teamname: get_team(teamname_lower=teamname.lower()).first() is None
+__check_teamname = lambda teamname: get_team(teamname_lower=utils.escape_teamname(teamname)).first() is None
 
 TeamSchema = Schema({
 	Required("teamname"): check(
 		([str, Length(min=4, max=32)], "Your teamname should be between 4 and 32 characters long."),
-		([utils.__check_ascii], "Please only use ASCII characters in your teamname."),
 		([__check_teamname], "This teamname is taken. Please choose a different one.")
 	),
 	Required("school"): check(
 		([str, Length(min=4, max=40)], "Your school name should be between 4 and 40 characters long. Use abbreviations if necessary."),
-		([utils.__check_ascii], "Please only use ASCII characters in your school name."),
 	),
 }, extra=True)
 
