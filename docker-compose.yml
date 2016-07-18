@@ -2,6 +2,7 @@ openctf:
   build: nginx
   links:
     - api
+    - sandbox
   ports:
     - "80:80"
   volumes:
@@ -12,6 +13,7 @@ api:
   env_file: .env
   links:
     - db
+    - sandbox
   expose:
     - 8000
   volumes:
@@ -23,3 +25,10 @@ db:
   env_file: .env
   expose:
     - 3306
+
+sandbox:
+  build: sandbox
+  volumes:
+    - ./sandbox:/sandbox
+  expose:
+    - 4000
