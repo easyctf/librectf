@@ -45,8 +45,8 @@ def problem_add():
 	return { "success": 1, "message": "Success!" }
 
 @blueprint.route("/delete", methods=["POST"])
-@admins_only
 @api_wrapper
+@admins_only
 def problem_delete():
 	params = utils.flat_multi(request.form)
 	pid = params.get("pid")
@@ -64,8 +64,8 @@ def problem_delete():
 	raise WebException("Problem does not exist!")
 
 @blueprint.route("/update", methods=["POST"])
-@admins_only
 @api_wrapper
+@admins_only
 def problem_update():
 	params = utils.flat_multi(request.form)
 	pid = params.get("pid")
@@ -106,9 +106,9 @@ def problem_update():
 
 @blueprint.route("/submit", methods=["POST"])
 @api_wrapper
-@login_required
-@team_required
 @team_finalize_required
+@team_required
+@login_required
 def problem_submit():
 	params = utils.flat_multi(request.form)
 	pid = params.get("pid")
@@ -171,8 +171,8 @@ def problem_submit():
 
 
 @blueprint.route("/data", methods=["GET"])
-@login_required
 @api_wrapper
+@login_required
 def problem_data():
 	_user = user.get_user().first()
 	if not user.is_admin():
@@ -221,9 +221,9 @@ def problem_data():
 
 @blueprint.route("/solves", methods=["POST"])
 @api_wrapper
-@login_required
-@team_required
 @team_finalize_required
+@team_required
+@login_required
 def problem_solves():
 	params = utils.flat_multi(request.form)
 	pid = params.get("pid")
@@ -240,6 +240,7 @@ def problem_solves():
 @blueprint.route("/clear_submissions", methods=["POST"])
 @api_wrapper
 @admins_only
+@login_required
 def clear_solves():
 	params = utils.flat_multi(request.form)
 

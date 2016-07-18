@@ -8,7 +8,7 @@ var create_problem = function() {
 	var input = "#new_problem_form input";
 	var data = $("#new_problem_form").serializeObject();
 
-	var grader_contents = ace.edit("new_grader").getValue();
+	var grader_contents = ace.edit("new-grader").getValue();
 	data["grader_contents"] = grader_contents;
 
 	var bonus = $("#bonus").val();
