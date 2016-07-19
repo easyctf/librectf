@@ -140,6 +140,10 @@ app.config(function($routeProvider, $locationProvider) {
 		templateUrl: "pages/admin/problems.html",
 		controller: "adminProblemsController"
 	})
+	.when("/admin/containers", {
+		templateUrl: "pages/admin/containers.html",
+		controller: "adminContainersController"
+	})
 	.when("/admin/stats", {
 		templateUrl: "pages/admin/statistics.html",
 		controller: "adminStatisticsController"
@@ -525,6 +529,11 @@ app.controller("adminProblemsController", function($controller, $scope, $http) {
 			grader.setValue(problem.grader_contents);
 		});
 	});
+});
+
+app.controller("adminContainersController", function($controller, $scope, $http) {
+	$controller("adminController", { $scope: $scope });
+
 });
 
 app.controller("adminStatisticsController", function($controller, $scope, $http) {

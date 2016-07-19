@@ -1,0 +1,20 @@
+<div class="page-header">
+	<h1>Docker Containers</h1>
+</div>
+
+<div class="jumbotron">
+	<form class="dropzone" id="dropzone">
+		<input type="hidden" name="csrf_token" />
+		<input type="file" name="file" style="display:none;" />
+	</form>
+</div>
+
+<script type="text/javascript">
+	$(document).ready(function() {
+		$("input[name=csrf_token]").val($.cookie("csrf_token"));
+		var dropzone = new Dropzone("#dropzone", {
+			"url": "/api/container/upload",
+			"maxFiles": 1
+		});
+	});
+</script>
