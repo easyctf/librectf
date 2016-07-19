@@ -1,6 +1,7 @@
 FROM docker
 
 RUN apk add --no-cache python python-dev py-pip
+RUN pip install docker-py
 
 RUN mkdir /sandbox
 COPY . /sandbox/
