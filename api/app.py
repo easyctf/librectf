@@ -43,6 +43,7 @@ def page_not_found(e):
 
 app.register_blueprint(api.activity.blueprint, url_prefix="/api/activity")
 app.register_blueprint(api.admin.blueprint, url_prefix="/api/admin")
+app.register_blueprint(api.container.blueprint, url_prefix="/api/container")
 app.register_blueprint(api.programming.blueprint, url_prefix="/api/programming")
 app.register_blueprint(api.user.blueprint, url_prefix="/api/user")
 app.register_blueprint(api.problem.blueprint, url_prefix="/api/problem")

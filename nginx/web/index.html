@@ -9,6 +9,7 @@
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous" id="bootstrap_css">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" integrity="sha384-yNuQMX46Gcak2eQsUzmBYgJ3eBeWYNKhnjyiBqLd1vvtE9kuMtgw6bjwN8J0JauQ" crossorigin="anonymous">
 	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.9.3/css/bootstrap-select.css" integrity="sha384-X6BCz/5YN8CudtAN21w+htVJP5lJNqXP0VBfbGzrX7A/FhjpPIoMtiRRHxRYiKU6" crossorigin="anonymous">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/dropzone/4.2.0/min/dropzone.min.css" integrity="sha384-AivDrv68J7248ZXpmMCs62ZQTUW01XQSEfpkiQokZq0MMGgfSd+QpUTdVSnxrxSz" crossorigin="anonymous">
 	<link rel="stylesheet" href="/css/openctf.css" id="openctf_css" />
 
 	<script src="https://code.jquery.com/jquery-2.1.4.min.js" integrity="sha384-R4/ztc4ZlRqWjqIuvf6RX5yb/v90qNGx6fS48N0tRxiGkqveZETq72KgDVJCp2TC" crossorigin="anonymous"></script>
@@ -24,6 +25,7 @@
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.2/ace.js" integrity="sha384-niN+bRlaXMBoq/f5L4zKOEYGxuD0YRGBocto9LP2fB1UiMfxrymATRN4GqjVUt6J" crossorigin="anonymous"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/epiceditor/0.2.2/js/epiceditor.min.js" integrity="sha384-jV5EM0s4BWbqIJxNwLbyMfgHMQWPkSn2oytRUMPSne2YaT5TAYcl7R0m1c1XsfAb" crossorigin="anonymous"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/countdown/2.6.0/countdown.min.js" integrity="sha384-wQLPQqLej93unaq3UvFsxbu5aXPLmzq0F7M2T20KGBJpN5MCU6DtNVpWfvGF0ayt" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/dropzone/4.2.0/min/dropzone.min.js" integrity="sha384-pHe1cvsuHwRCNIcjaquZAkEUEidHwtBvtYYVfbd43D4dHaOabWqQUUGm90yPKa+l" crossorigin="anonymous"></script>
 	<script src="/js/openctf.js"></script>
 	<script src="/js/admin.js"></script>
 </head>
@@ -65,8 +67,10 @@
 						<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Admin <span class="caret"></span></a>
 						<ul class="dropdown-menu">
 							<li><a href="/admin/stats">Statistics</a></li>
-							<li><a href="/admin/problems">Problem Editor</a></li>
 							<li><a href="/admin/teams">Team Management</a></li>
+							<li role="separator" class="divider"></li>
+							<li><a href="/admin/problems">Problem Editor</a></li>
+							<li><a href="/admin/containers">Docker Containers</a></li>
 							<li role="separator" class="divider"></li>
 							<li><a href="/admin/settings">CTF Settings</a></li>
 						</ul>

@@ -23,14 +23,27 @@ s.listen(10)
 
 def handler(conn):
 	info = {}
-	info["id"] = conn.recv(32).strip("\n")
+	info["id"] = ""
+	char = ""
+	while True:
+		char = conn.recv(1)
+		if char == "\n": break
+		info["id"] += char
+	print "ID:", info["id"]
 
 	WORKDIR = os.path.join(BUILDDIR, info["id"])
 	if os.path.exists(WORKDIR):
 		shutil.rmtree(WORKDIR)
 	os.mkdir(WORKDIR)
 
-	length = long(conn.recv(32))
+	length = ""
+	char = ""
+	while True:
+		char = conn.recv(1)
+		if char == "\n": break
+		length += char
+	length = long(length)
+	print "LENGTH:", length
 	with open(os.path.join(WORKDIR, "files.zip"), "wb") as file:
 		read = 0
 		bufsize = 32
@@ -40,7 +53,7 @@ def handler(conn):
 			read += bufsize
 		file.close()
 
-	
+	conn.send("ok\n")
 	conn.close()
 
 while 1:
