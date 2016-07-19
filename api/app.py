@@ -21,11 +21,6 @@ if not os.path.exists(app.config["PFP_FOLDER"]):
 with app.app_context():
 	from api.models import db, Config, Users, Activity, Teams, Problems, Files, Solves, LoginTokens, TeamInvitations, Tickets, TicketReplies, ProgrammingSubmissions
 	db.init_app(app)
-	try:
-		db.create_all()
-	except:
-		import traceback
-		print traceback.format_exc()
 	app.db = db
 
 @app.route("/api")
