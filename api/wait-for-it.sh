@@ -12,4 +12,4 @@ until mysql -h db -u root -p"$MYSQL_ROOT_PASSWORD"; do
 done
 
 >&2 echo "mysql is up - executing command"
-exec bash -c 'gunicorn --bind 0.0.0.0:8000 -w 4 app:app'
+exec bash -c "python manage.py db upgrade && gunicorn --bind 0.0.0.0:8000 -w 4 app:app"
