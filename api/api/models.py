@@ -155,9 +155,15 @@ class Activity(db.Model):
 		if self.type == 0:
 			return "<b>%s</b> created an account!" % generate_user_link(u.username)
 		elif self.type == 1:
-			return "<b>%s</b> created the team <b>%s</b>." % (generate_user_link(u.username), generate_team_link(t.teamname))
+			if t is None:
+				return "<b>%s</b> created a team." % (generate_user_link(u.username))
+			else:
+				return "<b>%s</b> created the team <b>%s</b>." % (generate_user_link(u.username), generate_team_link(t.teamname))
 		elif self.type == 2:
-			return "<b>%s</b> has left team <b>%s</b>." % (generate_user_link(u.username), generate_team_link(t.teamname))
+			if t is None:
+				return "<b>%s</b> left their team." % (generate_user_link(u.username))
+			else:
+				return "<b>%s</b> has left team <b>%s</b>." % (generate_user_link(u.username), generate_team_link(t.teamname))
 		elif self.type == 3:
 			return "<b>%s</b> from team <b>%s</b> has solved <b>%s</b>." % (generate_user_link(u.username), generate_team_link(t.teamname), p.title)
 		elif self.type == 4:
