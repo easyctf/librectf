@@ -106,9 +106,9 @@ def problem_update():
 
 @blueprint.route("/submit", methods=["POST"])
 @api_wrapper
-@team_finalize_required
-@team_required
 @login_required
+@team_required
+@team_finalize_required
 def problem_submit():
 	params = utils.flat_multi(request.form)
 	pid = params.get("pid")
@@ -221,9 +221,9 @@ def problem_data():
 
 @blueprint.route("/solves", methods=["POST"])
 @api_wrapper
-@team_finalize_required
-@team_required
 @login_required
+@team_required
+@team_finalize_required
 def problem_solves():
 	params = utils.flat_multi(request.form)
 	pid = params.get("pid")
@@ -239,8 +239,8 @@ def problem_solves():
 
 @blueprint.route("/clear_submissions", methods=["POST"])
 @api_wrapper
-@admins_only
 @login_required
+@admins_only
 def clear_solves():
 	params = utils.flat_multi(request.form)
 

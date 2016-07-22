@@ -71,8 +71,8 @@ def verify_email():
 		return { "success": 1, "message": "Verification email sent to %s" % user.email }
 
 @blueprint.route("/update_profile", methods=["POST"])
-@login_required
 @api_wrapper
+@login_required
 def user_update_profile():
 	params = utils.flat_multi(request.form)
 	password = params.get("current_password")
@@ -327,8 +327,8 @@ def user_twofactor_qr():
 	}
 
 @blueprint.route("/twofactor/verify", methods=["POST"])
-@login_required
 @api_wrapper
+@login_required
 def user_twofactor_verify():
 	_user = get_user().first()
 	if _user is None:
@@ -355,8 +355,8 @@ def user_twofactor_verify():
 	return { "success": 1, "message": "Confirmed!" }
 
 @blueprint.route("/avatar/upload", methods=["POST"])
-@login_required
 @api_wrapper
+@login_required
 def user_avatar_upload():
 	logged_in = is_logged_in()
 	if not logged_in:
@@ -385,8 +385,8 @@ def user_avatar_upload():
 		raise WebException(str(e))
 
 @blueprint.route("/avatar/remove", methods=["POST"])
-@login_required
 @api_wrapper
+@login_required
 def user_avatar_remove():
 	logged_in = is_logged_in()
 	if not logged_in:
@@ -401,8 +401,8 @@ def user_avatar_remove():
 		raise WebException(str(e))
 
 @blueprint.route("/session/delete", methods=["POST"])
-@login_required
 @api_wrapper
+@login_required
 def user_session_delete():
 	params = utils.flat_multi(request.form)
 	sid = params.get("sid")

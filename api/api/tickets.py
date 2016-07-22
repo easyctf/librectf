@@ -10,8 +10,8 @@ import utils
 blueprint = Blueprint("tickets", __name__)
 
 @blueprint.route("/create", methods=["POST"])
-@login_required
 @api_wrapper
+@login_required
 def create_ticket():
 	params = utils.flat_multi(request.form)
 
@@ -31,8 +31,8 @@ def create_ticket():
 	return { "success": 1, "message": "Ticket created." }
 
 @blueprint.route("/close", methods=["POST"])
-@login_required
 @api_wrapper
+@login_required
 def close_ticket():
 	params = utils.flat_multi(request.form)
 
@@ -50,8 +50,8 @@ def close_ticket():
 	return { "success": 1, "message": "Ticket closed." }
 
 @blueprint.route("/open", methods=["POST"])
-@login_required
 @api_wrapper
+@login_required
 def open_ticket():
 	params = utils.flat_multi(request.form)
 
@@ -69,8 +69,8 @@ def open_ticket():
 	return { "success": 1, "message": "Ticket opened." }
 
 @blueprint.route("/reply", methods=["POST"])
-@login_required
 @api_wrapper
+@login_required
 def reply_to_ticket():
 	params = utils.flat_multi(request.form)
 
@@ -89,8 +89,8 @@ def reply_to_ticket():
 	return { "success": 1, "message": "" }
 
 @blueprint.route("/data", methods=["GET"])
-@login_required
 @api_wrapper
+@login_required
 def ticket_data():
 	opened = []
 	closed = []

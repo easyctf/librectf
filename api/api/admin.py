@@ -85,7 +85,7 @@ def admin_setup():
 			db.session.add(var)
 			db.session.commit()
 			db.session.close()
-			
+
 	logger.log(__name__, "%s registered with %s" % (name.encode("utf-8"), email.encode("utf-8")))
 	user.login_user(username, password)
 
@@ -149,6 +149,7 @@ def admin_team_overview():
 
 @blueprint.route("/info")
 @api_wrapper
+@admins_only
 def admin_info():
 	settings = get_settings()
 	result = { }
