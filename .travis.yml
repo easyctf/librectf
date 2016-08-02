@@ -6,6 +6,7 @@ install:
   - sudo apt-get update
   - sudo apt-get -y install libjpeg-dev libmysqlclient-dev memcached tmux mysql-client
   - pip install -r api/requirements.txt
+  - pip install coveralls
 before_script:
   - mysql -e 'create database openctf;'
 script:
@@ -13,5 +14,7 @@ script:
   - coverage run --source api -m pytest -v && coverage report
 services:
   - mysql
+after_success:
+  coveralls
 notifications:
   email: false
