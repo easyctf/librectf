@@ -11,7 +11,10 @@ var create_problem = function() {
 	var grader_contents = ace.edit("new-grader").getValue();
 	data["grader_contents"] = grader_contents;
 
-	var bonus = $("#bonus").val();
+	var weightmap = ace.edit("new-weightmap").getValue();
+	data["weightmap"] = weightmap;
+
+	var bonus = $("#new-bonus").val();
 	data["bonus"] = bonus;
 
 	var autogen = $("#autogen").is(":checked");
@@ -44,6 +47,9 @@ var update_problem = function(form_id) {
 	var grader_contents = ace.edit(pid + "_grader").getValue();
 	data["grader_contents"] = grader_contents;
 
+	var weightmap = ace.edit(pid + "_weightmap").getValue();
+	data["weightmap"] = weightmap;
+
 	var bonus = $("#" + pid + "_bonus").val();
 	data["bonus"] = bonus;
 
@@ -71,7 +77,7 @@ var update_problem = function(form_id) {
 
 var delete_problem = function(form_id) {
 	$('#confirm').modal("show", { backdrop: 'static', keyboard: false })
-        .one('click', '#yes', function() {
+		.one('click', '#yes', function() {
 		var input = "#" + form_id + " input";
 		var pid = form_id.split("_")[1];
 		$(input).attr("disabled", "disabled");
@@ -92,7 +98,7 @@ var delete_problem = function(form_id) {
 			});
 		});
 
-        });
+	});
 }
 
 var update_settings = function() {
@@ -119,7 +125,7 @@ var update_settings = function() {
 
 function clear_submissions(form_id) {
 	$('#confirm').modal("show", { backdrop: 'static', keyboard: false })
-        .one('click', '#yes', function() {
+		.one('click', '#yes', function() {
 		var input = "#" + form_id + " input";
 		var pid = form_id.split("_")[1];
 		$(input).attr("disabled", "disabled");
@@ -140,5 +146,5 @@ function clear_submissions(form_id) {
 			});
 		});
 
-        });
+	});
 }

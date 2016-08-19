@@ -92,6 +92,22 @@
 							</div>
 							<div class="row">
 								<div class="col-sm-12 form-group">
+									<label class="col-sm-12" for="new-weightmap"><small>Weightmap</small></label>
+									<div class="col-sm-12">
+										<div id="new-weightmap"></div>
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-12 form-group">
+									<label class="col-sm-12" for="new-threshold"><small>Threshold</small></label>
+									<div class="col-sm-12">
+										<input class="form-control" name="value" id="new-threshold" type="number" placeholder="Threshold" required autocomplete="off" />
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-12 form-group">
 									<div class="col-sm-12">
 										<div class="checkbox">
 											<label><input id="autogen" type="checkbox"/>Autogen</label>
@@ -182,6 +198,22 @@
 									</div>
 								</div>
 							</div>
+							<div class="row">
+								<div class="col-sm-12 form-group">
+									<label class="col-sm-12"><small>Weightmap</small></label>
+									<div class="col-sm-12">
+										<div id="{{ problem['pid'] }}_weightmap"></div>
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-12 form-group">
+									<label class="col-sm-12"><small>Threshold</small></label>
+									<div class="col-sm-12">
+										<input class="form-control" name="threshold" id="{{ problem['pid'] }}_threshold" ng-value="problem['threshold']" type="number" placeholder="Threshold" required autocomplete="off" />
+									</div>
+								</div>
+							</div>
 							<br>
 							<div class="row">
 								<div class="col-sm-12 form-group">
@@ -230,10 +262,15 @@
 			"flag = 'this_is_a_flag'",
 			"",
 			"def grade(autogen, candidate):",
-			"    if candidate.find(flag) >= 0:",
-			"        return True, 'Correct!'",
-			"    return False, 'Nope.'"
+			"	if candidate.find(flag) >= 0:",
+			"		return True, 'Correct!'",
+			"	return False, 'Nope.'"
 		].join("\n"));
+
+		var new_weightmap = ace.edit("new-weightmap");
+		new_weightmap.setTheme("ace/theme/tomorrow");
+		new_weightmap.getSession().setMode("ace/mode/python");
+		new_weightmap.setValue("{}");
 		// new_grader.setValue(
 		// 	'#from hashlib import sha1\n'+
 		// 	'flag = "easyctf{FLAG}"\n\n'+
@@ -241,18 +278,18 @@
 		// 	'#autogen_key = "this_is_a_key" # secret used when generating flags\n\n'+
 		// 	'# Generate all data for each problem here:\n'+
 		// 	'#def generate_problem(random, pid):\n'+
-		// 	'#    flag = generate_flag(random)\n'+
-		// 	'#    return {\n'+
-		// 	'#        "description": "What could this possibly mean? %s" % flag.encode("hex")\n'+
-		// 	'#    }\n\n'+
+		// 	'#	flag = generate_flag(random)\n'+
+		// 	'#	return {\n'+
+		// 	'#		"description": "What could this possibly mean? %s" % flag.encode("hex")\n'+
+		// 	'#	}\n\n'+
 		// 	'#def generate_flag(random):\n'+
-		// 	'#    return "easyctf{%s}" % sha1(autogen_key + str(random.random())).hexdigest()\n\n'+
+		// 	'#	return "easyctf{%s}" % sha1(autogen_key + str(random.random())).hexdigest()\n\n'+
 		// 	'def grade(autogen, candidate):\n'+
-		// 	'#    if autogen:\n'+
-		// 	'#        flag = generate_flag(autogen)\n'+
-		// 	'    if candidate == flag:\n'+
-		// 	'        return True, "Correct!"\n'+
-		// 	'    return False, "Incorrect."\n\n'+
+		// 	'#	if autogen:\n'+
+		// 	'#		flag = generate_flag(autogen)\n'+
+		// 	'	if candidate == flag:\n'+
+		// 	'		return True, "Correct!"\n'+
+		// 	'	return False, "Incorrect."\n\n'+
 		// 	'# Return True if the flag is correct, False otherwise, along with\n'+
 		// 	'# a corresponding message to send to the user.'
 		// );

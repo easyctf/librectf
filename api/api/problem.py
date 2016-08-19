@@ -39,6 +39,12 @@ def problem_add():
 	bonus = params.get("bonus")
 	autogen = params.get("autogen")
 	try:
+		weightmap = json.loads(params.get("weightmap", "{}"))
+	except:
+		weightmap = {}
+	threshold = params.get("threshold", 0)
+
+	try:
 		add_problem(title, category, description, value, grader_contents, hint=hint, bonus=bonus, autogen=autogen)
 	except Exception, e:
 		raise WebException(str(e))
@@ -77,6 +83,11 @@ def problem_update():
 	bonus = params.get("bonus")
 	grader_contents = params.get("grader_contents")
 	autogen = params.get("autogen")
+	try:
+		weightmap = json.loads(params.get("weightmap", "{}"))
+	except:
+		weightmap = {}
+	threshold = params.get("threshold", 0)
 
 	problem = Problems.query.filter_by(pid=pid).first()
 	if problem:
@@ -87,6 +98,8 @@ def problem_update():
 		problem.value = value
 		problem.bonus = bonus
 		problem.autogen = autogen
+		problem.weightmap = weightmap
+		problem.threshold = threshold
 
 		if category == "Programming":
 			programming.validate_judge(grader_contents)
@@ -119,6 +132,10 @@ def problem_submit():
 
 	problem = Problems.query.filter_by(pid=pid).first()
 	_team = Teams.query.filter_by(tid=tid).first()
+
+	if problem not in get_problems(tid):
+		raise WebException("You have not unlocked this problem.")
+
 	solved = Solves.query.filter_by(pid=pid, tid=tid, correct=1).first()
 	if solved:
 		raise WebException("You already solved this problem.")
@@ -181,7 +198,7 @@ def problem_data():
 		if not team.team_finalized(team.get_team_of(_user.uid)):
 			raise WebException("Your team is not finalized.")
 
-	problems = Problems.query.order_by(Problems.value).all()
+	problems = get_problems(_user.tid, admin=user.is_admin())
 	problems_return = [ ]
 	for problem in problems:
 		solves = get_solves(problem.pid)
@@ -292,7 +309,8 @@ def get_problem(title=None, pid=None):
 def num_problems():
 	return Problems.query.filter_by().count()
 
-def add_problem(title, category, description, value, grader_contents, hint="", bonus=0, autogen=0):
+def add_problem(title, category, description, value, grader_contents, hint="", bonus=0, autogen=0, weightmap={}, threshold=0):
+	threshold = 1
 	grader_contents = str(grader_contents)
 	pid = title.lower().replace(" ", "-")
 	value = int(value)
@@ -315,7 +333,7 @@ def add_problem(title, category, description, value, grader_contents, hint="", b
 	grader_file.write(grader_contents)
 	grader_file.close()
 
-	problem = Problems(pid, title, category, description, value, grader_path, bonus=bonus, hint=hint, autogen=autogen)
+	problem = Problems(pid, title, category, description, value, grader_path, bonus=bonus, hint=hint, autogen=autogen, weightmap=weightmap, threshold=threshold)
 	db.session.add(problem)
 
 	files = request.files.getlist("files[]")
@@ -385,3 +403,16 @@ def validate_grader(grader_contents, autogen=False):
 			raise WebException(e)
 		except Exception, e:
 			raise WebException(e)
+
+def get_problems(tid, admin=False):
+	if admin:
+		return Problems.query.all()
+
+	solves = Solves.query.filter_by(tid=tid, correct=True).all()
+	problems = Problems.query.all()
+	problems_return = []
+	for problem in problems:
+		current = sum([problem.weightmap.get(solve.pid, 0) for solve in solves])
+		if current >= problem.threshold:
+			problems_return.append(problem)
+	return problems_return
