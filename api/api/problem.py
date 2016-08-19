@@ -292,16 +292,16 @@ def get_problem(title=None, pid=None):
 def num_problems():
 	return Problems.query.filter_by().count()
 
-def add_problem(title, category, description, value, grader_contents, pid=utils.generate_string(), hint="", bonus=0, autogen=0):
+def add_problem(title, category, description, value, grader_contents, hint="", bonus=0, autogen=0):
 	grader_contents = str(grader_contents)
-	pid = str(pid)
+	pid = title.lower().replace(" ", "-")
 	value = int(value)
 
 	title_exists = Problems.query.filter_by(title=title).first()
-	if title_exists:
+	pid_exists = Problems.query.filter_by(pid=pid).first()
+	if title_exists or pid_exists:
 		raise WebException("Problem name already taken.")
-	while Problems.query.filter_by(pid=pid).first():
-		pid = utils.generate_string()
+
 	if category == "Programming":
 		programming.validate_judge(grader_contents)
 	else:
