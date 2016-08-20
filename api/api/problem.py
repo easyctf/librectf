@@ -41,7 +41,7 @@ def problem_add():
 	try:
 		add_problem(title, category, description, value, grader_contents, hint=hint, bonus=bonus, autogen=autogen)
 	except Exception, e:
-		raise WebException(str(e))
+		raise WebException("Error: " + str(e))
 	return { "success": 1, "message": "Success!" }
 
 @blueprint.route("/delete", methods=["POST"])
@@ -337,7 +337,6 @@ def process_description(description):
 
 def validate_grader(grader_contents, autogen=False):
 	tmp_grader = "/tmp/grader.py"
-
 	open(tmp_grader, "w").write(grader_contents)
 
 	try:
@@ -353,7 +352,6 @@ def validate_grader(grader_contents, autogen=False):
 
 			while seed1 == seed2:
 				seed2 = utils.generate_string()
-
 			random.seed(seed1)
 			data = grader.generate_problem(random, "pid")
 			assert type(data) == dict
@@ -370,9 +368,9 @@ def validate_grader(grader_contents, autogen=False):
 
 			assert correct == True, "Grader marked correct flag as incorrect."
 		except AssertionError, e:
-			raise WebException(e)
+			raise WebException(str(e))
 		except Exception, e:
-			raise WebException(e)
+			raise WebException(str(e))
 	else:
 		try:
 			correct, message = grader.grade(None, "hi")
@@ -382,6 +380,18 @@ def validate_grader(grader_contents, autogen=False):
 			correct, message = grader.grade(None, grader.flag)
 			assert correct, "Grader marked correct flag as incorrect."
 		except AssertionError, e:
-			raise WebException(e)
+			raise WebException(str(e))
 		except Exception, e:
-			raise WebException(e)
+			raise WebException(str(e))
+
+def get_problems(tid, admin=False):
+	if admin:
+		return Problems.query.all()
+	solves = Solves.query.filter_by(tid=tid, correct=True).all()
+	problems = Problems.query.all()
+	problems_return = []
+	for problem in problems:
+		current = sum([problem.weightmap.get(solve.pid, 0) for solve in solves])
+		if current >= problem.threshold:
+			problems_return.append(problem)
+	return problems_return
