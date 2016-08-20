@@ -45,7 +45,7 @@ def problem_add():
 	threshold = params.get("threshold", 0)
 
 	try:
-		add_problem(title, category, description, value, grader_contents, hint=hint, bonus=bonus, autogen=autogen)
+		add_problem(title, category, description, value, grader_contents, hint=hint, bonus=bonus, autogen=autogen, threshold=threshold, weightmap=weightmap)
 	except Exception, e:
 		raise WebException(str(e))
 	return { "success": 1, "message": "Success!" }
@@ -310,7 +310,6 @@ def num_problems():
 	return Problems.query.filter_by().count()
 
 def add_problem(title, category, description, value, grader_contents, hint="", bonus=0, autogen=0, weightmap={}, threshold=0):
-	threshold = 1
 	grader_contents = str(grader_contents)
 	pid = title.lower().replace(" ", "-")
 	value = int(value)
@@ -407,7 +406,6 @@ def validate_grader(grader_contents, autogen=False):
 def get_problems(tid, admin=False):
 	if admin:
 		return Problems.query.all()
-
 	solves = Solves.query.filter_by(tid=tid, correct=True).all()
 	problems = Problems.query.all()
 	problems_return = []
