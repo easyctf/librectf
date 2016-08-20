@@ -1,5 +1,6 @@
 import json
 import pytest
+import time
 
 @pytest.mark.usefixtures("db")
 class TestGeneral():
@@ -26,6 +27,7 @@ class TestGeneral():
 			"password": "password",
 			"password_confirm": "password",
 			"type": "1",
+			"start_time": time.time() - 100,
 			"verification": app.api.utils.get_config("setup_verification")
 		}
 		response = json.loads(client.post("/api/admin/setup", data=options).data)

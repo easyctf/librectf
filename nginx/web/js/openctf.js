@@ -6,7 +6,7 @@ var CHART_HEIGHT = 208;
 app.filter("escape", function() {
 	return function(input) {
 		if(input) {
-			return window.encodeURIComponent(input); 
+			return window.encodeURIComponent(input);
 		}
 		return "";
 	}
@@ -523,6 +523,11 @@ app.controller("adminProblemsController", function($controller, $scope, $http) {
 			grader.setTheme("ace/theme/tomorrow");
 			grader.getSession().setMode("ace/mode/python");
 			grader.setValue(problem.grader_contents);
+
+			var weightmap = ace.edit(problem.pid + "_weightmap");
+			weightmap.setTheme("ace/theme/tomorrow");
+			weightmap.getSession().setMode("ace/mode/python");
+			weightmap.setValue(JSON.stringify(problem.weightmap));
 		});
 	});
 });

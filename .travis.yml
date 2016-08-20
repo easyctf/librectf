@@ -4,7 +4,7 @@ python:
   - "2.7"
 install:
   - sudo apt-get update
-  - sudo apt-get -y install libjpeg-dev libmysqlclient-dev memcached tmux mysql-client
+  - sudo apt-get -y install python python-dev python-pip libffi-dev libssl-dev libjpeg-dev libmysqlclient-dev memcached tmux mysql-client
   - pip install -r api/requirements.txt
   - pip install coveralls
 before_script:
