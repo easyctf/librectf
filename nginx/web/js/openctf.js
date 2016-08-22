@@ -292,9 +292,6 @@ app.controller("problemsController", function($controller, $scope, $http) {
 			$scope.problems = result["problems"];
 		} else {
 			permanent_message("problems_data_msg", "danger", result["message"], function() {
-				if (result["message"].indexOf("finalized") > 0) {
-					location.href = "/team";
-				}
 			});
 		}
 		$scope.$apply();
@@ -367,9 +364,6 @@ app.controller("programmingController", function($controller, $scope, $http, res
 		$scope.data = result;
 	} else {
 		display_message("programming_msg", "danger", result["message"], function() {
-			if (result["message"].indexOf("finalized") > 0) {
-				location.href = "/team";
-			}
 		});
 	}
 
@@ -851,16 +845,6 @@ var accept_invitation_request = function(uid) {
 			location.reload(true);
 		}
 	});
-};
-
-var finalize_team = function() {
-	if (confirm("Are you sure you want to finalize your team? You won't be able to make changes or add members after this.")) {
-		api_call("POST", "/api/team/finalize", { }, function(result) {
-			if (result["success"] == 1) {
-				location.reload(true);
-			}
-		});
-	}
 };
 
 var leave_team = function() {

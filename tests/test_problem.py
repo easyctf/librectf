@@ -31,7 +31,6 @@ class TestProblem():
 	def test_get_problem(self, app, client):
 		client.post("/api/user/login", data={ "username": USER[1], "password": USER[3] })
 		client.post("/api/team/create", data={ "teamname": "Test", "school": "Test" })
-		client.post("/api/team/finalize")
 		response = json.loads(client.get("/api/problem/data").data)
 		assert response["success"] == 1
 		assert "problems" in response and len(response["problems"]) > 0

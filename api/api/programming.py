@@ -73,8 +73,6 @@ def get_problems():
 		pass
 	elif session.get("tid") <= 0:
 		raise WebException("You need a team.")
-	elif team.get_team(tid=session.get("tid")).first().finalized != True:
-		raise WebException("Your team is not finalized.")
 
 	data = []
 	problems = Problems.query.filter_by(category="Programming").all()

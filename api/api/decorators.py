@@ -85,14 +85,6 @@ def team_required(f):
 		return f(*args, **kwds)
 	return wrapper
 
-def team_finalize_required(f):
-	@wraps(f)
-	def wrapper(*args, **kwds):
-		if team.get_team(tid=session["tid"]).first().finalized != True:
-			return { "success": 0, "message": "Your team must be finalized to view this content!" }
-		return f(*args, **kwds)
-	return wrapper
-
 import user # Must go below api_wrapper to prevent import loops
 import team
 

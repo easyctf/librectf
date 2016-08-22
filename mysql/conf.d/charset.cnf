@@ -10,3 +10,4 @@ init_connect='SET NAMES utf8'
 character-set-server=utf8
 collation-server=utf8_unicode_ci 
 skip-character-set-client-handshake
+max_allowed_packet=128M

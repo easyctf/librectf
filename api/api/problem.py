@@ -3,7 +3,7 @@ from flask import current_app as app
 from werkzeug import secure_filename
 
 from models import db, Files, Problems, ProgrammingSubmissions, Solves, Teams, Users, Activity
-from decorators import admins_only, api_wrapper, login_required, team_required, team_finalize_required, InternalException, WebException
+from decorators import admins_only, api_wrapper, login_required, team_required, InternalException, WebException
 
 import datetime
 import hashlib
@@ -121,7 +121,6 @@ def problem_update():
 @api_wrapper
 @login_required
 @team_required
-@team_finalize_required
 def problem_submit():
 	params = utils.flat_multi(request.form)
 	pid = params.get("pid")
@@ -195,8 +194,6 @@ def problem_data():
 	if not user.is_admin():
 		if not user.in_team(_user):
 			raise WebException("You need a team.")
-		if not team.team_finalized(team.get_team_of(_user.uid)):
-			raise WebException("Your team is not finalized.")
 
 	problems = get_problems(_user.tid, admin=user.is_admin())
 	problems_return = [ ]
@@ -240,7 +237,6 @@ def problem_data():
 @api_wrapper
 @login_required
 @team_required
-@team_finalize_required
 def problem_solves():
 	params = utils.flat_multi(request.form)
 	pid = params.get("pid")

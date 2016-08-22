@@ -37,6 +37,7 @@ class TestUser():
 	def test_user_status(self, client):
 		response = json.loads(client.get("/api/user/status").data)
 		required_keys = ["username", "competition", "in_team", "logged_in", "ctf_name"]
+		print response
 		assert response["success"] == 1
 		assert all([key in response.keys() for key in required_keys])
 

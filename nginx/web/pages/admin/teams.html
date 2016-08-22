@@ -14,10 +14,6 @@
 		<div id="{{ team['tid'] }}_body" class="panel-collapse collapse panel-body">
 			<form id="{{ team['tid'] }}_form">
 				<p>
-					<button onclick="toggle_finalized(this.closest('form').id); return false;" class="btn btn-warning btn-sm">
-						<span ng-show="team['finalized']!=true"><i class="fa fa-fw fa-check"></i> Finalize</span>
-						<span ng-show="team['finalized']==true"><i class="fa fa-fw fa-ban"></i> Unfinalize</span>
-					</button>
 					<button onclick="delete_team(this.closest('form').id); return false;" class="btn btn-danger btn-sm"><i class="fa fa-fw fa-trash"></i> Delete</button>
 				</p>
 				<div id="{{ team['tid'] }}_msg"/>
@@ -27,7 +23,7 @@
 							<div class="page-header">
 								<h4>Members</h4>
 							</div>
-							<table class="table table-striped">
+							<table class="table table-striped table-bordered">
 								<thead>
 									<tr>
 										<th>Name</th>
@@ -46,7 +42,7 @@
 							<div class="page-header">
 								<h4>Solves</h4>
 							</div>
-							<table class="table table-striped">
+							<table class="table table-striped table-bordered">
 								<thead>
 									<tr>
 										<th>Problem</th>

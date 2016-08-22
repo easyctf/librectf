@@ -1,5 +1,7 @@
 from flask_sqlalchemy import SQLAlchemy
 
+import cache
+
 import time
 import traceback
 import os
@@ -53,6 +55,7 @@ class Users(db.Model):
 	otp_confirmed = db.Column(db.Boolean)
 	email_verified = db.Column(db.Boolean)
 	email_token = db.Column(db.String(64))
+	restriction = db.Column(db.Integer, default=0) # 0 = not restricted, 1 = restricted, 2 = banned
 
 	def __init__(self, name, username, email, password, utype=1, admin=False):
 		self.name = name
@@ -188,7 +191,6 @@ class Teams(db.Model):
 		self.school = school
 		self.owner = owner
 		self.observer = observer
-		self.finalized = False
 
 	def get_members(self):
 		members = [ ]
@@ -298,11 +300,6 @@ class Teams(db.Model):
 		db.session.commit()
 		db.session.close()
 
-	def finalize(self):
-		Teams.query.filter_by(tid=self.tid).update({ "finalized": True })
-		db.session.commit()
-		db.session.close()
-
 	def get_solves(self):
 		solves = Solves.query.filter_by(tid=self.tid, correct=True).all()
 		result = []
@@ -316,6 +313,7 @@ class Teams(db.Model):
 			})
 		return result
 
+	@cache.memoize(timeout=120)
 	def get_info(self):
 		place_number, place = self.place()
 		result = {
@@ -328,7 +326,6 @@ class Teams(db.Model):
 			"members": self.get_members(),
 			"captain": self.owner,
 			"observer": self.is_observer(),
-			"finalized": self.finalized,
 			"solves": self.get_solves()
 		}
 		return result

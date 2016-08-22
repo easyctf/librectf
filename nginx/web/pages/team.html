@@ -21,17 +21,13 @@
 		<center>
 			<div ng-show="team['in_team']==true">
 				<div ng-show="team['is_owner']==true">
-					<div ng-show="team['finalized']!=true">
+					<div>
 						<form action="javascript:edit_teamname();">
 							<h1><span data-toggle="tooltip" data-placement="top" title="Click to edit team name." id="teamname_edit" class="padded editable" contenteditable>{{ team['teamname'] }}</span></h1>
 						</form>
 						<form action="javascript:edit_school();">
 							<h4><i class="fa fa-fw fa-university"></i> <span data-toggle="tooltip" data-placement="top" title="Click to edit school." id="school_edit" class="padded editable" contenteditable>{{ team['school'] || 'Add School' }}</span></h4>
 						</form>
-					</div>
-					<div ng-show="team['finalized']==true">
-						<h1><span class="padded">{{ team['teamname'] }}</span></h1>
-						<h4><i class="fa fa-fw fa-university"></i> <span class="padded">{{ team['school'] || 'Unknown Affiliation' }}</span></h4>
 					</div>
 				</div>
 				<div ng-show="team['is_owner']==false">
@@ -51,11 +47,7 @@
 					</p>
 				</div>
 				<div class="row">
-					<button class="btn btn-danger" onclick="javascript:finalize_team();" data-toggle="tooltip" data-placement="bottom" title="Your team isn't ready to compete yet. Finalize your team details in order to compete. You won't be able to add members or change names after that." ng-show="team['is_owner']==true && team['finalized']!=true">
-						<i class="fa fa-exclamation-triangle"></i>
-						Finalize Team
-					</button>
-					<button class="btn btn-danger" onclick="javascript:leave_team();" data-toggle="tooltip" data-placement="bottom" title="You will need an invitation to re-join this team. If you are the captain, the team will be disbanded." ng-show="team['finalized']!=true">
+					<button class="btn btn-danger" onclick="javascript:leave_team();" data-toggle="tooltip" data-placement="bottom" title="You will need an invitation to re-join this team. If you are the captain, the team will be disbanded.">
 						<i class="fa fa-exit"></i>
 						Leave Team
 					</button>
@@ -69,17 +61,13 @@
 						<i class="fa fa-fw fa-globe"></i>
 						OBSERVER
 					</div>
-					<div class="label label-danger" data-toggle="tooltip" data-placement="top" title="This team isn't finalized yet." ng-show="team['finalized']!=true">
-						<i class="fa fa-exclamation-triangle"></i>
-						UNFINALIZED
-					</div>
 				</div>
 			</div>
 		</center>
 	</div>
 	<div class="row">
 		<div class="col-sm-3 col-xs-12">
-			<div class="panel panel-default" ng-show="team['finalized']==true">
+			<div class="panel panel-default">
 				<div class="panel-heading">
 					<h4 class="panel-title">Statistics</h4>
 				</div>
@@ -103,13 +91,13 @@
 				<div class="list-group">
 					<div id="add_member_msg"/>
 					<div class="list-group-item" ng-repeat="member in team['members']">
-						<a class="badge" ng-href="javascript:remove_member('{{ member['username'] }}');" ng-show="team['is_owner']==true && team['finalized']!=true && member['captain']!=true"><i class="fa fa-fw fa-times"></i></a>
+						<a class="badge" ng-href="javascript:remove_member('{{ member['username'] }}');" ng-show="team['is_owner']==true && member['captain']!=true"><i class="fa fa-fw fa-times"></i></a>
 						<h4 class="list-group-item-heading" style="display:inline-block;">{{ member['name'] }}</h4>
 						<div class="label label-info" ng-show="member['captain']==true">Owner</div>
 						<p class="list-group-item-text"><a href="/profile/{{ member['username'] }}">@{{ member['username'] }}</a></p>
 					</div>
 				</div>
-				<div class="panel-footer" ng-show="team['is_owner']==true&&team['finalized']!=true">
+				<div class="panel-footer" ng-show="team['is_owner']==true">
 					<form id="add_member" onsubmit="add_member(); return false;" style="margin: 0;">
 						<div class="row">
 							<div class="col-xs-12">
@@ -123,17 +111,17 @@
 						</div>
 					</form>
 				</div>
-				<div class="panel-footer" ng-show="team['in_team']!=true && config.navbar['logged_in']==true && team['finalized']!=true">
+				<div class="panel-footer" ng-show="team['in_team']!=true && config.navbar['logged_in']==true">
 					<div class="row">
 						<div class="col-xs-12">
-							<a ng-href="javascript:request_invitation({{ team['tid'] }});" class="btn btn-primary col-xs-12" ng-show="team['invited']!=true && team['requested']!=true"><i class="fa fa-fw fa-plus"></i> Join this team</a>
+							<a ng-href="javascript:request_invitation({{ team['tid'] }});" class="btn btn-primary col-xs-12" ng-show="team['invited']!=true"><i class="fa fa-fw fa-plus"></i> Join this team</a>
 							<a class="btn btn-primary col-xs-12 disabled" ng-show="team['invited']!=true && team['requested']==true"><i class="fa fa-fw fa-check"></i> Sent Request</a>
 							<a ng-href="javascript:accept_invitation({{ team['tid'] }});" class="btn btn-success col-xs-12" ng-show="team['invited']==true"><i class="fa fa-fw fa-check"></i> Accept Invitation</a>
 						</div>
 					</div>
 				</div>
 			</div>
-			<div class="panel panel-default" ng-show="team['is_owner']==true && team['pending_invitations'].length > 0 && team['finalized']!=true">
+			<div class="panel panel-default" ng-show="team['is_owner']==true && team['pending_invitations'].length > 0">
 				<div class="panel-heading">
 					<h4 class="panel-title">Pending Invitations</h4>
 				</div>
@@ -145,7 +133,7 @@
 					</div>
 				</div>
 			</div>
-			<div class="panel panel-default" ng-show="team['is_owner']==true && team['invitation_requests'].length > 0 && team['finalized']!=true">
+			<div class="panel panel-default" ng-show="team['is_owner']==true && team['invitation_requests'].length > 0">
 				<div class="panel-heading">
 					<h4 class="panel-title">Invitation Requests</h4>
 				</div>
