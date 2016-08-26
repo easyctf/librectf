@@ -1,163 +1,190 @@
 <div class="page-header">
-	<center>
-		<h1>Welcome to OpenCTF!</h1>
-		<h3>Installation</h3>
-	</center>
+    <center>
+        <h1>Welcome to OpenCTF!</h1>
+        <h3>Installation</h3>
+    </center>
 </div>
 
 <div class="row">
-	<div class="col-md-6 col-md-offset-3 col-sm-10 col-sm-offset-1">
-		<div class="panel panel-default">
-			<div class="panel-heading">
-				<h2 class="panel-title">Setup</h2>
-			</div>
-			<div class="panel-body">
-				<form class="form-horizontal" onsubmit="setup_form(); return false;" id="setup_form" ng-show="ready==true">
-					<fieldset>
-						<div id="setup_msg"></div>
-					</fieldset>
-					<fieldset class="container-fluid">
-						<legend>CTF Information</legend>
-						<p>You can still change these values later.</p>
-						<div class="row">
-							<div class="col-sm-12 form-group">
-								<label class="col-sm-12" for="ctf_name"><small>CTF name</small></label>
-								<div class="col-sm-12">
-									<input class="form-control" type="text" required name="ctf_name" id="ctf_name" placeholder="CTF name" autocomplete="off" />
-								</div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-sm-12 form-group">
-								<label class="col-sm-12" for="start_time"><small>Start Time</small></label>
-								<div class="col-sm-12">
-									<input class="form-control" type="number" required name="start_time" id="start_time" placeholder="UNIX Timestamp" autocomplete="off" />
-								</div>
-							</div>
-						</div>
-						<p id="start_time_hint">CTF will begin on <time>...</time></p>
-						<div class="row">
-							<div class="col-sm-12 form-group">
-								<label class="col-sm-12" for="end_time"><small>End Time</small></label>
-								<div class="col-sm-12">
-									<input class="form-control" type="number" required name="end_time" id="end_time" placeholder="UNIX Timestamp" autocomplete="off" />
-								</div>
-							</div>
-						</div>
-						<p id="end_time_hint">CTF will end on <time>...</time></p>
-						<div class="row">
-							<div class="col-sm-12 form-group">
-								<label class="col-sm-12" for="team_size"><small>Team Size</small></label>
-								<div class="col-sm-12">
-									<input class="form-control" type="number" required name="team_size" id="team_size" placeholder="Team size" autocomplete="off" value="5"/>
-								</div>
-							</div>
-						</div>
-					</fieldset>
-					<fieldset class="container-fluid">
-						<legend>Administrator Registration</legend>
-						<p>This account will automatically be created with administrative privileges.</p>
-						<div class="row">
-							<div class="col-sm-12 form-group">
-								<label class="col-sm-12" for="name"><small>Your Name</small></label>
-								<div class="col-sm-12">
-									<input class="form-control" type="text" required name="name" id="name" placeholder="Your Name" autocomplete="off" />
-								</div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-sm-12 form-group">
-								<label class="col-sm-12" for="email"><small>Email</small></label>
-								<div class="col-sm-12">
-									<input class="form-control" type="email" required name="email" id="email" placeholder="michael@example.com" autocomplete="off" />
-								</div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-sm-12 form-group">
-								<label class="col-sm-12" for="username"><small>Username</small></label>
-								<div class="col-sm-12">
-									<input class="form-control" type="text" required name="username" id="username" placeholder="Username" autocomplete="off" />
-								</div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-sm-12 form-group">
-								<label class="col-sm-12" for="password"><small>Password</small></label>
-								<div class="col-sm-6">
-									<input class="form-control" type="password" required name="password" id="password" placeholder="Password" autocomplete="off" />
-								</div>
-								<div class="col-sm-6">
-									<input class="form-control" type="password" required name="password_confirm" id="password_confirm" placeholder="Confirm Password" autocomplete="off" />
-								</div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-sm-12 form-group">
-								<label class="col-sm-12" for="type"><small>Who are you?</small></label>
-								<div class="col-sm-12">
-									<select name="type" id="type" class="selectpicker" data-width="100%">
-										<option value="1">US Middle/High School Student</option>
-										<option value="2">Middle/High School Teacher</option>
-										<option value="3">Non-US/Non-Student/Observer</option>
-									</select>
-								</div>
-							</div>
-						</div>
-					</fieldset>
-					<fieldset class="container-fluid">
-						<legend>Confirmation</legend>
-						<p>In order to verify that you are actually the owner of this application, we need you to retrieve a certain verification token from the database. You may execute the following query at your MySQL terminal to retrieve this query:</p>
-						<p><code>SELECT `value` FROM `config` WHERE `key`='setup_verification';</code></p>
-						<p>Enter that verification token here:</p>
-						<div class="row">
-							<div class="col-sm-12 form-group">
-								<label class="col-sm-12" for="verification"><small>Verification</small></label>
-								<div class="col-sm-12">
-									<input class="form-control" type="text" required name="verification" id="verification" placeholder="Verification" autocomplete="off" />
-								</div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-sm-12 form-group">
-								<center>
-									<input type="hidden" id="_csrf" value="{{ csrf_token }}" />
-									<input type="submit" class="btn btn-success btn-lg" value="Confirm" />
-								</center>
-							</div>
-						</div>
-					</fieldset>
-				</form>
-				<div class="alert alert-danger" ng-show="ready!=true">
-					Sorry, setup could not be initialized. To fix this issue:
-					<ol>
-						<li>Clear your cookies.</li>
-						<li>Restart the server.</li>
-					</ol>
-					If neither of those work, please file an issue at <a href="https://github.com/EasyCTF/OpenCTF/issues" target="_blank">Github</a>.
-				</div>
-			</div>
-		</div>
-	</div>
+    <div class="col-md-6 col-md-offset-3 col-sm-10 col-sm-offset-1">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h2 class="panel-title">Setup</h2>
+            </div>
+            <div class="panel-body">
+                <form class="form-horizontal" onsubmit="setup_form(); return false;" id="setup_form" ng-show="ready==true">
+                    <fieldset>
+                        <div id="setup_msg"></div>
+                    </fieldset>
+                    <fieldset class="container-fluid">
+                        <legend>CTF Information</legend>
+                        <p>You can still change these values later.</p>
+                        <div class="row">
+                            <div class="col-sm-12 form-group">
+                                <label class="col-sm-12" for="ctf_name">
+                                    <small>CTF name</small>
+                                </label>
+                                <div class="col-sm-12">
+                                    <input class="form-control" type="text" required name="ctf_name" id="ctf_name" placeholder="CTF name" autocomplete="off"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12 form-group">
+                                <label class="col-sm-12" for="start_time">
+                                    <small>Start Time</small>
+                                </label>
+                                <div class="col-sm-12">
+                                    <input class="form-control" type="number" required name="start_time" id="start_time" placeholder="UNIX Timestamp" autocomplete="off"/>
+                                </div>
+                            </div>
+                        </div>
+                        <p id="start_time_hint">CTF will begin on
+                            <time>...</time>
+                        </p>
+                        <div class="row">
+                            <div class="col-sm-12 form-group">
+                                <label class="col-sm-12" for="end_time">
+                                    <small>End Time</small>
+                                </label>
+                                <div class="col-sm-12">
+                                    <input class="form-control" type="number" required name="end_time" id="end_time" placeholder="UNIX Timestamp" autocomplete="off"/>
+                                </div>
+                            </div>
+                        </div>
+                        <p id="end_time_hint">CTF will end on
+                            <time>...</time>
+                        </p>
+                        <div class="row">
+                            <div class="col-sm-12 form-group">
+                                <label class="col-sm-12" for="team_size">
+                                    <small>Team Size</small>
+                                </label>
+                                <div class="col-sm-12">
+                                    <input class="form-control" type="number" required name="team_size" id="team_size" placeholder="Team size" autocomplete="off" value="5"/>
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                    <fieldset class="container-fluid">
+                        <legend>Administrator Registration</legend>
+                        <p>This account will automatically be created with administrative privileges.</p>
+                        <div class="row">
+                            <div class="col-sm-12 form-group">
+                                <label class="col-sm-12" for="name">
+                                    <small>Your Name</small>
+                                </label>
+                                <div class="col-sm-12">
+                                    <input class="form-control" type="text" required name="name" id="name" placeholder="Your Name" autocomplete="off"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12 form-group">
+                                <label class="col-sm-12" for="email">
+                                    <small>Email</small>
+                                </label>
+                                <div class="col-sm-12">
+                                    <input class="form-control" type="email" required name="email" id="email" placeholder="michael@example.com" autocomplete="off"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12 form-group">
+                                <label class="col-sm-12" for="username">
+                                    <small>Username</small>
+                                </label>
+                                <div class="col-sm-12">
+                                    <input class="form-control" type="text" required name="username" id="username" placeholder="Username" autocomplete="off"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12 form-group">
+                                <label class="col-sm-12" for="password">
+                                    <small>Password</small>
+                                </label>
+                                <div class="col-sm-6">
+                                    <input class="form-control" type="password" required name="password" id="password" placeholder="Password" autocomplete="off"/>
+                                </div>
+                                <div class="col-sm-6">
+                                    <input class="form-control" type="password" required name="password_confirm" id="password_confirm" placeholder="Confirm Password" autocomplete="off"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12 form-group">
+                                <label class="col-sm-12" for="type">
+                                    <small>Who are you?</small>
+                                </label>
+                                <div class="col-sm-12">
+                                    <select name="type" id="type" class="selectpicker" data-width="100%">
+                                        <option value="1">US Middle/High School Student</option>
+                                        <option value="2">Middle/High School Teacher</option>
+                                        <option value="3">Non-US/Non-Student/Observer</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                    <fieldset class="container-fluid">
+                        <legend>Confirmation</legend>
+                        <p>In order to verify that you are actually the owner of this application, we need you to
+                            retrieve a certain verification token from the database. You may execute the following query
+                            at your MySQL terminal to retrieve this query:</p>
+                        <p><code>SELECT `value` FROM `config` WHERE `key`='setup_verification';</code></p>
+                        <p>Enter that verification token here:</p>
+                        <div class="row">
+                            <div class="col-sm-12 form-group">
+                                <label class="col-sm-12" for="verification">
+                                    <small>Verification</small>
+                                </label>
+                                <div class="col-sm-12">
+                                    <input class="form-control" type="text" required name="verification" id="verification" placeholder="Verification" autocomplete="off"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12 form-group">
+                                <center>
+                                    <input type="hidden" id="_csrf" value="{{ csrf_token }}"/>
+                                    <input type="submit" class="btn btn-success btn-lg" value="Confirm"/>
+                                </center>
+                            </div>
+                        </div>
+                    </fieldset>
+                </form>
+                <div class="alert alert-danger" ng-show="ready!=true">
+                    Sorry, setup could not be initialized. To fix this issue:
+                    <ol>
+                        <li>Clear your cookies.</li>
+                        <li>Restart the server.</li>
+                    </ol>
+                    If neither of those work, please file an issue at
+                    <a href="https://github.com/EasyCTF/OpenCTF/issues" target="_blank">Github</a>.
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script type="text/javascript">
-	var handler = function() {
-		var date = new Date(~~($("#start_time").val()) * 1000);
-		$("#start_time_hint > time").html(date.toLocaleString());
-		date = new Date(~~($("#end_time").val()) * 1000);
-		$("#end_time_hint > time").html(date.toLocaleString());
-	};
-	$(document).ready(function() {
-		$(".selectpicker").selectpicker();
-		var checkedClass = "fa fa-check-square";
-		var uncheckedClass = "fa fa-square";
-		$("#start_time").change(handler);
-		$("#start_time").keyup(handler);
-		$("#end_time").change(handler);
-		$("#end_time").keyup(handler);
-		$("#start_time").val(~~(new Date().getTime() / 1000 + 60 * 60));
-		$("#end_time").val(~~(new Date().getTime() / 1000 + 2 * 60 * 60));
-		handler();
-	});
+    var handler = function () {
+        var date = new Date(~~($("#start_time").val()) * 1000);
+        $("#start_time_hint > time").html(date.toLocaleString());
+        date = new Date(~~($("#end_time").val()) * 1000);
+        $("#end_time_hint > time").html(date.toLocaleString());
+    };
+    $(document).ready(function () {
+        $(".selectpicker").selectpicker();
+        var checkedClass = "fa fa-check-square";
+        var uncheckedClass = "fa fa-square";
+        $("#start_time").change(handler);
+        $("#start_time").keyup(handler);
+        $("#end_time").change(handler);
+        $("#end_time").keyup(handler);
+        $("#start_time").val(~~(new Date().getTime() / 1000 + 60 * 60));
+        $("#end_time").val(~~(new Date().getTime() / 1000 + 2 * 60 * 60));
+        handler();
+    });
 </script>

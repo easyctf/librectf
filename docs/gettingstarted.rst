@@ -18,7 +18,7 @@ Since this project is hosted on Github, the easiest way to install the project w
 .. code-block:: bash
    :linenos:
 
-   git clone https://github.com/easyctf/openctf.git
+       git clone https://github.com/easyctf/openctf.git
    cd openctf
 
 If it's not possible for you to install git or clone this repository, you may also download the latest version `here <https://github.com/EasyCTF/OpenCTF/archive/master.zip>`_.

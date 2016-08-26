@@ -26,6 +26,6 @@ Module contents
 ---------------
 
 .. automodule:: api
-    :members:
-    :undoc-members:
-    :show-inheritance:
+:members:
+        :undoc-members:
+        :show-inheritance:

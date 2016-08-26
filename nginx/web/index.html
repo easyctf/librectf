@@ -1,101 +1,105 @@
 <html ng-app="openctf">
 
 <head>
-	<base href="/">
-	<meta charset="utf-8">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<title>OpenCTF</title>
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/c3/0.4.11/c3.min.css" integrity="sha384-tXXRdLmcUxOP3gNdjUVjJqeG5/IJLHDrVfGYVyaUCABpBOSRX757RKMo9y4OU2qt" crossorigin="anonymous">
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous" id="bootstrap_css">
-	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" integrity="sha384-yNuQMX46Gcak2eQsUzmBYgJ3eBeWYNKhnjyiBqLd1vvtE9kuMtgw6bjwN8J0JauQ" crossorigin="anonymous">
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.9.3/css/bootstrap-select.css" integrity="sha384-X6BCz/5YN8CudtAN21w+htVJP5lJNqXP0VBfbGzrX7A/FhjpPIoMtiRRHxRYiKU6" crossorigin="anonymous">
-	<link rel="stylesheet" href="/css/openctf.css" id="openctf_css" />
+    <base href="/">
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>OpenCTF</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/c3/0.4.11/c3.min.css" integrity="sha384-tXXRdLmcUxOP3gNdjUVjJqeG5/IJLHDrVfGYVyaUCABpBOSRX757RKMo9y4OU2qt" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous" id="bootstrap_css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" integrity="sha384-yNuQMX46Gcak2eQsUzmBYgJ3eBeWYNKhnjyiBqLd1vvtE9kuMtgw6bjwN8J0JauQ" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.9.3/css/bootstrap-select.css" integrity="sha384-X6BCz/5YN8CudtAN21w+htVJP5lJNqXP0VBfbGzrX7A/FhjpPIoMtiRRHxRYiKU6" crossorigin="anonymous">
+    <link rel="stylesheet" href="/css/openctf.css" id="openctf_css"/>
 
-	<script src="https://code.jquery.com/jquery-2.1.4.min.js" integrity="sha384-R4/ztc4ZlRqWjqIuvf6RX5yb/v90qNGx6fS48N0tRxiGkqveZETq72KgDVJCp2TC" crossorigin="anonymous"></script>
-	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.8/angular.min.js" integrity="sha384-r1y8TJcloKTvouxnYsi4PJAx+nHNr90ibsEn3zznzDzWBN9X3o3kbHLSgcIPtzAp" crossorigin="anonymous"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.0-rc.0/angular-route.min.js" integrity="sha384-9MZDoFf10trgrfsQOs9GJhf/mP/sh5weVp3FDSi8h/4TEaV6dloEDkpxGTaOmAs6" crossorigin="anonymous"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.9.3/js/bootstrap-select.min.js" integrity="sha384-1qZEXZBmj54fSiiWT8bZQGEpCumJWDrAoEqMdg6N5bTTLCkU5RXoNeUsKWekRYob" crossorigin="anonymous"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-timeago/1.4.3/jquery.timeago.min.js" integrity="sha384-Bap3DetwPgo4GEFvaIDVSIrz5G0mUAUsfCUcEsi+JrrNu7dyj3gBmuAG4hDIGg/4" crossorigin="anonymous"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/smooth-scroll/7.1.1/js/smooth-scroll.min.js" integrity="sha384-bznoxhRX5dRiE60JhQSru8t7g2RPG9lwqvyut8sjFFWmsAlp+R38e7DiATv1YyIu" crossorigin="anonymous"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js" integrity="sha384-tSi+YsgNwyohDGfW/VhY51IK3RKAPYDcj1sNXJ16oRAyDP++K0NCzSCUW78EMFmf" crossorigin="anonymous"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js" integrity="sha384-N8EP0Yml0jN7e0DcXlZ6rt+iqKU9Ck6f1ZQ+j2puxatnBq4k9E8Q6vqBcY34LNbn" crossorigin="anonymous"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/c3/0.4.11/c3.min.js" integrity="sha384-gGgwZUQE/immRYmudqo/raGjoMiAwUrXsb7b10c8q8LBDMlzg8W4SU2joFAHuB4s" crossorigin="anonymous"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.2/ace.js" integrity="sha384-niN+bRlaXMBoq/f5L4zKOEYGxuD0YRGBocto9LP2fB1UiMfxrymATRN4GqjVUt6J" crossorigin="anonymous"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/epiceditor/0.2.2/js/epiceditor.min.js" integrity="sha384-jV5EM0s4BWbqIJxNwLbyMfgHMQWPkSn2oytRUMPSne2YaT5TAYcl7R0m1c1XsfAb" crossorigin="anonymous"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/countdown/2.6.0/countdown.min.js" integrity="sha384-wQLPQqLej93unaq3UvFsxbu5aXPLmzq0F7M2T20KGBJpN5MCU6DtNVpWfvGF0ayt" crossorigin="anonymous"></script>
-	<script src="/js/openctf.js"></script>
-	<script src="/js/admin.js"></script>
+    <script src="https://code.jquery.com/jquery-2.1.4.min.js" integrity="sha384-R4/ztc4ZlRqWjqIuvf6RX5yb/v90qNGx6fS48N0tRxiGkqveZETq72KgDVJCp2TC" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.8/angular.min.js" integrity="sha384-r1y8TJcloKTvouxnYsi4PJAx+nHNr90ibsEn3zznzDzWBN9X3o3kbHLSgcIPtzAp" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.5.0-rc.0/angular-route.min.js" integrity="sha384-9MZDoFf10trgrfsQOs9GJhf/mP/sh5weVp3FDSi8h/4TEaV6dloEDkpxGTaOmAs6" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.9.3/js/bootstrap-select.min.js" integrity="sha384-1qZEXZBmj54fSiiWT8bZQGEpCumJWDrAoEqMdg6N5bTTLCkU5RXoNeUsKWekRYob" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-timeago/1.4.3/jquery.timeago.min.js" integrity="sha384-Bap3DetwPgo4GEFvaIDVSIrz5G0mUAUsfCUcEsi+JrrNu7dyj3gBmuAG4hDIGg/4" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/smooth-scroll/7.1.1/js/smooth-scroll.min.js" integrity="sha384-bznoxhRX5dRiE60JhQSru8t7g2RPG9lwqvyut8sjFFWmsAlp+R38e7DiATv1YyIu" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-cookie/1.4.1/jquery.cookie.min.js" integrity="sha384-tSi+YsgNwyohDGfW/VhY51IK3RKAPYDcj1sNXJ16oRAyDP++K0NCzSCUW78EMFmf" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js" integrity="sha384-N8EP0Yml0jN7e0DcXlZ6rt+iqKU9Ck6f1ZQ+j2puxatnBq4k9E8Q6vqBcY34LNbn" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/c3/0.4.11/c3.min.js" integrity="sha384-gGgwZUQE/immRYmudqo/raGjoMiAwUrXsb7b10c8q8LBDMlzg8W4SU2joFAHuB4s" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.2/ace.js" integrity="sha384-niN+bRlaXMBoq/f5L4zKOEYGxuD0YRGBocto9LP2fB1UiMfxrymATRN4GqjVUt6J" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/epiceditor/0.2.2/js/epiceditor.min.js" integrity="sha384-jV5EM0s4BWbqIJxNwLbyMfgHMQWPkSn2oytRUMPSne2YaT5TAYcl7R0m1c1XsfAb" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/countdown/2.6.0/countdown.min.js" integrity="sha384-wQLPQqLej93unaq3UvFsxbu5aXPLmzq0F7M2T20KGBJpN5MCU6DtNVpWfvGF0ayt" crossorigin="anonymous"></script>
+    <script src="/js/openctf.js"></script>
+    <script src="/js/admin.js"></script>
 </head>
 
 <body ng-controller="mainController">
-	<div id="site-message" style="margin: 0"></div>
-	<nav class="navbar navbar-default">
-		<div class="container">
-			<div class="navbar-header">
-				<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#main-navbar" aria-expanded="false">
-					<span class="sr-only">Toggle navigation</span>
-					<span class="icon-bar"></span>
-					<span class="icon-bar"></span>
-					<span class="icon-bar"></span>
-				</button>
-				<a class="navbar-brand" href="/" id="main_logo">{{ config.navbar['ctf_name'] }}</a>
-			</div>
-			<div id="main-navbar" class="navbar-collapse collapse">
-				<ul class="nav navbar-nav">
-					<li><a href="/scoreboard">Scoreboard</a></li>
-				</ul>
-				<ul class="nav navbar-nav navbar-right" ng-show="config.navbar['logged_in']==false">
-					<li><a href="/register">Register</a></li>
-					<li><a href="/login">Login</a></li>
-				</ul>
-				<ul class="nav navbar-nav navbar-right" ng-show="config.navbar['logged_in']==true">
-					<div ng-show="config.navbar['competition_started']==true">
-					</div>
-					<li><a href="/chat">Chat</a></li>
-					<li class="dropdown" ng-show="config.navbar['competition']==true||config.navbar['admin']==true">
-						<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Competition <span class="caret"></span></a>
-						<ul class="dropdown-menu">
-							<li><a href="/problems">Problems</a></li>
-							<li><a href="/programming">Programming</a></li>
-						</ul>
-					</li>
-					<!-- <li ng-show="config.navbar['competition']!=true&&config.navbar['in_team']!=true"><a href="/findteam">Find Team</a></li> -->
-					<li class="dropdown" ng-show="config.navbar['admin']==true">
-						<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Admin <span class="caret"></span></a>
-						<ul class="dropdown-menu">
-							<li><a href="/admin/stats">Statistics</a></li>
-							<li><a href="/admin/problems">Problem Editor</a></li>
-							<li><a href="/admin/teams">Team Management</a></li>
-							<li role="separator" class="divider"></li>
-							<li><a href="/admin/settings">CTF Settings</a></li>
-						</ul>
-					</li>
-					<li class="dropdown">
-						<a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{ config.navbar["username"] }} <span class="caret"></span></a>
-						<ul class="dropdown-menu">
-							<li><a href="/profile">Profile</a></li>
-							<li><a href="/team">Team</a></li>
-							<li><a href="/help">Help</a></li>
-							<li role="separator" class="divider"></li>
-							<li><a href="/settings">Settings</a></li>
-							<li><a href="/logout">Logout</a></li>
-						</ul>
-					</li>
-				</ul>
-			</div>
-		</div>
-	</nav>
+<div id="site-message" style="margin: 0"></div>
+<nav class="navbar navbar-default">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#main-navbar" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="/" id="main_logo">{{ config.navbar['ctf_name'] }}</a>
+        </div>
+        <div id="main-navbar" class="navbar-collapse collapse">
+            <ul class="nav navbar-nav">
+                <li><a href="/scoreboard">Scoreboard</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right" ng-show="config.navbar['logged_in']==false">
+                <li><a href="/register">Register</a></li>
+                <li><a href="/login">Login</a></li>
+            </ul>
+            <ul class="nav navbar-nav navbar-right" ng-show="config.navbar['logged_in']==true">
+                <div ng-show="config.navbar['competition_started']==true">
+                </div>
+                <li><a href="/chat">Chat</a></li>
+                <li class="dropdown" ng-show="config.navbar['competition']==true||config.navbar['admin']==true">
+                    <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Competition
+                        <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="/problems">Problems</a></li>
+                        <li><a href="/programming">Programming</a></li>
+                    </ul>
+                </li>
+                <!-- <li ng-show="config.navbar['competition']!=true&&config.navbar['in_team']!=true"><a href="/findteam">Find Team</a></li> -->
+                <li class="dropdown" ng-show="config.navbar['admin']==true">
+                    <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Admin
+                        <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="/admin/stats">Statistics</a></li>
+                        <li><a href="/admin/problems">Problem Editor</a></li>
+                        <li><a href="/admin/teams">Team Management</a></li>
+                        <li role="separator" class="divider"></li>
+                        <li><a href="/admin/settings">CTF Settings</a></li>
+                    </ul>
+                </li>
+                <li class="dropdown">
+                    <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{
+                        config.navbar["username"] }} <span class="caret"></span></a>
+                    <ul class="dropdown-menu">
+                        <li><a href="/profile">Profile</a></li>
+                        <li><a href="/team">Team</a></li>
+                        <li><a href="/help">Help</a></li>
+                        <li role="separator" class="divider"></li>
+                        <li><a href="/settings">Settings</a></li>
+                        <li><a href="/logout">Logout</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
 
-	<div id="mainContent" class="container">
-		<div ng-view style="min-height:75vh;"></div>
-		<div class="footer" style="margin-bottom: 80px;">
-			<center>
-				<hr style="width:75%;" />
-				<p>This CTF runs on the <a href="https://github.com/EasyCTF/OpenCTF" target="_blank">OpenCTF</a> platform, an open-source CTF solution.</p>
-			</center>
-		</div>
-	</div>
+<div id="mainContent" class="container">
+    <div ng-view style="min-height:75vh;"></div>
+    <div class="footer" style="margin-bottom: 80px;">
+        <center>
+            <hr style="width:75%;"/>
+            <p>This CTF runs on the <a href="https://github.com/EasyCTF/OpenCTF" target="_blank">OpenCTF</a> platform,
+                an open-source CTF solution.</p>
+        </center>
+    </div>
+</div>
 </body>
 
 </html>

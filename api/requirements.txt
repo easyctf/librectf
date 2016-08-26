@@ -3,6 +3,7 @@ cryptography==1.2.3
 mysql-python
 Flask-SQLAlchemy
 Flask-Migrate
+Flask-OAuthlib
 Flask-Script
 SQLAlchemy
 gunicorn

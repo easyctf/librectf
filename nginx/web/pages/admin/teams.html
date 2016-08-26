@@ -1,88 +1,96 @@
 <div class="page-header">
-	<h1>Teams</h1>
-	<div id="team_overview_msg"/>
+    <h1>Teams</h1>
+    <div id="team_overview_msg"/>
 </div>
 
 <div class="panel-group">
-	<div class="panel panel-default" id="{{ team['tid'] }}_panel" ng-repeat="team in teams">
-		<div class="panel-heading" data-toggle="collapse" data-target="#{{ team['tid'] }}_body">
-			<h4 class="panel-title">
-				<a href="/team?teamname={{ team['teamname'] | escape }}" target="_blank">{{ team["teamname"] }}</a>
-				({{ team["points"] }} points)
-			</h4>
-		</div>
-		<div id="{{ team['tid'] }}_body" class="panel-collapse collapse panel-body">
-			<form id="{{ team['tid'] }}_form">
-				<p>
-					<button onclick="delete_team(this.closest('form').id); return false;" class="btn btn-danger btn-sm"><i class="fa fa-fw fa-trash"></i> Delete</button>
-				</p>
-				<div id="{{ team['tid'] }}_msg"/>
-					<input type="hidden" value="{{ team['tid'] }}"/>
-					<div class="row">
-						<div class="col-md-6">
-							<div class="page-header">
-								<h4>Members</h4>
-							</div>
-							<table class="table table-striped table-bordered">
-								<thead>
-									<tr>
-										<th>Name</th>
-										<th>Observer</th>
-									</tr>
-								</thead>
-								<tbody>
-									<tr ng-repeat="member in team['members']">
-										<td><a href="/profile/{{ member['username'] }}">{{ member['name'] }}</a> <span ng-show="member['captain']==true"><div class="label label-info">CAPTAIN</div></span></td>
-										<td><input id="{{ team['tid'] }}_observer" type="checkbox" ng-checked="member['observer']==true||member['admin']==true"/></td>
-									</tr>
-								</tbody>
-							</table>
-						</div>
-						<div class="col-md-6">
-							<div class="page-header">
-								<h4>Solves</h4>
-							</div>
-							<table class="table table-striped table-bordered">
-								<thead>
-									<tr>
-										<th>Problem</th>
-										<th>Value</th>
-										<th>Time</th>
-									</tr>
-								</thead>
-								<tbody>
-									<tr ng-repeat="solve in team['solves'] | orderBy:'-date' ">
-										<td>{{ solve['problem'] }}</td>
-										<td>{{ solve['value'] }}</td>
-										<td><time class="timeago" datetime="{{ solve['date'] }}"></time></td>
-									</tr>
-								</tbody>
-							</table>
-						</div>
-					</div>
-				</div>
-			</form>
-		</div>
-	</div>
+    <div class="panel panel-default" id="{{ team['tid'] }}_panel" ng-repeat="team in teams">
+        <div class="panel-heading" data-toggle="collapse" data-target="#{{ team['tid'] }}_body">
+            <h4 class="panel-title">
+                <a href="/team?teamname={{ team['teamname'] | escape }}" target="_blank">{{ team["teamname"] }}</a>
+                ({{ team["points"] }} points)
+            </h4>
+        </div>
+        <div id="{{ team['tid'] }}_body" class="panel-collapse collapse panel-body">
+            <form id="{{ team['tid'] }}_form">
+                <p>
+                    <button onclick="delete_team(this.closest('form').id); return false;" class="btn btn-danger btn-sm">
+                        <i class="fa fa-fw fa-trash"></i> Delete
+                    </button>
+                </p>
+                <div id="{{ team['tid'] }}_msg"/>
+                <input type="hidden" value="{{ team['tid'] }}"/>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="page-header">
+                            <h4>Members</h4>
+                        </div>
+                        <table class="table table-striped table-bordered">
+                            <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Observer</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr ng-repeat="member in team['members']">
+                                <td><a href="/profile/{{ member['username'] }}">{{ member['name'] }}</a>
+                                    <span ng-show="member['captain']==true"><div class="label label-info">CAPTAIN</div></span>
+                                </td>
+                                <td>
+                                    <input id="{{ team['tid'] }}_observer" type="checkbox" ng-checked="member['observer']==true||member['admin']==true"/>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="page-header">
+                            <h4>Solves</h4>
+                        </div>
+                        <table class="table table-striped table-bordered">
+                            <thead>
+                            <tr>
+                                <th>Problem</th>
+                                <th>Value</th>
+                                <th>Time</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr ng-repeat="solve in team['solves'] | orderBy:'-date' ">
+                                <td>{{ solve['problem'] }}</td>
+                                <td>{{ solve['value'] }}</td>
+                                <td>
+                                    <time class="timeago" datetime="{{ solve['date'] }}"></time>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+        </div>
+        </form>
+    </div>
+</div>
 </div>
 <script>
-var delete_team = function(form) {
-	var data = {};
-	var tid = form.split("_")[0];
-	data["tid"] = tid;
+    var delete_team = function (form) {
+        var data = {};
+        var tid = form.split("_")[0];
+        data["tid"] = tid;
 
-	api_call("POST", "/api/team/delete", data, function(result) {
-		if (result["success"] == 1) {
-			display_message("team_overview_msg", "success", result["message"], function() {
-				$("#" + tid + "_panel").slideUp("slow", "swing", null);
-			});
-		} else {
-			display_message("team_overview_msg", "danger", result["message"], null);
-		}
-	}, function(jqXHR) {
-		var result = jqXHR["responseText"];
-		display_message("team_overview_msg", "danger", "Error " + jqXHR["status"] + ": " + result["message"], function() {
-		});
-	});
-}
+        api_call("POST", "/api/team/delete", data, function (result) {
+            if (result["success"] == 1) {
+                display_message("team_overview_msg", "success", result["message"], function () {
+                    $("#" + tid + "_panel").slideUp("slow", "swing", null);
+                });
+            } else {
+                display_message("team_overview_msg", "danger", result["message"], null);
+            }
+        }, function (jqXHR) {
+            var result = jqXHR["responseText"];
+            display_message("team_overview_msg", "danger", "Error " + jqXHR["status"] + ": " + result["message"], function () {
+            });
+        });
+    }
 </script>

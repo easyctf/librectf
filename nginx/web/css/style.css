@@ -1,143 +1,182 @@
 @import url(https://fonts.googleapis.com/css?family=Exo+2);
+
 .heading1 {
     font-size: 75px !important;
     color: #62AC5B !important;
     font-family: "Exo 2" !important;
 }
+
 .charts {
-    width:100%;
-    border:4px double black;
+    width: 100%;
+    border: 4px double black;
 }
+
 .charted {
-    width:5em;
-    height:5em;
+    width: 5em;
+    height: 5em;
 }
+
 #map {
-    height:45em;
+    height: 45em;
     background-image: url(../images/placeholdermap.jpg);
     background-size: cover;
-    width:97%;
-    margin-right:auto;
-    margin-left:auto;
+    width: 97%;
+    margin-right: auto;
+    margin-left: auto;
 }
+
 ::-webkit-input-placeholder, :-moz-placeholder, ::-moz-placeholder, :-ms-input-placeholder {
     color: #999999;
 }
-.navbar-default .navbar-nav>.open>a, .navbar-default .navbar-nav>.open>a:focus, .navbar-default .navbar-nav>.open>a:hover, .dropdown-menu>li>a:focus, .dropdown-menu>li>a:hover {
-    background-color:#0066CC;
+
+.navbar-default .navbar-nav > .open > a, .navbar-default .navbar-nav > .open > a:focus, .navbar-default .navbar-nav > .open > a:hover, .dropdown-menu > li > a:focus, .dropdown-menu > li > a:hover {
+    background-color: #0066CC;
 }
+
 #menubox {
-    border:none;
+    border: none;
 }
+
 .pointvalue {
-    float:right;
+    float: right;
 }
+
 .panel.panel-info {
     margin: 2.5em;
 }
+
 .paragraph {
-    width:50em;
+    width: 50em;
     text-align: justify;
-    margin-left:auto;
-    margin-right:auto;
+    margin-left: auto;
+    margin-right: auto;
 }
+
 .prizes {
-    width:100%;
+    width: 100%;
 }
+
 #hint {
-    background:#0080FF;
-    border-color:#0180FF;
+    background: #0080FF;
+    border-color: #0180FF;
 }
+
 #check {
-    border-color:#449D44;
+    border-color: #449D44;
 }
+
 .probfile {
-    display:inline;
-    color:#62AC5B;
-    margin-right:1em;
-    margin-left:1em;
+    display: inline;
+    color: #62AC5B;
+    margin-right: 1em;
+    margin-left: 1em;
 }
+
 .filelink, .filelink:hover {
-    text-decoration:none;
+    text-decoration: none;
 }
+
 #style1 {
     background-color: #0080FF;
     margin: -0.1em;
 }
+
 #style1 .dropdown-menu {
     background-color: #1a8dff;
 }
+
 #email, #password {
     margin-bottom: 1em;
 }
+
 .style4 {
     margin-left: 10em;
     margin-right: 10em;
 }
+
 .icn {
     position: relative;
     bottom: 1px;
 }
+
 .style2 {
     margin: 0px 0px 0px 0px;
     padding: 0px 0px 0px 0px;
 }
+
 .style3 {
     margin-top: 1em;
 }
+
 #question-text {
     height: 4em;
 }
+
 #question-title {
     background-color: #D9EDF7;
     text-align: center;
     padding: 0px 0px 0px 0px;
     font-size: 1.2em;
 }
+
 .intro {
     text-align: center;
 }
+
 .column {
     max-width: 450px;
 }
+
 .mainbody {
     background-color: #FAFAFA;
 }
+
 .ui.menu .item img.logo {
     margin-right: 1.5em;
 }
+
 .main.container {
     margin-top: 7em;
 }
+
 .wireframe {
     margin-top: 2em;
 }
+
 .ui.footer.segment {
     margin: 5em 0em 0em;
     padding: 5em 0em;
 }
+
 .heading2, table {
     color: #226C1B;
 }
+
 li {
     transition-duration: 0.5s;
 }
+
 li:hover {
     background-color: #0066cc;
 }
+
 tr {
     transition-duration: 0.5s;
 }
+
 tr:hover {
     background-color: #DDDDDD;
 }
+
 li a, .navbar-brand {
     color: white !important;
 }
+
 #imp-files {
     margin-right: auto;
     padding-left: 2em;
 }
+
 @-webkit-keyframes fadeIn {
     from {
         opacity: 0;
@@ -146,6 +185,7 @@ li a, .navbar-brand {
         opacity: 1;
     }
 }
+
 @-moz-keyframes fadeIn {
     from {
         opacity: 0;
@@ -154,6 +194,7 @@ li a, .navbar-brand {
         opacity: 1;
     }
 }
+
 @keyframes fadeIn {
     from {
         opacity: 0;
@@ -162,6 +203,7 @@ li a, .navbar-brand {
         opacity: 1;
     }
 }
+
 .fade_in {
     opacity: 0;
     -webkit-animation: fadeIn ease-in-out 1;
@@ -174,24 +216,28 @@ li a, .navbar-brand {
     -moz-animation-duration: 1s;
     animation-duration: 1s;
 }
+
 .modal {
-  text-align: center;
+    text-align: center;
 }
+
 @media screen and (min-width: 768px) {
-  .modal:before {
-    display: inline-block;
-    vertical-align: middle;
-    content: " ";
-    height: 100%;
-  }
+    .modal:before {
+        display: inline-block;
+        vertical-align: middle;
+        content: " ";
+        height: 100%;
+    }
 }
+
 .modal-dialog {
-  display: inline-block;
-  text-align: left;
-  vertical-align: middle;
+    display: inline-block;
+    text-align: left;
+    vertical-align: middle;
 }
+
 .btn-sq-xs {
-  width: 25px !important;
-  height: 25px !important;
-  padding:2px;
+    width: 25px !important;
+    height: 25px !important;
+    padding: 2px;
 }

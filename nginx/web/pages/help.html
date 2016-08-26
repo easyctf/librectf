@@ -1,236 +1,260 @@
 <div ng-show="view==false">
-	<div class="page-header">
-		<h1>Help</h1>
-	</div>
+    <div class="page-header">
+        <h1>Help</h1>
+    </div>
 
-	<p>Are you having trouble with the platform? Have you discovered a bug? Submit a ticket here and admins will review it for you!</p>
+    <p>Are you having trouble with the platform? Have you discovered a bug? Submit a ticket here and admins will review
+        it for you!</p>
 
-	<div class="row">
-		<div class="tabbable">
-			<ul class="nav nav-pills nav-stacked col-md-3">
-				<li class="active"><a data-target="#new" data-toggle="tab">New</a></li>
-				<li><a data-target="#opened" data-toggle="tab">Open Tickets <span ng-show="data[0].length > 0" class="pull-right badge">{{ data[0].length }}</span></a></li>
-				<li><a data-target="#closed" data-toggle="tab">Closed Tickets <span ng-show="data[1].length > 0" class="pull-right badge">{{ data[1].length }}</span></a></li>
-			</ul>
-			<div class="tab-content col-md-9">
-				<div class="tab-pane active" id="new">
-					<div class="panel panel-default">
-						<div class="panel-heading">
-							<h4 class="panel-title">New Ticket</h4>
-						</div>
-						<div class="panel-body">
-							<div id="new_ticket_msg"/>
-							<form class="form-horizontal" onsubmit="new_ticket(); return false;" id="new_ticket_form">
-								<div class="row">
-									<div class="col-sm-12 form-group">
-										<label class="col-sm-12" for="title">Title</label>
-										<div class="col-sm-12"> <input class="form-control" type="text" required name="title" id="title" placeholder="Title" autocomplete="off" /> </div>
-									</div>
-								</div>
-								<div class="row">
-									<div class="col-sm-12 form-group">
-										<label class="col-sm-12" for="ticket_body">
-											Description
-											<p class="pull-right">
-												<i class="fa fa-fw fa-pencil"></i> Markdown Enabled
-											</p>
-										</label>
-										<div class="col-sm-12">
-											<textarea class="form-control" type="text" required name="ticket_body" id="ticket_body" placeholder="Leave a comment" autocomplete="off" />
-										</div>
-									</div>
-								</div>
-								<input type="submit" class="btn btn-success" value="Create"/>
-							</form>
-						</div>
-					</div>
-				</div>
-				<div class="tab-pane" id="opened">
-					<div class="panel panel-default">
-						<div class="panel-heading">
-							<h4 class="panel-title">Open Tickets</h4>
-						</div>
-						<ul class="list-group">
-							<div ng-repeat="ticket in data[0]">
-								<div class="list-group-item">
-									<i class="fa fa-question-circle" aria-hidden="true"></i>
-									<a style="color: black;" class="NO_HOVER_UNDERLINE_DAMMIT" ng-href="/help/{{ ticket.htid }}">{{ ticket.title }}</a>
-									<span style="color: grey; font-size: 15px;"> - {{ ticket.username }}</span>
-									<i class="fa fa-comment pull-right" aria-hidden="true" style="color: grey;">  {{ ticket.replies.length }}</i>
-									<div class="pull-right">Opened <time class="timeago" datetime="{{ ticket.date }}"/></div>
-								</div>
-							</div>
-						</ul>
-					</div>
-				</div>
-				<div class="tab-pane" id="closed">
-					<div class="panel panel-default">
-						<div class="panel-heading">
-							<h4 class="panel-title">Closed Tickets</h4>
-						</div>
-						<ul class="list-group">
-							<div ng-repeat="ticket in data[1]">
-								<div class="list-group-item">
-									<i class="fa fa-question-circle" aria-hidden="true"></i>
-									<a style="color: black;" class="NO_HOVER_UNDERLINE_DAMMIT" ng-href="/help/{{ ticket.htid }}">{{ ticket.title }}</a>
-									<span style="color: grey; font-size: 15px;"> - {{ ticket.username }}</span>
-									<i class="fa fa-comment pull-right" aria-hidden="true" style="color: grey;">  {{ ticket.replies.length }}</i>
-									<div class="pull-right">Opened <time class="timeago" datetime="{{ ticket.date }}"/></div>
-								</div>
-							</div>
-						</ul>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+    <div class="row">
+        <div class="tabbable">
+            <ul class="nav nav-pills nav-stacked col-md-3">
+                <li class="active"><a data-target="#new" data-toggle="tab">New</a></li>
+                <li><a data-target="#opened" data-toggle="tab">Open Tickets
+                    <span ng-show="data[0].length > 0" class="pull-right badge">{{ data[0].length }}</span></a></li>
+                <li><a data-target="#closed" data-toggle="tab">Closed Tickets
+                    <span ng-show="data[1].length > 0" class="pull-right badge">{{ data[1].length }}</span></a></li>
+            </ul>
+            <div class="tab-content col-md-9">
+                <div class="tab-pane active" id="new">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">New Ticket</h4>
+                        </div>
+                        <div class="panel-body">
+                            <div id="new_ticket_msg"/>
+                            <form class="form-horizontal" onsubmit="new_ticket(); return false;" id="new_ticket_form">
+                                <div class="row">
+                                    <div class="col-sm-12 form-group">
+                                        <label class="col-sm-12" for="title">Title</label>
+                                        <div class="col-sm-12">
+                                            <input class="form-control" type="text" required name="title" id="title" placeholder="Title" autocomplete="off"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-sm-12 form-group">
+                                        <label class="col-sm-12" for="ticket_body">
+                                            Description
+                                            <p class="pull-right">
+                                                <i class="fa fa-fw fa-pencil"></i> Markdown Enabled
+                                            </p>
+                                        </label>
+                                        <div class="col-sm-12">
+                                            <textarea class="form-control" type="text" required name="ticket_body" id="ticket_body" placeholder="Leave a comment" autocomplete="off"/>
+                                        </div>
+                                    </div>
+                                </div>
+                                <input type="submit" class="btn btn-success" value="Create"/>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="tab-pane" id="opened">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">Open Tickets</h4>
+                        </div>
+                        <ul class="list-group">
+                            <div ng-repeat="ticket in data[0]">
+                                <div class="list-group-item">
+                                    <i class="fa fa-question-circle" aria-hidden="true"></i>
+                                    <a style="color: black;" class="NO_HOVER_UNDERLINE_DAMMIT" ng-href="/help/{{ ticket.htid }}">{{
+                                        ticket.title }}</a>
+                                    <span style="color: grey; font-size: 15px;"> - {{ ticket.username }}</span>
+                                    <i class="fa fa-comment pull-right" aria-hidden="true" style="color: grey;"> {{
+                                        ticket.replies.length }}</i>
+                                    <div class="pull-right">Opened
+                                        <time class="timeago" datetime="{{ ticket.date }}"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </ul>
+                    </div>
+                </div>
+                <div class="tab-pane" id="closed">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">Closed Tickets</h4>
+                        </div>
+                        <ul class="list-group">
+                            <div ng-repeat="ticket in data[1]">
+                                <div class="list-group-item">
+                                    <i class="fa fa-question-circle" aria-hidden="true"></i>
+                                    <a style="color: black;" class="NO_HOVER_UNDERLINE_DAMMIT" ng-href="/help/{{ ticket.htid }}">{{
+                                        ticket.title }}</a>
+                                    <span style="color: grey; font-size: 15px;"> - {{ ticket.username }}</span>
+                                    <i class="fa fa-comment pull-right" aria-hidden="true" style="color: grey;"> {{
+                                        ticket.replies.length }}</i>
+                                    <div class="pull-right">Opened
+                                        <time class="timeago" datetime="{{ ticket.date }}"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 <div ng-show="view==true">
-	<div ng-show="angular.equals({}, data)"><h1>Invalid ticket.</h1></div>
-	<div ng-show="!angular.equals({}, data)">
-		<div class="page-header">
-			<h1><a href="/help">&laquo; Help</a> {{ data.title }}</h1>
-			<h4 style="display:inline;"><span ng-show="data.opened" class="label label-success">Open</span><span ng-show="!data.opened" class="label label-danger">Closed</span></h4>
-			<a class="NO_HOVER_UNDERLINE_DAMMIT" ng-href="/profile/{{ data.username }}">@{{ data.username }}</a> opened this issue <time class="timeago" datetime="{{ data.date }}" />
-		</div>
-		<div class="row">
-			<div class="col-md-8">
-				<table>
-					<tr>
-						<td style="vertical-align:top;">
-							<a ng-href="/profile/{{ data.username }}"><img align="left" ng-src="/api/user/avatar/{{ data.uid }}" id="avatar" style="max-width:64px;max-height:64px;"/></a>
-						</td>
-						<td style="width:100%">
-							<div class="panel panel-default">
-								<div class="panel-heading">
-									<h4 class="panel-title">
-										<a class="NO_HOVER_UNDERLINE_DAMMIT" ng-href="/profile/{{ data.username }}">@{{ data.username }}</a>
-										<small>commented <time class="timeago" style="color: gray;" datetime="{{ data.date }}"/></small>
-									</h4>
-								</div>
-								<div class="panel-body">
-									<p ng-bind-html="data['body'] | render_html"></p>
-								</div>
-							</div>
-						</td>
-					</tr>
-				</table>
-				<table ng-repeat="reply in data.replies">
-					<tr>
-						<td style="vertical-align:top;">
-							<a ng-href="/profile/{{ reply.username }}"><img align="left" ng-src="/api/user/avatar/{{ reply.uid }}" id="avatar" style="max-width:64px;max-height:64px;"/></a>
-						</td>
-						<td style="width:100%">
-							<div class="panel {{ reply.uid == data.you.uid ? 'panel-info' : 'panel-default' }}">
-								<div class="panel-heading">
-									<h4 class="panel-title">
-										<a class="NO_HOVER_UNDERLINE_DAMMIT" ng-href="/profile/{{ reply.username }}">@{{ reply.username }}</a>
-										<small>commented <time class="timeago" style="color: gray;" datetime="{{ reply.date }}"/></small>
-									</h4>
-								</div>
-								<div class="panel-body">
-									<p ng-bind-html="reply['body'] | render_html"></p>
-								</div>
-							</div>
-						</td>
-					</tr>
-				</table>
-				<hr />
-				<table>
-					<tr>
-						<td style="vertical-align:top;">
-							<a ng-href="/profile/{{ data.you.username }}"><img align="left" ng-src="/api/user/avatar/{{ data.you.uid }}" id="avatar" style="max-width:64px;max-height:64px;"/></a>
-						</td>
-						<td style="width:100%">
-							<form class="form-horizontal" onsubmit="new_reply(); return false;" id="new_reply_form">
-								<input type="hidden" name="htid" value="{{ data.htid }}" />
-								<div class="panel panel-default">
-									<div class="panel-heading">
-										<h4 class="panel-title">
-											Reply as
-											<a class="NO_HOVER_UNDERLINE_DAMMIT" ng-href="/profile/{{ data.you.username }}">@{{ data.you.username }}</a>
-											<p class="pull-right">
-												<i class="fa fa-fw fa-pencil"></i> Markdown Enabled
-											</p>
-										</h4>
-									</div>
-									<div class="panel-body">
-										<textarea class="form-control" type="text" required name="reply_body" id="reply_body" placeholder="Leave a comment" autocomplete="off" />
-									</div>
-									<div class="panel-footer" style="text-align:right;">
-										<input type="submit" class="btn btn-success" value="Reply"/>
-									</div>
-								</div>
-							</form>
-						</td>
-					</tr>
-				</table>
-			</div>
-			<div class="col-md-4">
-				<div class="panel panel-default">
-					<div class="panel-heading">
-						<h4 class="panel-title">Participants</h4>
-					</div>
-					<div class="list-group">
-						<a class="list-group-item" ng-repeat="participant in data.participants | orderBy:'' " href="/profile/{{ participant }}">
-							<img src="/api/user/avatar/{{ participant }}" style="width:32px;height:32px;margin-right:16px;" style="vertical-align:middle;">
-							@{{ participant }}
-						</a>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+    <div ng-show="angular.equals({}, data)"><h1>Invalid ticket.</h1></div>
+    <div ng-show="!angular.equals({}, data)">
+        <div class="page-header">
+            <h1><a href="/help">&laquo; Help</a> {{ data.title }}</h1>
+            <h4 style="display:inline;">
+                <span ng-show="data.opened" class="label label-success">Open</span><span ng-show="!data.opened" class="label label-danger">Closed</span>
+            </h4>
+            <a class="NO_HOVER_UNDERLINE_DAMMIT" ng-href="/profile/{{ data.username }}">@{{ data.username }}</a> opened
+            this issue
+            <time class="timeago" datetime="{{ data.date }}"/>
+        </div>
+        <div class="row">
+            <div class="col-md-8">
+                <table>
+                    <tr>
+                        <td style="vertical-align:top;">
+                            <a ng-href="/profile/{{ data.username }}"><img align="left" ng-src="/api/user/avatar/{{ data.uid }}" id="avatar" style="max-width:64px;max-height:64px;"/></a>
+                        </td>
+                        <td style="width:100%">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h4 class="panel-title">
+                                        <a class="NO_HOVER_UNDERLINE_DAMMIT" ng-href="/profile/{{ data.username }}">@{{
+                                            data.username }}</a>
+                                        <small>commented
+                                            <time class="timeago" style="color: gray;" datetime="{{ data.date }}"/>
+                                        </small>
+                                    </h4>
+                                </div>
+                                <div class="panel-body">
+                                    <p ng-bind-html="data['body'] | render_html"></p>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+                <table ng-repeat="reply in data.replies">
+                    <tr>
+                        <td style="vertical-align:top;">
+                            <a ng-href="/profile/{{ reply.username }}"><img align="left" ng-src="/api/user/avatar/{{ reply.uid }}" id="avatar" style="max-width:64px;max-height:64px;"/></a>
+                        </td>
+                        <td style="width:100%">
+                            <div class="panel {{ reply.uid == data.you.uid ? 'panel-info' : 'panel-default' }}">
+                                <div class="panel-heading">
+                                    <h4 class="panel-title">
+                                        <a class="NO_HOVER_UNDERLINE_DAMMIT" ng-href="/profile/{{ reply.username }}">@{{
+                                            reply.username }}</a>
+                                        <small>commented
+                                            <time class="timeago" style="color: gray;" datetime="{{ reply.date }}"/>
+                                        </small>
+                                    </h4>
+                                </div>
+                                <div class="panel-body">
+                                    <p ng-bind-html="reply['body'] | render_html"></p>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+                <hr/>
+                <table>
+                    <tr>
+                        <td style="vertical-align:top;">
+                            <a ng-href="/profile/{{ data.you.username }}"><img align="left" ng-src="/api/user/avatar/{{ data.you.uid }}" id="avatar" style="max-width:64px;max-height:64px;"/></a>
+                        </td>
+                        <td style="width:100%">
+                            <form class="form-horizontal" onsubmit="new_reply(); return false;" id="new_reply_form">
+                                <input type="hidden" name="htid" value="{{ data.htid }}"/>
+                                <div class="panel panel-default">
+                                    <div class="panel-heading">
+                                        <h4 class="panel-title">
+                                            Reply as
+                                            <a class="NO_HOVER_UNDERLINE_DAMMIT" ng-href="/profile/{{ data.you.username }}">@{{
+                                                data.you.username }}</a>
+                                            <p class="pull-right">
+                                                <i class="fa fa-fw fa-pencil"></i> Markdown Enabled
+                                            </p>
+                                        </h4>
+                                    </div>
+                                    <div class="panel-body">
+                                        <textarea class="form-control" type="text" required name="reply_body" id="reply_body" placeholder="Leave a comment" autocomplete="off"/>
+                                    </div>
+                                    <div class="panel-footer" style="text-align:right;">
+                                        <input type="submit" class="btn btn-success" value="Reply"/>
+                                    </div>
+                                </div>
+                            </form>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div class="col-md-4">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">Participants</h4>
+                    </div>
+                    <div class="list-group">
+                        <a class="list-group-item" ng-repeat="participant in data.participants | orderBy:'' " href="/profile/{{ participant }}">
+                            <img src="/api/user/avatar/{{ participant }}" style="width:32px;height:32px;margin-right:16px;" style="vertical-align:middle;">
+                            @{{ participant }}
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 <script>
-var new_ticket = function() {
-	var input = "#new_ticket_form input";
-	var data = $(input).serializeObject();
+    var new_ticket = function () {
+        var input = "#new_ticket_form input";
+        var data = $(input).serializeObject();
 
-	var body = $("#ticket_body").val();
-	data["body"] = body;
+        var body = $("#ticket_body").val();
+        data["body"] = body;
 
-	$(input).attr("disabled", "disabled");
-	api_call("POST", "/api/tickets/create", data, function(result) {
-		if (result["success"] == 1) {
-			display_message("new_ticket_msg", "success", result["message"], function() {
-				$(input).removeAttr("disabled");
-			});
-		} else {
-			display_message("new_ticket_msg", "danger", result["message"], function() {
-				$(input).removeAttr("disabled");
-			});
-		}
-	}, function(jqXHR) {
-		var result = jqXHR["responseText"];
-		display_message("new_ticket_msg", "danger", "Error " + jqXHR["status"] + ": " + result["message"], function() {
-			$(input).removeAttr("disabled");
-		});
-	});
-}
+        $(input).attr("disabled", "disabled");
+        api_call("POST", "/api/tickets/create", data, function (result) {
+            if (result["success"] == 1) {
+                display_message("new_ticket_msg", "success", result["message"], function () {
+                    $(input).removeAttr("disabled");
+                });
+            } else {
+                display_message("new_ticket_msg", "danger", result["message"], function () {
+                    $(input).removeAttr("disabled");
+                });
+            }
+        }, function (jqXHR) {
+            var result = jqXHR["responseText"];
+            display_message("new_ticket_msg", "danger", "Error " + jqXHR["status"] + ": " + result["message"], function () {
+                $(input).removeAttr("disabled");
+            });
+        });
+    }
 
-var new_reply = function() {
-	var input = "#new_reply_form input";
-	var data = $(input).serializeObject();
+    var new_reply = function () {
+        var input = "#new_reply_form input";
+        var data = $(input).serializeObject();
 
-	var body = $("#reply_body").val();
-	data["body"] = body;
+        var body = $("#reply_body").val();
+        data["body"] = body;
 
-	$(input).attr("disabled", "disabled");
-	api_call("POST", "/api/tickets/reply", data, function(result) {
-		if (result["success"] == 1) {
-			location.reload();
-			$(input).removeAttr("disabled");
-		} else {
-			display_message("new_reply_msg", "danger", result["message"], function() {
-				$(input).removeAttr("disabled");
-			});
-		}
-	}, function(jqXHR) {
-		var result = jqXHR["responseText"];
-		display_message("new_reply_msg", "danger", "Error " + jqXHR["status"] + ": " + result["message"], function() {
-			$(input).removeAttr("disabled");
-		});
-	});
-}
+        $(input).attr("disabled", "disabled");
+        api_call("POST", "/api/tickets/reply", data, function (result) {
+            if (result["success"] == 1) {
+                location.reload();
+                $(input).removeAttr("disabled");
+            } else {
+                display_message("new_reply_msg", "danger", result["message"], function () {
+                    $(input).removeAttr("disabled");
+                });
+            }
+        }, function (jqXHR) {
+            var result = jqXHR["responseText"];
+            display_message("new_reply_msg", "danger", "Error " + jqXHR["status"] + ": " + result["message"], function () {
+                $(input).removeAttr("disabled");
+            });
+        });
+    }
 </script>

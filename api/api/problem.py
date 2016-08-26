@@ -1,410 +1,425 @@
-from flask import Blueprint, jsonify, session, request
-from flask import current_app as app
-from werkzeug import secure_filename
-
-from models import db, Files, Problems, ProgrammingSubmissions, Solves, Teams, Users, Activity
-from decorators import admins_only, api_wrapper, login_required, team_required, InternalException, WebException
-
-import datetime
-import hashlib
 import imp
 import json
 import os
 import random
 import shutil
+
 import markdown2
+from flask import Blueprint, session, request
+from flask import current_app as app
+from werkzeug import secure_filename
 
 import autogen
 import cache
 import logger
 import programming
 import stats
-import team
 import user
 import utils
+from decorators import admins_only, api_wrapper, login_required, team_required, InternalException, WebException
+from models import db, Files, Problems, ProgrammingSubmissions, Solves, Teams, Activity
 
 blueprint = Blueprint("problem", __name__)
+
 
 @blueprint.route("/add", methods=["POST"])
 @api_wrapper
 @admins_only
 def problem_add():
-	params = utils.flat_multi(request.form)
-	title = params.get("title")
-	category = params.get("category")
-	description = params.get("description")
-	hint = params.get("hint")
-	value = params.get("value")
-	grader_contents = params.get("grader_contents")
-	bonus = params.get("bonus")
-	autogen = params.get("autogen")
-	try:
-		weightmap = json.loads(params.get("weightmap", "{}"))
-	except:
-		weightmap = {}
-	threshold = params.get("threshold", 0)
+    params = utils.flat_multi(request.form)
+    title = params.get("title")
+    category = params.get("category")
+    description = params.get("description")
+    hint = params.get("hint")
+    value = params.get("value")
+    grader_contents = params.get("grader_contents")
+    bonus = params.get("bonus")
+    autogen = params.get("autogen")
+    try:
+        weightmap = json.loads(params.get("weightmap", "{}"))
+    except:
+        weightmap = {}
+    threshold = params.get("threshold", 0)
 
-	try:
-		add_problem(title, category, description, value, grader_contents, hint=hint, bonus=bonus, autogen=autogen, threshold=threshold, weightmap=weightmap)
-	except Exception, e:
-		raise WebException("Error: " + str(e))
-	return { "success": 1, "message": "Success!" }
+    try:
+        add_problem(title, category, description, value, grader_contents, hint=hint, bonus=bonus, autogen=autogen,
+                    threshold=threshold, weightmap=weightmap)
+    except Exception, e:
+        raise WebException("Error: " + str(e))
+    return {"success": 1, "message": "Success!"}
+
 
 @blueprint.route("/delete", methods=["POST"])
 @api_wrapper
 @admins_only
 def problem_delete():
-	params = utils.flat_multi(request.form)
-	pid = params.get("pid")
-	problem = Problems.query.filter_by(pid=pid).first()
-	if problem:
-		ProgrammingSubmissions.query.filter_by(pid=pid).delete()
-		Solves.query.filter_by(pid=pid).delete()
-		Activity.query.filter_by(pid=pid).delete()
-		Problems.query.filter_by(pid=pid).delete()
-		grader_folder = os.path.dirname(problem.grader)
-		shutil.rmtree(grader_folder)
-		db.session.commit()
-		db.session.close()
-		return { "success": 1, "message": "Success!" }
-	raise WebException("Problem does not exist!")
+    params = utils.flat_multi(request.form)
+    pid = params.get("pid")
+    problem = Problems.query.filter_by(pid=pid).first()
+    if problem:
+        ProgrammingSubmissions.query.filter_by(pid=pid).delete()
+        Solves.query.filter_by(pid=pid).delete()
+        Activity.query.filter_by(pid=pid).delete()
+        Problems.query.filter_by(pid=pid).delete()
+        grader_folder = os.path.dirname(problem.grader)
+        shutil.rmtree(grader_folder)
+        db.session.commit()
+        db.session.close()
+        return {"success": 1, "message": "Success!"}
+    raise WebException("Problem does not exist!")
+
 
 @blueprint.route("/update", methods=["POST"])
 @api_wrapper
 @admins_only
 def problem_update():
-	params = utils.flat_multi(request.form)
-	pid = params.get("pid")
-	title = params.get("title")
-	category = params.get("category")
-	description = params.get("description")
-	hint = params.get("hint")
-	value = params.get("value")
-	bonus = params.get("bonus")
-	grader_contents = params.get("grader_contents")
-	autogen = params.get("autogen")
-	try:
-		weightmap = json.loads(params.get("weightmap", "{}"))
-	except:
-		weightmap = {}
-	threshold = params.get("threshold", 0)
+    params = utils.flat_multi(request.form)
+    pid = params.get("pid")
+    title = params.get("title")
+    category = params.get("category")
+    description = params.get("description")
+    hint = params.get("hint")
+    value = params.get("value")
+    bonus = params.get("bonus")
+    grader_contents = params.get("grader_contents")
+    autogen = params.get("autogen")
+    try:
+        weightmap = json.loads(params.get("weightmap", "{}"))
+    except:
+        weightmap = {}
+    threshold = params.get("threshold", 0)
 
-	problem = Problems.query.filter_by(pid=pid).first()
-	if problem:
-		problem.title = title
-		problem.category = category
-		problem.description = description
-		problem.hint = hint
-		problem.value = value
-		problem.bonus = bonus
-		problem.autogen = autogen
-		problem.weightmap = weightmap
-		problem.threshold = threshold
+    problem = Problems.query.filter_by(pid=pid).first()
+    if problem:
+        problem.title = title
+        problem.category = category
+        problem.description = description
+        problem.hint = hint
+        problem.value = value
+        problem.bonus = bonus
+        problem.autogen = autogen
+        problem.weightmap = weightmap
+        problem.threshold = threshold
 
-		if category == "Programming":
-			programming.validate_judge(grader_contents)
-		else:
-			validate_grader(grader_contents, autogen=int(autogen))
+        if category == "Programming":
+            programming.validate_judge(grader_contents)
+        else:
+            validate_grader(grader_contents, autogen=int(autogen))
 
-		with open(problem.grader, "w") as grader:
-			grader.write(grader_contents)
-			grader.close()
+        with open(problem.grader, "w") as grader:
+            grader.write(grader_contents)
+            grader.close()
 
-		db.session.add(problem)
-		db.session.commit()
-		db.session.close()
+        db.session.add(problem)
+        db.session.commit()
+        db.session.close()
 
-		return { "success": 1, "message": "Success!" }
-	raise WebException("Problem does not exist!")
+        return {"success": 1, "message": "Success!"}
+    raise WebException("Problem does not exist!")
+
 
 @blueprint.route("/submit", methods=["POST"])
 @api_wrapper
 @login_required
 @team_required
 def problem_submit():
-	params = utils.flat_multi(request.form)
-	pid = params.get("pid")
-	flag = params.get("flag")
-	tid = session.get("tid")
-	_user = user.get_user().first()
-	username = _user.username
+    params = utils.flat_multi(request.form)
+    pid = params.get("pid")
+    flag = params.get("flag")
+    tid = session.get("tid")
+    _user = user.get_user().first()
+    username = _user.username
 
-	problem = Problems.query.filter_by(pid=pid).first()
-	_team = Teams.query.filter_by(tid=tid).first()
+    problem = Problems.query.filter_by(pid=pid).first()
+    _team = Teams.query.filter_by(tid=tid).first()
 
-	if problem not in get_problems(tid):
-		raise WebException("You have not unlocked this problem.")
+    if problem not in get_problems(tid):
+        raise WebException("You have not unlocked this problem.")
 
-	solved = Solves.query.filter_by(pid=pid, tid=tid, correct=1).first()
-	if solved:
-		raise WebException("You already solved this problem.")
+    solved = Solves.query.filter_by(pid=pid, tid=tid, correct=1).first()
+    if solved:
+        raise WebException("You already solved this problem.")
 
-	flag_tried = Solves.query.filter_by(tid=tid, pid=pid, flag=flag).first()
-	if flag_tried:
-		raise WebException("Your team has already tried this solution.")
+    flag_tried = Solves.query.filter_by(tid=tid, pid=pid, flag=flag).first()
+    if flag_tried:
+        raise WebException("Your team has already tried this solution.")
 
-	if problem:
-		old_rank, dummy = _team.place()
-		dummy, dummy2, old_leader = stats.get_leaderboard()[0]
-		if problem.category == "Programming":
-			raise WebException("Please submit programming problems using the Programming interface.")
-		grader = imp.load_source("grader", problem.grader)
-		random = None
-		if problem.autogen:
-			random = autogen.get_random(pid, tid)
-		correct, response = grader.grade(random, flag)
+    if problem:
+        old_rank, dummy = _team.place()
+        dummy, dummy2, old_leader = stats.get_leaderboard()[0]
+        if problem.category == "Programming":
+            raise WebException("Please submit programming problems using the Programming interface.")
+        grader = imp.load_source("grader", problem.grader)
+        random = None
+        if problem.autogen:
+            random = autogen.get_random(pid, tid)
+        correct, response = grader.grade(random, flag)
 
-		solve = Solves(pid, _user.uid, tid, flag, correct)
-		db.session.add(solve)
-		db.session.commit()
+        solve = Solves(pid, _user.uid, tid, flag, correct)
+        db.session.add(solve)
+        db.session.commit()
 
-		if correct:
-			# Wait until after the solve has been added to the database before adding bonus
-			solves = get_solves(pid)
-			solve.bonus = [-1, solves][solves < 4]
-			cache.invalidate_memoization(get_solves, pid)
-			if _user:
-				activity = Activity(_user.uid, 3, tid=tid, pid=pid)
-				db.session.add(activity)
-			db.session.commit()
-			logger.log(__name__, "%s has solved %s by submitting %s" % (_team.teamname, problem.title, flag), level=logger.WARNING)
+        if correct:
+            # Wait until after the solve has been added to the database before adding bonus
+            solves = get_solves(pid)
+            solve.bonus = [-1, solves][solves < 4]
+            cache.invalidate_memoization(get_solves, pid)
+            if _user:
+                activity = Activity(_user.uid, 3, tid=tid, pid=pid)
+                db.session.add(activity)
+            db.session.commit()
+            logger.log(__name__, "%s has solved %s by submitting %s" % (_team.teamname, problem.title, flag),
+                       level=logger.WARNING)
 
-			new_rank, dummy = _team.place()
-			if new_rank == 1 and old_rank > 1:
-				activity = Activity(-1, 4, tid=_team.tid, pid=-1)
-				db.session.add(activity)
-				activity = Activity(-1, 5, tid=old_leader.tid, pid=-1)
-				db.session.add(activity)
-				db.session.commit()
-				db.session.close()
-			return { "success": 1, "message": response }
-		else:
-			logger.log(__name__, "%s has incorrectly submitted %s to %s" % (_team.teamname, flag, problem.title), level=logger.WARNING)
-			raise WebException(response)
+            new_rank, dummy = _team.place()
+            if new_rank == 1 and old_rank > 1:
+                activity = Activity(-1, 4, tid=_team.tid, pid=-1)
+                db.session.add(activity)
+                activity = Activity(-1, 5, tid=old_leader.tid, pid=-1)
+                db.session.add(activity)
+                db.session.commit()
+                db.session.close()
+            return {"success": 1, "message": response}
+        else:
+            logger.log(__name__, "%s has incorrectly submitted %s to %s" % (_team.teamname, flag, problem.title),
+                       level=logger.WARNING)
+            raise WebException(response)
 
-	else:
-		raise WebException("Problem does not exist!")
+    else:
+        raise WebException("Problem does not exist!")
 
 
 @blueprint.route("/data", methods=["GET"])
 @api_wrapper
 @login_required
 def problem_data():
-	_user = user.get_user().first()
-	if not user.is_admin():
-		if not user.in_team(_user):
-			raise WebException("You need a team.")
+    _user = user.get_user().first()
+    if not user.is_admin():
+        if not user.in_team(_user):
+            raise WebException("You need a team.")
 
-	problems = get_problems(_user.tid, admin=user.is_admin())
-	problems_return = [ ]
-	for problem in problems:
-		solves = get_solves(problem.pid)
-		solved = Solves.query.filter_by(pid=problem.pid, tid=session.get("tid", None), correct=1).first()
-		solved = ["Solved", "Unsolved"][solved is None]
-		description = process_description(problem.description)
+    problems = get_problems(_user.tid, admin=user.is_admin())
+    problems_return = []
+    for problem in problems:
+        solves = get_solves(problem.pid)
+        solved = Solves.query.filter_by(pid=problem.pid, tid=session.get("tid", None), correct=1).first()
+        solved = ["Solved", "Unsolved"][solved is None]
+        description = process_description(problem.description)
 
-		data = {
-			"pid": problem.pid,
-			"title": problem.title,
-			"category": problem.category,
-			"description": description,
-			"hint": problem.hint,
-			"value": problem.value,
-			"solves": solves,
-			"solved": solved
-		}
-		admin_data = {
-			"description_source": problem.description,
-			"threshold": problem.threshold,
-			"weightmap": problem.weightmap,
-			"grader_contents": open(problem.grader, "r").read(),
-			"bonus": problem.bonus,
-			"autogen": problem.autogen == True
-		}
-		if "admin" in session and session["admin"]:
-			data.update(admin_data)
-		if problem.autogen:
-			grader = imp.load_source("grader", problem.grader)
-			tid = session.get("tid", "team")
-			try:
-				data.update(grader.generate_problem(autogen.get_random(problem.pid, tid), problem.pid))
-			except Exception, e:
-				logger.log(__name__, "The grader for \"%s\" has thrown an error: %s" % (problem.title, e))
-		problems_return.append(data)
-	return { "success": 1, "problems": problems_return }
+        data = {
+            "pid": problem.pid,
+            "title": problem.title,
+            "category": problem.category,
+            "description": description,
+            "hint": problem.hint,
+            "value": problem.value,
+            "solves": solves,
+            "solved": solved
+        }
+        admin_data = {
+            "description_source": problem.description,
+            "threshold": problem.threshold,
+            "weightmap": problem.weightmap,
+            "grader_contents": open(problem.grader, "r").read(),
+            "bonus": problem.bonus,
+            "autogen": problem.autogen == True
+        }
+        if "admin" in session and session["admin"]:
+            data.update(admin_data)
+        if problem.autogen:
+            grader = imp.load_source("grader", problem.grader)
+            tid = session.get("tid", "team")
+            try:
+                data.update(grader.generate_problem(autogen.get_random(problem.pid, tid), problem.pid))
+            except Exception, e:
+                logger.log(__name__, "The grader for \"%s\" has thrown an error: %s" % (problem.title, e))
+        problems_return.append(data)
+    return {"success": 1, "problems": problems_return}
+
 
 @blueprint.route("/solves", methods=["POST"])
 @api_wrapper
 @login_required
 @team_required
 def problem_solves():
-	params = utils.flat_multi(request.form)
-	pid = params.get("pid")
-	solves_return = []
-	solves = Solves.query.filter_by(pid=pid,correct=True).order_by("date asc").all()
-	for solve in solves:
-		data = {
-			"teamname": Teams.query.filter_by(tid=solve.tid).first().teamname,
-			"date": utils.isoformat(float(solve.date))
-		}
-		solves_return.append(data)
-	return { "success": 1, "solves": solves_return }
+    params = utils.flat_multi(request.form)
+    pid = params.get("pid")
+    solves_return = []
+    solves = Solves.query.filter_by(pid=pid, correct=True).order_by("date asc").all()
+    for solve in solves:
+        data = {
+            "teamname": Teams.query.filter_by(tid=solve.tid).first().teamname,
+            "date": utils.isoformat(float(solve.date))
+        }
+        solves_return.append(data)
+    return {"success": 1, "solves": solves_return}
+
 
 @blueprint.route("/clear_submissions", methods=["POST"])
 @api_wrapper
 @login_required
 @admins_only
 def clear_solves():
-	params = utils.flat_multi(request.form)
+    params = utils.flat_multi(request.form)
 
-	pid = params.get("pid")
-	Solves.query.filter_by(pid=pid).delete()
-	ProgrammingSubmissions.query.filter_by(pid=pid).delete()
-	cache.invalidate_memoization(get_solves, pid)
-	db.session.commit()
-	db.session.close()
+    pid = params.get("pid")
+    Solves.query.filter_by(pid=pid).delete()
+    ProgrammingSubmissions.query.filter_by(pid=pid).delete()
+    cache.invalidate_memoization(get_solves, pid)
+    db.session.commit()
+    db.session.close()
 
-	return { "success": 1, "message": "Submissions cleared." }
+    return {"success": 1, "message": "Submissions cleared."}
+
 
 @cache.memoize(timeout=120)
 def get_solves(pid):
-	solves = Solves.query.filter_by(pid=pid, correct=1).count()
-	return solves
+    solves = Solves.query.filter_by(pid=pid, correct=1).count()
+    return solves
+
 
 def insert_problem(data, force=False):
-	with app.app_context():
-		if len(list(get_problem(pid=data["pid"]).all())) > 0:
-			if force == True:
-				_problem = Problems.query.filter_by(pid=data["pid"]).first()
-				db.session.delete(_problem)
-				db.session.commit()
-			else:
-				raise InternalException("Problem already exists.")
-		insert = Problems(data["pid"], data["title"], data["category"], data["description"], data["value"])
-		if "hint" in data: insert.hint = data["hint"]
-		if "autogen" in data: insert.autogen = data["autogen"]
-		if "bonus" in data: insert.bonus = data["bonus"]
-		if "threshold" in data: insert.threshold = data["threshold"]
-		if "weightmap" in data: insert.weightmap = data["weightmap"]
-		db.session.add(insert)
-		db.session.commit()
-		db.session.close()
-	return True
+    with app.app_context():
+        if len(list(get_problem(pid=data["pid"]).all())) > 0:
+            if force == True:
+                _problem = Problems.query.filter_by(pid=data["pid"]).first()
+                db.session.delete(_problem)
+                db.session.commit()
+            else:
+                raise InternalException("Problem already exists.")
+        insert = Problems(data["pid"], data["title"], data["category"], data["description"], data["value"])
+        if "hint" in data: insert.hint = data["hint"]
+        if "autogen" in data: insert.autogen = data["autogen"]
+        if "bonus" in data: insert.bonus = data["bonus"]
+        if "threshold" in data: insert.threshold = data["threshold"]
+        if "weightmap" in data: insert.weightmap = data["weightmap"]
+        db.session.add(insert)
+        db.session.commit()
+        db.session.close()
+    return True
+
 
 def get_problem(title=None, pid=None):
-	match = {}
-	if title != None:
-		match.update({ "title": title })
-	elif pid != None:
-		match.update({ "pid": pid })
-	with app.app_context():
-		result = Problems.query.filter_by(**match)
-		return result
+    match = {}
+    if title != None:
+        match.update({"title": title})
+    elif pid != None:
+        match.update({"pid": pid})
+    with app.app_context():
+        result = Problems.query.filter_by(**match)
+        return result
+
 
 @cache.memoize()
 def num_problems():
-	return Problems.query.filter_by().count()
+    return Problems.query.filter_by().count()
 
-def add_problem(title, category, description, value, grader_contents, hint="", bonus=0, autogen=0, weightmap={}, threshold=0):
-	grader_contents = str(grader_contents)
-	pid = title.lower().replace(" ", "-")
-	value = int(value)
 
-	title_exists = Problems.query.filter_by(title=title).first()
-	pid_exists = Problems.query.filter_by(pid=pid).first()
-	if title_exists or pid_exists:
-		raise WebException("Problem name already taken.")
+def add_problem(title, category, description, value, grader_contents, hint="", bonus=0, autogen=0, weightmap={},
+                threshold=0):
+    grader_contents = str(grader_contents)
+    pid = title.lower().replace(" ", "-")
+    value = int(value)
 
-	if category == "Programming":
-		programming.validate_judge(grader_contents)
-	else:
-		validate_grader(grader_contents, autogen=int(autogen))
+    title_exists = Problems.query.filter_by(title=title).first()
+    pid_exists = Problems.query.filter_by(pid=pid).first()
+    if title_exists or pid_exists:
+        raise WebException("Problem name already taken.")
 
-	grader_folder = os.path.join(app.config["GRADER_FOLDER"], pid)
-	if not os.path.exists(grader_folder):
-		os.makedirs(grader_folder)
-	grader_path = os.path.join(grader_folder, "grader.py")
-	grader_file = open(grader_path, "w")
-	grader_file.write(grader_contents)
-	grader_file.close()
+    if category == "Programming":
+        programming.validate_judge(grader_contents)
+    else:
+        validate_grader(grader_contents, autogen=int(autogen))
 
-	problem = Problems(pid, title, category, description, value, grader_path, bonus=bonus, hint=hint, autogen=autogen, weightmap=weightmap, threshold=threshold)
-	db.session.add(problem)
+    grader_folder = os.path.join(app.config["GRADER_FOLDER"], pid)
+    if not os.path.exists(grader_folder):
+        os.makedirs(grader_folder)
+    grader_path = os.path.join(grader_folder, "grader.py")
+    grader_file = open(grader_path, "w")
+    grader_file.write(grader_contents)
+    grader_file.close()
 
-	files = request.files.getlist("files[]")
-	for _file in files:
-		filename = secure_filename(_file.filename)
-		if len(filename) == 0:
-			continue
-		file_path = os.path.join(app.config["UPLOAD_FOLDER"], filename)
-		_file.save(file_path)
-		db_file = Files(problem.pid, "/".join(file_path.split("/")[2:]))
-		db.session.add(db_file)
-	db.session.commit()
-	db.session.close()
+    problem = Problems(pid, title, category, description, value, grader_path, bonus=bonus, hint=hint, autogen=autogen,
+                       weightmap=weightmap, threshold=threshold)
+    db.session.add(problem)
+
+    files = request.files.getlist("files[]")
+    for _file in files:
+        filename = secure_filename(_file.filename)
+        if len(filename) == 0:
+            continue
+        file_path = os.path.join(app.config["UPLOAD_FOLDER"], filename)
+        _file.save(file_path)
+        db_file = Files(problem.pid, "/".join(file_path.split("/")[2:]))
+        db.session.add(db_file)
+    db.session.commit()
+    db.session.close()
+
 
 def process_description(description):
-	description = markdown2.markdown(description)
-	description = description.replace("href=\"", "target=\"_blank\" href=\"") # dirty hack
-	return description
+    description = markdown2.markdown(description)
+    description = description.replace("href=\"", "target=\"_blank\" href=\"")  # dirty hack
+    return description
+
 
 def validate_grader(grader_contents, autogen=False):
-	tmp_grader = "/tmp/grader.py"
-	open(tmp_grader, "w").write(grader_contents)
+    tmp_grader = "/tmp/grader.py"
+    open(tmp_grader, "w").write(grader_contents)
 
-	try:
-		grader = imp.load_source("grader", tmp_grader)
-	except Exception, e:
-		raise WebException("There is a syntax error in the grader: %s" % e)
+    try:
+        grader = imp.load_source("grader", tmp_grader)
+    except Exception, e:
+        raise WebException("There is a syntax error in the grader: %s" % e)
 
-	if autogen:
-		# Autogenerated
-		try:
-			seed1 = utils.generate_string()
-			seed2 = utils.generate_string()
+    if autogen:
+        # Autogenerated
+        try:
+            seed1 = utils.generate_string()
+            seed2 = utils.generate_string()
 
-			while seed1 == seed2:
-				seed2 = utils.generate_string()
-			random.seed(seed1)
-			data = grader.generate_problem(random, "pid")
-			assert type(data) == dict
+            while seed1 == seed2:
+                seed2 = utils.generate_string()
+            random.seed(seed1)
+            data = grader.generate_problem(random, "pid")
+            assert type(data) == dict
 
-			random.seed(seed1)
-			flag1 = grader.generate_flag(random)
-			random.seed(seed2)
-			flag2 = grader.generate_flag(random)
+            random.seed(seed1)
+            flag1 = grader.generate_flag(random)
+            random.seed(seed2)
+            flag2 = grader.generate_flag(random)
 
-			assert flag1 != flag2, "generate_flag() has generated the same flag twice."
+            assert flag1 != flag2, "generate_flag() has generated the same flag twice."
 
-			random.seed(seed1)
-			correct, message = grader.grade(random, flag1)
+            random.seed(seed1)
+            correct, message = grader.grade(random, flag1)
 
-			assert correct == True, "Grader marked correct flag as incorrect."
-		except AssertionError, e:
-			raise WebException(str(e))
-		except Exception, e:
-			raise WebException(str(e))
-	else:
-		try:
-			correct, message = grader.grade(None, "hi")
-			assert type(correct) == bool, "First return from grade() must be a boolean."
-			assert hasattr(grader, "flag"), "Grader is missing the flag."
+            assert correct == True, "Grader marked correct flag as incorrect."
+        except AssertionError, e:
+            raise WebException(str(e))
+        except Exception, e:
+            raise WebException(str(e))
+    else:
+        try:
+            correct, message = grader.grade(None, "hi")
+            assert type(correct) == bool, "First return from grade() must be a boolean."
+            assert hasattr(grader, "flag"), "Grader is missing the flag."
 
-			correct, message = grader.grade(None, grader.flag)
-			assert correct, "Grader marked correct flag as incorrect."
-		except AssertionError, e:
-			raise WebException(str(e))
-		except Exception, e:
-			raise WebException(str(e))
+            correct, message = grader.grade(None, grader.flag)
+            assert correct, "Grader marked correct flag as incorrect."
+        except AssertionError, e:
+            raise WebException(str(e))
+        except Exception, e:
+            raise WebException(str(e))
+
 
 def get_problems(tid, admin=False):
-	if admin:
-		return Problems.query.all()
-	solves = Solves.query.filter_by(tid=tid, correct=True).all()
-	problems = Problems.query.all()
-	problems_return = []
-	for problem in problems:
-		current = sum([problem.weightmap.get(solve.pid, 0) for solve in solves])
-		if current >= problem.threshold:
-			problems_return.append(problem)
-	return problems_return
+    if admin:
+        return Problems.query.all()
+    solves = Solves.query.filter_by(tid=tid, correct=True).all()
+    problems = Problems.query.all()
+    problems_return = []
+    for problem in problems:
+        current = sum([problem.weightmap.get(solve.pid, 0) for solve in solves])
+        if current >= problem.threshold:
+            problems_return.append(problem)
+    return problems_return

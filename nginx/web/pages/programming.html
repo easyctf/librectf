@@ -1,120 +1,130 @@
 <div class="page-header">
-	<h1>Programming</h1>
+    <h1>Programming</h1>
 </div>
 <div class="row">
-	<div id="programming_msg" />
-	<div class="col-xs-12">
-		<div ng-show="data!=null" class="panel panel-default">
-			<div class="panel-heading clearfix">
-				<h4 class="panel-title">Code Editor
-					<div class="pull-right">
-						<select class="form-control" id="language-select" onchange="update_highlighting()">
-							<option value="python2">Python 2</option>
-							<option value="python3">Python 3</option>
-							<option value="java">Java</option>
-						</select>
-					</div>
-				</h4>
-			</div>
-			<div style="text-align: left" class="panel-body" id="editor">
-			</div>
-			<div class="panel-footer">
-				<div class="input-group">
-					<select class="form-control" id="problem-select">
-						<option value="">Select Problem...</option>
-						<option ng-repeat="problem in data.problems" ng-value="problem.pid" title="{{ problem.title }}">{{ problem.title }}</option>
-					</select>
+    <div id="programming_msg"/>
+    <div class="col-xs-12">
+        <div ng-show="data!=null" class="panel panel-default">
+            <div class="panel-heading clearfix">
+                <h4 class="panel-title">Code Editor
+                    <div class="pull-right">
+                        <select class="form-control" id="language-select" onchange="update_highlighting()">
+                            <option value="python2">Python 2</option>
+                            <option value="python3">Python 3</option>
+                            <option value="java">Java</option>
+                        </select>
+                    </div>
+                </h4>
+            </div>
+            <div style="text-align: left" class="panel-body" id="editor">
+            </div>
+            <div class="panel-footer">
+                <div class="input-group">
+                    <select class="form-control" id="problem-select">
+                        <option value="">Select Problem...</option>
+                        <option ng-repeat="problem in data.problems" ng-value="problem.pid" title="{{ problem.title }}">
+                            {{ problem.title }}
+                        </option>
+                    </select>
 					<span class="input-group-btn">
 						<button class="btn btn-success" type="button" ng-click="submit();">Submit</button>
 					</span>
-				</div>
-			</div>
-		</div>
-	</div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 <table ng-show="data!=null" class="table table-striped">
-	<thead>
-		<th>Submission #</th>
-		<th>Date</th>
-		<th>Problem title</th>
-		<th>Message</th>
-		<th>Duration (s)</th>
-		<th>Log</th>
-	</thead>
-	<tbody>
-		<tr ng-repeat="submission in submissions">
-			<td>{{ submission.number }}</td>
-			<td><time class="timeago" datetime="{{ submission.date }}"/></td>
-			<td>{{ submission.title }}</td>
-			<td>{{ submission.message }}</td>
-			<td>{{ submission.duration }}</td>
-			<td><button type="button" class="btn btn-sq-xs" data-toggle="modal" data-target="#{{ submission.number }}_log"><i class="fa fa-info-circle"/></button></td>
-			<td><button type="button" class="btn btn-sq-xs" id="{{ submission.psid }}" onclick="delete_submission(this.id); return false;"><i class="fa fa-trash-o"/></button></td>
-		</tr>
-	</tbody>
+    <thead>
+    <th>Submission #</th>
+    <th>Date</th>
+    <th>Problem title</th>
+    <th>Message</th>
+    <th>Duration (s)</th>
+    <th>Log</th>
+    </thead>
+    <tbody>
+    <tr ng-repeat="submission in submissions">
+        <td>{{ submission.number }}</td>
+        <td>
+            <time class="timeago" datetime="{{ submission.date }}"/>
+        </td>
+        <td>{{ submission.title }}</td>
+        <td>{{ submission.message }}</td>
+        <td>{{ submission.duration }}</td>
+        <td>
+            <button type="button" class="btn btn-sq-xs" data-toggle="modal" data-target="#{{ submission.number }}_log">
+                <i class="fa fa-info-circle"/></button>
+        </td>
+        <td>
+            <button type="button" class="btn btn-sq-xs" id="{{ submission.psid }}" onclick="delete_submission(this.id); return false;">
+                <i class="fa fa-trash-o"/></button>
+        </td>
+    </tr>
+    </tbody>
 </table>
 <div ng-repeat="submission in submissions">
-	<div id="{{ submission.number }}_log" class="modal fade" role="dialog">
-		<div class="modal-dialog">
-			<div class="modal-content">
-				<div class="modal-header">
-					<button type="button" class="close" data-dismiss="modal">&times;</button>
-					<h4 class="modal-title">[{{ submission.number }}] Log for "{{ submission.title }}"</h4>
-				</div>
-				<div class="modal-body">
-					<pre>{{ submission.log }}</pre>
-				</div>
-				<div class="modal-footer">
-					<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-				</div>
-			</div>
-		</div>
-	</div>
+    <div id="{{ submission.number }}_log" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">[{{ submission.number }}] Log for "{{ submission.title }}"</h4>
+                </div>
+                <div class="modal-body">
+                    <pre>{{ submission.log }}</pre>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 <script>
-	var update_highlighting = function() {
-		var language = $("#language-select").val();
-		if (language == "python3") {
-			language = "python";
-		}
-		var editor = ace.edit("editor");
-		editor.getSession().setMode("ace/mode/" + language);
-	}
+    var update_highlighting = function () {
+        var language = $("#language-select").val();
+        if (language == "python3") {
+            language = "python";
+        }
+        var editor = ace.edit("editor");
+        editor.getSession().setMode("ace/mode/" + language);
+    }
 
-	var delete_submission = function(psid) {
-		data = { "psid": psid };
-		var button = "#" + psid;
-		var tr = $(button).closest("tr");
-		$(button).attr("disabled", "disabled");
-		api_call("POST", "/api/programming/submissions/delete", data, function(result) {
-			if (result["success"] == 1) {
-				tr.find("td").fadeOut("fast", function() {
-					tr.remove();
-				});
-			} else {
-				display_message("programming_msg", "danger", result["message"], function() {
-					$(button).removeAttr("disabled");
-				});
+    var delete_submission = function (psid) {
+        data = {"psid": psid};
+        var button = "#" + psid;
+        var tr = $(button).closest("tr");
+        $(button).attr("disabled", "disabled");
+        api_call("POST", "/api/programming/submissions/delete", data, function (result) {
+            if (result["success"] == 1) {
+                tr.find("td").fadeOut("fast", function () {
+                    tr.remove();
+                });
+            } else {
+                display_message("programming_msg", "danger", result["message"], function () {
+                    $(button).removeAttr("disabled");
+                });
 
-			}
-		}, function(jqXHR, status, error) {
-			var result = jqXHR["responseText"];
-			display_message("programming_msg", "danger", "Error " + jqXHR["status"] + ": " + jqXHR["message"], function() {
-			});
-		});
-	}
+            }
+        }, function (jqXHR, status, error) {
+            var result = jqXHR["responseText"];
+            display_message("programming_msg", "danger", "Error " + jqXHR["status"] + ": " + jqXHR["message"], function () {
+            });
+        });
+    }
 
-	var preselect = function() {
-		if (location.hash.length > 1) {
-			var _problems = $("#problem-select").children();
-			for(var i=0; i<_problems.length; i++) {
-				var _problem = _problems[i];
-				if (_problem.title == decodeURIComponent(location.hash.substring(1))) {
-					$("#problem-select").val(_problem.value).change();
-					break;
-				}
-			}
-		}
-	};
-	preselect();
+    var preselect = function () {
+        if (location.hash.length > 1) {
+            var _problems = $("#problem-select").children();
+            for (var i = 0; i < _problems.length; i++) {
+                var _problem = _problems[i];
+                if (_problem.title == decodeURIComponent(location.hash.substring(1))) {
+                    $("#problem-select").val(_problem.value).change();
+                    break;
+                }
+            }
+        }
+    };
+    preselect();
 </script>

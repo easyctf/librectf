@@ -1,9 +1,11 @@
-html { padding:0 10px; }
+html {
+    padding: 0 10px;
+}
 
 body {
-  margin:0;
-  padding:10px 0;
-  background:#000;
+    margin: 0;
+    padding: 10px 0;
+    background: #000;
 }
 
 #epiceditor-preview h1,
@@ -17,26 +19,32 @@ body {
     margin: 0;
     padding: 0;
 }
+
 #epiceditor-preview {
-    background:#000;
+    background: #000;
     font-family: "Helvetica Neue", Helvetica, "Hiragino Sans GB", Arial, sans-serif;
     font-size: 13px;
     line-height: 18px;
     color: #ccc;
 }
+
 #epiceditor-preview a {
     color: #fff;
 }
+
 #epiceditor-preview a:hover {
     color: #00ff00;
     text-decoration: none;
 }
+
 #epiceditor-preview a img {
     border: none;
 }
+
 #epiceditor-preview p {
     margin-bottom: 9px;
 }
+
 #epiceditor-preview h1,
 #epiceditor-preview h2,
 #epiceditor-preview h3,
@@ -46,43 +54,53 @@ body {
     color: #cdcdcd;
     line-height: 36px;
 }
+
 #epiceditor-preview h1 {
     margin-bottom: 18px;
     font-size: 30px;
 }
+
 #epiceditor-preview h2 {
     font-size: 24px;
 }
+
 #epiceditor-preview h3 {
     font-size: 18px;
 }
+
 #epiceditor-preview h4 {
     font-size: 16px;
 }
+
 #epiceditor-preview h5 {
     font-size: 14px;
 }
+
 #epiceditor-preview h6 {
     font-size: 13px;
 }
+
 #epiceditor-preview hr {
     margin: 0 0 19px;
     border: 0;
     border-bottom: 1px solid #ccc;
 }
+
 #epiceditor-preview blockquote {
     padding: 13px 13px 21px 15px;
     margin-bottom: 18px;
-    font-family:georgia,serif;
+    font-family: georgia, serif;
     font-style: italic;
 }
+
 #epiceditor-preview blockquote:before {
-    content:"\201C";
-    font-size:40px;
-    margin-left:-10px;
-    font-family:georgia,serif;
-    color:#eee;
+    content: "\201C";
+    font-size: 40px;
+    margin-left: -10px;
+    font-family: georgia, serif;
+    color: #eee;
 }
+
 #epiceditor-preview blockquote p {
     font-size: 14px;
     font-weight: 300;
@@ -90,9 +108,11 @@ body {
     margin-bottom: 0;
     font-style: italic;
 }
+
 #epiceditor-preview code, #epiceditor-preview pre {
     font-family: Monaco, Andale Mono, Courier New, monospace;
 }
+
 #epiceditor-preview code {
     background-color: #000;
     color: #f92672;
@@ -102,10 +122,11 @@ body {
     -moz-border-radius: 3px;
     border-radius: 3px;
 }
+
 #epiceditor-preview pre {
     display: block;
     padding: 14px;
-    color:#66d9ef;
+    color: #66d9ef;
     margin: 0 0 18px;
     line-height: 16px;
     font-size: 11px;
@@ -113,9 +134,10 @@ body {
     white-space: pre-wrap;
     word-wrap: break-word;
 }
+
 #epiceditor-preview pre code {
     background-color: #000;
-    color:#ccc;
+    color: #ccc;
     font-size: 11px;
     padding: 0;
 }

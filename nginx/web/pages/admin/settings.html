@@ -1,128 +1,185 @@
 <form class="form-horizontal" onsubmit="update_settings(); return false" id="update_settings_form">
-	<div class="page-header">
-		<div style="float:right;">
-			<input type="submit" class="btn btn-lg btn-success" value="Save Settings"/>
-		</div>
-		<h1>Settings</h1>
-	</div>
+    <div class="page-header">
+        <div style="float:right;">
+            <input type="submit" class="btn btn-lg btn-success" value="Save Settings"/>
+        </div>
+        <h1>Settings</h1>
+    </div>
 
-	<div id="update_settings_msg"></div>
+    <div id="update_settings_msg"></div>
 
-	<div class="row">
-		<div class="col-md-4 col-sm-6 col-xs-12">
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<h4 class="panel-title">General Settings</h4>
-				</div>
-				<div class="panel-body">
-					<fieldset class="container-fluid">
-						<div class="row">
-							<div class="col-sm-12 form-group">
-								<label class="col-sm-12" for="ctf_name"><small>CTF Name</small></label>
-								<div class="col-sm-12">
-									<input class="form-control input-lg" type="text" required name="ctf_name" id="ctf_name" placeholder="CTF name" autocomplete="off" ng-value="settings['ctf_name']"/>
-								</div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-sm-12 form-group">
-								<label class="col-sm-12" for="team_size"><small>Team Size</small></label>
-								<div class="col-sm-12">
-									<input class="form-control" type="number" required name="team_size" id="team_size" placeholder="Team Size" autocomplete="off" ng-value="settings['team_size']"/>
-								</div>
-							</div>
-						</div>
-					</fieldset>
-				</div>
-			</div>
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<h4 class="panel-title">Github Webhook</h4>
-				</div>
-				<div class="panel-body">
-					<fieldset class="container-fluid">
-						<div class="row">
-							<div class="col-sm-12 form-group">
-								<p>Set a secret to enable the webhook. <a href="http://openctf.readthedocs.io/en/latest/webhooks.html" target="_blank">Help?</a></p>
-								<label class="col-sm-12" for="webhook_secret"><small>Webhook Secret</small></label>
-								<div class="col-sm-12">
-									<input class="form-control" type="password" name="webhook_secret" id="webhook_secret" placeholder="Webhook Secret" autocomplete="off" ng-value="settings['webhook_secret']"/>
-								</div>
-							</div>
-							<div class="col-sm-12 form-group" ng-show="settings['public_key']">
-								<p>This is the platform's public key. Make sure you add this key to your <b>Deploy Keys</b> in order for the platform to successfully pull your repository.</p>
-								<pre style="word-wrap:break;">{{ settings['public_key'] }}</pre>
-							</div>
-						</div>
-					</fieldset>
-				</div>
-			</div>
-		</div>
-		<div class="col-md-4 col-sm-6 col-xs-12">
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<h4 class="panel-title">Competition Time</h4>
-				</div>
-				<div class="panel-body">
-					<fieldset class="container-fluid">
-						<div class="row">
-							<div class="col-sm-12 form-group">
-								<label class="col-sm-12" for="start_time"><small>Start Time</small></label>
-								<div class="col-sm-12">
-									<input class="form-control" type="number" required name="start_time" id="start_time" placeholder="UNIX Timestamp" autocomplete="off" ng-value="settings['start_time']"/>
-									<div id="start_time_hint" style="text-align:right;"><b>Start</b> <time></time></div>
-								</div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col-sm-12 form-group">
-								<label class="col-sm-12" for="end_time"><small>End Time</small></label>
-								<div class="col-sm-12">
-									<input class="form-control" type="number" required name="end_time" id="end_time" placeholder="UNIX Timestamp" autocomplete="off" ng-value="settings['end_time']"/>
-									<div id="end_time_hint" style="text-align:right;"><b>End</b> <time></time></div>
-								</div>
-							</div>
-						</div>
-					</fieldset>
-				</div>
-			</div>
-		</div>
-		<div class="col-md-4 col-sm-6 col-xs-12">
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<h4 class="panel-title">Personalization</h4>
-				</div>
-				<div class="panel-body">
-					<fieldset class="container-fluid">
-						<div class="row">
-							<div class="col-sm-12 form-group">
-								<label class="col-sm-12" for="stylesheet"><small>Stylesheet URL</small></label>
-								<div class="col-sm-12">
-									<input class="form-control" type="url" required name="stylesheet" id="stylesheet" placeholder="Stylesheet URL" autocomplete="off" ng-value="settings['stylesheet']"/>
-								</div>
-							</div>
-						</div>
-					</fieldset>
-				</div>
-			</div>
-		</div>
-	</div>
+    <div class="row">
+        <div class="col-md-4 col-sm-6 col-xs-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">General Settings</h4>
+                </div>
+                <div class="panel-body">
+                    <fieldset class="container-fluid">
+                        <div class="row">
+                            <div class="col-sm-12 form-group">
+                                <label class="col-sm-12" for="ctf_name">
+                                    <small>CTF Name</small>
+                                </label>
+                                <div class="col-sm-12">
+                                    <input class="form-control input-lg" type="text" required name="ctf_name"
+                                           id="ctf_name" placeholder="CTF name" autocomplete="off"
+                                           ng-value="settings['ctf_name']"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12 form-group">
+                                <label class="col-sm-12" for="team_size">
+                                    <small>Team Size</small>
+                                </label>
+                                <div class="col-sm-12">
+                                    <input class="form-control" type="number" required name="team_size" id="team_size"
+                                           placeholder="Team Size" autocomplete="off" ng-value="settings['team_size']"/>
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">Github Webhook</h4>
+                </div>
+                <div class="panel-body">
+                    <fieldset class="container-fluid">
+                        <div class="row">
+                            <div class="col-sm-12 form-group">
+                                <p>Set a secret to enable the webhook. <a
+                                        href="http://openctf.readthedocs.io/en/latest/webhooks.html" target="_blank">Help?</a>
+                                </p>
+                                <label class="col-sm-12" for="webhook_secret">
+                                    <small>Webhook Secret</small>
+                                </label>
+                                <div class="col-sm-12">
+                                    <input class="form-control" type="password" name="webhook_secret"
+                                           id="webhook_secret" placeholder="Webhook Secret" autocomplete="off"
+                                           ng-value="settings['webhook_secret']"/>
+                                </div>
+                            </div>
+                            <div class="col-sm-12 form-group" ng-show="settings['public_key']">
+                                <p>This is the platform's public key. Make sure you add this key to your <b>Deploy
+                                    Keys</b> in order for the platform to successfully pull your repository.</p>
+                                <pre style="word-wrap:break;">{{ settings['public_key'] }}</pre>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-6 col-xs-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">Competition Time</h4>
+                </div>
+                <div class="panel-body">
+                    <fieldset class="container-fluid">
+                        <div class="row">
+                            <div class="col-sm-12 form-group">
+                                <label class="col-sm-12" for="start_time">
+                                    <small>Start Time</small>
+                                </label>
+                                <div class="col-sm-12">
+                                    <input class="form-control" type="number" required name="start_time" id="start_time" placeholder="UNIX Timestamp" autocomplete="off" ng-value="settings['start_time']"/>
+                                    <div id="start_time_hint" style="text-align:right;">
+                                        <b>Start</b>
+                                        <time></time>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12 form-group">
+                                <label class="col-sm-12" for="end_time">
+                                    <small>End Time</small>
+                                </label>
+                                <div class="col-sm-12">
+                                    <input class="form-control" type="number" required name="end_time" id="end_time" placeholder="UNIX Timestamp" autocomplete="off" ng-value="settings['end_time']"/>
+                                    <div id="end_time_hint" style="text-align:right;">
+                                        <b>End</b>
+                                        <time></time>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">CTF Calendar OAuth Settings</h4>
+                </div>
+                <div class="panel-body">
+                    <fieldset class="container-fluid">
+                        <div class="row">
+                            <div class="col-sm-12 form-group">
+                                <label class="col-sm-12" for="ctfcal_clientid">
+                                    <small>Client ID</small>
+                                </label>
+                                <div class="col-sm-12">
+                                    <input class="form-control" type="text" name="ctfcal_clientid" id="ctfcal_clientid" placeholder="Client ID" autocomplete="off" ng-value="settings['ctfcal_clientid']"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-sm-12 form-group">
+                                <label class="col-sm-12" for="ctfcal_clientsecret">
+                                    <small>Client Secret</small>
+                                </label>
+                                <div class="col-sm-12">
+                                    <input class="form-control" type="text" name="ctfcal_clientsecret" id="ctfcal_clientsecret" placeholder="Client Secret" autocomplete="off" ng-value="settings['ctfcal_clientsecret']"/>
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 col-sm-6 col-xs-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">Personalization</h4>
+                </div>
+                <div class="panel-body">
+                    <fieldset class="container-fluid">
+                        <div class="row">
+                            <div class="col-sm-12 form-group">
+                                <label class="col-sm-12" for="stylesheet">
+                                    <small>Stylesheet URL</small>
+                                </label>
+                                <div class="col-sm-12">
+                                    <input class="form-control" type="url" required name="stylesheet" id="stylesheet"
+                                           placeholder="Stylesheet URL" autocomplete="off"
+                                           ng-value="settings['stylesheet']"/>
+                                </div>
+                            </div>
+                        </div>
+                    </fieldset>
+                </div>
+            </div>
+        </div>
+    </div>
 </form>
 
 <script type="text/javascript">
-	var handler = function() {
-		var date = new Date(~~($("#start_time").val()) * 1000);
-		$("#start_time_hint > time").html(date.toLocaleString());
-		date = new Date(~~($("#end_time").val()) * 1000);
-		$("#end_time_hint > time").html(date.toLocaleString());
-	};
-	$(document).ready(function() {
-		$(".selectpicker").selectpicker();
-		var checkedClass = "fa fa-check-square";
-		var uncheckedClass = "fa fa-square";
-		$("#start_time").change(handler);
-		$("#start_time").keyup(handler);
-		$("#end_time").change(handler);
-		$("#end_time").keyup(handler);
-	});
+    var handler = function () {
+        var date = new Date(~~($("#start_time").val()) * 1000);
+        $("#start_time_hint > time").html(date.toLocaleString());
+        date = new Date(~~($("#end_time").val()) * 1000);
+        $("#end_time_hint > time").html(date.toLocaleString());
+    };
+    $(document).ready(function () {
+        $(".selectpicker").selectpicker();
+        var checkedClass = "fa fa-check-square";
+        var uncheckedClass = "fa fa-square";
+        $("#start_time").change(handler);
+        $("#start_time").keyup(handler);
+        $("#end_time").change(handler);
+        $("#end_time").keyup(handler);
+    });
 </script>

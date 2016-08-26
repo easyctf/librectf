@@ -21,23 +21,27 @@
                                             <div class="row">
                                                 <p>Reset your password here</p>
                                                 <div class="col-sm-12 form-group">
-                                                    <label class="col-sm-12" for="password"><small>Password</small></label>
+                                                    <label class="col-sm-12" for="password">
+                                                        <small>Password</small>
+                                                    </label>
                                                     <div class="col-sm-12">
-                                                        <input class="form-control" type="password" required name="password" id="password" placeholder="New password" autocomplete="off" />
+                                                        <input class="form-control" type="password" required name="password" id="password" placeholder="New password" autocomplete="off"/>
                                                     </div>
                                                 </div>
                                                 <div class="col-sm-12 form-group">
-                                                    <label class="col-sm-12" for="confirm_password"><small>Confirm Password</small></label>
+                                                    <label class="col-sm-12" for="confirm_password">
+                                                        <small>Confirm Password</small>
+                                                    </label>
                                                     <div class="col-sm-12">
-                                                        <input class="form-control" type="password" required name="confirm_password" id="confirm_password" placeholder="Confirm new password" autocomplete="off" />
+                                                        <input class="form-control" type="password" required name="confirm_password" id="confirm_password" placeholder="Confirm new password" autocomplete="off"/>
                                                     </div>
                                                 </div>
                                             </div>
                                             <div class="row">
                                                 <div class="col-sm-12 form-group">
                                                     <center>
-                                                        <input type="hidden" id="_csrf" value="{{ csrf_token }}" />
-                                                        <input type="submit" class="btn btn-success btn-lg" value="Reset password" />
+                                                        <input type="hidden" id="_csrf" value="{{ csrf_token }}"/>
+                                                        <input type="submit" class="btn btn-success btn-lg" value="Reset password"/>
                                                     </center>
                                                 </div>
                                             </div>
@@ -64,19 +68,22 @@
                                 </fieldset>
                                 <fieldset class="container-fluid">
                                     <div class="row">
-                                        <p>Enter the email you used to sign up with, and we'll send you an an email with a link to reset your password.</p>
+                                        <p>Enter the email you used to sign up with, and we'll send you an an email with
+                                            a link to reset your password.</p>
                                         <div class="col-sm-12 form-group">
-                                            <label class="col-sm-12" for="email"><small>Email</small></label>
+                                            <label class="col-sm-12" for="email">
+                                                <small>Email</small>
+                                            </label>
                                             <div class="col-sm-12">
-                                                <input class="form-control" type="email" required name="email" id="email" placeholder="Email" autocomplete="off" />
+                                                <input class="form-control" type="email" required name="email" id="email" placeholder="Email" autocomplete="off"/>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-sm-12 form-group">
                                             <center>
-                                                <input type="hidden" id="_csrf" value="{{ csrf_token }}" />
-                                                <input type="submit" class="btn btn-success btn-lg" value="Send email" />
+                                                <input type="hidden" id="_csrf" value="{{ csrf_token }}"/>
+                                                <input type="submit" class="btn btn-success btn-lg" value="Send email"/>
                                             </center>
                                         </div>
                                     </div>

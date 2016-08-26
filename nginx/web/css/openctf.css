@@ -9,39 +9,44 @@
 } */
 
 @font-face {
-	font-family: "Circular";
-	src: url("/fonts/lineto-circular-pro-book.ttf") format("truetype");
-	font-weight: normal;
+    font-family: "Circular";
+    src: url("/fonts/lineto-circular-pro-book.ttf") format("truetype");
+    font-weight: normal;
 }
 
 @font-face {
-	font-family: "Circular";
-	src: url("/fonts/lineto-circular-pro-medium.ttf") format("truetype");
-	font-weight: bold;
+    font-family: "Circular";
+    src: url("/fonts/lineto-circular-pro-medium.ttf") format("truetype");
+    font-weight: bold;
 }
 
 body {
-	font-family: "Circular", Helvetica Neue, Helvetica, Arial, sans-serif !important;
+    font-family: "Circular", Helvetica Neue, Helvetica, Arial, sans-serif !important;
 }
 
 .tab-content {
-	padding: 15px;
-	> .tab-pane {
-		display: none;
-	}
-	> .active {
-		display: block;
-	}
+    padding: 15px;
+
+>
+.tab-pane {
+    display: none;
+}
+
+>
+.active {
+    display: block;
+}
+
 }
 
 .NO_HOVER_UNDERLINE_DAMMIT:hover, .NO_HOVER_UNDERLINE_DAMMIT:focus, .NO_HOVER_UNDERLINE_DAMMIT:active {
-	text-decoration:none;
+    text-decoration: none;
 }
 
 #avatar {
-	border: 1px solid rgb(221, 221, 221);
+    border: 1px solid rgb(221, 221, 221);
 }
 
 .large-number {
-	font-size: 1.6em;
+    font-size: 1.6em;
 }

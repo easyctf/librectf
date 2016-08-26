@@ -1,319 +1,354 @@
 <style>
-	.editable {
-		outline: none;
-		border: 1px solid rgba(0, 0, 0, 0);
-	}
-	.editable:hover {
-		border: 1px solid #999;
-	}
-	.editable:focus {
-		border: 1px solid #999;
-		background-color: #FFF;
-	}
-	.padded {
-		display: inline-block;
-		padding: 15px;
-	}
+    .editable {
+        outline: none;
+        border: 1px solid rgba(0, 0, 0, 0);
+    }
+
+    .editable:hover {
+        border: 1px solid #999;
+    }
+
+    .editable:focus {
+        border: 1px solid #999;
+        background-color: #FFF;
+    }
+
+    .padded {
+        display: inline-block;
+        padding: 15px;
+    }
 </style>
 
 <div ng-show="team['tid'] >= 1">
-	<div class="jumbotron">
-		<center>
-			<div ng-show="team['in_team']==true">
-				<div ng-show="team['is_owner']==true">
-					<div>
-						<form action="javascript:edit_teamname();">
-							<h1><span data-toggle="tooltip" data-placement="top" title="Click to edit team name." id="teamname_edit" class="padded editable" contenteditable>{{ team['teamname'] }}</span></h1>
-						</form>
-						<form action="javascript:edit_school();">
-							<h4><i class="fa fa-fw fa-university"></i> <span data-toggle="tooltip" data-placement="top" title="Click to edit school." id="school_edit" class="padded editable" contenteditable>{{ team['school'] || 'Add School' }}</span></h4>
-						</form>
-					</div>
-				</div>
-				<div ng-show="team['is_owner']==false">
-					<h1><span class="padded">{{ team['teamname'] }}</span></h1>
-					<h4><i class="fa fa-fw fa-university"></i> <span class="padded">{{ team['school'] || 'Unknown Affiliation' }}</span></h4>
-				</div>
-				<div class="row">
-					<p>
-						<div class="label label-success">
-							<i class="fa fa-fw fa-flag"></i>
-							I'm in the team!
-						</div>
-						<div class="label label-warning" data-toggle="tooltip" data-placement="top" title="This team isn't eligible for prizes." ng-show="team['observer']==true">
-							<i class="fa fa-fw fa-globe"></i>
-							OBSERVER
-						</div>
-					</p>
-				</div>
-				<div class="row">
-					<button class="btn btn-danger" onclick="javascript:leave_team();" data-toggle="tooltip" data-placement="bottom" title="You will need an invitation to re-join this team. If you are the captain, the team will be disbanded.">
-						<i class="fa fa-exit"></i>
-						Leave Team
-					</button>
-				</div>
-			</div>
-			<div ng-show="team['in_team']!=true">
-				<h1><span class="padded">{{ team['teamname'] }}</span></h1>
-				<h4><i class="fa fa-fw fa-university"></i> <span class="padded">{{ team['school'] || 'Unknown Affiliation' }}</span></h4>
-				<div class="row">
-					<div class="label label-warning" data-toggle="tooltip" data-placement="top" title="This team isn't eligible for prizes." ng-show="team['observer']==true">
-						<i class="fa fa-fw fa-globe"></i>
-						OBSERVER
-					</div>
-				</div>
-			</div>
-		</center>
-	</div>
-	<div class="row">
-		<div class="col-sm-3 col-xs-12">
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<h4 class="panel-title">Statistics</h4>
-				</div>
-				<div class="list-group">
-					<div class="list-group-item">
-						<b class="large-number">{{ team['place'] }}</b> place
-						<small ng-show="team['observer']==true"><div class="label label-warning"><i class="fa fa-fw fa-globe"></i> OBSERVER</div></small>
-					</div>
-					<div class="list-group-item">
-						<b class="large-number">{{ team['points'] }}</b> point{{ team['points'] == 1 ? '' : 's' }}
-					</div>
-					<div class="list-group-item">
-						<b class="large-number">{{ team['members'].length }}</b> member{{ team['members'].length == 1 ? '' : 's' }}
-					</div>
-				</div>
-			</div>
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<h4 class="panel-title">Team Members</h4>
-				</div>
-				<div class="list-group">
-					<div id="add_member_msg"/>
-					<div class="list-group-item" ng-repeat="member in team['members']">
-						<a class="badge" ng-href="javascript:remove_member('{{ member['username'] }}');" ng-show="team['is_owner']==true && member['captain']!=true"><i class="fa fa-fw fa-times"></i></a>
-						<h4 class="list-group-item-heading" style="display:inline-block;">{{ member['name'] }}</h4>
-						<div class="label label-info" ng-show="member['captain']==true">Owner</div>
-						<p class="list-group-item-text"><a href="/profile/{{ member['username'] }}">@{{ member['username'] }}</a></p>
-					</div>
-				</div>
-				<div class="panel-footer" ng-show="team['is_owner']==true">
-					<form id="add_member" onsubmit="add_member(); return false;" style="margin: 0;">
-						<div class="row">
-							<div class="col-xs-12">
-								<div class="input-group">
-									<input type="text" class="form-control" id="new_member" name="new_member" placeholder="Add member..." autocomplete="off">
+    <div class="jumbotron">
+        <center>
+            <div ng-show="team['in_team']==true">
+                <div ng-show="team['is_owner']==true">
+                    <div>
+                        <form action="javascript:edit_teamname();">
+                            <h1>
+                                <span data-toggle="tooltip" data-placement="top" title="Click to edit team name." id="teamname_edit" class="padded editable" contenteditable>{{ team['teamname'] }}</span>
+                            </h1>
+                        </form>
+                        <form action="javascript:edit_school();">
+                            <h4><i class="fa fa-fw fa-university"></i>
+                                <span data-toggle="tooltip" data-placement="top" title="Click to edit school." id="school_edit" class="padded editable" contenteditable>{{ team['school'] || 'Add School' }}</span>
+                            </h4>
+                        </form>
+                    </div>
+                </div>
+                <div ng-show="team['is_owner']==false">
+                    <h1><span class="padded">{{ team['teamname'] }}</span></h1>
+                    <h4><i class="fa fa-fw fa-university"></i> <span class="padded">{{ team['school'] || 'Unknown Affiliation' }}</span>
+                    </h4>
+                </div>
+                <div class="row">
+                    <p>
+                    <div class="label label-success">
+                        <i class="fa fa-fw fa-flag"></i>
+                        I'm in the team!
+                    </div>
+                    <div class="label label-warning" data-toggle="tooltip" data-placement="top" title="This team isn't eligible for prizes." ng-show="team['observer']==true">
+                        <i class="fa fa-fw fa-globe"></i>
+                        OBSERVER
+                    </div>
+                    </p>
+                </div>
+                <div class="row">
+                    <button class="btn btn-danger" onclick="javascript:leave_team();" data-toggle="tooltip" data-placement="bottom" title="You will need an invitation to re-join this team. If you are the captain, the team will be disbanded.">
+                        <i class="fa fa-exit"></i>
+                        Leave Team
+                    </button>
+                </div>
+            </div>
+            <div ng-show="team['in_team']!=true">
+                <h1><span class="padded">{{ team['teamname'] }}</span></h1>
+                <h4><i class="fa fa-fw fa-university"></i> <span class="padded">{{ team['school'] || 'Unknown Affiliation' }}</span>
+                </h4>
+                <div class="row">
+                    <div class="label label-warning" data-toggle="tooltip" data-placement="top" title="This team isn't eligible for prizes." ng-show="team['observer']==true">
+                        <i class="fa fa-fw fa-globe"></i>
+                        OBSERVER
+                    </div>
+                </div>
+            </div>
+        </center>
+    </div>
+    <div class="row">
+        <div class="col-sm-3 col-xs-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">Statistics</h4>
+                </div>
+                <div class="list-group">
+                    <div class="list-group-item">
+                        <b class="large-number">{{ team['place'] }}</b> place
+                        <small ng-show="team['observer']==true">
+                            <div class="label label-warning"><i class="fa fa-fw fa-globe"></i> OBSERVER</div>
+                        </small>
+                    </div>
+                    <div class="list-group-item">
+                        <b class="large-number">{{ team['points'] }}</b> point{{ team['points'] == 1 ? '' : 's' }}
+                    </div>
+                    <div class="list-group-item">
+                        <b class="large-number">{{ team['members'].length }}</b> member{{ team['members'].length == 1 ?
+                        '' : 's' }}
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">Team Members</h4>
+                </div>
+                <div class="list-group">
+                    <div id="add_member_msg"/>
+                    <div class="list-group-item" ng-repeat="member in team['members']">
+                        <a class="badge" ng-href="javascript:remove_member('{{ member['username'] }}');" ng-show="team['is_owner']==true && member['captain']!=true"><i class="fa fa-fw fa-times"></i></a>
+                        <h4 class="list-group-item-heading" style="display:inline-block;">{{ member['name'] }}</h4>
+                        <div class="label label-info" ng-show="member['captain']==true">Owner</div>
+                        <p class="list-group-item-text"><a href="/profile/{{ member['username'] }}">@{{
+                            member['username'] }}</a></p>
+                    </div>
+                </div>
+                <div class="panel-footer" ng-show="team['is_owner']==true">
+                    <form id="add_member" onsubmit="add_member(); return false;" style="margin: 0;">
+                        <div class="row">
+                            <div class="col-xs-12">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="new_member" name="new_member" placeholder="Add member..." autocomplete="off">
 									<span class="input-group-btn">
 										<button class="btn btn-success" type="submit">&nbsp;<i class="fa fa-fw fa-plus"></i>&nbsp;</button>
 									</span>
-								</div>
-							</div>
-						</div>
-					</form>
-				</div>
-				<div class="panel-footer" ng-show="team['in_team']!=true && config.navbar['logged_in']==true">
-					<div class="row">
-						<div class="col-xs-12">
-							<a ng-href="javascript:request_invitation({{ team['tid'] }});" class="btn btn-primary col-xs-12" ng-show="team['invited']!=true"><i class="fa fa-fw fa-plus"></i> Join this team</a>
-							<a class="btn btn-primary col-xs-12 disabled" ng-show="team['invited']!=true && team['requested']==true"><i class="fa fa-fw fa-check"></i> Sent Request</a>
-							<a ng-href="javascript:accept_invitation({{ team['tid'] }});" class="btn btn-success col-xs-12" ng-show="team['invited']==true"><i class="fa fa-fw fa-check"></i> Accept Invitation</a>
-						</div>
-					</div>
-				</div>
-			</div>
-			<div class="panel panel-default" ng-show="team['is_owner']==true && team['pending_invitations'].length > 0">
-				<div class="panel-heading">
-					<h4 class="panel-title">Pending Invitations</h4>
-				</div>
-				<div class="list-group">
-					<div class="list-group-item" ng-repeat="member in team['pending_invitations']" href="/profile/{{ member['username'] }}">
-						<a class="badge" ng-href="javascript:rescind_invitation({{ member['uid'] }});"><i class="fa fa-fw fa-times"></i></a>
-						<h4 class="list-group-item-heading">{{ member['name'] }}</h4>
-						<p class="list-group-item-text"><a href="/profile/{{ member['username'] }}">@{{ member['username'] }}</a></p>
-					</div>
-				</div>
-			</div>
-			<div class="panel panel-default" ng-show="team['is_owner']==true && team['invitation_requests'].length > 0">
-				<div class="panel-heading">
-					<h4 class="panel-title">Invitation Requests</h4>
-				</div>
-				<div class="list-group">
-					<div class="list-group-item" ng-repeat="member in team['invitation_requests']" href="/profile/{{ member['username'] }}">
-						<a class="badge" ng-href="javascript:accept_invitation_request({{ member['uid'] }});"><i class="fa fa-fw fa-check"></i></a>
-						<h4 class="list-group-item-heading">{{ member['name'] }}</h4>
-						<p class="list-group-item-text"><a href="/profile/{{ member['username'] }}">@{{ member['username'] }}</a></p>
-					</div>
-				</div>
-			</div>
-		</div>
-		<div class="col-sm-9 col-xs-12">
-			<ul class="nav nav-tabs" role="tablist">
-				<li role="presentation" class="active"><a href="#overview" aria-controls="overview" role="tab" data-toggle="tab">Overview</a></li>
-				<li role="presentation"><a href="#activity" aria-controls="activity" role="tab" data-toggle="tab">Activity</a></li>
-				<li role="presentation"><a href="#solves" aria-controls="solves" role="tab" data-toggle="tab">Solves</a></li>
-			</ul>
-			<div class="tab-content">
-				<div role="tabpanel" class="tab-pane active" id="overview">
-					<div class="panel panel-default">
-						<div class="panel-heading">
-							<h4 class="panel-title">Recent Activity</h4>
-						</div>
-						<table class="table">
-							<tr ng-repeat="event in team['activity'] | limitTo: 5">
-								<td><time class="timeago" datetime="{{ event['timestamp'] }}"></time></td>
-								<td ng-bind-html="event['message_clean']"></td>
-							</tr>
-						</table>
-					</div>
-					<div class="panel panel-default">
-						<div class="panel-heading">
-							<h4 class="panel-title">Top Solves</h4>
-						</div>
-						<table class="table">
-							<thead>
-								<tr>
-									<th>Time</th>
-									<th>Problem</th>
-									<th>Value</th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr ng-repeat="solve in team['solves'] | orderBy: '-date' | orderBy: '-value' | limitTo: 5">
-									<td><time class="timeago" datetime="{{ solve['date'] }}"></time></td>
-									<td>{{ solve['problem'] }}</td>
-									<td>{{ solve['value'] }}</td>
-								</tr>
-							</tbody>
-						</table>
-					</div>
-				</div>
-				<div role="tabpanel" class="tab-pane" id="activity">
-					<div class="panel panel-default">
-						<table class="table">
-							<tr ng-repeat="event in team['activity']">
-								<td><time class="timeago" datetime="{{ event['timestamp'] }}"></time></td>
-								<td ng-bind-html="event['message_clean']"></td>
-							</tr>
-						</table>
-					</div>
-				</div>
-				<div role="tabpanel" class="tab-pane" id="solves">
-					<div class="panel panel-default">
-						<table class="table">
-							<thead>
-								<tr>
-									<th>Time</th>
-									<th>Problem</th>
-									<th>Value</th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr ng-repeat="solve in team['solves'] | orderBy: '-date' | orderBy: '-value'">
-									<td><time class="timeago" datetime="{{ solve['date'] }}"></time></td>
-									<td>{{ solve['problem'] }}</td>
-									<td>{{ solve['value'] }}</td>
-								</tr>
-							</tbody>
-						</table>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="panel-footer" ng-show="team['in_team']!=true && config.navbar['logged_in']==true">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <a ng-href="javascript:request_invitation({{ team['tid'] }});" class="btn btn-primary col-xs-12" ng-show="team['invited']!=true"><i class="fa fa-fw fa-plus"></i>
+                                Join this team</a>
+                            <a class="btn btn-primary col-xs-12 disabled" ng-show="team['invited']!=true && team['requested']==true"><i class="fa fa-fw fa-check"></i>
+                                Sent Request</a>
+                            <a ng-href="javascript:accept_invitation({{ team['tid'] }});" class="btn btn-success col-xs-12" ng-show="team['invited']==true"><i class="fa fa-fw fa-check"></i>
+                                Accept Invitation</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-default" ng-show="team['is_owner']==true && team['pending_invitations'].length > 0">
+                <div class="panel-heading">
+                    <h4 class="panel-title">Pending Invitations</h4>
+                </div>
+                <div class="list-group">
+                    <div class="list-group-item" ng-repeat="member in team['pending_invitations']" href="/profile/{{ member['username'] }}">
+                        <a class="badge" ng-href="javascript:rescind_invitation({{ member['uid'] }});"><i class="fa fa-fw fa-times"></i></a>
+                        <h4 class="list-group-item-heading">{{ member['name'] }}</h4>
+                        <p class="list-group-item-text"><a href="/profile/{{ member['username'] }}">@{{
+                            member['username'] }}</a></p>
+                    </div>
+                </div>
+            </div>
+            <div class="panel panel-default" ng-show="team['is_owner']==true && team['invitation_requests'].length > 0">
+                <div class="panel-heading">
+                    <h4 class="panel-title">Invitation Requests</h4>
+                </div>
+                <div class="list-group">
+                    <div class="list-group-item" ng-repeat="member in team['invitation_requests']" href="/profile/{{ member['username'] }}">
+                        <a class="badge" ng-href="javascript:accept_invitation_request({{ member['uid'] }});"><i class="fa fa-fw fa-check"></i></a>
+                        <h4 class="list-group-item-heading">{{ member['name'] }}</h4>
+                        <p class="list-group-item-text"><a href="/profile/{{ member['username'] }}">@{{
+                            member['username'] }}</a></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-sm-9 col-xs-12">
+            <ul class="nav nav-tabs" role="tablist">
+                <li role="presentation" class="active">
+                    <a href="#overview" aria-controls="overview" role="tab" data-toggle="tab">Overview</a></li>
+                <li role="presentation"><a href="#activity" aria-controls="activity" role="tab" data-toggle="tab">Activity</a>
+                </li>
+                <li role="presentation"><a href="#solves" aria-controls="solves" role="tab" data-toggle="tab">Solves</a>
+                </li>
+            </ul>
+            <div class="tab-content">
+                <div role="tabpanel" class="tab-pane active" id="overview">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">Recent Activity</h4>
+                        </div>
+                        <table class="table">
+                            <tr ng-repeat="event in team['activity'] | limitTo: 5">
+                                <td>
+                                    <time class="timeago" datetime="{{ event['timestamp'] }}"></time>
+                                </td>
+                                <td ng-bind-html="event['message_clean']"></td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">Top Solves</h4>
+                        </div>
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>Problem</th>
+                                <th>Value</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr ng-repeat="solve in team['solves'] | orderBy: '-date' | orderBy: '-value' | limitTo: 5">
+                                <td>
+                                    <time class="timeago" datetime="{{ solve['date'] }}"></time>
+                                </td>
+                                <td>{{ solve['problem'] }}</td>
+                                <td>{{ solve['value'] }}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div role="tabpanel" class="tab-pane" id="activity">
+                    <div class="panel panel-default">
+                        <table class="table">
+                            <tr ng-repeat="event in team['activity']">
+                                <td>
+                                    <time class="timeago" datetime="{{ event['timestamp'] }}"></time>
+                                </td>
+                                <td ng-bind-html="event['message_clean']"></td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div role="tabpanel" class="tab-pane" id="solves">
+                    <div class="panel panel-default">
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th>Time</th>
+                                <th>Problem</th>
+                                <th>Value</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr ng-repeat="solve in team['solves'] | orderBy: '-date' | orderBy: '-value'">
+                                <td>
+                                    <time class="timeago" datetime="{{ solve['date'] }}"></time>
+                                </td>
+                                <td>{{ solve['problem'] }}</td>
+                                <td>{{ solve['value'] }}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 <div ng-show="team['tid'] < 1 && config.navbar['logged_in']==true && team['my_team']==-1">
-	<div class="page-header">
-		<h1>Team</h1>
-	</div>
-	<div class="row">
-		<div class="col-md-6">
-			<div class="page-header">
-				<h3>New Team</h3>
-			</div>
-			<p>To play, you must be on a <b>team</b>. If you'd like to go solo, just create a team by yourself. Read about team eligibility in the <a href="/rules">rules</a>.</p>
+    <div class="page-header">
+        <h1>Team</h1>
+    </div>
+    <div class="row">
+        <div class="col-md-6">
+            <div class="page-header">
+                <h3>New Team</h3>
+            </div>
+            <p>To play, you must be on a <b>team</b>. If you'd like to go solo, just create a team by yourself. Read
+                about team eligibility in the <a href="/rules">rules</a>.</p>
 
-			<form class="form-horizontal" onsubmit="create_team(); return false;" id="create_team">
-				<fieldset>
-					<div id="create_team_msg"></div>
-				</fieldset>
-				<fieldset class="container-fluid">
-					<div class="col-md-12">
-						<div class="panel panel-default">
-							<div class="panel-heading">
-								<h2 class="panel-title">Create a Team</h2>
-							</div>
-							<div class="panel-body">
-								<form class="form-horizontal" onsubmit="login_form(); return false;" id="login_form">
-									<fieldset>
-										<div id="login_msg"></div>
-									</fieldset>
-									<fieldset class="container-fluid">
-										<div class="row">
-											<div class="col-sm-12 form-group">
-												<label class="col-sm-12" for="teamname"><small>Team Name</small></label>
-												<div class="col-sm-12">
-													<input class="form-control" type="text" required name="teamname" id="teamname" placeholder="Create a team name..." autocomplete="off" />
-												</div>
-											</div>
-										</div>
-										<div class="row">
-											<div class="col-sm-12 form-group">
-												<label class="col-sm-12" for="school"><small>School Name</small></label>
-												<div class="col-sm-12">
-													<input class="form-control" type="text" required name="school" id="school" placeholder="School Name" autocomplete="off" />
-												</div>
-											</div>
-										</div>
-										<div class="row">
-											<div class="col-sm-12 form-group">
-												<center>
-													<input type="submit" class="btn btn-success btn-lg" value="Create Team" />
-												</center>
-											</div>
-										</div>
-									</fieldset>
-								</form>
-							</div>
-						</div>
-					</div>
-				</fieldset>
-			</form>
-		</div>
-		<div class="col-md-6">
-			<div class="page-header">
-				<h3>Invitations</h3>
-			</div>
-			<p ng-show="team['invitations'].length==0">You need an invitation to join another team. If you'd like to request to be a member of their team, go to their team page and click the Request button.</p>
-			<div ng-show="team['invitations'].length>0" class="list-group">
-				<div class="list-group-item" ng-repeat="invitation in team['invitations']">
-					<a ng-href="/team/{{ invitation['team'] }}">{{ invitation['team'] }}</a>
-					<span class="label label-warning" ng-show="invitation['observer']==true"><i class="fa fa-fw fa-globe"></i> OBSERVER</span>
-					<a ng-href="javascript:accept_invitation({{ invitation['tid'] }});" class="badge">Accept &raquo;</a>
-				</div>
-			</div>
-		</div>
-	</div>
+            <form class="form-horizontal" onsubmit="create_team(); return false;" id="create_team">
+                <fieldset>
+                    <div id="create_team_msg"></div>
+                </fieldset>
+                <fieldset class="container-fluid">
+                    <div class="col-md-12">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h2 class="panel-title">Create a Team</h2>
+                            </div>
+                            <div class="panel-body">
+                                <form class="form-horizontal" onsubmit="login_form(); return false;" id="login_form">
+                                    <fieldset>
+                                        <div id="login_msg"></div>
+                                    </fieldset>
+                                    <fieldset class="container-fluid">
+                                        <div class="row">
+                                            <div class="col-sm-12 form-group">
+                                                <label class="col-sm-12" for="teamname">
+                                                    <small>Team Name</small>
+                                                </label>
+                                                <div class="col-sm-12">
+                                                    <input class="form-control" type="text" required name="teamname" id="teamname" placeholder="Create a team name..." autocomplete="off"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-sm-12 form-group">
+                                                <label class="col-sm-12" for="school">
+                                                    <small>School Name</small>
+                                                </label>
+                                                <div class="col-sm-12">
+                                                    <input class="form-control" type="text" required name="school" id="school" placeholder="School Name" autocomplete="off"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-sm-12 form-group">
+                                                <center>
+                                                    <input type="submit" class="btn btn-success btn-lg" value="Create Team"/>
+                                                </center>
+                                            </div>
+                                        </div>
+                                    </fieldset>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </fieldset>
+            </form>
+        </div>
+        <div class="col-md-6">
+            <div class="page-header">
+                <h3>Invitations</h3>
+            </div>
+            <p ng-show="team['invitations'].length==0">You need an invitation to join another team. If you'd like to
+                request to be a member of their team, go to their team page and click the Request button.</p>
+            <div ng-show="team['invitations'].length>0" class="list-group">
+                <div class="list-group-item" ng-repeat="invitation in team['invitations']">
+                    <a ng-href="/team/{{ invitation['team'] }}">{{ invitation['team'] }}</a>
+                    <span class="label label-warning" ng-show="invitation['observer']==true"><i class="fa fa-fw fa-globe"></i> OBSERVER</span>
+                    <a ng-href="javascript:accept_invitation({{ invitation['tid'] }});" class="badge">Accept &raquo;</a>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 <div ng-show="!found">
-	<div class="page-header">
-		<h1>Team Not Found</h1>
-	</div>
+    <div class="page-header">
+        <h1>Team Not Found</h1>
+    </div>
 
-	<p>The team you were looking for doesn't exist. Check to make sure you've spelled the name right.</p>
+    <p>The team you were looking for doesn't exist. Check to make sure you've spelled the name right.</p>
 </div>
 
 <script type="text/javascript">
-	$("#teamname_edit, #school_edit").on("keypress", function(e) {
-		if (e.keyCode == 13) {
-			console.log($(this).parent().parent().submit());
-			e.preventDefault();
-		}
-	});
-	$(document).ready(function() {
-		$("[data-toggle=tooltip]").tooltip();
-		$("ul[role=tablist]").tab();
-		$("a[role=tab]").click(function(e) {
-			e.preventDefault();
-		});
-	});
+    $("#teamname_edit, #school_edit").on("keypress", function (e) {
+        if (e.keyCode == 13) {
+            console.log($(this).parent().parent().submit());
+            e.preventDefault();
+        }
+    });
+    $(document).ready(function () {
+        $("[data-toggle=tooltip]").tooltip();
+        $("ul[role=tablist]").tab();
+        $("a[role=tab]").click(function (e) {
+            e.preventDefault();
+        });
+    });
 </script>

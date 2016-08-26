@@ -1,297 +1,335 @@
 <div class="page-header">
-	<h1>Problem Editor</h1>
+    <h1>Problem Editor</h1>
 </div>
 
 <style>
-.ace_editor {
-	width: 100%;
-	height: 200px;
-}
-.epiceditor-edit-mode {
-	border: 1px solid #999 !important;
-}
+    .ace_editor {
+        width: 100%;
+        height: 200px;
+    }
+
+    .epiceditor-edit-mode {
+        border: 1px solid #999 !important;
+    }
 </style>
 
 <div class="row">
-	<div class="tabbable">
-		<ul class="nav nav-pills nav-stacked col-md-3">
-			<li class="active"><a data-target="#new" data-toggle="tab"><i class="fa fa-fw fa-plus"></i> New</a></li>
-			<li ng-repeat="problem in problems"><a data-target="#problem_{{ problem['pid'] }}" data-toggle="tab">{{ problem["title"] }} ({{ problem["value"] }} points)</a></li>
-		</ul>
-		<div class="tab-content col-md-9">
-			<div class="tab-pane active" id="new">
-				<div class="panel panel-default">
-					<div class="panel-heading">
-						<h4 class="panel-title">New Problem</h4>
-					</div>
-					<div class="panel-body">
-						<div id="add-status"></div>
-						<form class="form-horizontal" onsubmit="create_problem(); return false;" id="new_problem_form">
-							<div class="row">
-								<div class="col-sm-12 form-group">
-									<label class="col-sm-12" for="new-title"><small>Name</small></label>
-									<div class="col-sm-12">
-										<input class="form-control" name="title" id="new-title" placeholder="Name" required autocomplete="off" />
-									</div>
-								</div>
-							</div>
-							<div class="row">
-								<div class="col-sm-12 form-group">
-									<label class="col-sm-12" for="new-description"><small>Description</small></label>
-									<div class="col-sm-12">
-										<textarea class="form-control" name="description" id="new-description" placeholder="Description" required autocomplete="off" />
-									</div>
-								</div>
-							</div>
-							<div class="row">
-								<div class="col-sm-12 form-group">
-									<label class="col-sm-12" for="new-category"><small>Category</small></label>
-									<div class="col-sm-12">
-										<input class="form-control" name="category" id="new-category" placeholder="Category" required autocomplete="off" />
-									</div>
-								</div>
-							</div>
-							<div class="row">
-								<div class="col-sm-12 form-group">
-									<label class="col-sm-12" for="new-hint"><small>Hint</small></label>
-									<div class="col-sm-12">
-										<input class="form-control" name="hint" id="new-hint" placeholder="Hint" required autocomplete="off" />
-									</div>
-								</div>
-							</div>
-							<div class="row">
-								<div class="col-sm-12 form-group">
-									<label class="col-sm-12" for="new-value"><small>Value</small></label>
-									<div class="col-sm-12">
-										<input class="form-control" name="value" id="new-value" type="number" placeholder="Value" required autocomplete="off" />
-									</div>
-								</div>
-							</div>
-							<div class="row">
-								<div class="col-sm-12 form-group">
-									<label class="col-sm-12" for="new-bonus"><small>Speed Bonus (%)</small></label>
-									<div class="col-sm-12">
-										<select class="form-control" id="new-bonus">
-											<option value="0">0/0/0</option>
-											<option value="1">3/2/1</option>
-											<option value="2">5/3/1</option>
-											<option value="3">8/5/3</option>
-											<option value="4">10/8/6</option>
-											<option value="5">20/12/8</option>
-										</select>
-									</div>
-								</div>
-							</div>
-							<div class="row">
-								<div class="col-sm-12 form-group">
-									<label class="col-sm-12" for="new-grader"><small>Grader</small></label>
-									<div class="col-sm-12">
-										<div id="new-grader"></div>
-									</div>
-								</div>
-							</div>
-							<div class="row">
-								<div class="col-sm-12 form-group">
-									<label class="col-sm-12" for="new-weightmap"><small>Weightmap</small></label>
-									<div class="col-sm-12">
-										<div id="new-weightmap"></div>
-									</div>
-								</div>
-							</div>
-							<div class="row">
-								<div class="col-sm-12 form-group">
-									<label class="col-sm-12" for="new-threshold"><small>Threshold</small></label>
-									<div class="col-sm-12">
-										<input class="form-control" name="value" id="new-threshold" type="number" placeholder="Threshold" required autocomplete="off" />
-									</div>
-								</div>
-							</div>
-							<div class="row">
-								<div class="col-sm-12 form-group">
-									<div class="col-sm-12">
-										<div class="checkbox">
-											<label><input id="autogen" type="checkbox"/>Autogen</label>
-										</div>
-									</div>
-								</div>
-							</div>
-							<div class="row">
-								<div class="col-sm-12 form-group">
-									<div class="col-sm-12">
-										<input type="submit" id="create-problem" class="btn btn-success" value="Create" />
-									</div>
-								</div>
-							</div>
-						</form>
-					</div>
-				</div>
-			</div>
-			<div class="tab-pane" ng-repeat="problem in problems" id="problem_{{ problem['pid'] }}">
-				<div class="panel panel-default">
-					<div class="panel-heading">
-						<h4 class="panel-title">Edit <b>{{ problem["title"] }}</b></h4>
-					</div>
-					<div class="panel-body">
-						<div id="{{ problem['pid'] }}_status" />
-						<form class="form-horizontal" onsubmit="update_problem(this.id); return false;" id="update_{{ problem['pid'] }}">
-							<input type="hidden" name="pid" value="{{ problem['pid'] }}" />
-							<div class="row">
-								<div class="col-sm-12 form-group">
-									<label class="col-sm-12" for="edit-title"><small>Name</small></label>
-									<div class="col-sm-12">
-										<input class="form-control" name="title" id="edit-title" placeholder="Name" ng-value="problem['title']" required/>
-									</div>
-								</div>
-							</div>
-							<div class="row">
-								<div class="col-sm-12 form-group">
-									<label class="col-sm-12" for="edit-description"><small>Description</small></label>
-									<div class="col-sm-12">
-										<textarea class="form-control" name="description" id="edit-description" placeholder="Description" required autocomplete="off">{{ problem["description_source"] }}</textarea>
-									</div>
-								</div>
-							</div>
-							<div class="row">
-								<div class="col-sm-12 form-group">
-									<label class="col-sm-12" for="edit-category"><small>Category</small></label>
-									<div class="col-sm-12">
-										<input class="form-control" name="category" id="edit-category" placeholder="Category" ng-value="problem['category']" required autocomplete="off" />
-									</div>
-								</div>
-							</div>
-							<div class="row">
-								<div class="col-sm-12 form-group">
-									<label class="col-sm-12" for="edit-hint"><small>Hint</small></label>
-									<div class="col-sm-12">
-										<input class="form-control" name="hint" id="edit-hint" placeholder="Hint" ng-value="problem['hint']" required autocomplete="off" />
-									</div>
-								</div>
-							</div>
-							<div class="row">
-								<div class="col-sm-12 form-group">
-									<label class="col-sm-12" for="edit-value"><small>Value</small></label>
-									<div class="col-sm-12">
-										<input class="form-control" type="number" name="value" id="edit-value" placeholder="Value" ng-value="problem['value']" required autocomplete="off" />
-									</div>
-								</div>
-							</div>
-							<div class="row">
-								<div class="col-sm-12 form-group">
-									<label class="col-sm-12" for="{{ problem.pid }}_bonus"><small>Speed Bonus (%)</small></label>
-									<div class="col-sm-12">
-										<select class="form-control" id="{{ problem.pid }}_bonus">
-											<option ng-selected="problem.bonus == 0" value="0">0/0/0</option>
-											<option ng-selected="problem.bonus == 1" value="1">3/2/1</option>
-											<option ng-selected="problem.bonus == 2" value="2">5/3/1</option>
-											<option ng-selected="problem.bonus == 3" value="3">8/5/3</option>
-											<option ng-selected="problem.bonus == 4" value="4">10/8/6</option>
-											<option ng-selected="problem.bonus == 5" value="5">20/12/8</option>
-										</select>
-									</div>
-								</div>
-							</div>
-							<div class="row">
-								<div class="col-sm-12 form-group">
-									<label class="col-sm-12" for="edit-grader"><small>Grader</small></label>
-									<div class="col-sm-12">
-										<div id="{{ problem['pid'] }}_grader"></div>
-									</div>
-								</div>
-							</div>
-							<div class="row">
-								<div class="col-sm-12 form-group">
-									<label class="col-sm-12"><small>Weightmap</small></label>
-									<div class="col-sm-12">
-										<div id="{{ problem['pid'] }}_weightmap"></div>
-									</div>
-								</div>
-							</div>
-							<div class="row">
-								<div class="col-sm-12 form-group">
-									<label class="col-sm-12"><small>Threshold</small></label>
-									<div class="col-sm-12">
-										<input class="form-control" name="threshold" id="{{ problem['pid'] }}_threshold" ng-value="problem['threshold']" type="number" placeholder="Threshold" required autocomplete="off" />
-									</div>
-								</div>
-							</div>
-							<br>
-							<div class="row">
-								<div class="col-sm-12 form-group">
-									<div class="col-sm-12">
-										<div class="checkbox">
-											<label><input id="{{ problem['pid'] }}_autogen" type="checkbox" ng-checked="problem['autogen'] == true"/>Autogen</label>
-										</div>
-									</div>
-								</div>
-							</div>
-							<div class="row">
-								<div class="col-sm-12 form-group">
-									<div class="col-sm-12">
-										<input type="submit" class="btn btn-success" value="Update" />
-										<input type="button" onclick="delete_problem(this.closest('form').id); return false;" class="btn btn-danger" value="Delete" />
-										<input type="button" onclick="clear_submissions(this.closest('form').id); return false;" class="btn btn-danger" value="Clear submissions" />
-									</div>
-								</div>
-							</div>
-						</form>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+    <div class="tabbable">
+        <ul class="nav nav-pills nav-stacked col-md-3">
+            <li class="active"><a data-target="#new" data-toggle="tab"><i class="fa fa-fw fa-plus"></i> New</a></li>
+            <li ng-repeat="problem in problems"><a data-target="#problem_{{ problem['pid'] }}" data-toggle="tab">{{
+                problem["title"] }} ({{ problem["value"] }} points)</a></li>
+        </ul>
+        <div class="tab-content col-md-9">
+            <div class="tab-pane active" id="new">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">New Problem</h4>
+                    </div>
+                    <div class="panel-body">
+                        <div id="add-status"></div>
+                        <form class="form-horizontal" onsubmit="create_problem(); return false;" id="new_problem_form">
+                            <div class="row">
+                                <div class="col-sm-12 form-group">
+                                    <label class="col-sm-12" for="new-title">
+                                        <small>Name</small>
+                                    </label>
+                                    <div class="col-sm-12">
+                                        <input class="form-control" name="title" id="new-title" placeholder="Name" required autocomplete="off"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12 form-group">
+                                    <label class="col-sm-12" for="new-description">
+                                        <small>Description</small>
+                                    </label>
+                                    <div class="col-sm-12">
+                                        <textarea class="form-control" name="description" id="new-description" placeholder="Description" required autocomplete="off"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12 form-group">
+                                    <label class="col-sm-12" for="new-category">
+                                        <small>Category</small>
+                                    </label>
+                                    <div class="col-sm-12">
+                                        <input class="form-control" name="category" id="new-category" placeholder="Category" required autocomplete="off"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12 form-group">
+                                    <label class="col-sm-12" for="new-hint">
+                                        <small>Hint</small>
+                                    </label>
+                                    <div class="col-sm-12">
+                                        <input class="form-control" name="hint" id="new-hint" placeholder="Hint" required autocomplete="off"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12 form-group">
+                                    <label class="col-sm-12" for="new-value">
+                                        <small>Value</small>
+                                    </label>
+                                    <div class="col-sm-12">
+                                        <input class="form-control" name="value" id="new-value" type="number" placeholder="Value" required autocomplete="off"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12 form-group">
+                                    <label class="col-sm-12" for="new-bonus">
+                                        <small>Speed Bonus (%)</small>
+                                    </label>
+                                    <div class="col-sm-12">
+                                        <select class="form-control" id="new-bonus">
+                                            <option value="0">0/0/0</option>
+                                            <option value="1">3/2/1</option>
+                                            <option value="2">5/3/1</option>
+                                            <option value="3">8/5/3</option>
+                                            <option value="4">10/8/6</option>
+                                            <option value="5">20/12/8</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12 form-group">
+                                    <label class="col-sm-12" for="new-grader">
+                                        <small>Grader</small>
+                                    </label>
+                                    <div class="col-sm-12">
+                                        <div id="new-grader"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12 form-group">
+                                    <label class="col-sm-12" for="new-weightmap">
+                                        <small>Weightmap</small>
+                                    </label>
+                                    <div class="col-sm-12">
+                                        <div id="new-weightmap"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12 form-group">
+                                    <label class="col-sm-12" for="new-threshold">
+                                        <small>Threshold</small>
+                                    </label>
+                                    <div class="col-sm-12">
+                                        <input class="form-control" name="value" id="new-threshold" type="number" placeholder="Threshold" required autocomplete="off"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12 form-group">
+                                    <div class="col-sm-12">
+                                        <div class="checkbox">
+                                            <label><input id="autogen" type="checkbox"/>Autogen</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12 form-group">
+                                    <div class="col-sm-12">
+                                        <input type="submit" id="create-problem" class="btn btn-success" value="Create"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="tab-pane" ng-repeat="problem in problems" id="problem_{{ problem['pid'] }}">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">Edit <b>{{ problem["title"] }}</b></h4>
+                    </div>
+                    <div class="panel-body">
+                        <div id="{{ problem['pid'] }}_status"/>
+                        <form class="form-horizontal" onsubmit="update_problem(this.id); return false;" id="update_{{ problem['pid'] }}">
+                            <input type="hidden" name="pid" value="{{ problem['pid'] }}"/>
+                            <div class="row">
+                                <div class="col-sm-12 form-group">
+                                    <label class="col-sm-12" for="edit-title">
+                                        <small>Name</small>
+                                    </label>
+                                    <div class="col-sm-12">
+                                        <input class="form-control" name="title" id="edit-title" placeholder="Name" ng-value="problem['title']" required/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12 form-group">
+                                    <label class="col-sm-12" for="edit-description">
+                                        <small>Description</small>
+                                    </label>
+                                    <div class="col-sm-12">
+                                        <textarea class="form-control" name="description" id="edit-description" placeholder="Description" required autocomplete="off">{{ problem["description_source"] }}</textarea>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12 form-group">
+                                    <label class="col-sm-12" for="edit-category">
+                                        <small>Category</small>
+                                    </label>
+                                    <div class="col-sm-12">
+                                        <input class="form-control" name="category" id="edit-category" placeholder="Category" ng-value="problem['category']" required autocomplete="off"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12 form-group">
+                                    <label class="col-sm-12" for="edit-hint">
+                                        <small>Hint</small>
+                                    </label>
+                                    <div class="col-sm-12">
+                                        <input class="form-control" name="hint" id="edit-hint" placeholder="Hint" ng-value="problem['hint']" required autocomplete="off"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12 form-group">
+                                    <label class="col-sm-12" for="edit-value">
+                                        <small>Value</small>
+                                    </label>
+                                    <div class="col-sm-12">
+                                        <input class="form-control" type="number" name="value" id="edit-value" placeholder="Value" ng-value="problem['value']" required autocomplete="off"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12 form-group">
+                                    <label class="col-sm-12" for="{{ problem.pid }}_bonus">
+                                        <small>Speed Bonus (%)</small>
+                                    </label>
+                                    <div class="col-sm-12">
+                                        <select class="form-control" id="{{ problem.pid }}_bonus">
+                                            <option ng-selected="problem.bonus == 0" value="0">0/0/0</option>
+                                            <option ng-selected="problem.bonus == 1" value="1">3/2/1</option>
+                                            <option ng-selected="problem.bonus == 2" value="2">5/3/1</option>
+                                            <option ng-selected="problem.bonus == 3" value="3">8/5/3</option>
+                                            <option ng-selected="problem.bonus == 4" value="4">10/8/6</option>
+                                            <option ng-selected="problem.bonus == 5" value="5">20/12/8</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12 form-group">
+                                    <label class="col-sm-12" for="edit-grader">
+                                        <small>Grader</small>
+                                    </label>
+                                    <div class="col-sm-12">
+                                        <div id="{{ problem['pid'] }}_grader"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12 form-group">
+                                    <label class="col-sm-12">
+                                        <small>Weightmap</small>
+                                    </label>
+                                    <div class="col-sm-12">
+                                        <div id="{{ problem['pid'] }}_weightmap"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12 form-group">
+                                    <label class="col-sm-12">
+                                        <small>Threshold</small>
+                                    </label>
+                                    <div class="col-sm-12">
+                                        <input class="form-control" name="threshold" id="{{ problem['pid'] }}_threshold" ng-value="problem['threshold']" type="number" placeholder="Threshold" required autocomplete="off"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <br>
+                            <div class="row">
+                                <div class="col-sm-12 form-group">
+                                    <div class="col-sm-12">
+                                        <div class="checkbox">
+                                            <label><input id="{{ problem['pid'] }}_autogen" type="checkbox" ng-checked="problem['autogen'] == true"/>Autogen</label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm-12 form-group">
+                                    <div class="col-sm-12">
+                                        <input type="submit" class="btn btn-success" value="Update"/>
+                                        <input type="button" onclick="delete_problem(this.closest('form').id); return false;" class="btn btn-danger" value="Delete"/>
+                                        <input type="button" onclick="clear_submissions(this.closest('form').id); return false;" class="btn btn-danger" value="Clear submissions"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <div id="confirm" class="modal fade">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			<div class="modal-body">Are you sure you want to do this?</div>
-			<div class="modal-footer">
-				<button type="button" data-dismiss="modal" class="btn btn-primary" id="yes">Yes</button>
-				<button type="button" data-dismiss="modal" class="btn">Cancel</button>
-			</div>
-		</div>
-	</div>
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-body">Are you sure you want to do this?</div>
+            <div class="modal-footer">
+                <button type="button" data-dismiss="modal" class="btn btn-primary" id="yes">Yes</button>
+                <button type="button" data-dismiss="modal" class="btn">Cancel</button>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script type="text/javascript">
-	$(document).ready(function() {
-		var new_grader = ace.edit("new-grader");
-		new_grader.setTheme("ace/theme/tomorrow");
-		new_grader.getSession().setMode("ace/mode/python");
-		new_grader.setValue([
-			"flag = 'this_is_a_flag'",
-			"",
-			"def grade(autogen, candidate):",
-			"	if candidate.find(flag) >= 0:",
-			"		return True, 'Correct!'",
-			"	return False, 'Nope.'"
-		].join("\n"));
+    $(document).ready(function () {
+        var new_grader = ace.edit("new-grader");
+        new_grader.setTheme("ace/theme/tomorrow");
+        new_grader.getSession().setMode("ace/mode/python");
+        new_grader.setValue([
+            "flag = 'this_is_a_flag'",
+            "",
+            "def grade(autogen, candidate):",
+            "	if candidate.find(flag) >= 0:",
+            "		return True, 'Correct!'",
+            "	return False, 'Nope.'"
+        ].join("\n"));
 
-		var new_weightmap = ace.edit("new-weightmap");
-		new_weightmap.setTheme("ace/theme/tomorrow");
-		new_weightmap.getSession().setMode("ace/mode/python");
-		new_weightmap.setValue("{}");
-		// new_grader.setValue(
-		// 	'#from hashlib import sha1\n'+
-		// 	'flag = "easyctf{FLAG}"\n\n'+
-		// 	'##Uncomment if the problem is autogenerated\n'+
-		// 	'#autogen_key = "this_is_a_key" # secret used when generating flags\n\n'+
-		// 	'# Generate all data for each problem here:\n'+
-		// 	'#def generate_problem(random, pid):\n'+
-		// 	'#	flag = generate_flag(random)\n'+
-		// 	'#	return {\n'+
-		// 	'#		"description": "What could this possibly mean? %s" % flag.encode("hex")\n'+
-		// 	'#	}\n\n'+
-		// 	'#def generate_flag(random):\n'+
-		// 	'#	return "easyctf{%s}" % sha1(autogen_key + str(random.random())).hexdigest()\n\n'+
-		// 	'def grade(autogen, candidate):\n'+
-		// 	'#	if autogen:\n'+
-		// 	'#		flag = generate_flag(autogen)\n'+
-		// 	'	if candidate == flag:\n'+
-		// 	'		return True, "Correct!"\n'+
-		// 	'	return False, "Incorrect."\n\n'+
-		// 	'# Return True if the flag is correct, False otherwise, along with\n'+
-		// 	'# a corresponding message to send to the user.'
-		// );
-	});
+        var new_weightmap = ace.edit("new-weightmap");
+        new_weightmap.setTheme("ace/theme/tomorrow");
+        new_weightmap.getSession().setMode("ace/mode/python");
+        new_weightmap.setValue("{}");
+        // new_grader.setValue(
+        // 	'#from hashlib import sha1\n'+
+        // 	'flag = "easyctf{FLAG}"\n\n'+
+        // 	'##Uncomment if the problem is autogenerated\n'+
+        // 	'#autogen_key = "this_is_a_key" # secret used when generating flags\n\n'+
+        // 	'# Generate all data for each problem here:\n'+
+        // 	'#def generate_problem(random, pid):\n'+
+        // 	'#	flag = generate_flag(random)\n'+
+        // 	'#	return {\n'+
+        // 	'#		"description": "What could this possibly mean? %s" % flag.encode("hex")\n'+
+        // 	'#	}\n\n'+
+        // 	'#def generate_flag(random):\n'+
+        // 	'#	return "easyctf{%s}" % sha1(autogen_key + str(random.random())).hexdigest()\n\n'+
+        // 	'def grade(autogen, candidate):\n'+
+        // 	'#	if autogen:\n'+
+        // 	'#		flag = generate_flag(autogen)\n'+
+        // 	'	if candidate == flag:\n'+
+        // 	'		return True, "Correct!"\n'+
+        // 	'	return False, "Incorrect."\n\n'+
+        // 	'# Return True if the flag is correct, False otherwise, along with\n'+
+        // 	'# a corresponding message to send to the user.'
+        // );
+    });
 </script>

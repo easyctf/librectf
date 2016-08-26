@@ -1,86 +1,112 @@
 <div class="container">
-	<p>&nbsp;</p>
-	<div class="row">
-		<div class="col-md-6 col-md-offset-3 col-sm-10 col-sm-offset-1">
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<h2 class="panel-title">Login</h2>
-				</div>
-				<div class="panel-body">
-					<form class="form-horizontal" onsubmit="login_form(); return false;" id="login_form">
-						<fieldset>
-							<div id="login_msg"></div>
-						</fieldset>
-						<fieldset class="container-fluid">
-							<div class="row">
-								<center>
-									<img src="https://placeholdit.imgix.net/~text?txtsize=48&txt=?&w=128&h=128" style="border:1px solid #999;width:120px;height:120px;border-radius:100%;" id="pfp" />
-								</center>
-							</div>
-							<div class="row">
-								<div class="col-sm-12 form-group">
-									<label class="col-sm-12" for="username"><small>Username</small></label>
-									<div class="col-sm-12">
-										<input class="form-control" type="text" required name="username" id="username" placeholder="Username" autocomplete="off" />
-									</div>
-								</div>
-							</div>
-							<div class="row">
-								<div class="col-sm-12 form-group">
-									<label class="col-sm-12" for="password"><small>Password</small></label>
-									<div class="col-sm-12">
-										<input class="form-control" type="password" required name="password" id="password" placeholder="Password" autocomplete="off" />
-									</div>
-								</div>
-							</div>
-							<div style="display:none;" id="tfa">
-								<p>Enter the token from your two-factor authentication app here.</p>
-								<div class="row">
-									<div class="col-sm-12 form-group">
-										<label class="col-sm-12" for="token"><small>Token</small></label>
-										<div class="col-sm-12">
-											<input class="form-control" type="number" name="token" id="token" placeholder="Token" autocomplete="off" />
-										</div>
-									</div>
-								</div>
-							</div>
-							<div class="row">
-								<div class="col-sm-12 form-group">
-									<center>
-										<input type="hidden" id="_csrf" value="{{ csrf_token }}" />
-										<input type="submit" class="btn btn-success btn-lg" value="Login" />
-									</center>
-								</div>
-							</div>
-							<div class="row">
-								<div class="col-sm-12 form-group">
-									<center>
-										<small>
-											<a href="/forgot">Forgot Password?</a>
-										</small>
-									</center>
-								</div>
-							</div>
-						</fieldset>
-					</form>
-				</div>
-			</div>
-		</div>
-	</div>
+    <p>&nbsp;</p>
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2 col-sm-10 col-sm-offset-1">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h2 class="panel-title">Login</h2>
+                </div>
+                <div class="panel-body">
+                    <div class="row">
+                        <div class="col-md-6 col-xs-12">
+                            <form class="form-horizontal" onsubmit="login_form(); return false;" id="login_form">
+                                <fieldset>
+                                    <div id="login_msg"></div>
+                                </fieldset>
+                                <fieldset class="container-fluid">
+                                    <div class="row">
+                                        <div class="col-sm-12 form-group">
+                                            <label class="col-sm-12" for="username">
+                                                <small>Username</small>
+                                            </label>
+                                            <div class="col-sm-12">
+                                                <input class="form-control" type="text" required name="username"
+                                                       id="username" placeholder="Username" autocomplete="off"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-12 form-group">
+                                            <label class="col-sm-12" for="password">
+                                                <small>Password</small>
+                                            </label>
+                                            <div class="col-sm-12">
+                                                <input class="form-control" type="password" required name="password"
+                                                       id="password" placeholder="Password" autocomplete="off"/>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div style="display:none;" id="tfa">
+                                        <p>Enter the token from your two-factor authentication app here.</p>
+                                        <div class="row">
+                                            <div class="col-sm-12 form-group">
+                                                <label class="col-sm-12" for="token">
+                                                    <small>Token</small>
+                                                </label>
+                                                <div class="col-sm-12">
+                                                    <input class="form-control" type="number" name="token" id="token"
+                                                           placeholder="Token" autocomplete="off"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-12 form-group">
+                                            <center>
+                                                <input type="hidden" id="_csrf" value="{{ csrf_token }}"/>
+                                                <input type="submit" class="btn btn-success btn-lg" value="Login"/>
+                                            </center>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-sm-12 form-group">
+                                            <center>
+                                                <small>
+                                                    <a href="/forgot">Forgot Password?</a>
+                                                </small>
+                                            </center>
+                                        </div>
+                                    </div>
+                                </fieldset>
+                            </form>
+                        </div>
+                        <div class="col-md-6 col-xs-12">
+                            <h3>Sign in with CTFCal</h3>
+                            <p>Some intro about CTFCal.</p>
+                            <center>
+                                <a href="javascript:void(0);" class="btn btn-lg btn-default" id="ctfcal_login" disabled>Login with CTFCal</a>
+                                <p><small id="disabled_notification">Sorry, this CTF administrator has not allowed CTFCal login.</small></p>
+                            </center>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script type="text/javascript">
-	$("#username").change(function() {
-		api_call("GET", "/api/user/info", { username: $("#username").val() }, function(result) {
-			if (result["success"] == 1) {
-				$("#pfp").attr("src", "/api/user/avatar/" + result["user"]["uid"]);
-				if (result["user"]["tfa_enabled"]) {
-					$("#tfa").slideDown();
-				}
-			} else {
-				$("#pfp").attr("src", "https://placeholdit.imgix.net/~text?txtsize=48&txt=?&w=128&h=128");
-				$("#tfa").slideUp();
-			}
-		});
-	});
+    $(function () {
+        api_call("GET", "/api/user/ctfcal/auth_url", {}, function (result) {
+            if (result["success"] == 1) {
+                var redirect_uri = location.protocol + "//" + location.host + "/api/user/ctfcal/callback";
+                $("#ctfcal_login").attr("href", result["url"]);
+                $("#ctfcal_login").removeAttr("disabled");
+                $("#disabled_notification").slideUp();
+            }
+        });
+    });
+    $("#username").change(function () {
+        api_call("GET", "/api/user/info", {username: $("#username").val()}, function (result) {
+            if (result["success"] == 1) {
+//				$("#pfp").attr("src", "/api/user/avatar/" + result["user"]["uid"]);
+                if (result["user"]["tfa_enabled"]) {
+                    $("#tfa").slideDown();
+                }
+            } else {
+//                $("#pfp").attr("src", "https://placeholdit.imgix.net/~text?txtsize=48&txt=?&w=128&h=128");
+                $("#tfa").slideUp();
+            }
+        });
+    });
 </script>

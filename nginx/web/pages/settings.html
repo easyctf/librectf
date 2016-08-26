@@ -1,234 +1,248 @@
 <style>
-	.btn-file {
-		position: relative;
-		overflow: hidden;
-	}
-	.btn-file input[type=file] {
-		position: absolute;
-		top: 0;
-		right: 0;
-		min-width: 100%;
-		min-height: 100%;
-		font-size: 100px; text-align: right; filter: alpha(opacity=0); opacity: 0;
-		background: red;
-		cursor: inherit;
-		display: block;
-	}
+    .btn-file {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .btn-file input[type=file] {
+        position: absolute;
+        top: 0;
+        right: 0;
+        min-width: 100%;
+        min-height: 100%;
+        font-size: 100px;
+        text-align: right;
+        filter: alpha(opacity=0);
+        opacity: 0;
+        background: red;
+        cursor: inherit;
+        display: block;
+    }
 </style>
 
 <div class="row">
-	<div class="col-sm-3 col-xs-12">
-		<div class="panel panel-default">
-			<div class="panel-heading">
-				<h4 class="panel-title">Account Settings</h4>
-			</div>
-			<div class="list-group">
-				<a ng-click="scrollTo('profile')" class="list-group-item">Profile</a>
-				<a ng-click="scrollTo('email')" class="list-group-item">Email</a>
-				<a ng-click="scrollTo('security')" class="list-group-item">Security</a>
-			</div>
-		</div>
-	</div>
-	<div class="col-sm-9 col-xs-12">
-		<form onsubmit="update_profile(); return false" id="update_profile_form">
-			<section id="profile">
-				<div class="panel panel-default">
-					<div class="panel-heading">
-						<h4 class="panel-title">Public Profile</h4>
-					</div>
-					<div class="panel-body">
-						<label>Profile Picture</label>
-						<div class="row">
-							<div class="col-sm-2">
-								<img src="/api/user/avatar/{{ user.uid }}?{{ timestamp }}" id="avatar" style="width:100%;max-height:256px;" />
-							</div>
-							<div class="col-sm-10">
-								<div class="row">
-									<div class="btn-group">
-										<div class="btn btn-primary btn-file" id="file_upload">
-											<i class="fa fa-fw fa-upload"></i> Upload new picture
-											<input type="file" name="file" id="file" accept="image/*" />
-										</div>
-										<a class="btn btn-default" href="javascript:remove_profile_picture();">
-											<i class="fa fa-fw fa-trash"></i> Remove profile picture
-										</a>
-									</div>
-								</div>
-								<div class="row">
-									<p><i>If you remove your picture, an automatically generated <a href="http://en.wikipedia.org/wiki/Identicon" target="_blank">identicon</a> will be used.</i></p>
-								</div1>
-							</div>
-						</div>
-					</div>
-				</div>
-			</section>
-			<section id="email">
-				<div class="panel panel-default">
-					<div class="panel-heading">
-						<h4 class="panel-title">Email</h4>
-					</div>
-					<div class="panel-body">
-						<input class="form-control" type="email" name="email" placeholder="Email" autocomplete="off" value="{{ user['email'] }}"/>
-					</div>
-				</div>
-				<div class="panel panel-default">
-					<div class="panel-heading">
-						<h4 class="panel-title">Email Preferences</h4>
-					</div>
-					<div class="panel-body">
-						<div id="verify_email_msg"/>
-						<div ng-show="user['email_verified']==true">
-							<p><i class="fa fa-fw fa-check" style="color:green;"></i>Your email has been verified.</p>
-						</div>
-						<div ng-show="user['email_verified']==false">
-							<p><i class="fa fa-fw fa-close" style="color:red;"></i>Your email has not yet been verified.</p>
-							<a id="verify_email_btn" onclick="verify_email(); return false;" class="btn btn-primary">Verify your email &raquo;</a>
-						</div>
-					</div>
-				</div>
-			</section>
-			<section id="security">
-				<div class="panel panel-default">
-					<div class="panel-heading">
-						<h4 class="panel-title">Two-Factor Authentication</h4>
-					</div>
-					<div class="panel-body">
-						<div ng-show="user['tfa_enabled']==true">
-							<p><i class="fa fa-fw fa-lock" style="color:green;"></i> Two-factor authentication is enabled on your account.</p>
-						</div>
-						<div ng-show="user['tfa_enabled']==false">
-							<p><i class="fa fa-fw fa-lock" style="color:red;"></i> Two-factor authentication isn't enabled on your account.</p>
-							<a href="/settings/twofactor" class="btn btn-primary">Setup two-factor authentication now &raquo;</a>
-						</div>
-					</div>
-				</div>
-				<div class="panel panel-default">
-					<div class="panel-heading">
-						<h4 class="panel-title">Active Sessions</h4>
-					</div>
-					<table class="table table-striped table-hover">
-						<thead>
-							<tr>
-								<th>IP</th>
-								<th>Location</th>
-								<th>Since</th>
-								<th></th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr ng-repeat="session in user['sessions']">
-								<td>{{ session["ip"] }}<span ng-show="session['me']==true"> (you)</span></td>
-								<td>{{ session["location"] }}</td>
-								<td><time class="timeago" datetime="{{ session['since'] }}"></time></td>
-								<td>(<a href="javascript:delete_session('{{ session['sid'] }}');">Remove</a>)</td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
-				<div class="panel panel-default">
-					<div class="panel-heading">
-						<h4 class="panel-title">Change Password</h4>
-					</div>
-					<div class="panel-body">
-						<input class="form-control" type="password" name="new_password" placeholder="New password" autocomplete="off"/>
-						<br>
-						<input class="form-control" type="password" name="new_password_confirm" placeholder="Confirm password" autocomplete="off"/>
-						<br>
-						<div id="change_pass_msg"></div>
-						<input class="form-control" type="password" name="current_password" placeholder="Current password"/>
-						<br>
-						<input class="btn btn-primary" type="submit" value="Update"/>
-					</div>
-				</div>
-			</section>
-		</form>
-	</div>
+    <div class="col-sm-3 col-xs-12">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4 class="panel-title">Account Settings</h4>
+            </div>
+            <div class="list-group">
+                <a ng-click="scrollTo('profile')" class="list-group-item">Profile</a>
+                <a ng-click="scrollTo('email')" class="list-group-item">Email</a>
+                <a ng-click="scrollTo('security')" class="list-group-item">Security</a>
+            </div>
+        </div>
+    </div>
+    <div class="col-sm-9 col-xs-12">
+        <form onsubmit="update_profile(); return false" id="update_profile_form">
+            <section id="profile">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">Public Profile</h4>
+                    </div>
+                    <div class="panel-body">
+                        <label>Profile Picture</label>
+                        <div class="row">
+                            <div class="col-sm-2">
+                                <img src="/api/user/avatar/{{ user.uid }}?{{ timestamp }}" id="avatar" style="width:100%;max-height:256px;"/>
+                            </div>
+                            <div class="col-sm-10">
+                                <div class="row">
+                                    <div class="btn-group">
+                                        <div class="btn btn-primary btn-file" id="file_upload">
+                                            <i class="fa fa-fw fa-upload"></i> Upload new picture
+                                            <input type="file" name="file" id="file" accept="image/*"/>
+                                        </div>
+                                        <a class="btn btn-default" href="javascript:remove_profile_picture();">
+                                            <i class="fa fa-fw fa-trash"></i> Remove profile picture
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <p><i>If you remove your picture, an automatically generated
+                                        <a href="http://en.wikipedia.org/wiki/Identicon" target="_blank">identicon</a>
+                                        will be used.</i></p>
+                                    </div1>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+            </section>
+            <section id="email">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">Email</h4>
+                    </div>
+                    <div class="panel-body">
+                        <input class="form-control" type="email" name="email" placeholder="Email" autocomplete="off" value="{{ user['email'] }}"/>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">Email Preferences</h4>
+                    </div>
+                    <div class="panel-body">
+                        <div id="verify_email_msg"/>
+                        <div ng-show="user['email_verified']==true">
+                            <p><i class="fa fa-fw fa-check" style="color:green;"></i>Your email has been verified.</p>
+                        </div>
+                        <div ng-show="user['email_verified']==false">
+                            <p><i class="fa fa-fw fa-close" style="color:red;"></i>Your email has not yet been verified.
+                            </p>
+                            <a id="verify_email_btn" onclick="verify_email(); return false;" class="btn btn-primary">Verify
+                                your email &raquo;</a>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <section id="security">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">Two-Factor Authentication</h4>
+                    </div>
+                    <div class="panel-body">
+                        <div ng-show="user['tfa_enabled']==true">
+                            <p><i class="fa fa-fw fa-lock" style="color:green;"></i> Two-factor authentication is
+                                enabled on your account.</p>
+                        </div>
+                        <div ng-show="user['tfa_enabled']==false">
+                            <p><i class="fa fa-fw fa-lock" style="color:red;"></i> Two-factor authentication isn't
+                                enabled on your account.</p>
+                            <a href="/settings/twofactor" class="btn btn-primary">Setup two-factor authentication
+                                now &raquo;</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">Active Sessions</h4>
+                    </div>
+                    <table class="table table-striped table-hover">
+                        <thead>
+                        <tr>
+                            <th>IP</th>
+                            <th>Location</th>
+                            <th>Since</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr ng-repeat="session in user['sessions']">
+                            <td>{{ session["ip"] }}<span ng-show="session['me']==true"> (you)</span></td>
+                            <td>{{ session["location"] }}</td>
+                            <td>
+                                <time class="timeago" datetime="{{ session['since'] }}"></time>
+                            </td>
+                            <td>(<a href="javascript:delete_session('{{ session['sid'] }}');">Remove</a>)</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title">Change Password</h4>
+                    </div>
+                    <div class="panel-body">
+                        <input class="form-control" type="password" name="new_password" placeholder="New password" autocomplete="off"/>
+                        <br>
+                        <input class="form-control" type="password" name="new_password_confirm" placeholder="Confirm password" autocomplete="off"/>
+                        <br>
+                        <div id="change_pass_msg"></div>
+                        <input class="form-control" type="password" name="current_password" placeholder="Current password"/>
+                        <br>
+                        <input class="btn btn-primary" type="submit" value="Update"/>
+                    </div>
+                </div>
+            </section>
+        </form>
+    </div>
 </div>
 
 <script type="text/javascript">
-	smoothScroll.init({
-		speed: 480,
-		easing: "easeOutCubic",
-		offset: $("#navbar").outerHeight(),
-		updateURL: false
-	});
-	var dataURItoBlob = function(dataURI) {
-		var byteString = atob(dataURI.split(",")[1]);
-		var mimeString = dataURI.split(",")[0].split(":")[1].split(";")[0];
-		var ab = new ArrayBuffer(byteString.length);
-		var ia = new Uint8Array(ab);
-		for (var i = 0; i < byteString.length; i++) {
-			ia[i] = byteString.charCodeAt(i);
-		}
-		var blob = new Blob([ ab ], { type: mimeString });
-		return blob;
-	}
-	var MAX_SIZE = 256;
-	var uploadListener = function(e) {
-		try {
-			$("#file_upload").attr("disabled", "disabled");
-			$("#file_upload").html("<i class='fa fa-fw fa-circle-o-notch fa-spin'></i> Uploading...");
-			var file = e.target.files[0];
-			var reader = new FileReader();
-			reader.onload = (function(_file) {
-				return function(progress) {
-					var img = document.createElement("img");
-					img.src = progress.target.result;
-					var width = img.width;
-					var height = img.height;
+    smoothScroll.init({
+        speed: 480,
+        easing: "easeOutCubic",
+        offset: $("#navbar").outerHeight(),
+        updateURL: false
+    });
+    var dataURItoBlob = function (dataURI) {
+        var byteString = atob(dataURI.split(",")[1]);
+        var mimeString = dataURI.split(",")[0].split(":")[1].split(";")[0];
+        var ab = new ArrayBuffer(byteString.length);
+        var ia = new Uint8Array(ab);
+        for (var i = 0; i < byteString.length; i++) {
+            ia[i] = byteString.charCodeAt(i);
+        }
+        var blob = new Blob([ab], {type: mimeString});
+        return blob;
+    }
+    var MAX_SIZE = 256;
+    var uploadListener = function (e) {
+        try {
+            $("#file_upload").attr("disabled", "disabled");
+            $("#file_upload").html("<i class='fa fa-fw fa-circle-o-notch fa-spin'></i> Uploading...");
+            var file = e.target.files[0];
+            var reader = new FileReader();
+            reader.onload = (function (_file) {
+                return function (progress) {
+                    var img = document.createElement("img");
+                    img.src = progress.target.result;
+                    var width = img.width;
+                    var height = img.height;
 
-					if (width > height) {
-						if (width > MAX_SIZE) {
-							height *= MAX_SIZE / width;
-							width = MAX_SIZE;
-						}
-					} else {
-						if (height > MAX_SIZE) {
-							width *= MAX_SIZE / height;
-							height = MAX_SIZE;
-						}
-					}
-					img.cwidth = width;
-					img.cheight = height;
+                    if (width > height) {
+                        if (width > MAX_SIZE) {
+                            height *= MAX_SIZE / width;
+                            width = MAX_SIZE;
+                        }
+                    } else {
+                        if (height > MAX_SIZE) {
+                            width *= MAX_SIZE / height;
+                            height = MAX_SIZE;
+                        }
+                    }
+                    img.cwidth = width;
+                    img.cheight = height;
 
-					var data = new FormData();
-					data.append("file", dataURItoBlob(img.src));
-					data.append("csrf_token", $.cookie("csrf_token"));
-					$.ajax({
-						type: "POST",
-						url: "/api/user/avatar/upload",
-						data: data,
-						processData: false,
-						contentType: false,
-					}).done(function(result) {
-						if (result["success"] == 1) {
-							$("#file_upload").removeClass("btn-primary");
-							$("#file_upload").addClass("btn-success");
-							$("#file_upload").html("<i class='fa fa-fw fa-check'></i> Done! Reloading...");
-							location.reload(true);
-						}
-					}).fail(function() {
-						$("#file_upload").removeClass("btn-primary");
-						$("#file_upload").addClass("btn-danger");
-						$("#file_upload").html("<i class='fa fa-fw fa-ban'></i> Error. Reloading...");
-						location.reload(true);
-					});
-				};
-			})(file);
-			reader.readAsDataURL(file);
-		} catch (e) {
-			console.log(e);
-			$("#file_upload").removeClass("btn-primary");
-			$("#file_upload").addClass("btn-danger");
-			$("#file_upload").html("<i class='fa fa-fw fa-ban'></i> Error. Reloading...");
-			location.reload(true);
-		}
-	};
-	$(document).ready(function() {
-		if (!(window.File && window.FileReader && window.FileList && window.Blob)) {
-			console.log("Your browser doesn't support file upload.");
-		} else {
-			document.getElementById("file").addEventListener("change", uploadListener, false);
-		};
-	});
+                    var data = new FormData();
+                    data.append("file", dataURItoBlob(img.src));
+                    data.append("csrf_token", $.cookie("csrf_token"));
+                    $.ajax({
+                        type: "POST",
+                        url: "/api/user/avatar/upload",
+                        data: data,
+                        processData: false,
+                        contentType: false,
+                    }).done(function (result) {
+                        if (result["success"] == 1) {
+                            $("#file_upload").removeClass("btn-primary");
+                            $("#file_upload").addClass("btn-success");
+                            $("#file_upload").html("<i class='fa fa-fw fa-check'></i> Done! Reloading...");
+                            location.reload(true);
+                        }
+                    }).fail(function () {
+                        $("#file_upload").removeClass("btn-primary");
+                        $("#file_upload").addClass("btn-danger");
+                        $("#file_upload").html("<i class='fa fa-fw fa-ban'></i> Error. Reloading...");
+                        location.reload(true);
+                    });
+                };
+            })(file);
+            reader.readAsDataURL(file);
+        } catch (e) {
+            console.log(e);
+            $("#file_upload").removeClass("btn-primary");
+            $("#file_upload").addClass("btn-danger");
+            $("#file_upload").html("<i class='fa fa-fw fa-ban'></i> Error. Reloading...");
+            location.reload(true);
+        }
+    };
+    $(document).ready(function () {
+        if (!(window.File && window.FileReader && window.FileList && window.Blob)) {
+            console.log("Your browser doesn't support file upload.");
+        } else {
+            document.getElementById("file").addEventListener("change", uploadListener, false);
+        }
+        ;
+    });
 </script>

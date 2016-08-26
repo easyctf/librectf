@@ -1,7 +1,7 @@
 .. api documentation master file, created by
-   sphinx-quickstart on Mon May 16 21:59:24 2016.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
+sphinx-quickstart on Mon May 16 21:59:24 2016.
+You can adapt this file completely to your liking, but it should at least
+contain the root `toctree` directive.
 
 Welcome to OpenCTF documentation!
 =================================
@@ -13,11 +13,11 @@ Check out our `Getting Started <gettingstarted.html>`_ page for instructions on 
 Contents:
 
 .. toctree::
-   :maxdepth: 4
+:maxdepth: 4
 
-   Getting Started <gettingstarted>
-   Github Webhook Integration <webhooks>
-   Python REST API <api>
+       Getting Started <gettingstarted>
+       Github Webhook Integration <webhooks>
+       Python REST API <api>
 
 
 Indices and tables
