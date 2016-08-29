@@ -9,7 +9,7 @@ from StringIO import StringIO
 import pyqrcode
 import requests
 from PIL import Image
-from flask import Blueprint, session, request, send_file, abort
+from flask import Blueprint, session, request, send_file, abort, redirect
 from flask import current_app as app
 from voluptuous import Schema, Length, Required
 from werkzeug import secure_filename
@@ -19,7 +19,7 @@ import logger
 import team
 import utils
 from decorators import api_wrapper, WebException, login_required
-from models import db, LoginTokens, Users, Activity
+from models import db, LoginTokens, Users, Activity, OAuthState
 from schemas import verify_to_schema, check
 
 ###############
@@ -439,8 +439,7 @@ def user_session_delete():
     return {"success": 1, "message": "Deleted."}
 
 
-@blueprint.route("/ctfcal/auth_url")
-@api_wrapper
+@blueprint.route("/ctfcal/auth")
 def ctfcal_oauth():
     result = {}
     client_id = utils.get_config("ctfcal_clientid")
@@ -449,9 +448,11 @@ def ctfcal_oauth():
         raise WebException("CTFCal login is not enabled.")
     state = utils.generate_string(32)
     redirect_uri = os.getenv("DOMAIN", "http://localhost") + "/api/user/ctfcal/callback"
-    valid_states[state] = {
-        "redirect_uri": redirect_uri
-    }
+    with app.app_context():
+        state_obj = OAuthState(sid=state, redirect_uri=redirect_uri)
+        db.session.add(state_obj)
+        db.session.commit()
+        db.session.close()
     params = {
         "client_id": client_id,
         "response_type": "code",
@@ -460,17 +461,16 @@ def ctfcal_oauth():
         "redirect_uri": redirect_uri
     }
     url = "http://localhost:5000/oauth/authorize?" + urllib.urlencode(params)
-    return {"success": 1, "url": url}
+    redirect(url)
 
 
 @blueprint.route("/ctfcal/callback")
-@api_wrapper
 def user_ctfcal_callback():
     params = utils.flat_multi(request.args)
     auth_code = params.get("code")
     state = params.get("state")
-    print valid_states
-    if state not in valid_states:
+    state_obj = OAuthState.query.filter_by(sid=state).first()
+    if state_obj is None:
         raise WebException("This isn't a valid state.")
 
     info = requests.get("http://98.206.22.165:5000/oauth/token", data={
@@ -478,7 +478,28 @@ def user_ctfcal_callback():
         "client_id": utils.get_config("ctfcal_clientid"),
         "client_secret": utils.get_config("ctfcal_clientsecret"),
         "grant_type": "authorization_code",
-        "redirect_uri": valid_states[state]["redirect_uri"]
+        "redirect_uri": state_obj.redirect_uri
+    }).json()
+    with app.app_context():
+        state_obj.access_token = info["access_token"]
+        state_obj.refresh_token = info["refresh_token"]
+        db.session.commit()
+        db.session.close()
+
+    return redirect("/register/ctfcal?state=%s" % state)
+
+
+@blueprint.route("/ctfcal/register/info")
+@api_wrapper
+def user_ctfcal_register_info():
+    params = utils.flat_multi(request.args)
+    state = params.get("state")
+    state_obj = OAuthState.query.filter_by(sid=state).first()
+    if state_obj is None:
+        raise WebException("This isn't a valid state.")
+
+    info = requests.get("http://98.206.22.165:5000/api/user/profile", headers={
+        "Authorization": "Basic {}".format(state_obj.access_token)
     }).json()
     return {"success": 1, "info": info}
 

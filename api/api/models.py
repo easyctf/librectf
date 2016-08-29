@@ -170,16 +170,16 @@ class Activity(db.Model):
                 return "<b>%s</b> created a team." % (generate_user_link(u.username))
             else:
                 return "<b>%s</b> created the team <b>%s</b>." % (
-                generate_user_link(u.username), generate_team_link(t.teamname))
+                    generate_user_link(u.username), generate_team_link(t.teamname))
         elif self.type == 2:
             if t is None:
                 return "<b>%s</b> left their team." % (generate_user_link(u.username))
             else:
                 return "<b>%s</b> has left team <b>%s</b>." % (
-                generate_user_link(u.username), generate_team_link(t.teamname))
+                    generate_user_link(u.username), generate_team_link(t.teamname))
         elif self.type == 3:
             return "<b>%s</b> from team <b>%s</b> has solved <b>%s</b>." % (
-            generate_user_link(u.username), generate_team_link(t.teamname), p.title)
+                generate_user_link(u.username), generate_team_link(t.teamname), p.title)
         elif self.type == 4:
             return "<b>%s</b> has taken 1st place!" % generate_team_link(t.teamname)
         elif self.type == 5:
@@ -524,7 +524,7 @@ class Pages(db.Model):
         self.title = title
         self.content = content
 
-    def get_all_pages():
+    def get_all_pages(self):
         pages = list(Pages.query.filter_by().all())
         page_results = []
         current_page = filter(lambda x: x.pvid == -1, pages)[0]
@@ -536,3 +536,10 @@ class Pages(db.Model):
 
     def get_html(self):
         return markdown2.markdown(self.content)
+
+
+class OAuthState(db.Model):
+    sid = db.Column(db.String(64), index=True, primary_key=True)
+    access_token = db.Column(db.String(64))
+    refresh_token = db.Column(db.String(64))
+    redirect_uri = db.Column(db.Text)

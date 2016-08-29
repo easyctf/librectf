@@ -86,16 +86,6 @@
 </div>
 
 <script type="text/javascript">
-    $(function () {
-        api_call("GET", "/api/user/ctfcal/auth_url", {}, function (result) {
-            if (result["success"] == 1) {
-                var redirect_uri = location.protocol + "//" + location.host + "/api/user/ctfcal/callback";
-                $("#ctfcal_login").attr("href", result["url"]);
-                $("#ctfcal_login").removeAttr("disabled");
-                $("#disabled_notification").slideUp();
-            }
-        });
-    });
     $("#username").change(function () {
         api_call("GET", "/api/user/info", {username: $("#username").val()}, function (result) {
             if (result["success"] == 1) {

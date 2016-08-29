@@ -98,6 +98,10 @@ app.config(function ($routeProvider, $locationProvider) {
             templateUrl: "pages/register.html",
             controller: "mainController"
         })
+        .when("/register/ctfcal", {
+            templateUrl: "pages/register_ctfcal.html",
+            controller: "mainController"
+        })
         .when("/scoreboard", {
             templateUrl: "pages/scoreboard.html",
             controller: "scoreboardController"

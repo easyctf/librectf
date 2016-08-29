@@ -11,3 +11,4 @@ files
 _build
 .env
 backups
+.idea
