@@ -27,7 +27,6 @@ from schemas import verify_to_schema, check
 ###############
 
 blueprint = Blueprint("user", __name__)
-valid_states = {}
 
 
 @blueprint.route("/verify", methods=["GET", "POST"])
