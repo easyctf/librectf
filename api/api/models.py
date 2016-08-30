@@ -6,6 +6,7 @@ import urllib
 import markdown2
 import onetimepass
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.sql import func
 
 import cache
 
@@ -543,3 +544,4 @@ class OAuthState(db.Model):
     access_token = db.Column(db.String(64))
     refresh_token = db.Column(db.String(64))
     redirect_uri = db.Column(db.Text)
+    expire_time = db.Column(db.DateTime, default=func.now())

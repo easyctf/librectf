@@ -460,7 +460,7 @@ def ctfcal_oauth():
         "redirect_uri": redirect_uri
     }
     url = "http://localhost:5000/oauth/authorize?" + urllib.urlencode(params)
-    redirect(url)
+    return redirect(url)
 
 
 @blueprint.route("/ctfcal/callback")
