@@ -1,0 +1,116 @@
+{% from "templates.html" import render_field, render_generic_field %}
+{% extends "layout.html" %}
+{% block title %}Settings{% endblock %}
+
+{% block content %}
+    <div class="section">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-3 col-xs-12">
+                    <div class="row">
+                        <div class="col-xs-12">
+                            <a href="{{ url_for('users.profile') }}" class="col-xs-12 btn btn-default">&laquo; Back to User Profile</a>
+                        </div>
+                    </div>
+                    <p></p>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">Account Settings</h4>
+                        </div>
+                        <div class="list-group">
+                            <a data-scroll href="#profile" class="list-group-item">Profile</a>
+                            <a data-scroll href="#security" class="list-group-item">Security</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-9 col-xs-12">
+                    <section id="profile">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">User Profile</h4>
+                            </div>
+                            <div class="panel-body">
+                                <div class="row">
+                                    <div class="col-sm-2">
+                                        <img src="{{ filestore(current_user.avatar) }}?{{ timestamp }}" id="avatar" style="max-width: 100%; max-height:256px; border-radius: 120px; border: 1px solid #ddd; box-shadow: 0 1px 1px rgba(0,0,0,.05);"/>
+                                    </div>
+                                    <div class="col-sm-10">
+                                        <form method="POST" enctype="multipart/form-data">
+                                            {{ profile_edit_form.csrf_token }}
+                                            <fieldset>
+                                                {{ render_field(profile_edit_form.name) }}
+                                                {{ render_generic_field(profile_edit_form.avatar) }}
+                                                {{ render_generic_field(profile_edit_form.remove_avatar) }}
+                                            </fieldset>
+                                            {{ profile_edit_form.submit(class_="btn btn-primary") }}
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                    <section id="security">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">Change Login Info</h4>
+                            </div>
+                            <div class="panel-body">
+                                <form method="POST">
+                                    {{ change_login_form.csrf_token }}
+                                    <fieldset>
+                                        <p>Enter your password to make any changes to your account.</p>
+                                        {{ render_field(change_login_form.old_password) }}
+                                        {{ render_field(change_login_form.email) }}
+                                        <p>
+                                            {% if current_user.email_verified %}
+                                                <i class="fa fa-fw fa-check" style="color:green;"></i>Your email has been verified.
+                                            {% else %}
+                                                <i class="fa fa-fw fa-close" style="color:red;"></i>Your email has not yet been verified.
+                                                <a id="verify_email_btn" href="javascript:verify_email()">Verify your email &raquo;</a>
+                                            {% endif %}
+                                        </p>
+                                        <hr />
+                                        <p>Leave this next part blank if you don't want to change your password.</p>
+                                        {{ render_field(change_login_form.password) }}
+                                        {{ render_field(change_login_form.confirm_password) }}
+                                    </fieldset>
+                                    {{ change_login_form.submit(class_="btn btn-primary") }}
+                                </form>
+                            </div>
+                        </div>
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">Two-Factor Authentication</h4>
+                            </div>
+                            <div class="panel-body">
+                                {% if current_user.otp_confirmed %}
+                                    <p><i class="fa fa-fw fa-lock" style="color:green;"></i> Two-factor authentication is enabled on your account.</p>
+                                    <a href="{{ url_for('users.two_factor_disable') }}" class="btn btn-danger">Disable</a>
+                                {% else %}
+                                    <p><i class="fa fa-fw fa-lock" style="color:red;"></i> Two-factor authentication isn't enabled on your account.</p>
+                                    <a href="{{ url_for('users.two_factor_setup') }}" class="btn btn-primary">Setup two-factor authentication now &raquo;</a>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        var verify_email = function () {
+            $.get("{{ url_for("users.verify_email") }}", function (result) {
+                if (result === "success") {
+                    $("#verify_email_btn").replaceWith("Sent! Check your email!");
+                } else {
+                    $("#verify_email_btn").replaceWith("Failed to send email.");
+                }
+            });
+        };
+        smoothScroll.init({
+            speed: 480,
+            easing: "easeOutCubic",
+            updateURL: false
+        });
+    </script>
+{% endblock %}

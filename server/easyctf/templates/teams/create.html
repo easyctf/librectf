@@ -1,0 +1,81 @@
+{% extends "layout.html" %}
+{% from "templates.html" import render_field, render_generic_field %}
+{% block title %}Create or Join Team{% endblock %}
+
+{% block content %}
+    <div class="section">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">Create Team</h4>
+                        </div>
+                        <div class="panel-body">
+                            {% if current_user.level == 3 %}
+                                <div class="alert alert-info">
+                                    Hey there! Even though you're a teacher, we're going to ask that you create an account simply because of how the system works. In terms of scoring, your team will be considered an observer team.
+                                </div>
+                            {% endif %}
+                            <form method="POST">
+                                {{ create_team_form.csrf_token }}
+                                <fieldset>
+                                    {{ render_field(create_team_form.teamname) }}
+                                    {{ render_field(create_team_form.school) }}
+                                </fieldset>
+                                {{ create_team_form.submit(class_="btn btn-primary") }}
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">Join Team</h4>
+                        </div>
+                        {% if current_user.level == 3 %}
+                            <div class="alert alert-warning">
+                                A word of warning: if you join a team with your students, the team will be marked as an observer team and will be disqualified from winning prizes. If you want to keep track of your students' progress, please use our <a href="{{ url_for('classroom.index') }}">classrooms</a> feature.
+                            </div>
+                        {% endif %}
+                        {% set incoming_invitations = current_user.incoming_invitations %}
+                        {% if incoming_invitations %}
+                            <div class="panel-body">
+                                Here are your current invitations. Click "Accept" to join the team.
+                            </div>
+                            <div class="list-group">
+                                {% for team in incoming_invitations %}
+                                    <div class="list-group-item">
+                                        <a href="{{ url_for('users.accept', id=team.tid) }}" class="badge">Accept</a>
+                                        <a href="{{ url_for('teams.profile', tid=team.tid) }}">{{ team.teamname }}</a>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        {% else %}
+                            <div class="panel-body">
+                                To join a team, you must have an invitation from that team. Contact your team to send you an
+                                invitation, or find their team profile page and request to join their team.
+                            </div>
+                        {% endif %}
+                    </div>
+                    {% set outgoing_invitations = current_user.outgoing_invitations %}
+                    {% if outgoing_invitations %}
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">Sent Requests</h4>
+                            </div>
+                            <div class="list-group">
+                                {% for req in outgoing_invitations %}
+                                    <div class="list-group-item">
+                                        <a href="javascript:void(0);" class="badge">Withdraw</a>
+                                        <a href="{{ url_for('teams.profile', tid=req._to) }}">{{ req.to.teamname }}</a>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

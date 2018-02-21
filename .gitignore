@@ -1,0 +1,10 @@
+.data
+.env
+.vagrant
+.vscode
+.digitalocean-token
+.idea
+
+__pycache__
+*.pyc
+ubuntu-xenial-16.04-cloudimg-console.log

@@ -1,0 +1,435 @@
+{% extends "layout.html" %}
+{% block title %}Game{% endblock %}
+
+{% block content %}
+    <style>
+        a.button {
+            -webkit-appearance: button;
+            -moz-appearance: button;
+            appearance: button;
+
+            text-decoration: none;
+            color: initial;
+        }
+
+        #vn {
+            position: relative;
+            width: 100%;
+            height: 600px;
+            background-color: #090939;
+        }
+
+        #vn_scene {
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: none;
+            width: 100%;
+            height: 100%;
+        }
+
+        #scene_background {
+            width: 65%;
+            height: 100%;
+
+            background-size: cover;
+        }
+
+        #character_1 {
+            width: 50%;
+            height: 90%;
+            position: absolute;
+            top: 10%;
+            left: 10%;
+            background-size: cover;
+        }
+
+        #character_2 {
+            width: 20%;
+            height: 80%;
+            position: absolute;
+            top: 20%;
+            left: 40%;
+        }
+
+        #character_3 {
+            width: 20%;
+            height: 80%;
+            position: absolute;
+            top: 20%;
+            left: 70%;
+        }
+
+        #problem_list_box {
+            position: absolute;
+            width: 35%;
+            height: 40%;
+            top: 0;
+            left: 65%;
+
+            background-color: #090939;
+            padding-left: 2.5%;
+            padding-right: 2.5%;
+
+            font-size: 1em;
+            color: #eee;
+        }
+
+        #problem_list_box::before, #problem_list_box::after {
+            display: block;
+            content: "";
+            height: 10%;
+        }
+
+        #problem_list_box_inner {
+            width: 100%;
+            height: 80%;
+
+            font-family: 'Inconsolata', monospace;
+
+            overflow-y: auto;
+        }
+
+        #problem_list {
+            height: 85%;
+        }
+
+        #problem_list_route {
+            display: none;
+            text-align: center;
+
+            border: 1px cyan solid;
+        }
+
+        #problem_hover_label {
+            width: 100%;
+            height: 15%;
+            left: 0%;
+            top: 90%;
+
+            font-family: 'Inconsolata', monospace;
+
+            text-align: center;
+            color: #B20000;
+
+            overflow: hidden;
+            z-index: 99;
+            position: absolute;
+        }
+
+        #problem_entry_template {
+            position: relative;
+            width: 50px;
+            height: 50px;
+            display: inline-block;
+
+            margin: 5px;
+
+            cursor: pointer;
+
+            background-color: blue;
+
+            visibility: hidden;
+            user-select: none;
+            -moz-user-select: none;
+            -khtml-user-select: none;
+            -webkit-user-select: none;
+            -o-user-select: none;
+        }
+
+        .point_value_label {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+
+            font-size: 25px;
+        }
+
+        #problem_box {
+            position: absolute;
+            width: 35%;
+            height: 35%;
+            top: 40%;
+            left: 65%;
+
+            background-color: #090939;
+            padding-left: 2.5%;
+            padding-right: 2.5%;
+
+            font-size: 1em;
+            color: #eee;
+        }
+
+        #problem_box::before, #problem_box::after {
+            display: block;
+            content: "";
+            height: 10%;
+        }
+
+        #problem_box_inner {
+            width: 100%;
+            height: 80%;
+
+            font-family: 'Inconsolata', monospace;
+
+            overflow: hidden;
+        }
+
+        #problem_title {
+            width: 100%;
+            height: 20%;
+
+            font-size: 1em;
+
+            text-align: center;
+        }
+
+        #problem_body {
+            height: 60%;
+            font-size: 15px;
+
+            overflow-y: auto;
+        }
+
+        #flag_box {
+            position: relative;
+            height: 20%;
+        }
+
+        #flag_input_box {
+            position: absolute;
+            top: 0;
+            height: 100%;
+            width: 100%;
+
+            visibility: hidden;
+        }
+
+        #flag_input {
+            display: inline-block;
+            width: 75%;
+            height: 100%;
+            float: left;
+            overflow-x: auto;
+            margin: 0;
+            font-family: Inconsolata, monospace;
+
+            background-color: #000;
+            border: solid 1px #fff;
+            color: #fff;
+
+            vertical-align: bottom
+        }
+
+        #flag_submit_button {
+            display: inline-block;
+            width: 20%;
+            height: 100%;
+            margin: 0;
+            float: left;
+            font-family: Inconsolata, monospace;
+
+            background-color: #000;
+            border: solid 1px #fff;
+            color: #fff;
+
+            vertical-align: bottom
+        }
+
+        #flag_programming_button {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            top: 0;
+
+            font-family: 'Inconsolata', monospace;
+
+            background-color: #000;
+            border: solid 1px #fff;
+            color: #fff;
+
+            visibility: hidden;
+        }
+
+        #dialogue_box {
+            position: absolute;
+            width: 100%;
+            height: 22%;
+            top: 78%;
+
+            background-color: rgba(0, 0, 0, 0.5);
+            padding-left: 10%;
+            padding-right: 10%;
+
+            font-size: 1.5em;
+            color: #eee;
+        }
+
+        #dialogue_box::before, #dialogue_box::after {
+            display: block;
+            content: "";
+            height: 27%;
+        }
+
+        #dialogue_box_inner {
+            width: 100%;
+            height: 80%;
+
+            font-family: 'Inconsolata', monospace;
+
+            overflow: hidden;
+        }
+
+        #dialogue_next_arrow {
+            position: absolute;
+            font-size: 1em;
+            bottom: 0.5em;
+            right: 1em;
+            color: #B20000;
+
+            visibility: hidden;
+        }
+
+        #speaker_display {
+            width: 20%;
+            position: absolute;
+            left: 7%;
+            top: 78%;
+            transform: translateY(-50%);
+
+            text-align: center;
+            background-color: rgba(9, 9, 57, 0.9);
+            color: #eee;
+            font-size: 2em;
+            font-family: 'Inconsolata', monospace;
+            padding-top: 0.3em;
+            padding-bottom: 0.3em;
+        }
+
+        #speaker_display::before, #speaker_display::after {
+            display: block;
+            content: "";
+            height: 10%;
+        }
+
+        #loading_screen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            width: 100%;
+
+            background-color: black;
+        }
+
+        #loading_display {
+            color: #eee;
+            font-size: 2em;
+            font-family: 'Inconsolata', monospace;
+        }
+    </style>
+
+    <div class="section gradient">
+        <div class="container">
+            <div style="float: right;">
+                <h3>Points: {{ current_user.team.points() }}</h3>
+            </div>
+            <h1>Game</h1>
+        </div>
+    </div>
+    <div class="section">
+        <div class="container">
+            <div id="vn">
+                <div id="vn_scene">
+                    <div id="scene_background">
+
+                    </div>
+
+                    <div id="character_1"></div>
+                    <div id="character_2"></div>
+                    <div id="character_3"></div>
+
+                    <div id="problem_list_box">
+                        <div id="problem_list_box_inner">
+                            <div id="problem_list">
+                                <div id="problem_list_route"></div>
+                                <div style="clear: both;"></div>
+                                <div id="problem_list_normal"></div>
+                            </div>
+                            <div id="problem_hover_label"></div>
+                        </div>
+                    </div>
+                    <div id="problem_entry_template">
+                        <!-- assumed to be first child -->
+                        <div class="point_value_label">
+                            &nbsp
+                        </div>
+                    </div>
+
+                    <div id="problem_box">
+                        <div id="problem_box_inner">
+                            <div id="problem_title">
+                                <!-- TODO: problem points and category -->
+                            </div>
+                            <div id="problem_body">
+
+                            </div>
+                            <div id="flag_box">
+                                <div id="flag_input_box">
+                                    {{ problem_submit_form.csrf_token }}
+                                    <input id="flag_input" type="text" placeholder="Flag"/>
+                                    <button id="flag_submit_button">Submit</button>
+                                </div>
+                                <form id="flag_programming_form_button" action="{{ url_for('chals.programming') }}" target="_blank">
+                                    <button type="submit" id="flag_programming_button">
+                                        Open in Programming Editor ➚
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="dialogue_box">
+                        <div id="dialogue_box_inner">
+
+                        </div>
+                        <div id="dialogue_next_arrow">
+                            ▶▶
+                        </div>
+                    </div>
+
+                    <div id="speaker_display">
+                        <div id="speaker_display_inner">
+
+                        </div>
+                    </div>
+                </div>
+
+                <div id="loading_screen">
+                    <span id="loading_display">
+                        Loading...
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="/assets/js/vn.js"></script>
+
+    <script>
+        var master = new Master(new ServerAPI({
+            'game': '/assets/game.json',
+            'problems': '/game/problems',
+            'state': '/game/state',
+            'submit': '/game/submit',
+            'game_state_update': '/game/state/update'
+        }, document.getElementById('csrf_token').value));
+        master.init();
+        //master.set_scene('one');
+        master.start();
+    </script>
+{% endblock %}

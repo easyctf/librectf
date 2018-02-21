@@ -1,0 +1,207 @@
+{% from "templates.html" import render_field %}
+{% extends "layout.html" %}
+{% block title %}{{ team.teamname }}{% endblock %}
+
+{% block content %}
+    {% if team.banned %}
+        <div class="alert alert-danger" style="margin:0; border-radius:0;">
+            <div class="container">
+                Your team has been <b>disqualified</b> for breaking CTF rules. You can continue to solve challenges and score points, but your public profile has been disabled and your team removed from the scoreboard listing. If you believe this is a mistake, please contact one of the organizers, but remember that organizers' decisions are final.
+            </div>
+        </div>
+    {% endif %}
+    <div class="section gradient">
+        <div class="container jumbotron" style="padding: 0; margin-bottom: 0;">
+            <table>
+                <tr>
+                    <td><img src="{{ filestore(team.avatar) }}" style="border-radius: 150px; width: 150px; height: 150px;" /></td>
+                    <td style="padding-left: 40px;">
+                        <h1>{{ team.teamname }}</h1>
+                        <h4><i class="fa fa-fw fa-university"></i> {{ team.school }}
+                        </h4>
+                        <p></p>
+                        <div>
+                            {% if current_user.tid == team.tid %}
+                                <div class="label label-success">
+                                    <i class="fa fa-fw fa-flag"></i> I'm in the team!
+                                </div>
+                            {% endif %}
+                            {% if team.observer %}
+                                <div class="label label-warning" data-toggle="tooltip" data-placement="top" title="This team isn't eligible for prizes.">
+                                    <i class="fa fa-fw fa-globe"></i> Observer
+                                </div>
+                            {% endif %}
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <div class="section">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-3 col-xs-12">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">Team Members</h4>
+                        </div>
+                        <div class="list-group">
+                            {% for member in team.members %}
+                                <div class="list-group-item">
+                                    <table>
+                                        <tr>
+                                            <td>
+                                                <a href="{{ url_for("users.profile", uid=member.uid) }}">
+                                                    <img src="{{ filestore(member.avatar) }}" style="width:40px;height:40px;margin-right:10px;border:1px solid #ddd;border-radius:40px;"/>
+                                                </a>
+                                            </td>
+                                            <td>
+                                                <h4 class="list-group-item-heading" style="display:inline-block;">{{ member.name }}</h4>
+                                                {% if member.uid == team.owner %}
+                                                    <div class="label label-info">Captain</div>
+                                                {% endif %}
+                                                <p class="list-group-item-text">
+                                                    <a href="{{ url_for('users.profile', uid=member.uid) }}">@{{ member.username }}</a>
+                                                </p>
+                                            </td>
+                                        </tr>
+                                    </table>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-9 col-xs-12">
+                    <ul class="nav nav-tabs" role="tablist">
+                        <!--<li role="presentation"><a href="#activity" aria-controls="activity" role="tab" data-toggle="tab">Activity</a></li>-->
+                        <li role="presentation" class="active">
+                            <a href="#solves" aria-controls="solves" role="tab" data-toggle="tab">Solves</a>
+                        </li>
+                        {% if current_user.is_authenticated and current_user.uid == team.owner %}
+                            <a href="{{ url_for('teams.settings') }}" class="btn btn-primary" style="float:right;">
+                                <i class="fa fa-fw fa-pencil"></i> Manage Team
+                            </a>
+                        {% endif %}
+                    </ul>
+                    <div class="tab-content">
+                        <!--<div role="tabpanel" class="tab-pane" id="activity">
+                        </div>-->
+                        <div role="tabpanel" class="tab-pane active" id="solves">
+
+                            <div id="progression_chart"></div>
+                            {% set solves = team.solves | sort(attribute="date", reverse=True) %}
+                            <table class="table table-striped table">
+                                <thead>
+                                <tr>
+                                    <th>Problem</th>
+                                    <th>Category</th>
+                                    <th>Value</th>
+                                    <th>Solver</th>
+                                    <th>Time</th>
+                                </tr>
+                                </thead>
+                                {% for solve in solves %}
+                                    <tbody>
+                                    <tr>
+                                        {% set problem = solve.problem %}
+                                        <td>{{ problem.title }}</td>
+                                        <td>{{ problem.category }}</td>
+                                        <td>{{ problem.value }}</td>
+                                        <td>{{ solve.user.username }}</td>
+                                        <td>
+                                            <span data-livestamp="{{ solve.date }}"></span>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                {% endfor %}
+                            </table>
+                        </div>
+                        {% if current_user.uid == team.owner %}
+                            <div role="tabpanel" class="tab-pane" id="manage">
+                                {% if manage_team_form %}
+                                    <div class="panel panel-default">
+                                        <div class="panel-heading">
+                                            <h4 class="panel-title">Manage Team</h4>
+                                        </div>
+                                        <div class="panel-body">
+                                            <form method="POST">
+                                                {{ manage_team_form.csrf_token }}
+                                                <div class="row">
+                                                    <div class="col-xs-6">
+                                                        {{ render_field(manage_team_form.teamname) }}
+                                                        {{ render_field(manage_team_form.school) }}
+                                                        {{ manage_team_form.submit(class_="btn btn-primary") }}
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                                {% if disband_team_form %}
+                                    <div class="panel panel-warning">
+                                        <div class="panel-heading">
+                                            <h4 class="panel-title">Disband Team</h4>
+                                        </div>
+                                        <div class="panel-body">
+                                            <p>Your team will still be visible as a "ghost" team. However, no one will be able to join it anymore.</p>
+                                            <form method="POST">
+                                                {{ disband_team_form.csrf_token }}
+                                                <div class="row">
+                                                    <div class="col-xs-12">
+                                                        {% if disband_team_form.teamname.errors %}
+                                                            <p style="color:#F00;">
+                                                                {% for error in disband_team_form.teamname.errors %}
+                                                                    {{ error }}
+                                                                {% endfor %}
+                                                            </p>
+                                                        {% endif %}
+                                                        <div class="input-group">
+                                                            {{ disband_team_form.teamname(class_="form-control", placeholder="Confirm Team Name") }}
+                                                            <span class="input-group-btn">
+                                                            {{ disband_team_form.submit(class_="btn btn-danger") }}
+                                                        </span>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("[data-toggle=tooltip]").tooltip();
+            $("ul[role=tablist]").tab();
+            $("a[role=tab]").click(function (e) {
+                e.preventDefault();
+            });
+
+            google.charts.load("current", {"packages": ["corechart"]});
+            google.charts.setOnLoadCallback(drawChart);
+
+            function drawChart() {
+                var data = google.visualization.arrayToDataTable({{ team.get_score_progression() | tojson }});
+
+                var options = {
+                    title: "Score Progression",
+                    curveType: "line",
+                    legend: {position: "right"},
+                    vAxes: { 0: {title: "Score"} },
+                    hAxes: { 0: {title: "Time"} },
+                };
+
+                var chart = new google.visualization.LineChart(document.getElementById("progression_chart"));
+                chart.draw(data, options);
+            }
+        });
+
+    </script>
+{% endblock %}

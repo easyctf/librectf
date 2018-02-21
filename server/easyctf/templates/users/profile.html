@@ -1,0 +1,113 @@
+{% from "templates.html" import render_field %}
+{% extends "layout.html" %}
+{% block title %}{{ user.name }} (@{{ user.username }}){% endblock %}
+
+{% block content %}
+    <div class="section">
+        <div class="container">
+            <div class="row">
+                <div class="col-sm-3 col-xs-12">
+                    <div class="panel panel-default">
+                        <div style="width:100%; height: 100px; border-bottom: 1px solid #ddd; box-shadow: 0 1px 1px rgba(0,0,0,.05);border-top-left-radius: 4px; border-top-right-radius: 4px;">
+                        </div>
+                        <div class="panel-body">
+                            <div style="text-align: center; position: relative; top: -75px; height: 80px; margin-bottom: -10px;">
+                                <img src="{{ filestore(user.avatar) }}" style="width: 120px; height: 120px; border-radius: 120px; border: 1px solid #ddd; box-shadow: 0 1px 1px rgba(0,0,0,.05);"/>
+                            </div>
+                            <h2 style="text-align: center; margin: 0; font-weight:bold; font-size:2em;">{{ user.name }}</h2>
+                            <small style="text-align: center; display:block; font-size:1.5em; color:#999;">@{{ user.username }}</small>
+                            {% if user.easyctf %}
+                                <b style="text-align: center; display: block; color: #000;">EasyCTF Organizer</b>
+                            {% endif %}
+                            <hr/>
+                            <div>
+                                <i class="fa fa-fw fa-user"></i>
+                                {{ user.type }}
+                            </div>
+                            {% if user == current_user and user.email %}
+                                <div data-toggle="tooltip" data-placement="top" title="Only visible to you.">
+                                    <i class="fa fa-fw fa-envelope"></i>
+                                    <a style="color:#666;" href="mailto:{{ user.email }}">
+                                        <span id="email">{{ user.email }}</span>
+                                    </a>
+                                </div>
+                            {% endif %}
+                            <div>
+                                <i class="fa fa-fw fa-clock-o"></i>
+                                Joined
+                                <time data-livestamp="{{ user.register_time }}"></time>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-sm-9 col-xs-12">
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li role="presentation" class="active">
+                            <a href="#profile" aria-controls="profile" role="tab" data-toggle="tab">Profile</a></li>
+                        <!--<li role="presentation">
+                            <a href="#activity" aria-controls="activity" role="tab" data-toggle="tab">Activity</a></li>-->
+                        {% if user == current_user %}
+                            <a href="{{ url_for('users.settings') }}" class="btn btn-primary" style="float:right;">
+                                <i class="fa fa-fw fa-pencil"></i> Edit Profile
+                            </a>
+                        {% endif %}
+                    </ul>
+                    <div class="tab-content">
+                        <div role="tabpanel" class="tab-pane active" id="profile">
+                            <div class="row">
+                                <div class="col-xs-12">
+                                    <div class="panel panel-default">
+                                        <div class="panel-heading">
+                                            <h4 class="panel-title">Team Information</h4>
+                                        </div>
+                                        {% if not user.team %}
+                                            <div class="panel-body">
+                                                {% if current_user == user and user.pending_invitations %}
+                                                    <div class="alert alert-success">You have pending invitations! <a href="{{ url_for("teams.create") }}">Click here to view them &raquo;</a></div>
+                                                {% endif %}
+                                                <b>{{ user.name }}</b> is not a part of a team.
+                                            </div>
+                                        {% else %}
+                                            <table class="table table-bordered">
+                                                <tr>
+                                                    <th>Team Name</th>
+                                                    <td>
+                                                        <a href="{{ url_for('teams.profile', tid=user.tid) }}">{{ user.team.teamname }}</a>
+                                                    </td>
+                                                </tr>
+                                                <tr>
+                                                    <th>School</th>
+                                                    <td>{{ user.team.school }}</td>
+                                                </tr>
+                                                {# <tr>
+                                                    <th>Place</th>
+                                                    <td>{{ user.team.place()[1] }}</td>
+                                                </tr> #}
+                                            </table>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!--<div role="tabpanel" class="tab-pane" id="activity">
+                            <div class="panel panel-default">
+                                <div class="panel-body">
+                                    activity panel
+                                </div>
+                            </div>
+                        </div>-->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("[data-toggle=tooltip]").tooltip();
+            $("ul[role=tablist]").tab();
+            $("a[role=tab]").click(function (e) {
+                e.preventDefault();
+            });
+        });
+    </script>
+{% endblock %}

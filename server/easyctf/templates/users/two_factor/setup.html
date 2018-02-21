@@ -1,0 +1,35 @@
+{% from "templates.html" import render_field, render_generic_field, flashes %}
+{% extends "layout.html" %}
+{% block title %}Setup Two-Factor Authentication{% endblock %}
+
+{% block content %}
+    <div class="section">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 col-md-offset-3 col-sm-10 col-sm-offset-1">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h2 class="panel-title">Two-Factor Authentication</h2>
+                        </div>
+                        <div class="panel-body">
+                            <p>Two-factor authentication protects your account by requiring you to verify your identity using a means other than your password. We'll use the app <a href="https://www.authy.com/" target="_blank" rel="noopener">Authy</a> to moderate this process. To begin, scan the following QR code with your app, and then enter the 6-digit code shown on your screen.</p>
+                            <form method="POST">
+                                {{ two_factor_form.csrf_token }}
+                                <fieldset>
+                                    <div class="form-group">
+                                        <center>
+                                            <img src="{{ url_for('users.two_factor_qr') }}"/>
+                                        </center>
+                                    </div>
+                                    {{ render_field(two_factor_form.code) }}
+                                    {{ render_field(two_factor_form.password) }}
+                                </fieldset>
+                                {{ two_factor_form.submit(class_="btn btn-primary") }}
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

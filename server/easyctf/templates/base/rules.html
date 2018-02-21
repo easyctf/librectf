@@ -1,0 +1,46 @@
+{% extends "layout.html" %}
+{% block title %}Rules{% endblock %}
+{% block content %}
+    <div class="section gradient">
+        <div class="container">
+            <h1>Rules</h1>
+        </div>
+    </div>
+    <div class="section">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-10 col-md-offset-1">
+                    <h3>Please follow these rules to give everyone a fair chance at winning.</h3>
+                    <ol>
+                        <li><b>Use common sense.</b> If you feel like what you're doing is disrupting the competition in any way, <b>STOP</b> doing it. Don't wait for us to yell at you.</li>
+                        <li><b>Don't cheat.</b> We're encouraging you to do your own work. While it's acceptable to use resources on the internet such as documentation or forums, it's not acceptable to ask someone other than the 1-5 members of your team to directly help you on the problem. Don't ask questions on public forums involving specific details of the problems. Don't share flags or methods with other teams.</li>
+                        <li><b>Don't disrupt others.</b> Don't attack other teams, and don't attack the contest infrastructure in order to prevent others from solving problems or submitting flags.</li>
+                        <li><b>Don't make many accounts.</b> Making multiple accounts for any purpose ("multi-accounting") is not allowed. If you are a teacher and want to set up a class, please ask your students to create accounts for themselves and then you can add them to your classroom. Any hints of multi-accounting is basis for disqualification, no questions asked.</li>
+                        <li><b>Be nice.</b> Since this is an educational environment, don't use profanity in your username or team names. Inappropriate names are subject to account deletion or immediate disqualification at the discretion of the organizers. Also, don't spam or harass people in chat.</li>
+                    </ol>
+                    <p>If you break any of these rules, your team may be converted into an observer team (see below), disqualifying you from winning prizes. In severe cases, we may decide to remove you from the competition altogether. <b>Decisions made by competition organizers are final.</b></p>
+
+                    <div class="page-header">
+                        <h2>Who can play?</h2>
+                    </div>
+
+                    <p>Anyone is welcome to play in EasyCTF! However, since EasyCTF is targeted at students enrolled in middle schools and high schools in the US, only those students will be eligible for prizes. People who don't fall in the category of students enrolled in a middle or high school in the US are <i>observers</i>. While observers are allowed to place on the scoreboard, they will not be eligible for winning prizes. Teams with at least one observer member will be considered an observer team.</p>
+                    <p>After the contest is over, we will contact the winning teams to verify that their team meets the conditions before distributing prizes. If a winning team does not meet these conditions, their team will be considered an observer team, and the prizes will be given to the next highest team.</p>
+
+                    <div class="page-header">
+                        <h2>Flag Format</h2>
+                    </div>
+
+                    <p>The flags that you find will usually follow the format <code>easyctf{flag}</code>. This way, you will know you have the flag when you find it. Problems that don't follow this format will indicate that they don't follow the format next to their problem statement. If you believe you've found a flag but the scoring server is not accepting it, please contact the competition organizers.</p>
+
+                    <div class="page-header">
+                        <h2>Scoring</h2>
+                    </div>
+
+                    <p>In EasyCTF, every problem has an assigned point value, which is usually representative of the difficulty of the problem. Your team's total score is the sum of the points you obtain from every problem you solve. Problems may have speed bonuses, allowing you to earn extra points for solving it faster. The speed bonus varies per problem and will be indicated in the problem listing.</p>
+                    <p>Teams with a higher score will outrank teams with a lower score. The latest listing of every team's score will appear on their team's profile, and an estimate of the latest ranking will appear on the scoreboard page. Ties between teams that have an equal amount of points will be settled by their performance on higher-valued problems. For example, if two teams tied at 100 points by solving a 20-point problem and an 80-point problem, the team that solved the 80-point problem first will outrank the other.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

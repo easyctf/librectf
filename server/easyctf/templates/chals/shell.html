@@ -1,0 +1,50 @@
+{% from "templates.html" import render_field, render_generic_field %}
+{% extends "layout.html" %}
+{% block title %}Shell{% endblock %}
+
+{% block content %}
+    <div class="section gradient">
+        <div class="container">
+            <h1>Shell</h1>
+        </div>
+    </div>
+    <div class="section">
+        <div class="container">
+            <p>The shell server allows you to connect to a live Linux server and use it to help you
+                as you solve challenges. You'll need to log in with a different set of credentials,
+                which you can view by clicking the button below. Note that (1) in order to paste into
+                the terminal emulator below, you must right click and select "paste from browser", and
+                (2) <b>the password will not be displayed as you type it in</b>.</p>
+            <p>Our server supports mosh login!</p>
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h4 class="panel-title">EasyCTF Shell Server</h4>
+                </div>
+                <div class="panel-body">
+                    <table style="width: 100%;">
+                        <tr>
+                            <td>
+                                <span id="credentials"><a href="javascript:retrieve_credentials();" class="btn btn-info" onclick="retrieve_credentials();return false;">Reveal Credentials</a></span>
+                            </td>
+                            <td style="text-align: right;">
+                                <a href="https://shell.easyctf.com" target="_blank" class="btn btn-info">Full Screen</a>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+                <iframe src="https://shell.easyctf.com" style="border: none; width: 100%; min-height: 500px;"></iframe>
+                <div class="panel-body">
+                    <small>Abuse is not tolerated and <i>will</i> lead to immediate disqualification and removal from the competition.</small>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        var retrieve_credentials = function() {
+            $.get("{{ url_for('chals.shell_credentials') }}", function(data) {
+                data = JSON.parse(data);
+                $("#credentials").html("username: <code>" + data.username + "</code> | password: <code>" + data.password + "</code>. For SSH, <code>ssh " + data.username + "@s.easyctf.com</code>.");
+            });
+        };
+    </script>
+{% endblock %}

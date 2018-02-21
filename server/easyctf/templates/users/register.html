@@ -1,0 +1,46 @@
+{% from "templates.html" import render_field, render_generic_field %}
+{% extends "layout.html" %}
+{% block title %}Register{% endblock %}
+
+{% block content %}
+    <div class="section gradient">
+        <div class="container">
+            <h1>Register</h1>
+        </div>
+    </div>
+    <div class="section">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 col-md-offset-3 col-sm-10 col-sm-offset-1">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h2 class="panel-title">Register</h2>
+                        </div>
+                        <div class="list-group">
+                            <div class="list-group-item">
+                                <form method="POST">
+                                    {{ register_form.csrf_token }}
+                                    <fieldset>
+                                        {{ render_field(register_form.name) }}
+                                        {{ render_field(register_form.email) }}
+                                        {{ render_field(register_form.username) }}
+                                        <div class="row">
+                                            <div class="col-md-6">
+                                                {{ render_field(register_form.password) }}
+                                            </div>
+                                            <div class="col-md-6">
+                                                {{ render_field(register_form.confirm_password) }}
+                                            </div>
+                                        </div>
+                                        {{ render_generic_field(register_form.level) }}
+                                    </fieldset>
+                                    {{ register_form.submit(class_="btn btn-primary") }}
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

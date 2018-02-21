@@ -1,0 +1,125 @@
+{% from "templates.html" import render_field, render_generic_field %}
+{% extends "layout.html" %}
+{% block title %}Team Settings{% endblock %}
+
+{% block content %}
+<div class="section">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-3 col-xs-12">
+                <div class="row">
+                    <div class="col-xs-12">
+                        <a href="{{ url_for('teams.profile') }}" class="col-xs-12 btn btn-default">&laquo; Back to Team Profile</a>
+                    </div>
+                </div>
+                <p></p>
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h4 class="panel-title"><b>{{ team.teamname }}</b> Settings</h4>
+                    </div>
+                    <div class="list-group">
+                        <a data-scroll href="#profile" class="list-group-item">Profile</a>
+                        <a data-scroll href="#members" class="list-group-item">Current Members</a>
+                        <a data-scroll href="#outgoing-invitations" class="list-group-item">Outgoing Invitations</a>
+                    </div>
+                </div>
+            </div>
+            <div class="col-sm-9 col-xs-12">
+                <section id="profile">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">Team Profile</h4>
+                        </div>
+                        <div class="panel-body">
+                            <div class="row">
+                                <div class="col-sm-2">
+                                    <img src="{{ filestore(team.avatar) }}?{{ timestamp }}" id="avatar" style="max-width: 100%; max-height:256px; border-radius: 120px; border: 1px solid #ddd; box-shadow: 0 1px 1px rgba(0,0,0,.05);"/>
+                                </div>
+                                <div class="col-sm-10">
+                                    <form method="POST" enctype="multipart/form-data">
+                                        {{ profile_edit_form.csrf_token }}
+                                        <fieldset>
+                                            {{ render_field(profile_edit_form.teamname) }}
+                                            {{ render_field(profile_edit_form.school) }}
+                                            {{ render_generic_field(profile_edit_form.avatar) }}
+                                            {{ render_generic_field(profile_edit_form.remove_avatar) }}
+                                        </fieldset>
+                                        {{ profile_edit_form.submit(class_="btn btn-primary") }}
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <section id="members">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">Current Members</h4>
+                        </div>
+                        <div class="panel-body">
+                            <div class="list-group">
+                                {% for user in team.members %}
+                                    <div class="list-group-item">
+                                        {% if user.uid != current_user.uid %}
+                                            <div class="badge">
+                                                <a href="{{ url_for('teams.evict', id=user.uid) }}">Evict</a>
+                                            </div>
+                                        {% endif %}
+                                        <img src="{{ filestore(user.avatar) }}" style="width: 24px; height: 24px; vertical-align: middle;" />
+                                        &nbsp;
+                                        <a href="{{ url_for('users.profile', uid=user.uid) }}">{{ user.username }}</a>
+                                    </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                <section id="outgoing-invitations">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">Outgoing Invitations</h4>
+                        </div>
+                        <div class="panel-body">
+                            {% set outgoing_invitations = team.outgoing_invitations %}
+                            {% if outgoing_invitations %}
+                                <div class="list-group">
+                                    {% for user in outgoing_invitations %}
+                                        <div class="list-group-item">
+                                            <div class="badge">
+                                                <a href="{{ url_for('teams.cancel', id=user.uid) }}">Withdraw</a>
+                                            </div>
+                                            <img src="{{ filestore(user.avatar) }}" style="width: 24px; height: 24px; vertical-align: middle;" />
+                                            &nbsp;
+                                            <a href="{{ url_for('users.profile', uid=user.uid) }}">{{ user.username }}</a>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                            <form method="POST">
+                                {{ add_member_form.csrf_token }}
+                                <div class="row">
+                                    <div class="col-xs-12">
+                                        {% if add_member_form.username.errors %}
+                                            <p style="color:#F00;">
+                                                {% for error in add_member_form.username.errors %}
+                                                    {{ error }}
+                                                {% endfor %}
+                                            </p>
+                                        {% endif %}
+                                        <div class="input-group">
+                                            {{ add_member_form.username(class_="form-control") }}
+                                            <span class="input-group-btn">
+                                                {{ add_member_form.submit(class_="btn btn-success") }}
+                                            </span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

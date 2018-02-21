@@ -1,0 +1,16 @@
+[Unit]
+Description=easyctf web server
+After=network.target
+
+[Service]
+EnvironmentFile=/var/easyctf/env
+PIDFile=/run/easyctf/pid
+User=root
+WorkingDirectory=$PROJECT_DIRECTORY
+ExecStart=$PROJECT_DIRECTORY/entrypoint.sh
+ExecReload=$KILL -s HUP \$MAINPID
+ExecStop=$KILL -s TERM \$MAINPID
+PrivateTmp=true
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,33 @@
+{% from "templates.html" import render_field, render_generic_field %}
+{% extends "layout.html" %}
+{% block title %}Solves{% endblock %}
+
+{% block content %}
+    <div class="section gradient">
+        <div class="container">
+            <h1>Recent Solves on <b>{{ problem.title }}</b></h1>
+        </div>
+    </div>
+    <div class="section">
+        <div class="container">
+            <table class="table table-striped table-hover">
+                <thead>
+                <tr>
+                    <th>Team Name</th>
+                    <th>Date</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for solve in problem.solves|sort(attribute="date", reverse=True) %}
+                    <tr>
+                        <td><a href="{{ url_for("teams.profile", tid=solve.team.tid) }}">{{ solve.team.teamname }}</a></td>
+                        <td>
+                            <time data-livestamp="{{ solve.date }}"></time>
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}

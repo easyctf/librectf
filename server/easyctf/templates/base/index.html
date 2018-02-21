@@ -1,0 +1,69 @@
+{% extends "layout.html" %}
+{% block title %}Home{% endblock %}
+
+{% block content %}
+    <div class="page-header page-header-top gradient" id="masthead">
+        <center style="margin-top:120px; margin-bottom:60px;">
+            <div id="title">
+                <h1>EasyCTF <div class="hidden-xs" style="display: inline;">IV</div></h1>
+                <h2>High School Hacking Competition</h2>
+                <a href="https://www.timeanddate.com/countdown/to?iso=20180210T19&p0=64&msg=EasyCTF+IV&font=sanserif&csz=1" target="_blank"><i class="fa fa-calendar"></i> February 10 to February 20, 2018</a>
+            </div>
+        </center>
+        <center>
+            <p>
+                <a href="{{ url_for("base.about") }}" class="btn btn-lg btn-primary">Learn More</a>
+                <a href="{{ url_for("users.register") }}" class="btn btn-lg btn-success">Register &raquo;</a>
+            </p>    
+        </center>
+    </div>
+    <div class="section" style="background-color: #f8f8f8;">
+        <div class="container">
+            <div class="page-header" style="text-align: center;">
+                <h1>Ever wanted to be a hacker?</h1>
+                <h3 style="color: #999;">EasyCTF is one of the largest student-run high school cybersecurity events.</h3>
+            </div>
+            <div class="row">
+                <div class="col-md-3 col-xs-6" style="text-align: center;">
+                    <h3><i class="fa fa-fw fa-2x fa-desktop"></i></h3>
+                    <h3>Play</h3>
+                    <p>Whether you're a seasoned CTFer, or you've never written a line of code, you'll be able to get involved with EasyCTF!</p>
+                </div>
+                <div class="col-md-3 col-xs-6" style="text-align: center;">
+                    <h3><i class="fa fa-fw fa-2x fa-graduation-cap"></i></h3>
+                    <h3>Learn</h3>
+                    <p>Our new and improved classrooms feature makes it easier for teachers to integrate EasyCTF into classroom instruction!</p>
+                </div>
+                <div class="col-md-3 col-xs-6" style="text-align: center;">
+                    <h3><i class="fa fa-fw fa-2x fa-bar-chart"></i></h3>
+                    <h3>Compete</h3>
+                    <p>Solve challenges faster than other teams to earn your spot on the leaderboard, whether you're eligible or not.</p>
+                </div>
+                <div class="col-md-3 col-xs-6" style="text-align: center;">
+                    <h3><i class="fa fa-fw fa-2x fa-trophy"></i></h3>
+                    <h3>Win</h3>
+                    <p>Teams that consist of high school students from US schools are eligible to win prizes! Click <a href="{{ url_for('base.about') }}">here</a> to learn more.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="section">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-10 col-md-offset-1">
+                    <div class="page-header">
+                        <h1>What is EasyCTF?</h1>
+                    </div>
+                    <div class="col-sm-6">
+                        <h3>Intense Cybersecurity Contest</h3>
+                        <p>No, we're not running around in a gym, tagging other players. Capture the flag contests, or CTFs for short, are intense cybersecurity contests where participants try to capture pieces of information, called flags.</p>
+                    </div>
+                    <div class="col-sm-6">
+                        <h3>Fun, Competitive Style</h3>
+                        <p>The race to the top is on! Submit flags and watch your team go up on the <span title="not necessarily in real time">leaderboard</span>. You'll get a full week to solve as many challenges as possible.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

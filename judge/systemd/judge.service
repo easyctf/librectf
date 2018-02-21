@@ -1,0 +1,12 @@
+[Unit]
+Description=indepedent judging unit
+
+[Service]
+Restart=always
+Environment=\"API_KEY=$API_KEY\"
+Environment=\"JUDGE_URL=$JUDGE_URL\"
+ExecStart=$PYTHON $PROJECT_DIRECTORY/judge.py
+ExecStop=:
+
+[Install]
+WantedBy=default.target

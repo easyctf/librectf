@@ -1,0 +1,47 @@
+{% extends "layout.html" %}
+{% block title %}About{% endblock %}
+
+{% block content %}
+    <div class="section gradient">
+        <div class="container">
+            <h1>About</h1>
+        </div>
+    </div>
+    <div class="section">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-10 col-md-offset-1">
+                    <div class="page-header">
+                        <h2>What? Hacking?</h2>
+                    </div>
+
+                    <p>Yup. You heard that right. EasyCTF is a online hacking/cybersecurity contest targeted at middle and high school students. Like many similar CTF competitions, participants will have to crack, decompile, decrypt, etc. through many defenses in order to find a secret message, known as the "flag". The challenges presented are designed with the intent of being hacked, making it an excellent and legal way for students to get some great hands-on experience.</p>
+
+                    <div class="page-header">
+                        <h2>How many people per team?</h2>
+                    </div>
+
+                    <p>Teams can consist of up to 5 members. There's no advantage to having less people on your team, but it's definitely to your advantage to have more people helping you, so invite your friends to play along! Only teams that consist of middle or high school students are eligible for prizes. Please see our <a href="{{ url_for('base.rules') }}">rules</a> page to review what constitutes an eligible team.</p>
+
+                    <div class="page-header">
+                        <h2>Help, I don't know anything!</h2>
+                    </div>
+
+                    <p>That's completely fine! Like its name suggests, EasyCTF is an intro-level CTF contest, but can be enjoyable for new and veteran hackers alike. We don't expect you to know anything, but we do expect you to learn! With the "programming" category, you can practice some of the foundational skills required to solve some of the later challenges.</p>
+
+                    <div class="page-header">
+                        <h2>Wait, can't I just look this stuff up?</h2>
+                    </div>
+
+                    <p>Absolutely. In fact, we encourage you to use whatever resources you have, as long as it complies with our rules. CTF contests are created with the intention of allowing participants to look up information about topics they aren't familiar with. Our goal here is to open the door to cybersecurity and computer science for young and prospective hackers, and being able to find the information you want through searching the Internet is a great skill to have. Please see our <a href="{{ url_for('base.rules') }}">rules</a> page to review what resources you are allowed to use.</p>
+
+                    <div class="page-header">
+                        <h2>How can I prepare?</h2>
+                    </div>
+
+                    <p>You don't need any background experience to play EasyCTF! That being said, if you still want to know what kind of problems are going to show up in the contest, try reading some of <a href="http://writeups.easyctf.com/" target="_blank">these writeups from last year</a>, or practicing with challenges from other past CTFs.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

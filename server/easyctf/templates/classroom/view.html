@@ -1,0 +1,184 @@
+{% from "templates.html" import render_field %}
+{% extends "layout.html" %}
+{% block title %}Classrooms{% endblock %}
+
+{% block content %}
+    <div class="section gradient">
+        <div class="container">
+            <h1>{{ classroom.name }}</h1>
+        </div>
+    </div>
+    <div class="section">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-8">
+                    {% if classroom.size %}
+                        {% cache 120, "classroom", "%d" % classroom.id %}
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h4 class="panel-title">Class Leaderboard</h4>
+                                </div>
+                                <table class="table table-striped table-hover">
+                                    <thead>
+                                    <tr>
+                                        <th>Rank</th>
+                                        <th>Team Name</th>
+                                        <th>School</th>
+                                        <th>Points</th>
+                                        {% if current_user.uid == classroom.owner %}
+                                            <th></th>
+                                        {% endif %}
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% set rank = 1 %}
+                                    {% for team in classroom.scoreboard %}
+                                        <tr>
+                                            <td>{{ rank }}</td>
+                                            <td>
+                                                <a href="{{ url_for("teams.profile", tid=team.tid) }}">{{ team.teamname }}</a>
+                                            </td>
+                                            <td>{{ team.school }}</td>
+                                            <td>{{ team.points() }}</td>
+                                            {% if current_user.uid == classroom.owner %}
+                                                <td>
+                                                    <div class="dropdown">
+                                                        <button class="btn btn-xs btn-default dropdown-toggle" type="button" id="teamQuickActions{{ team.tid }}" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                                            Quick Actions
+                                                            <span class="caret"></span>
+                                                        </button>
+                                                        <ul class="dropdown-menu" aria-labelledby="teamQuickActions{{ team.tid }}">
+                                                            <li>
+                                                                <a href="{{ url_for('classroom.remove', cid=classroom.id, tid=team.tid) }}"><i class="fa fa-fw fa-trash"></i> Remove from classroom</a>
+                                                            </li>
+                                                        </ul>
+                                                    </div>
+                                                </td>
+                                            {% endif %}
+                                        </tr>
+                                        {% set rank = rank + 1 %}
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h4 class="panel-title">Individual Leaderboard</h4>
+                                </div>
+                                <table class="table table-striped table-hover">
+                                    <thead>
+                                    <tr>
+                                        <th>Rank</th>
+                                        <th>Name</th>
+                                        <th>Points</th>
+                                        {% if current_user.uid == classroom.owner %}
+                                            <th></th>
+                                        {% endif %}
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                    {% set rank = 1 %}
+                                    {% for user in users %}
+                                        <tr>
+                                            <td>{{ rank }}</td>
+                                            <td>
+                                                <a href="{{ url_for("users.profile", uid=user.uid) }}">{{ user.name }}</a>
+                                            </td>
+                                            <td>{{ user.points() }}</td>
+                                        </tr>
+                                    {% endfor %}
+                                    </tbody>
+                                </table>
+                            </div>
+                        {% endcache %}
+                    {% else %}
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">Welcome to your new classroom!</h4>
+                            </div>
+                            <div class="panel-body">
+                                Use the panel to the right to start adding teams to your classroom!
+                            </div>
+                        </div>
+                    {% endif %}
+                    {% if current_user.uid == classroom.owner and classroom.invites %}
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">Invited Teams</h4>
+                            </div>
+                            <div class="panel-body">
+                                These are teams you've invited but haven't yet accepted the invitation to join your class.
+                            </div>
+                            <table class="table table-striped table-hover">
+                                <thead>
+                                <tr>
+                                    <th>Team Name</th>
+                                    <th>Size</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {% for team in classroom.invites %}
+                                    <tr>
+                                        <td>
+                                            <a href="{{ url_for('teams.profile', tid=team.tid) }}">{{ team.teamname }}</a>
+                                        </td>
+                                        <td>{{ team.size }}</td>
+                                    </tr>
+                                {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% endif %}
+                </div>
+                <div class="col-md-4">
+                    {% if current_user.uid == classroom.owner %}
+                        <div class="panel panel-info">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">Classroom Management</h4>
+                            </div>
+                            <div class="panel-body">
+                                <p>Type in the name of a team to invite them to join your class
+                                    <b>{{ classroom.name }}</b>!</p>
+                                <form method="POST">
+                                    <fieldset>
+                                        {{ add_team_form.csrf_token }}
+                                        <div class="row">
+                                            <div class="col-xs-12">
+                                                {% if add_team_form.name.errors %}
+                                                    <p style="color:#F00;">
+                                                        {% for error in add_team_form.name.errors %}
+                                                            {{ error }}
+                                                        {% endfor %}
+                                                    </p>
+                                                {% endif %}
+                                                <div class="input-group">
+                                                    {{ add_team_form.name(class_="form-control", autocomplete="off") }}
+                                                    <span class="input-group-btn">
+                                            {{ add_team_form.submit(class_="btn btn-success") }}
+                                        </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </fieldset>
+                                </form>
+                                <hr/>
+                                <div class="dropdown">
+                                    <button class="btn btn-default dropdown-toggle" type="button" id="actions" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                                        Classroom Options
+                                        <span class="caret"></span>
+                                    </button>
+                                    <ul class="dropdown-menu" aria-labelledby="actions">
+                                        <li>
+                                            <a href="javascript:if(confirm('Are you sure you want to do this?')){location.href='{{ url_for('classroom.delete', id=classroom.id) }}';}"><i class="fa fa-fw fa-trash"></i> Delete Classroom</a>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    {% else %}
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

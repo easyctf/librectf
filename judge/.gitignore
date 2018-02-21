@@ -1,0 +1,10 @@
+build
+# ideally these should all be in a subfolder
+generator.py
+grader.py
+program.py
+case_number
+input
+report
+error
+.idea

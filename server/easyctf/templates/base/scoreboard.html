@@ -1,0 +1,73 @@
+{% extends "layout.html" %}
+{% block title %}Scoreboard{% endblock %}
+
+{% block content %}
+    <style>
+        /* .unrank { display: none; } */
+    </style>
+    <div class="section gradient">
+        <div class="container">
+            <h1>Scoreboard</h1>
+        </div>
+    </div>
+
+    <div class="section">
+        <div class="container">
+            <a id="toggle-observer" href="javascript:toggleObserver();" class="btn btn-info" data-toggle="tooltip" data-placement="right" title="Observer teams will show up in blue.">Show Observer Teams</a>
+            <table class="table table-hover">
+                <thead>
+                <tr>
+                    <th>Rank</th>
+                    <th>Team Name</th>
+                    <th>School</th>
+                    <th>Points</th>
+                    <th>Last Solve</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% set rank = 1 %}
+                {% set unrank = 1 %}
+                {% for team, tid, score, date in scoreboard %}
+                    <tr{% if team.observer %} class="info" style="display: none;"{% endif %}>
+                        <td>
+                            <span class="unrank" style="display: none;">{{ unrank }}</span>
+                            <span class="rank">{{ rank }}</span>
+                        </td>
+                        <td><a href="{{ url_for("teams.profile", tid=tid) }}">{{ team.teamname }}</a></td>
+                        <td>{{ team.school }}</td>
+                        <td>{{ score }}</td>
+                        <td><span data-livestamp="{{ date | to_timestamp }}"></span></td>
+
+                        {% set unrank = unrank + 1 %}
+                        {% if not team.observer %}
+                            {% set rank = rank + 1 %}
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script>
+        var showObserver = false;
+        var toggleObserver;
+        $(function () {
+            $("[data-toggle='tooltip']").tooltip();
+            toggleObserver = function() {
+                if (showObserver) {
+                    $("span.unrank").hide();
+                    $("span.rank").show();
+                    $("tr.info").hide();
+                    $("#toggle-observer").html("Show Observer Teams");
+                    showObserver = false;
+                } else {
+                    $("span.unrank").show();
+                    $("span.rank").hide();
+                    $("tr.info").show();
+                    $("#toggle-observer").html("Hide Observer Teams");
+                    showObserver = true;
+                }
+            };
+        });
+    </script>
+{% endblock %}

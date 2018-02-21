@@ -1,0 +1,138 @@
+{% extends "layout.html" %}
+{% block title %}Programming{% endblock %}
+
+{% block content %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.2/ace.js" integrity="sha384-niN+bRlaXMBoq/f5L4zKOEYGxuD0YRGBocto9LP2fB1UiMfxrymATRN4GqjVUt6J" crossorigin="anonymous"></script>
+    <div class="section gradient">
+        <div class="container">
+            <h1>Programming Editor</h1>
+        </div>
+    </div>
+    <div class="section">
+        <div class="container">
+            <div class="alert alert-info">
+                If you are using Java, name your class <code>Main</code>.
+            </div>
+            <ul class="nav nav-tabs" role="tablist">
+                <li role="presentation" class="active"><a href="javascript:void(0);" role="tab">Editor</a></li>
+                <li role="presentation"><a href="{{ url_for("chals.status") }}" role="tab">Submissions</a></li>
+            </ul>
+            <div class="tab-content">
+                <div role="tabpanel" class="tab-pane active">
+                    <div class="tabbable">
+                        <ul class="nav nav-pills nav-stacked col-md-3">
+                            {% for _problem in problems %}
+                                <li{% if _problem.pid == problem.pid %} class="active"{% endif %}>
+                                    <a href="{{ url_for("chals.programming", pid=_problem.pid) }}">{{ _problem.title }} ({{ _problem.value }} points)
+                                    </a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                        <div class="tab-content col-md-9">
+                            <div ng-show="data!=null" class="panel panel-default">
+                                <div class="panel-heading clearfix">
+                                    <h4 class="panel-title">
+                                        Programming Editor - <b>{{ problem.title }}</b>
+                                    </h4>
+                                </div>
+                                <nav class="navbar navbar-default" style="border: 0; margin: 0;">
+                                    <div class="container-fluid">
+                                        <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                                            <ul class="nav navbar-nav">
+                                                <li class="dropdown">
+                                                    <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span id="language_selector">Language</span> <span class="caret"></span></a>
+                                                    <ul class="dropdown-menu" id="languages">
+                                                        <li><a href="javascript:select_language('python2');" id="python2"><i class="fa fa-fw"></i> <span>Python 2</span></a></li>
+                                                        <li><a href="javascript:select_language('python3');" id="python3"><i class="fa fa-fw"></i> <span>Python 3</span></a></li>
+                                                        <li><a href="javascript:select_language('cxx');" id="cxx"><i class="fa fa-fw"></i> <span>C/C++</span></a></li>
+                                                        <li><a href="javascript:select_language('java');" id="java"><i class="fa fa-fw"></i> <span>Java</span></a></li>
+                                                    </ul>
+                                                </li>
+                                                <li class="dropdown">
+                                                    <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><span id="theme_selector">Theme</span> <span class="caret"></span></a>
+                                                    <ul class="dropdown-menu" id="themes">
+                                                        <li><a href="javascript:select_theme('ambiance');" id="ambiance"><i class="fa fa-fw"></i> <span>Ambiance</span></a></li>
+                                                        <li><a href="javascript:select_theme('chrome');" id="chrome"><i class="fa fa-fw"></i> <span>Chrome</span></a></li>
+                                                        <li><a href="javascript:select_theme('clouds_midnight');" id="clouds_midnight"><i class="fa fa-fw"></i> <span>Clouds Midnight</span></a></li>
+                                                        <li><a href="javascript:select_theme('cobalt');" id="cobalt"><i class="fa fa-fw"></i> <span>Cobalt</span></a></li>
+                                                        <li><a href="javascript:select_theme('dawn');" id="dawn"><i class="fa fa-fw"></i> <span>Dawn</span></a></li>
+                                                        <li><a href="javascript:select_theme('dreamweaver');" id="dreamweaver"><i class="fa fa-fw"></i> <span>Dreamweaver</span></a></li>
+                                                        <li><a href="javascript:select_theme('eclipse');" id="eclipse"><i class="fa fa-fw"></i> <span>Eclipse</span></a></li>
+                                                        <li><a href="javascript:select_theme('github');" id="github"><i class="fa fa-fw"></i> <span>Github</span></a></li>
+                                                        <li><a href="javascript:select_theme('idle_fingers');" id="idle_fingers"><i class="fa fa-fw"></i> <span>IDLE Fingers</span></a></li>
+                                                        <li><a href="javascript:select_theme('monokai');" id="monokai"><i class="fa fa-fw"></i> <span>Monokai</span></a></li>
+                                                        <li><a href="javascript:select_theme('solarized_dark');" id="solarized_dark"><i class="fa fa-fw"></i> <span>Solarized Dark</span></a></li>
+                                                        <li><a href="javascript:select_theme('solarized_light');" id="solarized_light"><i class="fa fa-fw"></i> <span>Solarized Light</span></a></li>
+                                                        <li><a href="javascript:select_theme('tomorrow');" id="tomorrow"><i class="fa fa-fw"></i> <span>Tomorrow</span></a></li>
+                                                        <li><a href="javascript:select_theme('tomorrow_night');" id="tomorrow_night"><i class="fa fa-fw"></i> <span>Tomorrow Night</span></a></li>
+                                                        <li><a href="javascript:select_theme('twilight');" id="twilight"><i class="fa fa-fw"></i> <span>Twilight</span></a></li>
+                                                        <li><a href="javascript:select_theme('xcode');" id="xcode"><i class="fa fa-fw"></i> <span>XCode</span></a></li>
+                                                    </ul>
+                                                </li>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </nav>
+                                <div class="panel-body">
+                                    <div class="container-fluid">
+                                        <h4>Problem Statement</h4>
+                                        {{ problem.render_description(tid=current_user.tid) | safe }}
+                                    </div>
+                                </div>
+                                <div id="editor">{% if programming_submit_form.code.data %}{{ programming_submit_form.code.data }}{% endif %}</div>
+                                <div class="panel-footer" style="text-align: right;">
+                                    <form method="POST">
+                                        {{ programming_submit_form.csrf_token }}
+                                        {{ programming_submit_form.pid(value=problem.pid) }}
+                                        {{ programming_submit_form.language() }}
+                                        {{ programming_submit_form.code(style="display: none;") }}
+                                        {% for field in programming_submit_form %}
+                                            {% if field.errors %}
+                                                <p style="color: #F00;">
+                                                    {% for error in field.errors %}
+                                                        {{ error }}<br/>
+                                                    {% endfor %}
+                                                </p>
+                                            {% endif %}
+                                        {% endfor %}
+                                        <span class="btn-group">
+                                    <button class="btn btn-lg btn-success" type="submit">Submit</button>
+                                </span>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        $("#editor").height($(window).height() / 2);
+        var editor = ace.edit("editor");
+
+        editor.setOptions({
+            fontFamily: "monospace",
+            fontSize: "10pt"
+        });
+        editor.on("change", function () {
+            $("[name=code]").val(editor.getValue());
+        });
+
+        var select_language = function (language) {
+            $("[name=language]").val(language);
+            $("#languages li a i").removeClass("fa-check");
+            $("#" + language).children("i").addClass("fa-check");
+            $("#language_selector").html("Language: " + {"python2": "Python 2", "python3": "Python 3", "cxx": "C/C++", "java": "Java"}[language]);
+            editor.getSession().setMode("ace/mode/" + {"python2": "python", "python3": "python", "cxx": "c_cpp", "java": "java"}[language]);
+        }
+        select_language("python2");
+        var select_theme = function (theme) {
+            $("#themes li a i").removeClass("fa-check");
+            $("#" + theme).children("i").addClass("fa-check");
+            $("#theme_selector").html("Theme: " + $("#" + theme).children("span").text());
+            editor.setTheme("ace/theme/" + theme);
+        }
+        select_theme("tomorrow");
+    </script>
+{% endblock %}

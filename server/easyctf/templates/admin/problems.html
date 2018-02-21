@@ -1,0 +1,96 @@
+{% from "templates.html" import render_field, render_generic_field, render_editor %}
+{% extends "layout.html" %}
+{% block title %}Problem Editor{% endblock %}
+
+{% block content %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.2/ace.js" integrity="sha384-niN+bRlaXMBoq/f5L4zKOEYGxuD0YRGBocto9LP2fB1UiMfxrymATRN4GqjVUt6J" crossorigin="anonymous"></script>
+    <style>
+        .ace_editor {
+            width: 100%;
+            height: 150px;
+        }
+    </style>
+    <div class="section gradient">
+        <div class="container">
+            <h1>Problem Editor</h1>
+        </div>
+    </div>
+    <div class="section">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="tabbable">
+                        <ul class="nav nav-pills nav-stacked col-md-3">
+                            <li{% if not current_problem %} class="active"{% endif %}>
+                                <a href="{{ url_for("admin.problems") }}"><i class="fa fa-fw fa-plus"></i> New</a>
+                            </li>
+                            {% for _problem in problems %}
+                                <li{% if _problem.pid == current_problem.pid %} class="active"{% endif %}>
+                                    <a href="{{ url_for("admin.problems", pid=_problem.pid) }}">{{ _problem.title }} ({{ _problem.value }} points)</a>
+                                </li>
+                            {% endfor %}
+                        </ul>
+                        <div class="tab-content col-md-9">
+                            <div class="panel panel-default">
+                                <div class="panel-heading">
+                                    <h4 class="panel-title">{% if not current_problem %}New Problem{% else %}Editing
+                                        <b>{{ current_problem.title }}</b>{% endif %}</h4>
+                                </div>
+                                <div class="panel-body">
+                                    <div id="add-status"></div>
+                                    <form method="POST">
+                                        {{ problem_form.csrf_token }}
+                                        <fieldset>
+                                            {{ render_field(problem_form.author) }}
+                                            {{ render_field(problem_form.title) }}
+                                            {{ render_field(problem_form.name) }}
+                                            {{ render_field(problem_form.category) }}
+                                            {{ render_field(problem_form.value) }}
+                                            {{ render_editor(problem_form.description, "markdown") }}
+                                            {{ problem_form.programming(style="display: none;") }}
+                                        </fieldset>
+                                        <fieldset>
+                                            <ul class="nav nav-tabs" role="tablist">
+                                                <li role="presentation"
+                                                        {% if not problem_form.programming.data %} class="active"{% endif %}>
+                                                    <a href="#normal-problem" class="programming" data-programming="0" aria-controls="normal-problem" role="tab" data-toggle="tab">Standard Problem</a>
+                                                </li>
+                                                <li role="presentation"
+                                                        {% if problem_form.programming.data %} class="active"{% endif %}>
+                                                    <a href="#programming-problem" class="programming" data-programming="1" aria-controls="programming-problem" role="tab" data-toggle="tab">Programming Problem</a>
+                                                </li>
+                                            </ul>
+                                            <div class="tab-content">
+                                                <div role="tabpanel" class="tab-pane{% if not problem_form.programming.data %} active{% endif %}" id="normal-problem">
+                                                    {{ render_generic_field(problem_form.autogen) }}
+                                                </div>
+                                                <div role="tabpanel" class="tab-pane{% if problem_form.programming.data %} active{% endif %}" id="programming-problem">
+                                                    {{ render_field(problem_form.test_cases) }}
+                                                    {{ render_field(problem_form.time_limit) }}
+                                                    {{ render_field(problem_form.memory_limit) }}
+                                                    {{ render_editor(problem_form.generator, "python") }}
+                                                </div>
+                                                {{ render_editor(problem_form.grader, "python") }}
+                                            </div>
+                                        </fieldset>
+                                        {{ problem_form.submit(class_="btn btn-primary") }}
+                                    </form>
+                                    {% if current_problem %}
+                                        <form method="POST" action="{{ url_for("admin.delete_problem", pid=current_problem.pid) }}">
+                                            <input type="submit" class="btn btn-danger" value="Delete"/>
+                                        </form>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        $("a.programming").on("shown.bs.tab", function (e) {
+            $("input#programming").prop("checked", $(e.target).data("programming") == true);
+        });
+    </script>
+{% endblock %}

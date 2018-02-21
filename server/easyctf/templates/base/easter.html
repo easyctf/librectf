@@ -1,0 +1,66 @@
+{% extends "layout.html" %}
+{% block title %}Easter Eggs{% endblock %}
+
+{% block content %}
+    <div class="section" style="background-color: black;">
+        <div class="container" style="color: #0f0;">
+            <h1>Easter Eggs</h1>
+        </div>
+    </div>
+    <div class="section">
+        <div class="container">
+            <p>Here's how the Easter Egg game works:</p>
+            <ul>
+                <li>Easter eggs are scattered throughout the site, challenges, and other places that are related to EasyCTF</li>
+                <li>You don't get to know how many easter eggs there are</li>
+                <li>You don't know how many easter eggs other people have</li>
+                <li>Whoever finds the most eggs gets a special bonus ;)</li>
+            </ul>
+            <p>Good luck! Remember, don't spoil the fun of finding this page by telling other people!</p>
+
+            {% if current_user.admin %}
+                <h2>Admin Panel</h2>
+                <p>Add easter eggs here. Go to the database to remove eggs.</p>
+                <div class="row">
+                    <div class="col-md-6">
+                        <form class="form-horizontal" method="POST">
+                            <div class="input-group">
+                                <input type="text" class="form-control" autocomplete="off" placeholder="egg{ }" name="egg">
+                                <span class="input-group-btn">
+                                    <input class="btn btn-primary" type="submit" name="submit" />
+                                </span>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <p></p>
+                <ul>
+                {% for egg in eggs %}
+                    <li><code>{{ egg.flag }}</code></li>
+                {% endfor %}
+                </ul>
+            {% else %}
+                <h2>Submit Easter Egg</h2>
+                <p>For getting this far, here's an easter egg: <code>egg{backdoor_from_the_90's}</code>.</p>
+                <div class="row">
+                    <div class="col-md-6">
+                        <form class="form-horizontal" method="POST">
+                            <div class="input-group">
+                                <input type="text" class="form-control" autocomplete="off" placeholder="egg{ }" name="egg">
+                                <span class="input-group-btn">
+                                    <input class="btn btn-primary" type="submit" name="submit" />
+                                </span>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+                <p></p>
+                <ul>
+                {% for solve in eggs %}
+                    <li><code>{{ solve.egg.flag }}</code></li>
+                {% endfor %}
+                </ul>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

@@ -1,0 +1,42 @@
+{% from "templates.html" import render_field %}
+{% extends "layout.html" %}
+{% block title %}CTF Settings{% endblock %}
+
+{% block content %}
+    <form method="POST">
+        {{ settings_form.csrf_token }}
+        <div class="section gradient">
+            <div class="container">
+                <div style="float: right;">
+                    {{ settings_form.submit(class_="btn btn-lg btn-success") }}
+                </div>
+                <h1>Settings</h1>
+            </div>
+        </div>
+        <div class="section">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-4 col-sm-6 col-xs-12">
+                        <div class="panel panel-default">
+                            <div class="panel-heading">
+                                <h4 class="panel-title">General Settings</h4>
+                            </div>
+                            <div class="panel-body">
+                                <fieldset class="container-fluid">
+                                    <div class="row">
+                                        <div class="col-sm-12 form-group">
+                                            {{ render_field(settings_form.ctf_name) }}
+                                            {{ render_field(settings_form.team_size) }}
+                                            {{ render_field(settings_form.start_time) }}
+                                            {{ render_field(settings_form.end_time) }}
+                                        </div>
+                                    </div>
+                                </fieldset>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+{% endblock %}

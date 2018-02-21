@@ -1,0 +1,4 @@
+__pycache__
+*.pyc
+easyctf.db
+secret.sh

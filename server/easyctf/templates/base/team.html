@@ -1,0 +1,42 @@
+{% extends "layout.html" %}
+{% block title %}The Team{% endblock %}
+
+{% block content %}
+    <div class="section gradient">
+        <div class="container">
+            <h1>The Team</h1>
+        </div>
+    </div>
+    <div class="section">
+        <div class="container">
+            <div class="row">
+                <p>We're the people directly responsible for EasyCTF! Want to talk to us? Find us on <a href="{{ url_for('base.updates') }}">Discord</a>!</p>
+                {% for user in easyctf_team %}
+                <div class="col-lg-3 col-md-6 col-sm-12">
+                    <div class="list-group">
+                        <div class="list-group-item">
+                            <table>
+                                <tbody>
+                                    <tr>
+                                        <td>
+                                            <a href="{{ url_for('users.profile', uid=user.uid) }}">
+                                                <img src="{{ filestore(user.avatar) }}" style="width:40px;height:40px;margin-right:10px;border:1px solid #ddd;border-radius:40px;">
+                                            </a>
+                                        </td>
+                                        <td>
+                                            <h4 class="list-group-item-heading" style="display:inline-block;">{{ user.name }}</h4>
+                                            <p class="list-group-item-text">
+                                                <a href="{{ url_for('users.profile', uid=user.uid) }}">@{{ user.username }}</a>
+                                            </p>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+{% endblock %}
