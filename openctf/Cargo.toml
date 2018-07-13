@@ -1,0 +1,8 @@
+[package]
+name = "openctf"
+version = "0.1.0"
+authors = ["Michael <localhost>"]
+
+[dependencies]
+actix = "0.7.0"
+actix-web = "0.6.15"
