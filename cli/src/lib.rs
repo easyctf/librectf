@@ -25,7 +25,8 @@ pub struct OpenCTF {
 impl OpenCTF {
     pub fn run() -> Result<(), Error> {
         let opt = OpenCTF::from_args();
-        println!("{:?}", opt);
-        Ok(())
+        match opt.cmd {
+            Command::Web(web) => web.run(),
+        }
     }
 }
