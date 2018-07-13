@@ -1,6 +1,8 @@
+use std::env;
 use std::sync::Arc;
 
 use actix_web::server;
+use env_logger;
 use failure::Error;
 use openctf::{Config, OpenCTF};
 
@@ -13,6 +15,7 @@ pub(crate) struct Web {
     )]
     port: Option<u16>,
 }
+
 impl Web {
     pub fn run(&self, config: Config) -> Result<(), Error> {
         let ctf = Arc::new(OpenCTF::new(config)?);
@@ -23,6 +26,8 @@ impl Web {
             addr.1 = port;
         }
 
+        env::set_var("RUST_LOG", "actix_web=info");
+        env_logger::init();
         server::new(move || ctf.app()).bind(addr)?.run();
         Ok(())
     }

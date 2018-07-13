@@ -1,12 +1,10 @@
 use std::collections::{btree_map, BTreeMap};
 use std::fs::File;
 use std::io::Read;
-use std::iter::Map;
 use std::path::PathBuf;
-use std::vec;
 
 use either::Either;
-use failure::Error;
+use failure::{err_msg, Error};
 use walkdir::WalkDir;
 
 pub type Binfile<T> = Either<T, PathBuf>;
@@ -34,11 +32,11 @@ impl Storage for String {
 
 cfg_if! {
     if #[cfg(debug_assertions)] {
-        fn load_entry<T>(path: PathBuf) -> Result<Binfile<T>, Error> {
-            Ok(Either::Right(path))
+        fn load_entry<T>(path: &PathBuf) -> Result<Binfile<T>, Error> {
+            Ok(Either::Right(path.clone()))
         }
     } else {
-        fn load_entry<T>(path: PathBuf) -> Result<Binfile<T>,Error>{
+        fn load_entry<T>(path: &PathBuf) -> Result<Binfile<T>, Error>{
             let mut file = File::open(path)?;
             let mut data: Vec<u8> = Vec::new();
             match file.read_to_end(&mut data) {
@@ -67,8 +65,15 @@ impl<T: Storage> Bindata<T> {
             .filter_map(|e| e.ok())
             .filter(|e| e.file_type().is_file())
         {
-            let path = entry.path().to_path_buf();
-            map.insert("a".to_owned(), load_entry(path)?);
+            let path = entry
+                .path()
+                .to_path_buf();
+            let entry = load_entry(&path)?;
+            let name = path
+                .as_os_str()
+                .to_str()
+                .ok_or(err_msg("could not load template"))?;
+            map.insert(name.to_owned(), entry);
         }
         Ok(Bindata(map))
     }

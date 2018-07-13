@@ -18,8 +18,9 @@ pub mod app;
 pub mod bindata;
 pub mod challenge;
 pub mod config;
+pub mod views;
 
-pub use app::OpenCTF;
+pub use app::{AppState, OpenCTF};
 pub use bindata::Bindata;
 pub use challenge::Challenge;
 pub use config::Config;
