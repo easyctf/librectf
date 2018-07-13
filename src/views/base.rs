@@ -6,7 +6,7 @@ use tera::Context;
 use AppState;
 
 pub fn index(
-    (state, query): (State<AppState>, Query<HashMap<String, String>>),
+    (state, _query): (State<AppState>, Query<HashMap<String, String>>),
 ) -> Result<HttpResponse, Error> {
     let s = state
         .templates

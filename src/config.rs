@@ -21,7 +21,7 @@ impl Config {
         }
     }
 
-    pub fn from_file(path: &PathBuf) -> Result<Config, Error> {
+    pub fn from_file(_path: &PathBuf) -> Result<Config, Error> {
         // TODO: parse a config from file
         Ok(Config::default())
     }
