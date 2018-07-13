@@ -1,3 +1,4 @@
+extern crate actix_web;
 extern crate failure;
 extern crate openctf;
 #[macro_use]
@@ -9,7 +10,6 @@ use std::path::PathBuf;
 
 use failure::Error;
 use openctf::Config;
-use structopt::StructOpt;
 
 use web::Web;
 
@@ -30,8 +30,8 @@ pub struct OpenCTF {
 
 impl OpenCTF {
     pub fn run(self) -> Result<(), Error> {
-        match self.cmd {
-            Command::Web(web) => web.run(),
+        match &self.cmd {
+            &Command::Web(ref web) => web.run(self.get_config()?),
         }
     }
 

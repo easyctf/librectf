@@ -8,6 +8,8 @@ name = "openctf"
 path = "bin/cli.rs"
 
 [dependencies]
+actix = "0.7.0"
+actix-web = "0.6.15"
 failure = "0.1.1"
 openctf = { path = "../openctf" }
 structopt = "0.2.10"

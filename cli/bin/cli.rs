@@ -10,6 +10,6 @@ fn main() {
     let opt = OpenCTF::from_args();
     match opt.run() {
         Ok(_) => (),
-        Err(err) => panic!(err),
+        Err(err) => panic!("Error occurred: {}", err),
     }
 }
