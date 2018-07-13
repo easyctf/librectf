@@ -6,4 +6,9 @@ authors = ["Michael <localhost>"]
 [dependencies]
 actix = "0.7.0"
 actix-web = "0.6.15"
+cfg-if = "0.1.4"
+either = "1.5.0"
 failure = "0.1.1"
+regex = "1.0.1"
+tera = "0.11.8"
+walkdir = "2.1.4"
