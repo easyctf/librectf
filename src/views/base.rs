@@ -10,7 +10,7 @@ pub fn index(
 ) -> Result<HttpResponse, Error> {
     let s = state
         .templates
-        .render("templates/index.html", &Context::new())
-        .map_err(|_| error::ErrorInternalServerError("Template error"))?;
+        .render("base/index.html", &Context::new())
+        .map_err(|err| error::ErrorInternalServerError(format!("Template error: {:?}", err)))?;
     Ok(HttpResponse::Ok().content_type("text/html").body(s))
 }

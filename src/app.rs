@@ -1,12 +1,8 @@
-use std::path::PathBuf;
-
 use actix_web::{http::Method, middleware, App};
 use failure::Error;
 use tera::Tera;
 
-use bindata::resolve;
 use views;
-use Bindata;
 use Config;
 
 pub struct OpenCTF {
@@ -22,10 +18,11 @@ impl OpenCTF {
         Ok(OpenCTF { config })
     }
     pub fn app(&self) -> Result<App<AppState>, Error> {
-        let mut tera = compile_templates!(concat!(env!("CARGO_MANIFEST_DIR"), "/templates/**/*"));
-        // load all templates
+        let tera = compile_templates!(concat!(env!("CARGO_MANIFEST_DIR"), "/templates/**/*"));
+        /*
         let tmp: Bindata<String> = Bindata::new(PathBuf::from("templates"))?;
         let data = tmp.iter().map(|(k, v)| (k, resolve(v))).collect::<Vec<_>>();
+
         match tera.add_raw_templates(
             data.iter()
                 .filter(|(_, v)| v.is_ok())
@@ -36,8 +33,8 @@ impl OpenCTF {
             Err(err) => panic!("could not load templates: {}", err),
             _ => (),
         }
+        */
 
-        println!("{:?}", tera.templates);
         Ok(App::with_state(AppState { templates: tera })
             .middleware(middleware::Logger::default())
             .resource("/", |r| r.method(Method::GET).with(views::base::index)))

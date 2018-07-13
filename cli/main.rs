@@ -11,6 +11,7 @@ use std::path::PathBuf;
 
 use failure::Error;
 use openctf::Config;
+use structopt::StructOpt;
 
 use web::Web;
 
@@ -49,5 +50,13 @@ impl OpenCTF {
             Some(ref path) => Config::from_file(path),
             None => Ok(Config::default()),
         }
+    }
+}
+
+fn main() {
+    let opt = OpenCTF::from_args();
+    match opt.run() {
+        Ok(_) => (),
+        Err(err) => panic!("Error occurred: {}", err),
     }
 }
