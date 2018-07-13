@@ -1,10 +1,10 @@
-//! # OpenCTF CLI
-
+extern crate failure;
 #[macro_use]
 extern crate structopt;
 
 mod web;
 
+use failure::Error;
 use structopt::StructOpt;
 
 use web::Web;
@@ -17,12 +17,15 @@ enum Command {
 
 #[derive(Debug, StructOpt)]
 #[structopt(name = "openctf", about = "Flexible and powerful CTF framework.")]
-struct OpenCTF {
+pub struct OpenCTF {
     #[structopt(subcommand)]
     cmd: Command,
 }
 
-fn main() {
-    let opt = OpenCTF::from_args();
-    println!("{:?}", opt);
+impl OpenCTF {
+    pub fn run() -> Result<(), Error> {
+        let opt = OpenCTF::from_args();
+        println!("{:?}", opt);
+        Ok(())
+    }
 }
