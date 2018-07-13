@@ -5,8 +5,11 @@
 #[macro_use]
 extern crate actix;
 extern crate actix_web;
+extern crate failure;
 
-mod app;
+pub mod challenge;
+pub mod config;
 
-pub mod prelude {
-}
+pub use challenge::Challenge;
+pub use config::Config;
+
