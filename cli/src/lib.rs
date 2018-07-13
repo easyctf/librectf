@@ -20,11 +20,19 @@ enum Command {
 }
 
 #[derive(Debug, StructOpt)]
-#[structopt(name = "openctf", about = "Flexible and powerful CTF framework.")]
+#[structopt(
+    name = "openctf",
+    about = "Flexible and powerful CTF framework."
+)]
 pub struct OpenCTF {
     #[structopt(subcommand)]
     cmd: Command,
-    #[structopt(short = "c", long = "config", help = "Path to the config file.", parse(from_os_str))]
+    #[structopt(
+        short = "c",
+        long = "config",
+        help = "Path to the config file.",
+        parse(from_os_str)
+    )]
     config_file: Option<PathBuf>,
 }
 

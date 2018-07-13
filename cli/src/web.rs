@@ -1,6 +1,8 @@
-use actix_web::{server, App};
+use std::sync::Arc;
+
+use actix_web::{server};
 use failure::Error;
-use openctf::Config;
+use openctf::{Config, OpenCTF};
 
 #[derive(Debug, StructOpt)]
 pub(crate) struct Web {
@@ -14,11 +16,15 @@ pub(crate) struct Web {
 
 impl Web {
     pub fn run(&self, config: Config) -> Result<(), Error> {
-        // determine bind address
-        let host = config.host.as_ref();
-        let port = self.port.unwrap_or(config.port);
+        let ctf = Arc::new(OpenCTF::new(config)?);
+        
+        let addr_ref = ctf.clone();
+        let mut addr = addr_ref.bind_address();
+        if let Some(port) = self.port {
+            addr.1 = port;
+        }
 
-        server::new(|| App::new()).bind((host, port))?.run();
+        server::new(move || ctf.app()).bind(addr)?.run();
         Ok(())
     }
 }

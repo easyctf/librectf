@@ -4,7 +4,9 @@ use failure::Error;
 
 /// Represents a configuration for an OpenCTF server instance.
 pub struct Config {
+    /// The host on which to listen (default: '0.0.0.0')
     pub host: String,
+    /// The port on which to listen (default: 4401)
     pub port: u16,
 }
 
