@@ -14,6 +14,8 @@ extern crate regex;
 #[macro_use]
 extern crate tera;
 extern crate walkdir;
+#[macro_use]
+extern crate wtforms;
 
 pub mod app;
 pub mod challenge;
