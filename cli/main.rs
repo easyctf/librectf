@@ -1,4 +1,3 @@
-extern crate actix_web;
 extern crate env_logger;
 extern crate failure;
 extern crate openctf;
