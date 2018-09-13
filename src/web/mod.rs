@@ -6,8 +6,8 @@ mod static_files;
 use rocket::{self, Rocket};
 
 use self::static_files::StaticFiles;
-use Config;
 use db;
+use Config;
 
 /// This function produces an instance of the [Rocket](Rocket) app that we are building.
 pub fn app(config: &Config) -> Rocket {

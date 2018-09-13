@@ -1,4 +1,7 @@
-use diesel::{mysql::MysqlConnection, r2d2::{Pool, PooledConnection, ConnectionManager}};
+use diesel::{
+    mysql::MysqlConnection,
+    r2d2::{ConnectionManager, Pool, PooledConnection},
+};
 
 type ManagedMysqlConnection = ConnectionManager<MysqlConnection>;
 pub type MysqlPool = Pool<ManagedMysqlConnection>;
@@ -8,4 +11,3 @@ pub fn connect(database_url: impl AsRef<str>) -> MysqlPool {
     let manager = ConnectionManager::<MysqlConnection>::new(database_url.as_ref());
     Pool::new(manager).expect("Failed to create the pool.")
 }
-
