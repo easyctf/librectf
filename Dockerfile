@@ -23,7 +23,6 @@ RUN apt-get update && \
         git \
         musl-dev \
         musl-tools \
-        libpq-dev \
         libsqlite-dev \
         libssl-dev \
         pkgconf \
@@ -40,7 +39,7 @@ RUN apt-get update && \
     rm -f mdbook-v$MDBOOK_VERSION-x86_64-unknown-linux-musl.tar.gz
 
 # Allow sudo without a password.
-ADD sudoers /etc/sudoers.d/nopasswd
+ADD ci/sudoers /etc/sudoers.d/nopasswd
 
 # Run all further code as user `rust`, and create our working directories
 # as the appropriate user.

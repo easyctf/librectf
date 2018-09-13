@@ -28,10 +28,16 @@ pub fn config_derive(tokens: TokenStream) -> TokenStream {
 
     // now go through every field of the struct
     for field in fields.named {
+        if field.attrs.len() == 0 {
+            panic!("each field must have a #[config()] on it")
+        }
         for attr in field.attrs {
             let _meta = match attr.interpret_meta() {
                 Some(meta) => meta,
-                None => continue,
+                None => panic!(
+                    "could not parse attribute on field {}",
+                    field.ident.unwrap().to_string()
+                ),
             };
         }
     }
