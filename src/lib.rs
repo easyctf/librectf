@@ -7,7 +7,7 @@
 #![plugin(rocket_codegen)]
 
 #[macro_use]
-extern crate config as _config;
+extern crate cfgmacro;
 extern crate diesel;
 #[macro_use]
 extern crate embed;

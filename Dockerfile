@@ -59,12 +59,12 @@ RUN curl https://sh.rustup.rs -sSf | \
     sh -s -- -y --default-toolchain $TOOLCHAIN && \
     rustup target add x86_64-unknown-linux-musl && \
     rustup target add armv7-unknown-linux-musleabihf
-ADD cargo-config.toml /home/rust/.cargo/config
+ADD ci/cargo-config.toml /home/rust/.cargo/config
 
 # Set up a `git credentials` helper for using GH_USER and GH_TOKEN to access
 # private repositories if desired.
-ADD git-credential-ghtoken /usr/local/bin
-RUN git config --global credential.https://github.com.helper ghtoken
+# ADD git-credential-ghtoken /usr/local/bin
+# RUN git config --global credential.https://github.com.helper ghtoken
 
 # Build a static library version of OpenSSL using musl-libc.  This is
 # needed by the popular Rust `hyper` crate.
