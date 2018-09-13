@@ -7,6 +7,9 @@
 #![plugin(rocket_codegen)]
 
 #[macro_use]
+extern crate config as _config;
+extern crate diesel;
+#[macro_use]
 extern crate embed;
 extern crate failure;
 #[macro_use]
@@ -18,6 +21,9 @@ extern crate serde;
 extern crate tera;
 
 mod challenge;
+mod config;
+mod db;
 pub mod web;
 
 pub use challenge::Challenge;
+pub use config::Config;

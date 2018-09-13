@@ -1,4 +1,4 @@
-use openctf::web;
+use openctf::{web, Config};
 use structopt::StructOpt;
 
 #[derive(Debug, StructOpt)]
@@ -8,7 +8,8 @@ pub struct Web {
 
 impl Web {
     pub fn run(&self) {
-        let app = web::app();
+        let config = Config::default();
+        let app = web::app(&config);
         app.launch();
     }
 }
