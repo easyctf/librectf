@@ -8,7 +8,6 @@
 
 #[macro_use]
 extern crate cfgmacro;
-extern crate diesel;
 #[macro_use]
 extern crate embed;
 extern crate failure;
@@ -22,7 +21,6 @@ extern crate tera;
 
 mod challenge;
 mod config;
-mod db;
 pub mod web;
 
 pub use challenge::Challenge;
