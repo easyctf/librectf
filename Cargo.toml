@@ -4,7 +4,7 @@ version = "0.0.0-1"
 authors = ["Michael <localhost>"]
 
 [workspace]
-members = [".", "cache", "bin", "cfgmacro", "cfgmacro/cfgmacro-derive"]
+members = [".", "bin", "cache", "cfgmacro", "cfgmacro/cfgmacro-derive", "orm", "orm/orm-derive"]
 
 [dependencies]
 cache = { path = "cache" }

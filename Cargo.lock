@@ -473,6 +473,14 @@ version = "0.2.13"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 
 [[package]]
+name = "orm"
+version = "0.1.0"
+
+[[package]]
+name = "orm-derive"
+version = "0.1.0"
+
+[[package]]
 name = "pear"
 version = "0.0.20"
 source = "registry+https://github.com/rust-lang/crates.io-index"
