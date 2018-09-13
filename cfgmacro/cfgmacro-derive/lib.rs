@@ -77,6 +77,7 @@ pub fn config_derive(tokens: TokenStream) -> TokenStream {
     // begin building token streams
     let mut tokens = TokenStream2::new();
     let mut clap_constructor = TokenStream2::new();
+    let mut get_matches_from = TokenStream2::new();
     let mut constructor = TokenStream2::new();
 
     for (field, metalist) in fields.iter() {
@@ -89,6 +90,7 @@ pub fn config_derive(tokens: TokenStream) -> TokenStream {
             match meta {
                 ConfigTypes::Arg(arg) => {
                     let s = Literal::string(arg);
+                    get_matches_from.extend(quote!(#s,));
                     match_with_arg =
                         Some(quote!(.or_else(|| matches.value_of(#s).map(|s| s.to_owned()))));
                     clap_constructor.extend(quote!(
@@ -127,7 +129,7 @@ pub fn config_derive(tokens: TokenStream) -> TokenStream {
 
                 let matches = App::new("openctf")
                                       #clap_constructor
-                                      .get_matches();
+                                      .get_matches_from(vec![ #get_matches_from ]);
                 #tokens
                 Ok(#ident { #constructor })
             }
