@@ -4,8 +4,12 @@ version = "0.1.0"
 authors = ["Michael <localhost>"]
 
 [workspace]
-members = [".", "cli", "components/models"]
+members = [".", "cache", "cli", "config"]
 
 [dependencies]
-rocket = "0.3"
+cache = { path = "cache" }
+config = { path = "config" }
+embed = { git = "https://github.com/iptq/embed" }
+
 failure = "0.1.1"
+rocket = "0.3"

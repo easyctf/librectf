@@ -2,14 +2,12 @@
 //!
 //! This crate contains the core of the OpenCTF library.
 
-#[macro_use]
-extern crate actix;
-extern crate actix_web;
+#![deny(missing_docs)]
+
+extern crate rocket;
 extern crate failure;
 
-pub mod challenge;
-pub mod config;
+mod challenge;
 
 pub use challenge::Challenge;
-pub use config::Config;
 

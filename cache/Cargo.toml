@@ -1,6 +1,9 @@
 [package]
-name = "models"
+name = "cache"
 version = "0.1.0"
 authors = ["Michael Zhang <failed.down@gmail.com>"]
+
+[lib]
+path = "lib.rs"
 
 [dependencies]
