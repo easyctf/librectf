@@ -5,5 +5,5 @@ use super::Template;
 #[get("/")]
 fn index() -> Template {
     let ctx = Context::new();
-    Template::render("index.html", &ctx)
+    Template::render("base/index.html", &ctx)
 }
