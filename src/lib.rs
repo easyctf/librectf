@@ -10,4 +10,3 @@ extern crate failure;
 mod challenge;
 
 pub use challenge::Challenge;
-

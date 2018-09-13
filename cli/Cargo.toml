@@ -5,9 +5,10 @@ authors = ["Michael <localhost>"]
 
 [[bin]]
 name = "openctf"
-path = "bin/cli.rs"
+path = "main.rs"
 
 [dependencies]
 failure = "0.1.1"
+env_logger = "0.5"
 openctf = { path = ".." }
 structopt = "0.2.10"
