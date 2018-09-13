@@ -83,25 +83,33 @@ pub fn config_derive(tokens: TokenStream) -> TokenStream {
         let ident = field.ident.clone().unwrap();
 
         let mut match_with_arg = None;
+        let mut match_with_env = None;
 
         for meta in metalist.iter() {
             match meta {
                 ConfigTypes::Arg(arg) => {
                     let s = Literal::string(arg);
-                    match_with_arg = Some(quote!(.or_else(|| matches.value_of(#s).map(|s| s.to_owned()))));
+                    match_with_arg =
+                        Some(quote!(.or_else(|| matches.value_of(#s).map(|s| s.to_owned()))));
                     clap_constructor.extend(quote!(
                         .arg(Arg::with_name(#s).long(#s))
                     ))
+                }
+                ConfigTypes::Env(env) => {
+                    let s = Literal::string(env);
+                    match_with_env = Some(quote!(.or_else(|| env::var(#s).ok())));
                 }
                 _ => (),
             }
         }
 
         let match_with_arg = match_with_arg.unwrap_or_else(|| TokenStream2::new());
+        let match_with_env = match_with_env.unwrap_or_else(|| TokenStream2::new());
 
         tokens.extend(quote! {
             let #ident = None
                 #match_with_arg
+                #match_with_env
             .unwrap();
         });
 
@@ -115,6 +123,8 @@ pub fn config_derive(tokens: TokenStream) -> TokenStream {
             #[allow(missing_docs)]
             pub fn new() -> Result<Self, &'static str> {
                 use cfgmacro::clap::{App, Arg};
+                use std::env;
+
                 let matches = App::new("openctf")
                                       #clap_constructor
                                       .get_matches();

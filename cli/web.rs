@@ -7,9 +7,8 @@ pub struct Web {
 }
 
 impl Web {
-    pub fn run(&self) {
-        let config = Config::default();
-        let app = web::app(&config);
+    pub fn run(&self, config: &Config) {
+        let app = web::app(config);
         app.launch();
     }
 }
