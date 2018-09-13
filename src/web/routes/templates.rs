@@ -44,7 +44,8 @@ impl Template {
         C: Serialize,
     {
         // TODO: log the error sometime
-        let contents = RENDERER.render(&name.into(), &context).ok();
+        let name = name.into();
+        let contents = RENDERER.render(&name, &context).ok();
         Template { contents }
     }
     fn finalize(self) -> Result<(String, ContentType), Status> {
