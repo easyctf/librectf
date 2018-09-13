@@ -86,15 +86,6 @@ RUN echo "Building OpenSSL" && \
     CC=musl-gcc ./configure --static --prefix=/usr/local/musl && \
     make && sudo make install && \
     \
-    echo "Building libpq" && \
-    cd /tmp && \
-    POSTGRESQL_VERSION=9.6.8 && \
-    curl -LO "https://ftp.postgresql.org/pub/source/v$POSTGRESQL_VERSION/postgresql-$POSTGRESQL_VERSION.tar.gz" && \
-    tar xzf "postgresql-$POSTGRESQL_VERSION.tar.gz" && cd "postgresql-$POSTGRESQL_VERSION" && \
-    CC=musl-gcc CPPFLAGS=-I/usr/local/musl/include LDFLAGS=-L/usr/local/musl/lib ./configure --with-openssl --without-readline --prefix=/usr/local/musl && \
-    cd src/interfaces/libpq && make all-static-lib && sudo make install-lib-static && \
-    cd ../../bin/pg_config && make && sudo make install && \
-    \
     rm -r /tmp/*
 
 ENV OPENSSL_DIR=/usr/local/musl/ \
