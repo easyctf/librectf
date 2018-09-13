@@ -22,7 +22,7 @@ set -euo pipefail
 case $1 in
     check)
         echo "Building static binaries using ekidd/rust-musl-builder"
-        docker build -f Dockerfile.check -t build-"$2"-image .
+        docker build -f Dockerfile -t build-"$2"-image .
         docker run -it --name build-"$2" build-"$2"-image "cargo build --all"
         docker rm build-"$2"
         docker rmi build-"$2"-image
