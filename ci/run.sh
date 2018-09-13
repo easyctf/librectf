@@ -23,14 +23,14 @@ case $1 in
     check)
         echo "Building static binaries using ekidd/rust-musl-builder"
         docker build -f Dockerfile -t build-"$2"-image .
-        docker run -it --name build-"$2" build-"$2"-image "cargo build --all"
+        docker run -it --name build-"$2" build-"$2"-image "bash -c 'cargo +nightly build --all'"
         docker rm build-"$2"
         docker rmi build-"$2"-image
         ;;
     build)
         echo "Building static binaries using ekidd/rust-musl-builder"
         docker build -t build-"$2"-image .
-        docker run -it --name build-"$2" build-"$2"-image "cargo build --release --all"
+        docker run -it --name build-"$2" build-"$2"-image "bash -c 'cargo +nightly build --release --all'"
         docker cp build-"$2":/home/rust/src/target/x86_64-unknown-linux-musl/release/"$2" "$2"
         docker rm build-"$2"
         docker rmi build-"$2"-image

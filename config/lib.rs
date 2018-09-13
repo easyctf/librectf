@@ -9,7 +9,7 @@ extern crate syn;
 extern crate quote;
 
 use proc_macro::TokenStream;
-use syn::{parse2,Data, DeriveInput};
+use syn::{parse2, Data, DeriveInput};
 
 #[proc_macro_derive(Config)]
 pub fn config_derive(tokens: TokenStream) -> TokenStream {
@@ -21,6 +21,6 @@ pub fn config_derive(tokens: TokenStream) -> TokenStream {
         _ => panic!("#[derive(Config)] should only be used on structs."),
     };
 
-    let result = quote! {};
+    let result = quote!{};
     result.into()
-}  
+}

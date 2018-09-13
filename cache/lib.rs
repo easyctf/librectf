@@ -14,6 +14,4 @@
 #![deny(missing_docs)]
 
 /// An abstraction for a key-value cache.
-pub trait Cache {
-
-}
+pub trait Cache {}

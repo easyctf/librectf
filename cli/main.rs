@@ -3,15 +3,19 @@ extern crate failure;
 extern crate openctf;
 extern crate structopt;
 
+mod web;
+
 use std::path::PathBuf;
 
 use failure::Error;
 use structopt::StructOpt;
 
+use web::Web;
+
 #[derive(Debug, StructOpt)]
 enum Command {
     #[structopt(name = "web")]
-    Web,
+    Web(Web),
 }
 
 #[derive(Debug, StructOpt)]
@@ -33,6 +37,9 @@ pub struct OpenCTF {
 
 impl OpenCTF {
     pub fn run(&self) -> Result<(), Error> {
+        match &self.cmd {
+            Command::Web(web) => web.run(),
+        }
         Ok(())
     }
 }

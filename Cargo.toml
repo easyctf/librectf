@@ -12,4 +12,9 @@ config = { path = "config" }
 embed = { git = "https://github.com/iptq/embed" }
 
 failure = "0.1.1"
+lazy_static = "1.0"
 rocket = "0.3"
+rocket_codegen = "0.3"
+rocket_contrib = { version = "0.3", default-features = false, features = ["tera_templates"] }
+serde = "1.0"
+tera = "0.11"

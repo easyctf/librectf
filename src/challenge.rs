@@ -1,3 +1,2 @@
 /// A challenge.
-pub struct Challenge {
-}
+pub struct Challenge {}
