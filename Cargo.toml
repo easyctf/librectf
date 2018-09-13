@@ -10,6 +10,7 @@ members = [".", "bin", "cache", "cfgmacro", "cfgmacro/cfgmacro-derive", "orm", "
 cache = { path = "cache" }
 cfgmacro = { path = "cfgmacro" }
 embed = { git = "https://github.com/iptq/embed" }
+orm = { path = "orm" }
 
 failure = "0.1.1"
 lazy_static = "1.0"
