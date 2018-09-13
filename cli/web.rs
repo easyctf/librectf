@@ -1,5 +1,5 @@
-use structopt::StructOpt;
 use openctf::web;
+use structopt::StructOpt;
 
 #[derive(Debug, StructOpt)]
 pub struct Web {
