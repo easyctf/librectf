@@ -1,1 +1,2 @@
-pub struct Challenge {}
+pub struct Challenge {
+}
