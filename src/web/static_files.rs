@@ -2,6 +2,7 @@
 //! the custom Embed derive.
 
 // TODO: expand this to do some kind of browser-level caching with headers
+// TODO: expand this to allow extra paths in the search (besides precompiled)
 
 use std::borrow::Cow;
 
