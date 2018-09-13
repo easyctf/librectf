@@ -1,0 +1,12 @@
+language: rust
+sudo: required
+dist: trusty
+
+script:
+  - ./ci/run.sh check openctf
+
+before_deploy:
+  - ./ci/run.sh build openctf ${TRAVIS_TAG}-${TRAVIS_OS_NAME}
+
+notifications:
+  email: false

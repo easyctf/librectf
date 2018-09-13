@@ -4,9 +4,9 @@
 
 #![deny(missing_docs)]
 
-extern crate rocket;
 extern crate failure;
 
 mod challenge;
+mod web;
 
 pub use challenge::Challenge;
