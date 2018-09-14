@@ -461,6 +461,7 @@ dependencies = [
  "lazy_static 1.1.0 (registry+https://github.com/rust-lang/crates.io-index)",
  "mime_guess 2.0.0-alpha.6 (registry+https://github.com/rust-lang/crates.io-index)",
  "orm 0.1.0",
+ "orm-derive 0.1.0",
  "rocket 0.3.16 (registry+https://github.com/rust-lang/crates.io-index)",
  "rocket_codegen 0.3.16 (registry+https://github.com/rust-lang/crates.io-index)",
  "rocket_contrib 0.3.16 (registry+https://github.com/rust-lang/crates.io-index)",
@@ -476,9 +477,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 [[package]]
 name = "orm"
 version = "0.1.0"
-dependencies = [
- "orm-derive 0.1.0",
-]
 
 [[package]]
 name = "orm-derive"

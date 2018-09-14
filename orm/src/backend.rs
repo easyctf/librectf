@@ -1,4 +1,4 @@
-use {QueryBuilder, MysqlQueryBuilder};
+use {MysqlQueryBuilder, QueryBuilder};
 
 pub trait Backend
 where

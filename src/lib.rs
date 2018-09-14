@@ -2,7 +2,7 @@
 //!
 //! This crate contains the core of the OpenCTF library.
 
-#![feature(plugin)]
+#![feature(plugin, custom_attribute, proc_macro_mod)]
 #![plugin(rocket_codegen)]
 
 #[macro_use]
@@ -15,6 +15,7 @@ extern crate lazy_static;
 extern crate mime_guess;
 #[macro_use]
 extern crate orm;
+extern crate orm_derive;
 extern crate rocket;
 extern crate rocket_contrib;
 extern crate serde;

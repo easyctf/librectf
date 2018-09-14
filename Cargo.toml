@@ -4,13 +4,14 @@ version = "0.0.0-1"
 authors = ["Michael <localhost>"]
 
 [workspace]
-members = [".", "bin", "cache", "cfgmacro", "cfgmacro/cfgmacro-derive", "orm", "orm/orm-derive"]
+members = [".", "bin", "cache", "cfgmacro", "cfgmacro/cfgmacro-derive", "orm", "orm/derive"]
 
 [dependencies]
 cache = { path = "cache" }
 cfgmacro = { path = "cfgmacro" }
 embed = { git = "https://github.com/iptq/embed" }
 orm = { path = "orm" }
+orm-derive = { path = "orm/derive" }
 
 failure = "0.1.1"
 lazy_static = "1.0"
