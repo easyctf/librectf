@@ -11,7 +11,7 @@ pub struct User {
     #[column(primary_key)]
     pub id: i32,
 
-    #[column(foreign_key("teams.id"))]
+    #[column(foreign_key = "Team::id")]
     pub tid: i32,
 
     #[column]

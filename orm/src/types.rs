@@ -1,3 +1,4 @@
-pub enum SqlType {
+pub trait SqlType {
 
 }
+
