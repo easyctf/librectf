@@ -4,8 +4,8 @@ extern crate syn;
 #[macro_use]
 extern crate quote;
 
-use syn::DeriveInput;
 use proc_macro::TokenStream;
+use syn::DeriveInput;
 
 #[proc_macro_derive(Model, attributes(column, table_name))]
 pub fn model_derive(tokens: TokenStream) -> TokenStream {

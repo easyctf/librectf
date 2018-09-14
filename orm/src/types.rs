@@ -1,4 +1,1 @@
-pub trait SqlType {
-
-}
-
+pub trait SqlType {}
