@@ -1,6 +1,7 @@
 [package]
 name = "orm"
 version = "0.1.0"
+description = "ORM for OpenCTF, based on diesel.rs"
 authors = ["Michael Zhang <failed.down@gmail.com>"]
 
 [features]

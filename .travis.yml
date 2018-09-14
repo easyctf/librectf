@@ -16,6 +16,7 @@ notifications:
 deploy:
   - provider: releases
     api_key: $AUTH_TOKEN
+    file_glob: true
     file:
       - "openctf-*"
     on:

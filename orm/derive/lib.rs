@@ -1,5 +1,3 @@
-// TODO: merge into codegen
-
 extern crate proc_macro;
 extern crate proc_macro2;
 extern crate syn;
