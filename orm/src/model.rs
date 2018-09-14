@@ -1,6 +1,6 @@
-use Backend;
+use BaseQuery;
 
-pub trait Model<'s, B: Backend> {
+pub trait Model: Sized {
     /// Begin building a query.
-    fn query<T: Backend>(&self) -> <T as Backend>::QueryBuilder;
+    fn query() -> BaseQuery<Self>;
 }

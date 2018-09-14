@@ -18,7 +18,9 @@ pub fn schema_attr(_attrs: TokenStream, item: TokenStream) -> TokenStream {
     let ident = &item.ident;
 
     // all of the contents should be #[model]s or #[table]s
-    let mut content = TokenStream2::new();
+    let mut content = quote! {
+        use ::orm::{Backend, BaseQuery, Model};
+    };
     if let Some((_, ref items)) = item.content {
         for item in items {
             let item = match item {
@@ -50,6 +52,11 @@ pub fn schema_attr(_attrs: TokenStream, item: TokenStream) -> TokenStream {
                 #vis struct #ident {
                     #fcontent
                 }
+                impl Model for #ident {
+                    fn query() -> BaseQuery<Self> {
+                        BaseQuery::new()
+                    }
+                }
             });
         }
     }
@@ -60,6 +67,7 @@ pub fn schema_attr(_attrs: TokenStream, item: TokenStream) -> TokenStream {
         pub struct #schema_ident {
 
         }
+        #[cfg(feature = "mysql")]
         impl<'a> ::orm::Schema<'a, ::orm::MysqlBackend> for #schema_ident {}
     };
 

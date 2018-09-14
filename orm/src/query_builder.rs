@@ -1,7 +1,24 @@
-use {Backend, MysqlBackend};
+use AsQuery;
+use Backend;
 
-pub trait QueryBuilder<B: Backend> {}
+pub struct BaseQuery<T> {
+    _x: ::std::marker::PhantomData<T>,
+}
 
-pub struct MysqlQueryBuilder {}
+pub trait QueryBuilder<B: Backend>
+where
+    Self: Default,
+{
+    fn build(&self) -> String;
+}
 
-impl QueryBuilder<MysqlBackend> for MysqlQueryBuilder {}
+impl<T> BaseQuery<T> {
+    pub fn new() -> Self {
+        BaseQuery { _x: ::std::marker::PhantomData::default() }
+    }
+}
+
+impl<T> AsQuery for BaseQuery<T> {
+    type Query = String;
+    fn as_query(&self) -> Self::Query { String::new() }
+}
