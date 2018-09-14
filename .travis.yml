@@ -5,7 +5,7 @@ services:
   - docker
 
 script:
-  - ./ci/run.sh check openctf
+  - if [ -z "$TRAVIS_TAG" ]; then ./ci/run.sh check openctf; fi
 
 before_deploy:
   - ./ci/run.sh build openctf ${TRAVIS_TAG}-${TRAVIS_OS_NAME}
