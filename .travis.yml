@@ -12,3 +12,12 @@ before_deploy:
 
 notifications:
   email: false
+
+deploy:
+  - provider: releases
+    api_key: $AUTH_TOKEN
+    file:
+      - "openctf-*"
+    on:
+      tags: true
+    skip_cleanup: true
