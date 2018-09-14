@@ -8,8 +8,8 @@ extern crate syn;
 extern crate quote;
 
 use proc_macro::TokenStream;
-use proc_macro2::{TokenStream as TokenStream2, Span};
-use syn::{Item, ItemMod, Fields, FieldsNamed, Ident};
+use proc_macro2::{Span, TokenStream as TokenStream2};
+use syn::{Fields, FieldsNamed, Ident, Item, ItemMod};
 
 #[proc_macro_attribute]
 pub fn schema_attr(_attrs: TokenStream, item: TokenStream) -> TokenStream {
@@ -23,7 +23,7 @@ pub fn schema_attr(_attrs: TokenStream, item: TokenStream) -> TokenStream {
         for item in items {
             let item = match item {
                 Item::Struct(struct_item) => struct_item,
-                _ => panic!("only structs should appear in schema!{}")
+                _ => panic!("only structs should appear in schema!{}"),
             };
             let vis = &item.vis;
             let ident = &item.ident;
@@ -31,7 +31,10 @@ pub fn schema_attr(_attrs: TokenStream, item: TokenStream) -> TokenStream {
             // fields of the struct
             let mut fcontent = TokenStream2::new();
             let fields = match &item.fields {
-                Fields::Named(FieldsNamed { named: named_fields, .. }) => named_fields,
+                Fields::Named(FieldsNamed {
+                    named: named_fields,
+                    ..
+                }) => named_fields,
                 _ => panic!("structs must used named fields (struct xxx { })"),
             };
             for field in fields {
