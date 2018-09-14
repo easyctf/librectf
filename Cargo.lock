@@ -144,7 +144,7 @@ version = "0.1.0"
 dependencies = [
  "env_logger 0.5.13 (registry+https://github.com/rust-lang/crates.io-index)",
  "failure 0.1.2 (registry+https://github.com/rust-lang/crates.io-index)",
- "openctf 0.0.0-1",
+ "openctf 0.0.0-2",
  "structopt 0.2.10 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
@@ -452,7 +452,7 @@ dependencies = [
 
 [[package]]
 name = "openctf"
-version = "0.0.0-1"
+version = "0.0.0-2"
 dependencies = [
  "cache 0.1.0",
  "cfgmacro 0.1.0",

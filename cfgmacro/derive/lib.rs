@@ -108,11 +108,15 @@ pub fn config_derive(tokens: TokenStream) -> TokenStream {
         let match_with_arg = match_with_arg.unwrap_or_else(|| TokenStream2::new());
         let match_with_env = match_with_env.unwrap_or_else(|| TokenStream2::new());
 
+        let ident_str = Literal::string(ident.to_string().as_ref());
         tokens.extend(quote! {
-            let #ident = None
-                #match_with_arg
-                #match_with_env
-            .unwrap();
+            let #ident = match None
+                                    #match_with_arg
+                                    #match_with_env
+                        {
+                Some(value) => value,
+                None => panic!("could not find a config value for {}", #ident_str),
+            };
         });
 
         constructor.extend(quote!(#ident,));

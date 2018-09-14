@@ -7,6 +7,6 @@ authors = ["Michael Zhang <failed.down@gmail.com>"]
 path = "lib.rs"
 
 [dependencies]
-cfgmacro-derive = { path = "cfgmacro-derive" }
+cfgmacro-derive = { path = "derive" }
 clap = "2.32"
 toml = "0.4"
