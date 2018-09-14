@@ -7,7 +7,7 @@ mod web;
 
 use std::path::PathBuf;
 
-use failure::{err_msg, Error};
+use failure::Error;
 use structopt::StructOpt;
 
 use web::Web;
@@ -37,9 +37,8 @@ pub struct OpenCTF {
 
 impl OpenCTF {
     pub fn run(&self) -> Result<(), Error> {
-        let config = openctf::Config::new().map_err(|err| err_msg(err))?;
         match &self.cmd {
-            Command::Web(web) => web.run(&config),
+            Command::Web(web) => web.run(),
         }
         Ok(())
     }

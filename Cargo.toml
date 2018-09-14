@@ -4,11 +4,10 @@ version = "0.0.0-2"
 authors = ["Michael <localhost>"]
 
 [workspace]
-members = [".", "bin", "cache", "cfgmacro", "cfgmacro/derive", "orm", "orm/derive"]
+members = [".", "bin", "cache", "orm", "orm/derive"]
 
 [dependencies]
 cache = { path = "cache" }
-cfgmacro = { path = "cfgmacro" }
 embed = { git = "https://github.com/iptq/embed" }
 orm = { path = "orm" }
 orm-derive = { path = "orm/derive" }
@@ -20,4 +19,5 @@ rocket = "0.3"
 rocket_codegen = "0.3"
 rocket_contrib = { version = "0.3", default-features = false }
 serde = "1.0"
+structopt = "0.2"
 tera = "0.11"

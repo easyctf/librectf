@@ -6,8 +6,6 @@
 #![plugin(rocket_codegen)]
 
 #[macro_use]
-extern crate cfgmacro;
-#[macro_use]
 extern crate embed;
 extern crate failure;
 #[macro_use]
@@ -19,6 +17,8 @@ extern crate orm_derive;
 extern crate rocket;
 extern crate rocket_contrib;
 extern crate serde;
+#[macro_use]
+extern crate structopt;
 extern crate tera;
 
 mod challenge;

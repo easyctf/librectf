@@ -3,12 +3,13 @@ use structopt::StructOpt;
 
 #[derive(Debug, StructOpt)]
 pub struct Web {
-    // potentially have options here?
+    #[structopt(flatten)]
+    config: Config,
 }
 
 impl Web {
-    pub fn run(&self, config: &Config) {
-        let app = web::app(config);
+    pub fn run(&self) {
+        let app = web::app(&self.config);
         app.launch();
     }
 }

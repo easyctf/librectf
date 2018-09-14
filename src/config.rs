@@ -1,12 +1,8 @@
 /// OpenCTF main configuration
-// TODO: remove Default
-#[derive(Config, Default)]
+
+#[derive(Debug, StructOpt)]
 pub struct Config {
     /// The URL for the database as a MySQL connection string.
-    #[config(
-        arg = "database-url",
-        env = "DATABASE_URL",
-        key = "database_url"
-    )]
+    #[structopt(long = "database-url", env = "DATABASE_URL")]
     pub database_url: String,
 }
