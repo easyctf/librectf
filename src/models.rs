@@ -1,5 +1,5 @@
 schema! {
-    pub schema Schema;
+    pub schema CTF;
 
     #[model(table_name = "teams")]
     pub struct Team {

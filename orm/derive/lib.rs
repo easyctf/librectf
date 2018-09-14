@@ -8,8 +8,8 @@ extern crate syn;
 extern crate quote;
 
 use proc_macro::TokenStream;
-use proc_macro2::TokenStream as TokenStream2;
-use syn::{Item, ItemMod};
+use proc_macro2::{TokenStream as TokenStream2, Span};
+use syn::{Item, ItemMod, Fields, FieldsNamed, Ident};
 
 #[proc_macro_attribute]
 pub fn schema_attr(_attrs: TokenStream, item: TokenStream) -> TokenStream {
@@ -27,15 +27,43 @@ pub fn schema_attr(_attrs: TokenStream, item: TokenStream) -> TokenStream {
             };
             let vis = &item.vis;
             let ident = &item.ident;
+
+            // fields of the struct
+            let mut fcontent = TokenStream2::new();
+            let fields = match &item.fields {
+                Fields::Named(FieldsNamed { named: named_fields, .. }) => named_fields,
+                _ => panic!("structs must used named fields (struct xxx { })"),
+            };
+            for field in fields {
+                let vis = &field.vis;
+                let ident = &field.ident.as_ref().unwrap(); // this is ok because we confirmed it's named
+                let ty = &field.ty;
+                fcontent.extend(quote! {
+                    #vis #ident: #ty,
+                });
+            }
+
             content.extend(quote! {
-                #vis struct #ident {}
+                #vis struct #ident {
+                    #fcontent
+                }
             });
         }
     }
 
+    // now add the schema object
+    let schema_ident = Ident::new(&format!("{}Schema", ident), Span::call_site());
+    let schema_def = quote! {
+        pub struct #schema_ident {
+
+        }
+        impl<'a> ::orm::Schema<'a, ::orm::MysqlBackend> for #schema_ident {}
+    };
+
     let result = quote! {
         #vis mod #ident {
             #content
+            #schema_def
         }
     };
     result.into()
