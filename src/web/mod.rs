@@ -18,7 +18,8 @@ pub fn app(config: &Config) -> Rocket {
     rocket::ignite()
         .manage(pool)
         .mount("/static", StaticFiles::default().into())
-        .mount("/user", routes![routes::user::register])
-        .mount("/user", routes![routes::user::settings])
-        .mount("/", routes![routes::base::index])
+        .mount("/user", routes![routes::user::get_register])
+        .mount("/user", routes![routes::user::post_register])
+        .mount("/user", routes![routes::user::get_settings])
+        .mount("/", routes![routes::base::get_index])
 }

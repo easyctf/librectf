@@ -1,4 +1,4 @@
-use orm::{ConnectionPool, Model};
+use orm::ConnectionPool;
 use rocket::State;
 use tera::Context;
 
@@ -6,18 +6,22 @@ use models::User;
 use web::{Template, UserGuard};
 
 #[get("/register")]
-fn register() -> Template {
+fn get_register() -> Template {
     let ctx = Context::new();
     Template::render("base/index.html", &ctx)
 }
 
+#[post("/register")]
+fn post_register() {
+
+}
+
 #[get("/settings")]
-fn settings(db: State<ConnectionPool>, _user: UserGuard) -> Template {
+fn get_settings(db: State<ConnectionPool>, _user: UserGuard) -> Template {
     let ctx = Context::new();
 
     // testing out the model
-    let query = User::query();
-    db.run(query);
+    let user = db.query(User::model()).into_iter();
 
     Template::render("base/index.html", &ctx)
 }

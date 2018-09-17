@@ -17,7 +17,7 @@ pub fn schema_attr(_attrs: TokenStream, item: TokenStream) -> TokenStream {
 
     // all of the contents should be #[model]s or #[table]s
     let mut content = quote! {
-        use ::orm::{Backend, BaseQuery, Model};
+        use ::orm::*;
     };
     if let Some((_, ref items)) = item.content {
         for item in items {
@@ -27,9 +27,20 @@ pub fn schema_attr(_attrs: TokenStream, item: TokenStream) -> TokenStream {
             };
             let vis = &item.vis;
             let ident = &item.ident;
+            let attrs = &item.attrs;
+            let mut tablename = ident.to_string();
+
+            for attr in attrs {
+            }
 
             // fields of the struct
             let mut fcontent = TokenStream2::new();
+            let mut implcontent = quote! {
+                pub fn model() -> Column<#ident> {
+                    Column::default()
+                }
+            };
+
             let fields = match &item.fields {
                 Fields::Named(FieldsNamed {
                     named: named_fields,
@@ -39,21 +50,32 @@ pub fn schema_attr(_attrs: TokenStream, item: TokenStream) -> TokenStream {
             };
             for field in fields {
                 let vis = &field.vis;
-                let ident = &field.ident.as_ref().unwrap(); // this is ok because we confirmed it's named
+                let aug_ident = Ident::new(
+                    &format!("__orig_{}", field.ident.as_ref().unwrap()),
+                    Span::call_site(),
+                ); // this is ok because we confirmed it's named
                 let ty = &field.ty;
                 fcontent.extend(quote! {
-                    #vis #ident: #ty,
+                    #vis #aug_ident: #ty,
+                });
+
+                let ident = &field.ident.as_ref().unwrap();
+                implcontent.extend(quote! {
+                    #vis fn #ident() -> Column<#ty> {
+                        Column::default()
+                    }
                 });
             }
 
             content.extend(quote! {
+                #[derive(Default)]
                 #vis struct #ident {
                     #fcontent
                 }
+                impl #ident {
+                    #implcontent
+                }
                 impl Model for #ident {
-                    fn query() -> BaseQuery<Self> {
-                        BaseQuery::new()
-                    }
                 }
             });
         }

@@ -1,11 +1,10 @@
 use url::Url;
 
 use backend;
-use {AsQuery, Query};
+use IntoEntities;
+use Query;
 
-pub trait ConnectionPoolExt {
-    fn run(&self, impl AsQuery);
-}
+pub trait ConnectionPoolExt {}
 
 pub enum ConnectionPool {
     #[cfg(feature = "mysql")]
@@ -25,12 +24,7 @@ impl ConnectionPool {
         }
     }
 
-    pub fn run(&self, query: impl AsQuery) {
-        // send query to the server
-        // backend specific
-        match self {
-            #[cfg(feature = "mysql")]
-            ConnectionPool::Mysql(backend) => backend.run(query),
-        }
+    pub fn query<T>(&self, ent: impl IntoEntities<T>) -> Query<T> {
+        Query::new(&self, ent)
     }
 }

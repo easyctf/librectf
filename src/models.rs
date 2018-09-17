@@ -17,5 +17,8 @@ schema! {
 
         #[column]
         pub email: String,
+
+        #[column]
+        pub password: String,
     }
 }

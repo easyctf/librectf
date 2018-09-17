@@ -5,15 +5,12 @@ use std::sync::Arc;
 use self::r2d2_mysql::MysqlConnectionManager;
 use r2d2::Pool;
 
-use AsQuery;
 use Backend;
 use ConnectionPoolExt;
-use QueryBuilder;
 
 pub struct MysqlBackend {}
 
 impl Backend for MysqlBackend {
-    type QueryBuilder = MysqlQueryBuilder;
     type ConnectionManager = MysqlConnectionManager;
 }
 
@@ -39,16 +36,5 @@ impl MysqlConnectionPool {
     }
 }
 
-impl ConnectionPoolExt for MysqlConnectionPool {
-    fn run(&self, query: impl AsQuery) {}
-}
-
 #[derive(Default)]
 pub struct MysqlQueryBuilder {}
-
-impl QueryBuilder<MysqlBackend> for MysqlQueryBuilder {
-    fn build(&self) -> String {
-        // TODO:
-        String::new()
-    }
-}
