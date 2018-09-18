@@ -8,9 +8,7 @@ pub struct Query<'a, T> {
     _inner: ::std::marker::PhantomData<T>,
 }
 
-pub struct QueryResult {
-
-}
+pub struct QueryResult {}
 
 pub enum Value {}
 
@@ -22,19 +20,8 @@ impl<'a, T> Query<'a, T> {
             _inner: ::std::marker::PhantomData::default(),
         }
     }
-}
 
-impl<'a, T> IntoIterator for Query<'a, T> {
-    type Item = Value;
-    type IntoIter = QueryResult;
-    fn into_iter(self) -> Self::IntoIter {
-        QueryResult {}
-    }    
-}
+    pub fn all(&self) {
 
-impl Iterator for QueryResult {
-    type Item = Value;
-    fn next(&mut self) -> Option<Self::Item> {
-        None
     }
 }

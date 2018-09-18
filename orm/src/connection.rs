@@ -27,4 +27,8 @@ impl ConnectionPool {
     pub fn query<T>(&self, ent: impl IntoEntities<T>) -> Query<T> {
         Query::new(&self, ent)
     }
+
+    pub fn commit(&self) {
+        
+    }
 }

@@ -12,16 +12,14 @@ fn get_register() -> Template {
 }
 
 #[post("/register")]
-fn post_register() {
-
-}
+fn post_register() {}
 
 #[get("/settings")]
 fn get_settings(db: State<ConnectionPool>, _user: UserGuard) -> Template {
     let ctx = Context::new();
 
     // testing out the model
-    let user = db.query(User::model()).into_iter();
+    let query = db.query((User::model(), User::id()));
 
     Template::render("base/index.html", &ctx)
 }

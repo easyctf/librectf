@@ -6,12 +6,18 @@ use self::r2d2_mysql::MysqlConnectionManager;
 use r2d2::Pool;
 
 use Backend;
-use ConnectionPoolExt;
+use Compiler;
 
 pub struct MysqlBackend {}
 
 impl Backend for MysqlBackend {
+    type Compiler = MysqlCompiler;
     type ConnectionManager = MysqlConnectionManager;
+}
+
+pub struct MysqlCompiler;
+
+impl Compiler for MysqlCompiler {
 }
 
 pub struct MysqlConnectionPool {

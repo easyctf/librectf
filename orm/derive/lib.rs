@@ -30,8 +30,7 @@ pub fn schema_attr(_attrs: TokenStream, item: TokenStream) -> TokenStream {
             let attrs = &item.attrs;
             let mut tablename = ident.to_string();
 
-            for attr in attrs {
-            }
+            for attr in attrs {}
 
             // fields of the struct
             let mut fcontent = TokenStream2::new();
