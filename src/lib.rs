@@ -10,6 +10,7 @@ extern crate diesel;
 extern crate r2d2;
 extern crate r2d2_diesel;
 
+extern crate bcrypt;
 #[macro_use]
 extern crate embed;
 extern crate failure;
@@ -20,13 +21,14 @@ extern crate rocket;
 extern crate rocket_contrib;
 extern crate serde;
 #[macro_use]
+extern crate serde_derive;
+#[macro_use]
 extern crate structopt;
 extern crate tera;
 
 mod challenge;
 mod config;
 mod db;
-mod security;
 pub mod models;
 pub mod web;
 mod schema;

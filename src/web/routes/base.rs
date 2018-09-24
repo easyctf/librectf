@@ -1,9 +1,7 @@
-use tera::Context;
-
 use super::Template;
+use web::guards::ContextGuard;
 
 #[get("/")]
-fn get_index() -> Template {
-    let ctx = Context::new();
+fn get_index(ctx: ContextGuard) -> Template {
     Template::render("base/index.html", &ctx)
 }

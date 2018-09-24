@@ -4,5 +4,5 @@ use super::schema::*;
 #[table_name = "users"]
 pub struct NewUser<'a> {
     pub email: &'a str,
-    pub password: &'a str,
+    pub password: String,
 }

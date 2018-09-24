@@ -1,11 +1,10 @@
-use diesel::prelude::*;
+use diesel::{self, prelude::*};
 use rocket::request::Form;
-use tera::Context;
+use bcrypt;
 
-use web::{Template, UserGuard};
+use web::{Template, ContextGuard};
 use db::Connection;
 use models::NewUser;
-use security;
 
 #[derive(FromForm)]
 struct RegisterForm {
@@ -15,16 +14,16 @@ struct RegisterForm {
 
 impl<'a> From<&'a RegisterForm> for NewUser<'a> {
     fn from(form: &'a RegisterForm) -> Self {
+        let password = bcrypt::hash(&form.password, bcrypt::DEFAULT_COST).unwrap();
         NewUser {
             email: form.email.as_ref(),
-            password: security::generate_password(&form.password),
+            password: password,
         }
     }
 }
 
 #[get("/register")]
-fn get_register() -> Template {
-    let ctx = Context::new();
+fn get_register(ctx: ContextGuard) -> Template {
     Template::render("base/index.html", &ctx)
 }
 
@@ -36,10 +35,6 @@ fn post_register(db: Connection, form: Form<RegisterForm>) {
 }
 
 #[get("/settings")]
-fn get_settings(_user: UserGuard) -> Template {
-    let ctx = Context::new();
-
-    // testing out the model
-
+fn get_settings(ctx: ContextGuard) -> Template {
     Template::render("base/index.html", &ctx)
 }
