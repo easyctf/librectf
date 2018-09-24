@@ -10,6 +10,7 @@ members = [".", "cache"]
 cache = { path = "cache" }
 embed = { git = "https://github.com/iptq/embed" }
 
+bcrypt = "0.2"
 env_logger = "0.5"
 failure = "0.1.1"
 lazy_static = "1.0"

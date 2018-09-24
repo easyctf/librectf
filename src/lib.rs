@@ -5,6 +5,7 @@
 #![feature(plugin, custom_derive)]
 #![plugin(rocket_codegen)]
 
+#[macro_use]
 extern crate diesel;
 extern crate r2d2;
 extern crate r2d2_diesel;
@@ -25,8 +26,11 @@ extern crate tera;
 mod challenge;
 mod config;
 mod db;
+mod security;
 pub mod models;
 pub mod web;
+mod schema;
 
 pub use challenge::Challenge;
 pub use config::Config;
+use db::Connection;

@@ -1,4 +1,9 @@
-CREATE TABLE `users` (
-    
+CREATE TABLE IF NOT EXISTS `chals` (
+    `id` INTEGER PRIMARY KEY
 );
 
+CREATE TABLE IF NOT EXISTS `users` (
+    `id` INTEGER PRIMARY KEY,
+    `email` VARCHAR(128) NOT NULL,
+    `password` VARCHAR(64) NOT NULL
+);
