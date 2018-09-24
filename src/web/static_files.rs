@@ -16,7 +16,7 @@ use rocket::{
 
 #[derive(Default, Clone, Embed)]
 #[folder = "static"]
-pub(super) struct StaticFiles;
+pub struct StaticFiles;
 
 impl Into<Vec<Route>> for StaticFiles {
     fn into(self) -> Vec<Route> {

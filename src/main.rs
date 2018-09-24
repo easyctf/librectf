@@ -3,17 +3,28 @@ extern crate failure;
 extern crate openctf;
 extern crate structopt;
 
-mod web;
-
 use std::path::PathBuf;
 
 use failure::Error;
+use openctf::Config;
 use structopt::StructOpt;
 
-use web::Web;
+#[derive(Debug, StructOpt)]
+pub struct Web {
+    #[structopt(flatten)]
+    config: Config,
+}
+
+impl Web {
+    pub fn run(&self) {
+        let app = openctf::web::app(&self.config);
+        app.launch();
+    }
+}
 
 #[derive(Debug, StructOpt)]
 enum Command {
+    /// Run a web server.
     #[structopt(name = "web")]
     Web(Web),
 }
@@ -23,6 +34,7 @@ enum Command {
     name = "openctf",
     about = "Flexible and powerful CTF framework."
 )]
+
 pub struct OpenCTF {
     #[structopt(subcommand)]
     cmd: Command,
