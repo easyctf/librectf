@@ -40,9 +40,4 @@ joinable!(solves -> teams (team_id));
 joinable!(solves -> users (user_id));
 joinable!(users -> teams (team_id));
 
-allow_tables_to_appear_in_same_query!(
-    chals,
-    solves,
-    teams,
-    users,
-);
+allow_tables_to_appear_in_same_query!(chals, solves, teams, users,);

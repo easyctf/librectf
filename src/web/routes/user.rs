@@ -1,10 +1,10 @@
+use bcrypt;
 use diesel::{self, prelude::*};
 use rocket::request::Form;
-use bcrypt;
 
-use web::{Template, ContextGuard};
 use db::Connection;
 use models::NewUser;
+use web::{ContextGuard, Template};
 
 #[derive(FromForm)]
 struct RegisterForm {
@@ -24,14 +24,16 @@ impl<'a> From<&'a RegisterForm> for NewUser<'a> {
 
 #[get("/register")]
 fn get_register(ctx: ContextGuard) -> Template {
-    Template::render("base/index.html", &ctx)
+    Template::render("user/register.html", &ctx)
 }
 
 #[post("/register", data = "<form>")]
 fn post_register(db: Connection, form: Form<RegisterForm>) {
     use schema::users;
     let new_user: NewUser = form.get().into();
-    diesel::insert_into(users::table).values(&new_user).execute(&*db);
+    diesel::insert_into(users::table)
+        .values(&new_user)
+        .execute(&*db);
 }
 
 #[get("/settings")]

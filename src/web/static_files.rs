@@ -5,13 +5,14 @@
 // TODO: expand this to allow extra paths in the search (besides precompiled)
 
 use std::borrow::Cow;
+use std::io::Cursor;
 
 use mime_guess::guess_mime_type;
 use rocket::{
     handler::Outcome,
-    http::{ContentType, Method},
-    response::Content,
-    Route,
+    http::{ContentType, Header, Method},
+    response::{Body, Content},
+    Response, Route,
 };
 
 #[derive(Default, Clone, Embed)]
@@ -31,7 +32,18 @@ impl Into<Vec<Route>> for StaticFiles {
                 let bottom = Cow::from(String::from(mime.subtype().as_ref()));
                 ContentType::new(top, bottom)
             };
-            Outcome::from(req, Content(ct, StaticFiles::get(&path)))
+            let response = match StaticFiles::get(&path) {
+                Some(resource) => {
+                    let len = resource.len() as u64;
+                    let response = Response::build()
+                        .raw_body(Body::Sized(Cursor::new(resource.clone()), len))
+                        .header(Header::new("Cache-Control", "max-age=31536000"))
+                        .finalize();
+                    Some(Content(ct, response))
+                }
+                None => None,
+            };
+            Outcome::from(req, response)
         })]
     }
 }

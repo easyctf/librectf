@@ -30,8 +30,8 @@ mod challenge;
 mod config;
 mod db;
 pub mod models;
-pub mod web;
 mod schema;
+pub mod web;
 
 pub use challenge::Challenge;
 pub use config::Config;

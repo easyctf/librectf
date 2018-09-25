@@ -1,6 +1,6 @@
 use std::ops::Deref;
 
-use diesel::{prelude::MysqlConnection};
+use diesel::prelude::MysqlConnection;
 use r2d2::{Pool, PooledConnection};
 use r2d2_diesel::ConnectionManager;
 use rocket::{
