@@ -21,8 +21,8 @@ pub fn establish_connection(
 impl<'a, 'r> FromRequest<'a, 'r> for Connection {
     type Error = ();
 
-    fn from_request(request: &'a Request<'r>) -> request::Outcome<Connection, ()> {
-        let pool = request.guard::<State<Pool<ConnectionManager<MysqlConnection>>>>()?;
+    fn from_request(req: &'a Request<'r>) -> request::Outcome<Connection, ()> {
+        let pool = req.guard::<State<Pool<ConnectionManager<MysqlConnection>>>>()?;
         match pool.get() {
             Ok(conn) => Outcome::Success(Connection(conn)),
             Err(_) => Outcome::Failure((Status::ServiceUnavailable, ())),

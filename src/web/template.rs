@@ -1,12 +1,13 @@
 use std::borrow::Cow;
 
+use env_logger;
 use rocket::{
     http::{ContentType, Status},
     response::{self, Content},
     Request,
 };
 use serde::Serialize;
-use tera::Tera;
+use tera::{self, Tera};
 
 lazy_static! {
     static ref RENDERER: Tera = {
@@ -34,7 +35,7 @@ lazy_static! {
 #[derive(Embed)]
 #[folder = "templates"]
 pub struct Template {
-    contents: Option<String>,
+    contents: Result<String, tera::Error>,
 }
 
 impl Template {
@@ -45,13 +46,16 @@ impl Template {
     {
         // TODO: log the error sometime
         let name = name.into();
-        let contents = RENDERER.render(&name, &context).ok();
+        let contents = RENDERER.render(&name, &context);
         Template { contents }
     }
     fn finalize(self) -> Result<(String, ContentType), Status> {
         match self.contents {
-            Some(contents) => Ok((contents, ContentType::HTML)),
-            None => Err(Status::InternalServerError),
+            Ok(contents) => Ok((contents, ContentType::HTML)),
+            Err(err) => {
+                error!("Template render error: {}", err);
+                Err(Status::InternalServerError)
+            },
         }
     }
 }

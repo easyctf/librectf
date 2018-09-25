@@ -1,6 +1,9 @@
 use bcrypt;
 use diesel::{self, prelude::*};
-use rocket::request::Form;
+use rocket::{
+    request::Form,
+    response::{Flash, Redirect},
+};
 
 use db::Connection;
 use models::NewUser;
@@ -22,6 +25,16 @@ impl<'a> From<&'a RegisterForm> for NewUser<'a> {
     }
 }
 
+#[get("/login")]
+fn get_login(ctx: ContextGuard) -> Flash<Redirect> {
+    Flash::success(Redirect::to("/"), "Lol.")
+}
+
+#[post("/login")]
+fn post_login(ctx: ContextGuard) -> Template {
+    Template::render("user/login.html", &ctx)
+}
+
 #[get("/register")]
 fn get_register(ctx: ContextGuard) -> Template {
     Template::render("user/register.html", &ctx)
@@ -33,7 +46,8 @@ fn post_register(db: Connection, form: Form<RegisterForm>) {
     let new_user: NewUser = form.get().into();
     diesel::insert_into(users::table)
         .values(&new_user)
-        .execute(&*db);
+        .execute(&*db)
+        .unwrap();
 }
 
 #[get("/settings")]

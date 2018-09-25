@@ -13,9 +13,12 @@ extern crate r2d2_diesel;
 extern crate bcrypt;
 #[macro_use]
 extern crate embed;
+extern crate env_logger;
 extern crate failure;
 #[macro_use]
 extern crate lazy_static;
+#[macro_use]
+extern crate log;
 extern crate mime_guess;
 extern crate rocket;
 extern crate rocket_contrib;

@@ -8,29 +8,26 @@ use tera::Context;
 #[derive(Serialize, Default)]
 struct UserGuard {}
 
+#[derive(Serialize, Default)]
+struct FlashMessage(String, String);
+
+#[derive(Serialize)]
 pub struct ContextGuard {
     user: Option<UserGuard>,
+    flash: Option<FlashMessage>,
     extra: Context,
 }
 
 impl<'a, 'r> FromRequest<'a, 'r> for ContextGuard {
     type Error = String;
-    fn from_request(_req: &'a Request<'r>) -> request::Outcome<Self, Self::Error> {
+    fn from_request(req: &'a Request<'r>) -> request::Outcome<Self, Self::Error> {
         let user = None;
+        let flash = req
+            .guard::<Option<request::FlashMessage>>()
+            .map(|flash| {
+                flash.map(|flash| FlashMessage(flash.name().to_owned(), flash.msg().to_owned()))
+            }).map_failure(|(a, _)| (a, String::new()))?;
         let extra = Context::new();
-        Outcome::Success(ContextGuard { user, extra })
-    }
-}
-
-impl Serialize for ContextGuard {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: Serializer,
-    {
-        let mut s = serializer.serialize_struct("context", 2)?;
-        s.serialize_field("logged_in", &self.user.is_some())?;
-        s.serialize_field("user", &self.user)?;
-        s.serialize_field("extra", &self.extra)?;
-        s.end()
+        Outcome::Success(ContextGuard { user, flash, extra })
     }
 }

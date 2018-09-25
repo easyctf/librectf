@@ -24,7 +24,7 @@ impl Into<Vec<Route>> for StaticFiles {
         vec![Route::ranked(10, Method::Get, "/<path..>", |req, _| {
             let path = req.uri().path();
             let path = path.trim_left_matches("/static/");
-            println!("path: {}", path);
+
             // sorry sergio, i'm gonna use mime_guess here
             let ct = {
                 let mime = guess_mime_type(&path);

@@ -1,4 +1,3 @@
-extern crate env_logger;
 extern crate failure;
 extern crate openctf;
 extern crate structopt;

@@ -1,5 +1,4 @@
-use super::Template;
-use web::guards::ContextGuard;
+use web::{guards::ContextGuard, Template};
 
 #[get("/")]
 fn get_index(ctx: ContextGuard) -> Template {
