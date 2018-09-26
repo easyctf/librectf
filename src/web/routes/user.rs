@@ -5,7 +5,7 @@ use diesel::{self, prelude::*};
 use regex::Regex;
 use rocket::{
     request::{FlashMessage, Form},
-    response::{Flash, Redirect, Responder},
+    response::{Flash, Redirect, Responder, Response},
 };
 
 use db::Connection;
@@ -32,9 +32,9 @@ struct RegisterForm {
     password: Result<RegisterPassword, String>,
 }
 
-impl<'a> TryFrom<RegisterForm> for NewUser {
+impl<'a> TryFrom<&'a RegisterForm> for NewUser {
     type Error = Vec<String>;
-    fn try_from(form: RegisterForm) -> Result<Self, Self::Error> {
+    fn try_from(form: &'a RegisterForm) -> Result<Self, Self::Error> {
         let mut errors = Vec::new();
         let email = match &form.email {
             Ok(ref email) => email.0.clone(),
@@ -74,13 +74,9 @@ fn get_register(ctx: ContextGuard) -> Template {
 }
 
 #[post("/register", data = "<form>")]
-fn post_register(
-    db: Connection,
-    ctx: ContextGuard,
-    form: Form<RegisterForm>,
-) -> Either<Flash<Template>, Flash<Redirect>> {
+fn post_register(db: Connection, form: Form<RegisterForm>) -> Flash<Redirect> {
     use schema::users;
-    match <RegisterForm as TryInto<NewUser>>::try_into(form.get()) {
+    match <&RegisterForm as TryInto<NewUser>>::try_into(form.get()) {
         Ok(new_user) => {
             diesel::insert_into(users::table)
                 .values(new_user)
@@ -88,17 +84,13 @@ fn post_register(
                 .unwrap();
         }
         Err(err) => {
-            return Either::Left(Flash::new(
-                Template::render("user/register.html", &ctx),
-                "danger",
-                err.join("<br />"),
-            ))
+            return Flash::new(Redirect::to("/user/register"), "danger", err.join("<br />"));
         }
     }
-    Either::Right(Flash::success(
+    Flash::success(
         Redirect::to("/user/login"),
         "Success! Check your email for a verification link.",
-    ))
+    )
 }
 
 #[get("/settings")]
