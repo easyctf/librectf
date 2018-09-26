@@ -9,6 +9,7 @@ PINNED=0.2.1
 
 if [ "$PINNED" != "$INSTALLED" ]; then
     URL=https://github.com/rust-lang-nursery/mdBook/releases/download/v${PINNED}/mdbook-v${PINNED}-x86_64-unknown-linux-gnu.tar.gz
+    mkdir -p $HOME/.cargo/bin
     curl -SsL $URL | tar xvz -C $HOME/.cargo/bin
 fi
 
