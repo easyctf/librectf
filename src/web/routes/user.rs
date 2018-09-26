@@ -13,7 +13,7 @@ use serde_cbor::to_vec;
 
 use db::Connection;
 use models::{NewUser, User};
-use web::{guards::UserGuard, ContextGuard, Template};
+use web::{guards::User as CUser, ContextGuard, Template};
 use INTERNAL_SERVER_ERROR_MESSAGE;
 
 lazy_static! {
@@ -85,8 +85,8 @@ fn post_login(
         }).and_then(
             |(form, user)| match bcrypt::verify(&form.password, &user.password) {
                 Ok(true) => {
-                    let user_guard = UserGuard { name: user.name };
-                    to_vec(&user_guard)
+                    let user = CUser { name: user.name };
+                    to_vec(&user)
                         .map_err(|_| Vec::new())
                         .map(|vec| encode(vec.as_slice()))
                 }

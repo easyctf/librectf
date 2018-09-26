@@ -8,16 +8,19 @@ use serde_cbor::from_slice;
 use tera::Context;
 
 #[derive(Serialize, Deserialize, Default)]
-pub struct UserGuard {
+pub struct User {
     pub name: String,
 }
+
+#[derive(Serialize, Deserialize, Default)]
+pub struct UserGuard(Option<User>);
 
 #[derive(Serialize, Default)]
 struct FlashMessage(String, String);
 
 #[derive(Serialize)]
 pub struct ContextGuard {
-    user: Option<UserGuard>,
+    user: UserGuard,
     flash: Option<FlashMessage>,
     extra: Context,
 }
@@ -32,13 +35,24 @@ impl<'a, 'r> FromRequest<'a, 'r> for ContextGuard {
                 .and_then(|user| decode(user.value()).ok())
                 .and_then(|user| from_slice(user.as_slice()).ok())
         };
-
         let flash = req
             .guard::<Option<request::FlashMessage>>()
             .map(|flash| {
                 flash.map(|flash| FlashMessage(flash.name().to_owned(), flash.msg().to_owned()))
             }).map_failure(|(a, _)| (a, ()))?;
         let extra = Context::new();
-        Outcome::Success(ContextGuard { user, flash, extra })
+        Outcome::Success(ContextGuard {
+            user: UserGuard(user),
+            flash,
+            extra,
+        })
+    }
+}
+
+impl<'a, 'r> FromRequest<'a, 'r> for UserGuard {
+    type Error = ();
+    fn from_request(req: &'a Request<'r>) -> request::Outcome<Self, Self::Error> {
+        let ctx = req.guard::<ContextGuard>()?;
+        Outcome::Success(ctx.user)
     }
 }

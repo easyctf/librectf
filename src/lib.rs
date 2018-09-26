@@ -5,7 +5,6 @@
 #![feature(plugin, custom_derive, tool_lints, try_from)]
 #![allow(proc_macro_derive_resolution_fallback)]
 #![plugin(rocket_codegen)]
-
 #![allow(clippy::needless_pass_by_value)]
 
 #[macro_use]
@@ -50,5 +49,4 @@ pub use challenge::Challenge;
 pub use config::Config;
 use task_queue::TaskQueue;
 
-const INTERNAL_SERVER_ERROR_MESSAGE: &str =
-    "Internal server error, please contact the webmaster.";
+const INTERNAL_SERVER_ERROR_MESSAGE: &str = "Internal server error, please contact the webmaster.";

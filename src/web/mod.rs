@@ -39,6 +39,7 @@ pub fn app(config: &Config) -> Rocket {
         .manage(tq)
         .manage(pool)
         .mount("/static", StaticFiles::default().into())
+        .mount("/team", routes![routes::team::get_index])
         .mount(
             "/user",
             routes![
