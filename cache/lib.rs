@@ -17,12 +17,16 @@ extern crate serde;
 extern crate serde_cbor;
 
 #[cfg(feature = "redis")]
-mod redis;
+extern crate redis;
+#[cfg(feature = "redis")]
+mod _redis;
 
 mod hashmap;
 
 use serde::{Deserialize, Serialize};
 
+#[cfg(feature = "redis")]
+pub use _redis::RedisCache;
 pub use hashmap::HashMapCache;
 
 /// An abstraction for a key-value cache.

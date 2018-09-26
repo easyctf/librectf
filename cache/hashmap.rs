@@ -2,9 +2,7 @@ use std::collections::HashMap;
 use std::sync::{Arc, RwLock};
 
 use serde::{Deserialize, Serialize};
-
-use serde_cbor::Value;
-use serde_cbor::{from_value, to_value};
+use serde_cbor::{from_value, to_value, Value};
 
 use Cache;
 

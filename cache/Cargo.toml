@@ -6,6 +6,11 @@ authors = ["Michael Zhang <failed.down@gmail.com>"]
 [lib]
 path = "lib.rs"
 
+[features]
+default = ["redis"]
+
 [dependencies]
 serde = "1.0"
 serde_cbor = "0.9"
+
+redis = { version = "0.9", optional = true }
