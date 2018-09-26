@@ -5,10 +5,10 @@ services:
   - docker
 
 script:
-  - if [ -z "$TRAVIS_TAG" ]; then ./ci/run.sh check openctf; fi
+  - if [ -z "$TRAVIS_TAG" ]; then ./.ci/run.sh check openctf; fi
 
 before_deploy:
-  - ./ci/run.sh build openctf ${TRAVIS_TAG}-${TRAVIS_OS_NAME}
+  - ./.ci/run.sh build openctf ${TRAVIS_TAG}-${TRAVIS_OS_NAME}
 
 notifications:
   email: false
@@ -23,7 +23,7 @@ deploy:
     on:
       tags: true
   - provider: script
-    script: ./ci/book.sh
+    script: ./.ci/book.sh
     skip_cleanup: true
     on:
       tags: true
