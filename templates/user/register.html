@@ -3,4 +3,38 @@
 {% block title %}Register -{% endblock %}
 
 {% block content %}
+<p></p>
+<section class="h-100">
+    <div class="container h-100">
+        <div class="row justify-content-md-center h-100">
+            <div class="card-wrapper">
+                <div class="card fat">
+                    <div class="card-body" style="min-width: 400px;">
+                        <h4 class="card-title">Register User</h4>
+                        <form method="POST">
+                            <div class="form-group">
+                                <label for="email">Email</label>
+                                <input id="email" class="form-control" name="email" placeholder="Email" required="" type="">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="password">Password</label>
+                                <input id="password" class="form-control" name="password" placeholder="Password" required="" type="password">
+                            </div>
+
+                            <div class="form-group no-margin">
+                                <button type="submit" class="btn btn-primary btn-block">
+                                    Register
+                                </button>
+                            </div>
+                            <div class="margin-top20 text-center">
+                                Already have an account? <a href="index.html">Login</a>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 {% endblock %}

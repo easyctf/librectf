@@ -2,7 +2,7 @@ use super::schema::*;
 
 #[derive(Insertable)]
 #[table_name = "users"]
-pub struct NewUser<'a> {
-    pub email: &'a str,
+pub struct NewUser {
+    pub email: String,
     pub password: String,
 }

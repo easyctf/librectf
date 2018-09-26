@@ -1,6 +1,7 @@
 //! Helpers for the web-facing parts of the library.
 
 mod guards;
+mod responder;
 mod routes;
 mod static_files;
 mod template;

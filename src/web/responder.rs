@@ -1,0 +1,16 @@
+use rocket::{http::Status, response::Responder, Request, Response};
+
+pub enum Either<'a, A: Responder<'a>, B: Responder<'a>> {
+    Left(A),
+    Right(B),
+    _Phantom(::std::marker::PhantomData<&'a i32>),
+}
+
+impl<'r, A: Responder<'r>, B: Responder<'r>> Responder<'r> for Either<'r, A, B> {
+    fn respond_to(self, req: &Request) -> Result<Response<'r>, Status> {
+        match self {
+            Either::Left(resp) => resp.respond_to(req),
+            Either::Right(resp) => resp.respond_to(req),
+        }
+    }
+}
