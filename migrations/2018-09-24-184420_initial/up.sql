@@ -17,6 +17,7 @@ CREATE TABLE IF NOT EXISTS `teams` (
 
 CREATE TABLE IF NOT EXISTS `users` (
     `id` INTEGER PRIMARY KEY AUTO_INCREMENT,
+    `name` VARCHAR(20) NOT NULL,
     `email` VARCHAR(128) NOT NULL,
     `email_verified` BOOLEAN NOT NULL DEFAULT FALSE,
     `password` VARCHAR(64) NOT NULL,
@@ -26,6 +27,7 @@ CREATE TABLE IF NOT EXISTS `users` (
     `team_id` INTEGER NULL,
 
     -- constraints
+    UNIQUE (`name`),
     UNIQUE (`email`),
     CONSTRAINT `user_team_fk` FOREIGN KEY (`team_id`) REFERENCES `teams`(`id`)
 );

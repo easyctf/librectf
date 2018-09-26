@@ -26,7 +26,7 @@ use serde::{Deserialize, Serialize};
 pub use hashmap::HashMapCache;
 
 /// An abstraction for a key-value cache.
-pub trait Cache {
+pub trait Cache: Clone {
     /// The Error type (should support both `get` and `set`).
     type Error;
 

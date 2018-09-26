@@ -10,7 +10,9 @@ extern crate diesel;
 extern crate r2d2;
 extern crate r2d2_diesel;
 
+extern crate base64;
 extern crate bcrypt;
+extern crate cache;
 #[macro_use]
 extern crate embed;
 extern crate env_logger;
@@ -25,6 +27,7 @@ extern crate regex;
 extern crate rocket;
 extern crate rocket_contrib;
 extern crate serde;
+extern crate serde_cbor;
 #[macro_use]
 extern crate serde_derive;
 #[macro_use]
@@ -36,7 +39,12 @@ mod config;
 mod db;
 pub mod models;
 mod schema;
+mod task_queue;
 pub mod web;
 
 pub use challenge::Challenge;
 pub use config::Config;
+use task_queue::TaskQueue;
+
+const INTERNAL_SERVER_ERROR_MESSAGE: &'static str =
+    "Internal server error, please contact the webmaster.";

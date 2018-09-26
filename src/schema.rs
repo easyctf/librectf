@@ -27,6 +27,7 @@ table! {
 table! {
     users (id) {
         id -> Integer,
+        name -> Varchar,
         email -> Varchar,
         email_verified -> Bool,
         password -> Varchar,
