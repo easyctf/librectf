@@ -23,14 +23,14 @@ case $1 in
     check)
         echo "Building static binaries using rust-musl-builder"
         docker build --build-arg TOOLCHAIN="nightly" -f Dockerfile -t build-"$2"-image .
-        docker run -it --name build-"$2" build-"$2"-image bash -c 'cargo build --all'
+        docker run -it --name build-"$2" --env "PKG_CONFIG_ALL_STATIC=1" build-"$2"-image bash -c 'cargo build --all'
         docker rm build-"$2"
         docker rmi build-"$2"-image
         ;;
     build)
         echo "Building static binaries using rust-musl-builder"
         docker build --build-arg TOOLCHAIN="nightly" -t build-"$2"-image .
-        docker run -it --name build-"$2" build-"$2"-image bash -c 'cargo build --release --all'
+        docker run -it --name build-"$2" --env "PKG_CONFIG_ALL_STATIC=1" build-"$2"-image bash -c 'cargo build --release --all'
         docker cp build-"$2":/home/rust/src/target/x86_64-unknown-linux-musl/release/"$2" "$2"
         docker rm build-"$2"
         docker rmi build-"$2"-image

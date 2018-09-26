@@ -2,8 +2,11 @@
 //!
 //! This crate contains the core of the OpenCTF library.
 
-#![feature(plugin, custom_derive, try_from)]
+#![feature(plugin, custom_derive, tool_lints, try_from)]
+#![allow(proc_macro_derive_resolution_fallback)]
 #![plugin(rocket_codegen)]
+
+#![allow(clippy::needless_pass_by_value)]
 
 #[macro_use]
 extern crate diesel;
@@ -47,5 +50,5 @@ pub use challenge::Challenge;
 pub use config::Config;
 use task_queue::TaskQueue;
 
-const INTERNAL_SERVER_ERROR_MESSAGE: &'static str =
+const INTERNAL_SERVER_ERROR_MESSAGE: &str =
     "Internal server error, please contact the webmaster.";

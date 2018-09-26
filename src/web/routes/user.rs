@@ -23,14 +23,14 @@ lazy_static! {
 
 generate_form_field!(value => UsernameField(pub String) {
     if !USERNAME_PATTERN.is_match(&value) {
-        return Err(format!("Invalid username (must be 3-20 chars and begin with a non-numeric character)."));
+        return Err("Invalid username (must be 3-20 chars and begin with a non-numeric character).".to_string());
     }
     Ok(UsernameField(value.to_owned()))
 });
 
 generate_form_field!(value => EmailField(pub String) {
     if !EMAIL_PATTERN.is_match(&value) {
-        return Err(format!("Invalid email."));
+        return Err("Invalid email.".to_string());
     }
     Ok(EmailField(value.to_owned()))
 });

@@ -1,7 +1,8 @@
 [package]
 name = "openctf"
-version = "0.0.0-3"
+version = "0.0.0-8"
 authors = ["Michael <localhost>"]
+build = "src/build.rs"
 
 [workspace]
 members = [".", "cache"]

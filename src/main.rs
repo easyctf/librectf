@@ -2,8 +2,6 @@ extern crate failure;
 extern crate openctf;
 extern crate structopt;
 
-use std::path::PathBuf;
-
 use openctf::cli::OpenCTF;
 use structopt::StructOpt;
 

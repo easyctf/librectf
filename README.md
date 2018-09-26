@@ -13,15 +13,6 @@ Status
 
 OpenCTF is currently under development. Expect to see changes in the coming weeks!
 
-Features
---------
-
-- The entire platform ships in a _single_ binary!
-  - Easy installation by following instructions
-  - Flexible deployment options
-- Individual user accounts
-  - Team formation through join codes
-
 Roadmap
 -------
 

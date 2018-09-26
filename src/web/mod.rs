@@ -24,9 +24,10 @@ pub fn app(config: &Config) -> Rocket {
     let tq = TaskQueue::new(cache);
     let config = config.clone();
 
-    let rocket_env = match config.debug {
-        true => rocket::config::Environment::Development,
-        false => rocket::config::Environment::Production,
+    let rocket_env = if config.debug {
+        rocket::config::Environment::Development
+    } else {
+        rocket::config::Environment::Production
     };
     let mut rcfg = rocket::Config::build(rocket_env)
         .address(config.bind_host.as_ref())
