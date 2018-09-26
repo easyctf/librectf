@@ -10,18 +10,13 @@ use rocket::{
 
 use db::Connection;
 use models::NewUser;
-use web::{responder::Either, ContextGuard, Template};
-
-lazy_static! {
-    static ref EMAIL_PATTERN: Regex = Regex::new(r#"(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])"#).unwrap();
-}
+use web::{responder::Either, validate_email, ContextGuard, Template};
 
 generate_form_field!(value => RegisterEmail(pub String) {
-    if !EMAIL_PATTERN.is_match(value) {
-        return Err("Please enter a valid email address.".to_owned());
-    }
+    // TODO: validate email to some general regex
     Ok(RegisterEmail(value.to_owned()))
 });
+
 generate_form_field!(value => RegisterPassword(String) {
     Ok(RegisterPassword(value.to_owned()))
 });
@@ -76,21 +71,27 @@ fn get_register(ctx: ContextGuard) -> Template {
 #[post("/register", data = "<form>")]
 fn post_register(db: Connection, form: Form<RegisterForm>) -> Flash<Redirect> {
     use schema::users;
-    match <&RegisterForm as TryInto<NewUser>>::try_into(form.get()) {
-        Ok(new_user) => {
-            diesel::insert_into(users::table)
-                .values(new_user)
-                .execute(&*db)
-                .unwrap();
-        }
-        Err(err) => {
-            return Flash::new(Redirect::to("/user/register"), "danger", err.join("<br />"));
-        }
+    match <&RegisterForm as TryInto<NewUser>>::try_into(form.get()).and_then(|new_user| {
+        diesel::insert_into(users::table)
+            .values(new_user)
+            .execute(&*db)
+            .map_err(|err| match err {
+                diesel::result::Error::DatabaseError(
+                    diesel::result::DatabaseErrorKind::UniqueViolation,
+                    _,
+                ) => vec!["This email has already been taken.".to_owned()],
+                _ => {
+                    error!("Diesel error on user::post_register: {}", err);
+                    vec!["Internal server error, please contact the webmaster.".to_owned()]
+                }
+            })
+    }) {
+        Ok(_) => Flash::success(
+            Redirect::to("/user/login"),
+            "Success! Check your email for a verification link.",
+        ),
+        Err(err) => Flash::new(Redirect::to("/user/register"), "danger", err.join("<br />")),
     }
-    Flash::success(
-        Redirect::to("/user/login"),
-        "Success! Check your email for a verification link.",
-    )
 }
 
 #[get("/settings")]

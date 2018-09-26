@@ -1,5 +1,7 @@
 //! Helpers for the web-facing parts of the library.
 
+#[allow(dead_code)]
+mod email;
 mod guards;
 mod responder;
 mod routes;
@@ -12,6 +14,7 @@ use rocket::{self, Rocket};
 use self::guards::*;
 use self::static_files::StaticFiles;
 use self::template::Template;
+use self::email::validate_email;
 use db::establish_connection;
 use Config;
 

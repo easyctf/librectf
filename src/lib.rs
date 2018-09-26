@@ -15,6 +15,7 @@ extern crate bcrypt;
 extern crate embed;
 extern crate env_logger;
 extern crate failure;
+extern crate idna;
 #[macro_use]
 extern crate lazy_static;
 #[macro_use]
