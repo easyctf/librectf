@@ -7,3 +7,5 @@ authors = ["Michael Zhang <failed.down@gmail.com>"]
 path = "lib.rs"
 
 [dependencies]
+serde = "1.0"
+serde_cbor = "0.9"

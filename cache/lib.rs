@@ -13,5 +13,32 @@
 
 #![deny(missing_docs)]
 
+extern crate serde;
+extern crate serde_cbor;
+
+#[cfg(feature = "redis")]
+mod redis;
+
+mod hashmap;
+
+use serde::{Deserialize, Serialize};
+
+pub use hashmap::HashMapCache;
+
 /// An abstraction for a key-value cache.
-pub trait Cache {}
+pub trait Cache {
+    /// The Error type (should support both `get` and `set`).
+    type Error;
+
+    /// Get the value associated with the given `key` from the datastore.
+    fn get<K, V>(&self, key: K) -> Result<V, Self::Error>
+    where
+        K: AsRef<str>,
+        for<'a> V: Deserialize<'a>;
+
+    /// Set the value associated with `key` to `value`.
+    fn set<K, V>(&mut self, key: K, value: V) -> Result<(), Self::Error>
+    where
+        K: AsRef<str>,
+        V: Serialize;
+}

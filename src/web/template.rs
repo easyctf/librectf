@@ -1,6 +1,5 @@
 use std::borrow::Cow;
 
-use env_logger;
 use rocket::{
     http::{ContentType, Status},
     response::{self, Content},
@@ -55,7 +54,7 @@ impl Template {
             Err(err) => {
                 error!("Template render error: {}", err);
                 Err(Status::InternalServerError)
-            },
+            }
         }
     }
 }

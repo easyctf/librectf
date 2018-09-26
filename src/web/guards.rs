@@ -2,7 +2,6 @@ use rocket::{
     request::{self, FromRequest, Request},
     Outcome,
 };
-use serde::ser::{Serialize, SerializeStruct, Serializer};
 use tera::Context;
 
 #[derive(Serialize, Default)]

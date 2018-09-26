@@ -38,4 +38,3 @@ pub mod web;
 
 pub use challenge::Challenge;
 pub use config::Config;
-use db::Connection;
