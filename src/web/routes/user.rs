@@ -10,7 +10,7 @@ use rocket::{
 
 use db::Connection;
 use models::NewUser;
-use web::{responder::Either, validate_email, ContextGuard, Template};
+use web::{responder::Either, ContextGuard, Template};
 
 generate_form_field!(value => RegisterEmail(pub String) {
     // TODO: validate email to some general regex
