@@ -16,9 +16,14 @@ notifications:
 deploy:
   - provider: releases
     api_key: $AUTH_TOKEN
+    skip_cleanup: true
     file_glob: true
     file:
       - "openctf-*"
     on:
       tags: true
+  - provider: script
+    script: ./ci/book.sh
     skip_cleanup: true
+    on:
+      tags: true

@@ -85,9 +85,7 @@ fn post_login(
         }).and_then(
             |(form, user)| match bcrypt::verify(&form.password, &user.password) {
                 Ok(true) => {
-                    let user_guard = UserGuard {
-                        name: user.name,
-                    };
+                    let user_guard = UserGuard { name: user.name };
                     to_vec(&user_guard)
                         .map_err(|_| Vec::new())
                         .map(|vec| encode(vec.as_slice()))
@@ -104,7 +102,7 @@ fn post_login(
             cookies.add_private(Cookie::new("user", encoded));
             Ok(())
         }) {
-        Ok(_) => Ok(Redirect::to("/")),
+        Ok(_) => Ok(Redirect::to("/team")),
         Err(err) => Err(Flash::new(
             Redirect::to("/user/login"),
             "danger",

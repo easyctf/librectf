@@ -35,6 +35,7 @@ extern crate structopt;
 extern crate tera;
 
 mod challenge;
+pub mod cli;
 mod config;
 mod db;
 pub mod models;
