@@ -1,4 +1,4 @@
-use redis::{Client, Commands, FromRedisValue, RedisError};
+use redis::{Client, Commands, FromRedisValue, RedisError, Value};
 use serde::{Deserialize, Serialize};
 use serde_cbor::{from_slice, to_vec};
 
@@ -20,7 +20,7 @@ impl Cache for RedisCache {
     {
         self.client
             .get(key.as_ref())
-            .and_then(|value: redis::Value| Vec::<u8>::from_redis_value(&value))
+            .and_then(|value: Value| Vec::<u8>::from_redis_value(&value))
             .map_err(|_| ())
             .and_then(|vec| from_slice(vec.as_slice()).map_err(|_| ()))
     }
