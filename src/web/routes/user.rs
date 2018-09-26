@@ -2,18 +2,24 @@ use std::convert::{TryFrom, TryInto};
 
 use bcrypt;
 use diesel::{self, prelude::*};
-use regex::Regex;
 use rocket::{
-    request::{FlashMessage, Form},
-    response::{Flash, Redirect, Responder, Response},
+    request::Form,
+    response::{Flash, Redirect},
 };
+use regex::Regex;
 
 use db::Connection;
 use models::NewUser;
-use web::{responder::Either, ContextGuard, Template};
+use web::{ContextGuard, Template};
+
+lazy_static! {
+    static ref EMAIL_PATTERN: Regex = Regex::new(r#"(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])"#).unwrap();
+}
 
 generate_form_field!(value => RegisterEmail(pub String) {
-    // TODO: validate email to some general regex
+    if !EMAIL_PATTERN.is_match(&value) {
+        return Err(format!("Invalid email."));
+    }
     Ok(RegisterEmail(value.to_owned()))
 });
 

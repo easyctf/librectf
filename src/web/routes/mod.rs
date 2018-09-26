@@ -5,7 +5,7 @@ macro_rules! generate_form_field {
         impl<'v> ::rocket::request::FromFormValue<'v> for $name {
             type Error = String;
             fn from_form_value($value: &'v ::rocket::http::RawStr) -> Result<Self, Self::Error> {
-                let $value: &str = $value.as_ref();
+                let $value: String = $value.url_decode().map_err(|err| format!("URL encoding error: {}", err))?;
                 $($body)*
             }
         }
