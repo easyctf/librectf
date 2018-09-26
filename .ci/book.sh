@@ -19,7 +19,7 @@ fi
 
 # This builds the book in target/doc/guide. See https://github.com/rust-lang-nursery/mdBook/issues/698
 mkdir -p ../target/doc
-mdbook build -d ../target/doc/book
+$HOME/.cargo/bin/mdbook build -d ../target/doc/book
 
 # Get the lastest tag across all branches
 # https://stackoverflow.com/a/7261049/3549270
