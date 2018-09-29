@@ -49,5 +49,8 @@ pub fn app(config: &Config) -> Rocket {
                 routes::user::post_login,
                 routes::user::post_register,
             ],
-        ).mount("/", routes![routes::base::get_index])
+        ).mount(
+            "/",
+            routes![routes::base::get_index, routes::base::get_scoreboard],
+        )
 }

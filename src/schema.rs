@@ -3,6 +3,9 @@ table! {
         id -> Integer,
         title -> Varchar,
         enabled -> Bool,
+        correct_flag -> Text,
+        regex -> Bool,
+        value -> Integer,
     }
 }
 

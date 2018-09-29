@@ -1,4 +1,4 @@
-DROP TABLE IF EXISTS `solves`;
-DROP TABLE IF EXISTS `chals`;
-DROP TABLE IF EXISTS `users`;
-DROP TABLE IF EXISTS `teams`;
+DROP TABLE `solves`;
+DROP TABLE `chals`;
+DROP TABLE `users`;
+DROP TABLE `teams`;

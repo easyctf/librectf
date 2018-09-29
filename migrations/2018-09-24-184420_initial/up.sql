@@ -1,21 +1,26 @@
-CREATE TABLE IF NOT EXISTS `chals` (
+CREATE TABLE `chals` (
     `id` INTEGER PRIMARY KEY AUTO_INCREMENT,
     `title` VARCHAR(64) NOT NULL,
     `enabled` BOOLEAN NOT NULL DEFAULT FALSE,
+
+    `correct_flag` TEXT NOT NULL,
+    `regex` BOOLEAN NOT NULL DEFAULT FALSE,
+    `value` INTEGER NOT NULL,
 
     -- constraints
     UNIQUE(`title`)
 );
 
-CREATE TABLE IF NOT EXISTS `teams` (
+CREATE TABLE `teams` (
     `id` INTEGER PRIMARY KEY AUTO_INCREMENT,
     `name` VARCHAR(20) NOT NULL,
+    `banned` INTEGER NOT NULL,
 
     -- constraints
     UNIQUE (`name`)
 );
 
-CREATE TABLE IF NOT EXISTS `users` (
+CREATE TABLE `users` (
     `id` INTEGER PRIMARY KEY AUTO_INCREMENT,
     `name` VARCHAR(20) NOT NULL,
     `email` VARCHAR(128) NOT NULL,
@@ -32,7 +37,7 @@ CREATE TABLE IF NOT EXISTS `users` (
     CONSTRAINT `user_team_fk` FOREIGN KEY (`team_id`) REFERENCES `teams`(`id`)
 );
 
-CREATE TABLE IF NOT EXISTS `solves` (
+CREATE TABLE `solves` (
     `id` INTEGER PRIMARY KEY AUTO_INCREMENT,
 
     `timestamp` DATETIME NOT NULL DEFAULT NOW(),
