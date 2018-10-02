@@ -1,2 +1,5 @@
 /// A challenge.
-pub struct Challenge {}
+pub struct Challenge {
+    title: String,
+    enabled: bool,
+}

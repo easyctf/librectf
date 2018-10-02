@@ -1,0 +1,30 @@
+#!/bin/bash
+tag=$1
+target=$2
+
+if [[ -z "$tag" ]]; then
+    echo Tag is needed
+    exit 1
+fi
+
+if [[ -z "$target" ]]; then
+    echo Target is needed
+    exit 1
+fi
+
+cargo build --target $target --release
+
+project="openctf"
+build_dir=$(mktemp -d 2>/dev/null || mktemp -d -t tmp)
+out_dir=$(pwd)
+name="$project-$tag-$target"
+mkdir "$build_dir/$name"
+
+cp target/$target/release/$project "$build_dir/$name/"
+cp LICENSE "$build_dir/$name/"
+
+pushd $build_dir
+strip "$name/$project"
+tar cvf "$out_dir/$name.tar" "$name"
+popd
+xz -f9 "$name.tar"

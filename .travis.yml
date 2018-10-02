@@ -1,17 +1,24 @@
-sudo: required
+language: rust
+cache: cargo
 dist: trusty
+sudo: false
 
-services:
-  - docker
+env:
+  global:
+    - PROJECT_NAME=openctf
 
+matrix:
+  include:
+    - os: linux
+      rust: stable
+      env: TARGET=x86_64-unknown-linux-gnu
+  fast_finish: true
+
+before_script: rustup target add $TARGET || echo ok
 script:
-  - if [ -z "$TRAVIS_TAG" ]; then ./.ci/run.sh check openctf; fi
+  - if [ -z "$TRAVIS_TAG" ]; then cargo check --all --target $TARGET; fi
 
-before_deploy:
-  - ./.ci/run.sh build openctf ${TRAVIS_TAG}-${TRAVIS_OS_NAME}
-
-notifications:
-  email: false
+before_deploy: ./ci/package $TRAVIS_TAG $TARGET
 
 deploy:
   - provider: releases
@@ -23,7 +30,10 @@ deploy:
     on:
       tags: true
   - provider: script
-    script: ./.ci/book.sh
+    script: ./ci/book
     skip_cleanup: true
     on:
       tags: true
+
+notifications:
+  email: false
