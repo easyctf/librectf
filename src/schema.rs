@@ -24,6 +24,7 @@ table! {
     teams (id) {
         id -> Integer,
         name -> Varchar,
+        banned -> Integer,
     }
 }
 
