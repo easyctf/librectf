@@ -5,23 +5,21 @@ mod routes;
 mod static_files;
 mod template;
 
-use cache::HashMapCache;
 use env_logger;
 use rocket::{self, Rocket};
+use task_queue::TaskQueue;
 
 use self::guards::*;
 use self::static_files::StaticFiles;
 use self::template::Template;
 use db::establish_connection;
 use Config;
-use TaskQueue;
 
 /// This function produces an instance of the [Rocket](Rocket) app that we are building.
 pub fn app(config: &Config) -> Rocket {
     env_logger::init();
-    let cache = HashMapCache::new();
     let pool = establish_connection(&config.database_url);
-    let tq = TaskQueue::new(cache);
+    let tq = TaskQueue::new();
     let config = config.clone();
 
     let rocket_cfg = {

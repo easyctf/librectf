@@ -35,6 +35,7 @@ extern crate serde_derive;
 #[macro_use]
 extern crate structopt;
 extern crate tera;
+extern crate task_queue;
 
 mod challenge;
 pub mod cli;
@@ -42,11 +43,9 @@ mod config;
 mod db;
 pub mod models;
 mod schema;
-mod task_queue;
 pub mod web;
 
 pub use challenge::Challenge;
 pub use config::Config;
-use task_queue::TaskQueue;
 
 const INTERNAL_SERVER_ERROR_MESSAGE: &str = "Internal server error, please contact the webmaster.";

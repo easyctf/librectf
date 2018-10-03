@@ -1,0 +1,6 @@
+[package]
+name = "task_queue"
+version = "0.1.0"
+authors = ["Michael Zhang <failed.down@gmail.com>"]
+
+[dependencies]
