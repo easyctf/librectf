@@ -111,6 +111,12 @@ fn post_login(
     }
 }
 
+#[get("/logout")]
+fn get_logout(mut cookies: Cookies) -> Flash<Redirect> {
+    cookies.remove_private(Cookie::named("user"));
+    Flash::success(Redirect::to("/"), "Successfully logged out!")
+}
+
 #[get("/register")]
 fn get_register(ctx: ContextGuard) -> Template {
     Template::render("user/register.html", &ctx)
@@ -144,5 +150,5 @@ fn post_register(db: Connection, form: Form<RegisterForm>) -> Flash<Redirect> {
 
 #[get("/settings")]
 fn get_settings(ctx: ContextGuard) -> Template {
-    Template::render("base/index.html", &ctx)
+    Template::render("user/settings.html", &ctx)
 }

@@ -34,6 +34,7 @@ pub fn app(config: &Config) -> Rocket {
         .port(config.bind_port)
         .unwrap();
     rcfg.set_secret_key(config.secret_key.as_ref()).unwrap();
+    
     rocket::custom(rcfg, true)
         .manage(config)
         .manage(tq)
@@ -44,6 +45,7 @@ pub fn app(config: &Config) -> Rocket {
             "/user",
             routes![
                 routes::user::get_login,
+                routes::user::get_logout,
                 routes::user::get_register,
                 routes::user::get_settings,
                 routes::user::post_login,
