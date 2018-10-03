@@ -24,18 +24,21 @@ pub fn app(config: &Config) -> Rocket {
     let tq = TaskQueue::new(cache);
     let config = config.clone();
 
-    let rocket_env = if config.debug {
-        rocket::config::Environment::Development
-    } else {
-        rocket::config::Environment::Production
+    let rocket_cfg = {
+        let rocket_env = if config.debug {
+            rocket::config::Environment::Development
+        } else {
+            rocket::config::Environment::Production
+        };
+        let mut cfg = rocket::Config::build(rocket_env)
+            .address(config.bind_host.as_ref())
+            .port(config.bind_port)
+            .unwrap();
+        cfg.set_secret_key(config.secret_key.as_ref()).unwrap();
+        cfg
     };
-    let mut rcfg = rocket::Config::build(rocket_env)
-        .address(config.bind_host.as_ref())
-        .port(config.bind_port)
-        .unwrap();
-    rcfg.set_secret_key(config.secret_key.as_ref()).unwrap();
-    
-    rocket::custom(rcfg, true)
+
+    rocket::custom(rocket_cfg, true)
         .manage(config)
         .manage(tq)
         .manage(pool)
