@@ -57,6 +57,8 @@ impl ChalImportCommand {
                 None => continue,
             }
 
+            // TODO: run Make here
+
             // find problem.toml
             let problem_toml_path = path.join("problem.toml");
             if !problem_toml_path.exists() {

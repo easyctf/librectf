@@ -1,4 +1,6 @@
 #!/bin/bash
+set -xe
+
 tag=$1
 target=$2
 
