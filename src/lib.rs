@@ -15,8 +15,6 @@ extern crate r2d2_diesel;
 extern crate base64;
 extern crate bcrypt;
 extern crate cache;
-#[macro_use]
-extern crate embed;
 extern crate env_logger;
 #[macro_use]
 extern crate failure;
@@ -47,6 +45,7 @@ mod errors;
 pub mod models;
 mod schema;
 mod tasks;
+mod util;
 pub mod web;
 
 pub use challenge::Challenge;

@@ -5,11 +5,8 @@ use std::path::PathBuf;
 use toml;
 
 use errors::{CustomError, DirError};
+use util::read_file;
 use Error;
-
-lazy_static! {
-    static ref REQUIRED_FIELDS: [&'static str; 3] = ["title", "description_file", "grader_file"];
-}
 
 #[derive(Debug, StructOpt)]
 pub enum ChalCommand {
@@ -46,6 +43,20 @@ impl ChalImportCommand {
             };
             let path = entry.path();
 
+            match path
+                .file_name()
+                .and_then(|ostr| ostr.to_str())
+                .and_then(|name| {
+                    if name.starts_with(".") {
+                        None
+                    } else {
+                        Some(())
+                    }
+                }) {
+                Some(_) => (),
+                None => continue,
+            }
+
             // find problem.toml
             let problem_toml_path = path.join("problem.toml");
             if !problem_toml_path.exists() {
@@ -57,21 +68,7 @@ impl ChalImportCommand {
             }
 
             // read the problem file
-            let problem_contents = match {
-                let mut file = match File::open(&problem_toml_path) {
-                    Ok(file) => file,
-                    Err(err) => {
-                        return Err(CustomError::new(format!("Error accessing file: {}", err)).into())
-                    }
-                };
-                let mut contents = String::new();
-                match file.read_to_string(&mut contents) {
-                    Ok(_) => Ok::<_, Error>(contents),
-                    Err(err) => {
-                        Err(CustomError::new(format!("Error reading file: {}", err)).into())
-                    }
-                }
-            } {
+            let problem_contents = match read_file(&problem_toml_path) {
                 Ok(problem) => problem,
                 Err(err) => {
                     failed.push((Some(path), err));
@@ -102,31 +99,77 @@ impl ChalImportCommand {
             };
 
             // check for the existence of required fields
-            let mut flag = false;
-            for field in REQUIRED_FIELDS.iter() {
-                if !problem_toml.contains_key(field.to_owned()) {
+            let title = match problem_toml.get("title") {
+                Some(toml::Value::String(title)) => title,
+                _ => {
                     failed.push((
                         Some(path),
-                        CustomError::new(format!(
-                            "problem.toml is missing required key '{}'",
-                            field
-                        )).into(),
+                        CustomError::new("String key 'title' not found.").into(),
                     ));
-                    flag = true;
-                    break;
+                    continue;
                 }
-            }
-            if flag {
-                continue;
-            }
+            };
+            let description = match (
+                problem_toml.get("description"),
+                problem_toml.get("description_file"),
+            ) {
+                (Some(_), Some(_)) => {
+                    failed.push((
+                        Some(path),
+                        CustomError::new("Cannot use both 'description' and 'description_file'.")
+                            .into(),
+                    ));
+                    continue;
+                }
+                (Some(toml::Value::String(description)), None) => description.clone(),
+                (None, Some(toml::Value::String(description_file))) => {
+                    match read_file(&description_file) {
+                        Ok(description) => description,
+                        Err(err) => {
+                            failed.push((Some(path), err.into()));
+                            continue;
+                        }
+                    }
+                }
+                _ => {
+                    failed.push((
+                        Some(path),
+                        CustomError::new("Neither 'description' nor 'description_file' found.")
+                            .into(),
+                    ));
+                    continue;
+                }
+            };
+            let grader = match problem_toml.get("grader") {
+                Some(toml::Value::String(grader_path)) => {
+                    let path = PathBuf::from(&grader_path);
+                    if !path.exists() {
+                        failed.push((
+                            Some(path),
+                            CustomError::new("Grader file not found.").into(),
+                        ));
+                        continue;
+                    }
+                    path
+                }
+                _ => {
+                    failed.push((
+                        Some(path),
+                        CustomError::new("String key 'grader' not found.").into(),
+                    ));
+                    continue;
+                }
+            };
         }
 
         if failed.len() > 0 {
             error!("Failed to load directories:");
             for (path, err) in failed {
-                error!(" - {:?}: {}", path, err);
+                error!(" - {:?}: {:?}", path, err);
             }
+            return Err(CustomError::new("Failed to import some challenges.").into());
         }
+        info!("Successfully imported all challenges.");
         Ok(())
     }
 }

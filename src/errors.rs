@@ -9,6 +9,14 @@ use serde_json;
 #[fail(display = "Error traversing the directory")]
 pub struct DirError(#[cause] pub io::Error);
 
+#[derive(Debug, Fail)]
+#[fail(display = "Error accessing the file")]
+pub struct FileOpenError(#[cause] pub io::Error);
+
+#[derive(Debug, Fail)]
+#[fail(display = "Error reading the file")]
+pub struct FileReadError(#[cause] pub io::Error);
+
 #[derive(Debug)]
 pub struct CustomError(String);
 
@@ -16,7 +24,7 @@ macro_rules! error_derive_from {
     ([$($error:path[$v:expr] => $into:ident,)*]) => {
         #[derive(Debug, Fail)]
         pub enum Error {
-            #[fail(display = "")]
+            #[fail(display = "{}", _0)]
             Custom(#[cause] CustomError),
             $(
                 #[fail(display = $v)]
@@ -37,7 +45,9 @@ macro_rules! error_derive_from {
 error_derive_from!([
     rocket::error::LaunchError["Error launching Rocket application"] => RocketLaunch,
     serde_json::Error["Error during the serialization of JSON"] => JSONSerialization,
-    DirError["Error traversing the directory"] => Dir,
+    DirError[""] => Dir,
+    FileOpenError[""] => FileOpen,
+    FileReadError[""] => FileRead,
 ]);
 
 impl CustomError {
