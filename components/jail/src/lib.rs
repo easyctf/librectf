@@ -1,10 +1,19 @@
-use std::path::PathBuf;
+use std::path::{Path, PathBuf};
+use std::process::Command;
 
-pub struct JailOptions {
-
+#[derive(Default)]
+pub struct JailBuilder {
+    path: PathBuf,
 }
 
-pub struct Jail {
-    pub path: PathBuf,
-    pub options: JailOptions,
+impl JailBuilder {
+    pub fn new(path: impl AsRef<Path>) -> JailBuilder {
+        JailBuilder {
+            path: path.as_ref().to_path_buf(),
+            ..Default::default()
+        }
+    }
+    pub fn build(&self) -> Command {
+        Command::new("nsjail")
+    }
 }
