@@ -1,0 +1,26 @@
+{
+  "name": "openctf",
+  "version": "0.1.0",
+  "description": "CTF Platform",
+  "main": "index.js",
+  "repository": "https://github.com/easyctf/openctf",
+  "author": "Michael Zhang",
+  "license": "MIT",
+  "private": false,
+  "devDependencies": {
+    "@vue/component-compiler-utils": "^2.2.0",
+    "babel-core": "^6.26.3",
+    "babel-preset-env": "^1.7.0",
+    "bootstrap-vue": "^2.0.0-rc.11",
+    "parcel": "^1.10.1",
+    "vue-router": "^3.0.1",
+    "vue-template-compiler": "^2.5.17"
+  },
+  "scripts": {
+    "serve": "parcel serve index.html"
+  },
+  "dependencies": {
+    "vue": "^2.5.17",
+    "vue-hot-reload-api": "^2.3.1"
+  }
+}
