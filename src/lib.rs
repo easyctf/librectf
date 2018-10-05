@@ -18,6 +18,7 @@ extern crate cache;
 #[macro_use]
 extern crate embed;
 extern crate env_logger;
+#[macro_use]
 extern crate failure;
 extern crate idna;
 #[macro_use]
@@ -30,22 +31,25 @@ extern crate rocket;
 extern crate rocket_contrib;
 extern crate serde;
 extern crate serde_cbor;
+extern crate serde_json;
 #[macro_use]
 extern crate serde_derive;
 #[macro_use]
 extern crate structopt;
-extern crate tera;
 extern crate task_queue;
 
 mod challenge;
 pub mod cli;
 mod config;
 mod db;
+mod errors;
 pub mod models;
 mod schema;
+mod tasks;
 pub mod web;
 
 pub use challenge::Challenge;
 pub use config::Config;
+use errors::Error;
 
 const INTERNAL_SERVER_ERROR_MESSAGE: &str = "Internal server error, please contact the webmaster.";

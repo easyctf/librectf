@@ -27,8 +27,8 @@ rocket_codegen = "0.3"
 rocket_contrib = { version = "0.3", default-features = false }
 serde = "1.0"
 serde_cbor = "0.9"
+serde_json = "1.0"
 serde_derive = "1.0"
 structopt = "0.2"
 task_queue = { path = "components/task_queue" }
-tera = "0.11"
 toml = "0.4"
