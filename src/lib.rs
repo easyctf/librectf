@@ -37,7 +37,7 @@ extern crate serde_derive;
 #[macro_use]
 extern crate structopt;
 extern crate task_queue;
-extern crate walkdir;
+extern crate toml;
 
 mod challenge;
 pub mod cli;

@@ -31,5 +31,4 @@ serde_derive = "1.0"
 serde_json = "1.0"
 structopt = "0.2"
 task_queue = { path = "components/task_queue" }
-toml = "^0.4.7"
-walkdir = "2.2"
+toml = "0.4"
