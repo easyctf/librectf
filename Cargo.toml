@@ -16,19 +16,20 @@ embed = { git = "https://github.com/iptq/embed" }
 env_logger = "0.5"
 failure = "0.1.1"
 idna = "0.1"
+jsonwebtoken = "5.0"
 lazy_static = "1.0"
 log = "0.4"
 mime_guess = "2.0.0-alpha.6"
 r2d2 = "0.8"
 r2d2-diesel = "1.0"
 regex = "1.0"
-rocket = "0.3"
-rocket_codegen = "0.3"
-rocket_contrib = { version = "0.3", default-features = false }
+rocket = { git = "https://github.com/SergioBenitez/Rocket", version = "0.4.0-dev" }
+rocket_codegen = { git = "https://github.com/SergioBenitez/Rocket", version = "0.4.0-dev" }
+rocket_contrib = { git = "https://github.com/SergioBenitez/Rocket", version = "0.4.0-dev", default-features = false }
 serde = "1.0"
 serde_cbor = "0.9"
-serde_json = "1.0"
 serde_derive = "1.0"
+serde_json = "1.0"
 structopt = "0.2"
 task_queue = { path = "components/task_queue" }
-toml = "0.4"
+toml = "^0.4.7"
