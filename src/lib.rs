@@ -37,6 +37,7 @@ extern crate serde_derive;
 #[macro_use]
 extern crate structopt;
 extern crate task_queue;
+extern crate walkdir;
 
 mod challenge;
 pub mod cli;
@@ -50,6 +51,6 @@ pub mod web;
 
 pub use challenge::Challenge;
 pub use config::Config;
-use errors::Error;
+pub use errors::Error;
 
 const INTERNAL_SERVER_ERROR_MESSAGE: &str = "Internal server error, please contact the webmaster.";

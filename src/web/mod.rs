@@ -3,17 +3,14 @@
 mod guards;
 mod routes;
 
-use env_logger;
 use rocket::{self, Rocket};
 use task_queue::TaskQueue;
 
-use self::guards::*;
 use db::establish_connection;
 use Config;
 
 /// This function produces an instance of the [Rocket](Rocket) app that we are building.
 pub fn app(config: &Config) -> Rocket {
-    env_logger::init();
     let pool = establish_connection(&config.database_url);
     let tq = TaskQueue::new();
     let config = config.clone();

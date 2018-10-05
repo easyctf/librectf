@@ -1,15 +1,16 @@
 use web;
 use Config;
+use Error;
 
 #[derive(Debug, StructOpt)]
-pub struct Web {
+pub struct WebCommand {
     #[structopt(flatten)]
     config: Config,
 }
 
-impl Web {
-    pub fn run(&self) {
+impl WebCommand {
+    pub fn run(&self) -> Result<(), Error> {
         let app = web::app(&self.config);
-        app.launch();
+        Err(app.launch().into())
     }
 }

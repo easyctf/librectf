@@ -3,16 +3,31 @@ mod web;
 
 use std::path::PathBuf;
 
-use failure::Error;
+use env_logger;
 use structopt::StructOpt;
 
-use self::web::Web;
+use self::chal::ChalCommand;
+use self::web::WebCommand;
+use Error;
 
 #[derive(Debug, StructOpt)]
 enum Command {
+    /// Challenge-related commands
+    #[structopt(name = "chal")]
+    Chal(ChalCommand),
+
     /// Run a web server.
     #[structopt(name = "web")]
-    Web(Web),
+    Web(WebCommand),
+}
+
+impl Command {
+    pub fn run(&self) -> Result<(), Error> {
+        match self {
+            Command::Chal(chal) => chal.run(),
+            Command::Web(web) => web.run(),
+        }
+    }
 }
 
 #[derive(Debug, StructOpt)]
@@ -23,6 +38,7 @@ enum Command {
 pub struct OpenCTF {
     #[structopt(subcommand)]
     cmd: Command,
+
     #[structopt(
         short = "c",
         long = "config",
@@ -34,9 +50,7 @@ pub struct OpenCTF {
 
 impl OpenCTF {
     pub fn run(&self) -> Result<(), Error> {
-        match &self.cmd {
-            Command::Web(web) => web.run(),
-        }
-        Ok(())
+        env_logger::init();
+        self.cmd.run()
     }
 }

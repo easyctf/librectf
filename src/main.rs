@@ -3,12 +3,10 @@ extern crate openctf;
 extern crate structopt;
 
 use openctf::cli::OpenCTF;
+use openctf::Error;
 use structopt::StructOpt;
 
-fn main() {
+fn main() -> Result<(), Error> {
     let opt = OpenCTF::from_args();
-    match opt.run() {
-        Ok(_) => (),
-        Err(err) => panic!("Error occurred: {}", err),
-    }
+    opt.run()
 }
