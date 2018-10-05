@@ -1,5 +1,5 @@
 <template>
-    <b-navbar toggleable="md" type="dark" variant="dark">
+    <b-navbar class="navbar" toggleable="md" type="dark" variant="dark">
         <div class="container">
             <b-navbar-toggle target="nav_collapse"></b-navbar-toggle>
             <b-navbar-brand to="/">OpenCTF</b-navbar-brand>
@@ -35,4 +35,7 @@
 </script>
 
 <style lang="scss" scoped>
+    .navbar {
+        margin-bottom: 28px;
+    }
 </style>

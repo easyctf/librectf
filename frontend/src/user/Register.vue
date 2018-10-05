@@ -2,7 +2,7 @@
     <section class="h-100">
         <div class="container h-100">
             <div class="row justify-content-md-center h-100">
-                <b-card title="Login">
+                <b-card title="Register">
                     <b-form @submit="onSubmit">
                         <b-form-group id="emailGroup"
                             label="Email Address"
@@ -11,6 +11,15 @@
                                 type="email"
                                 required
                                 placeholder="Email Address">
+                            </b-form-input>
+                        </b-form-group>
+                        <b-form-group id="usernameGroup"
+                            label="Username"
+                            label-for="username">
+                            <b-form-input id="username"
+                                type="text"
+                                required
+                                placeholder="Username">
                             </b-form-input>
                         </b-form-group>
                         <b-form-group id="passwordGroup"
@@ -28,7 +37,7 @@
                         </b-form-group>
 
                         <div class="margin-top20 text-center">
-                            Need an account? <router-link :to="{ name: 'user/register' }">Register</router-link>
+                            Have an account? <router-link :to="{ name: 'user/login' }">Login</router-link>
                         </div>
                     </b-form>
                 </b-card>
