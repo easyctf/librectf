@@ -10,7 +10,10 @@ import App from "./App";
 Vue.use(BootstrapVue);
 Vue.use(VueRouter);
 
-const router = new VueRouter();
+const router = new VueRouter({
+    mode: "history",
+    routes: [],
+});
 
 document.addEventListener("DOMContentLoaded", function(event) { 
     new Vue({

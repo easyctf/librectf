@@ -2,14 +2,12 @@
 
 mod guards;
 mod routes;
-mod static_files;
 
 use env_logger;
 use rocket::{self, Rocket};
 use task_queue::TaskQueue;
 
 use self::guards::*;
-use self::static_files::StaticFiles;
 use db::establish_connection;
 use Config;
 
@@ -38,7 +36,6 @@ pub fn app(config: &Config) -> Rocket {
         .manage(config)
         .manage(tq)
         .manage(pool)
-        .mount("/static", StaticFiles::default().into())
         .mount("/team", routes![])
         .mount(
             "/user",
