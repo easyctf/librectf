@@ -6,9 +6,9 @@ You can import challenges into your CTF platform directly by using the challenge
 
 The tool should be run from the root directory of all challenges. Each subdirectory of that directory will be considered a challenge, so if you want some extra files that are not considered to be part of a challenge, put a `.` before the name to hide the directory. The directory name is used as a **unique identifier** for this challenge, and will be stored in the database.
 
-**Note:** on subsequent runs of the import tool, if a challenge exists in the database with the same name as the challenge directory, any scores for that challenge will not be wiped; instead, the problem data will simply be overwritten. If you'd like to wipe the scores as well, you must manually delete them.
+**Note:** on subsequent runs of the import tool, if a challenge exists in the database with the same name as the challenge directory, any scores for that challenge will not be wiped; instead, the challenge data will simply be overwritten. If you'd like to wipe the scores as well, you must manually delete them.
 
-Each directory *must* have a `problem.toml` that contains metadata about the problem. This must contain a minimum of these fields:
+Each directory *must* have a `meta.toml` that contains metadata about the challenge. This must contain a minimum of these fields:
 
 * `title: str` - The title of your challenge.
 * `description: str | description_file: path` - Specifying either of these provides a description. `description_file` will read the description from the file.
@@ -25,7 +25,7 @@ grader: "grader.py"
 
 ## Grader
 
-The grader is an executable which receives information about the submission and must return information about the correctness of the submission. It will receive the problem nonce and team ID through command-line arguments, and then the user's flag submission through standard input. It should print some feedback about the submission to standard output, and then exit with 1 (incorrect), or 0 (correct) to indicate whether the submission was correct or not.
+The grader is an executable which receives information about the submission and must return information about the correctness of the submission. It will receive the challenge nonce and team ID through command-line arguments, and then the user's flag submission through standard input. It should print some feedback about the submission to standard output, and then exit with 1 (incorrect), or 0 (correct) to indicate whether the submission was correct or not.
 
 **Note:** The grader file must be an *executable*. If you wish to use a scripting language such as Python or Perl, make sure you add the [shebang](https://en.wikipedia.org/wiki/Shebang_(Unix)) (`#!`) line at the top of the file to indicate the means by which to run this file.
 
@@ -66,8 +66,8 @@ print("Correct.")
 # automatically exits with status 0
 ```
 
-## Problem build dependencies
+## Challenge build dependencies
 
 Sometimes, there may be extra steps you'd like to take before you import the challenges, such as building binaries or generating files. Perhaps you are storing all of your challenges in a code repository and don't want to commit build artifacts. In order to cater to this need, OpenCTF will check for the existence of a `Makefile` in the challenge directory and run it before anything else happens.
 
-Make sure that wherever you're running this import tool, you also have all the dependencies required to run the Makefiles. Don't put anything user- or team-specific in these Makefiles, since they are only run *once* during import. If you'd like to generate files that are specific to a user or team, set the challenge to `autogen` in `problem.toml`.
+Make sure that wherever you're running this import tool, you also have all the dependencies required to run the Makefiles. Don't put anything user- or team-specific in these Makefiles, since they are only run *once* during import. If you'd like to generate files that are specific to a user or team, set the challenge to `autogen` in `meta.toml`.

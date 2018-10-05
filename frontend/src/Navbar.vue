@@ -19,8 +19,8 @@
                             </b-nav-item-dropdown>
                         </template>
                         <template v-else>
-                            <b-nav-item to="/user/register">Register</b-nav-item>
                             <b-nav-item :to="{ name: 'user/login' }">Login</b-nav-item>
+                            <b-nav-item :to="{ name: 'user/register' }">Register</b-nav-item>
                         </template>
                     </b-navbar-nav>
             </b-collapse>

@@ -59,27 +59,27 @@ impl ChalImportCommand {
 
             // TODO: run Make here
 
-            // find problem.toml
-            let problem_toml_path = path.join("problem.toml");
-            if !problem_toml_path.exists() {
+            // find meta.toml
+            let meta_toml_path = path.join("meta.toml");
+            if !meta_toml_path.exists() {
                 failed.push((
                     Some(path),
-                    CustomError::new("Could not find problem.toml in this directory.").into(),
+                    CustomError::new("Could not find meta.toml in this directory.").into(),
                 ));
                 continue;
             }
 
-            // read the problem file
-            let problem_contents = match read_file(&problem_toml_path) {
-                Ok(problem) => problem,
+            // read the meta file
+            let meta_contents = match read_file(&meta_toml_path) {
+                Ok(meta) => meta,
                 Err(err) => {
                     failed.push((Some(path), err));
                     continue;
                 }
             };
 
-            // parse the problem file
-            let problem_toml = match toml::from_str::<toml::Value>(&problem_contents) {
+            // parse the meta file
+            let meta_toml = match toml::from_str::<toml::Value>(&meta_contents) {
                 Ok(value) => value,
                 Err(err) => {
                     failed.push((
@@ -89,19 +89,19 @@ impl ChalImportCommand {
                     continue;
                 }
             };
-            let problem_toml = match problem_toml {
+            let meta_toml = match meta_toml {
                 toml::Value::Table(table) => table,
                 _ => {
                     failed.push((
                         Some(path),
-                        CustomError::new("problem.toml must be a TOML table.").into(),
+                        CustomError::new("meta.toml must be a TOML table.").into(),
                     ));
                     continue;
                 }
             };
 
             // check for the existence of required fields
-            let title = match problem_toml.get("title") {
+            let title = match meta_toml.get("title") {
                 Some(toml::Value::String(title)) => title,
                 _ => {
                     failed.push((
@@ -112,8 +112,8 @@ impl ChalImportCommand {
                 }
             };
             let description = match (
-                problem_toml.get("description"),
-                problem_toml.get("description_file"),
+                meta_toml.get("description"),
+                meta_toml.get("description_file"),
             ) {
                 (Some(_), Some(_)) => {
                     failed.push((
@@ -142,9 +142,9 @@ impl ChalImportCommand {
                     continue;
                 }
             };
-            let grader = match problem_toml.get("grader") {
+            let grader = match meta_toml.get("grader_file") {
                 Some(toml::Value::String(grader_path)) => {
-                    let path = PathBuf::from(&grader_path);
+                    let path = path.join(&grader_path);
                     if !path.exists() {
                         failed.push((
                             Some(path),
@@ -157,7 +157,7 @@ impl ChalImportCommand {
                 _ => {
                     failed.push((
                         Some(path),
-                        CustomError::new("String key 'grader' not found.").into(),
+                        CustomError::new("String key 'grader_file' not found.").into(),
                     ));
                     continue;
                 }
