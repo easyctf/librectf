@@ -4,6 +4,7 @@ error_wrapper!(DbConnectionError: ::r2d2::Error = "Failed to get database connec
 
 error_derive_from!(WebError = {
     DbConnectionError[""] => DbConnection,
+    ::bcrypt::BcryptError["Bcrypt error"] => Bcrypt,
 });
 
 impl ResponseError for WebError {}

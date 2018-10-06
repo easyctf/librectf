@@ -3,7 +3,8 @@ mod errors;
 mod state;
 mod user;
 
-use actix_web::{http::Method, server, App};
+use actix_web::{self, http::Method, server, App, HttpRequest, HttpResponse, Json, Responder};
+use serde::Serialize;
 
 use self::db::Connection as DbConn;
 use self::state::State;
@@ -30,4 +31,31 @@ pub fn run(config: Config) -> Result<(), Error> {
         .bind("127.0.0.1:8000")
         .map_err(|err| AddressBindError(err).into())
         .map(|server| server.run())
+}
+
+pub enum JsonResult<T, E> {
+    Ok(T),
+    Err(E),
+}
+
+impl<T, E> JsonResult<T, E> {
+    pub fn ok(v: impl AsRef<str>) -> JsonResult<String, E> {
+        JsonResult::Ok(v.as_ref().to_owned())
+    }
+
+    pub fn err(v: impl AsRef<str>) -> JsonResult<T, String> {
+        JsonResult::Err(v.as_ref().to_owned())
+    }
+}
+
+impl<T: Serialize, E: Serialize> Responder for JsonResult<T, E> {
+    type Item = HttpResponse;
+    type Error = actix_web::Error;
+
+    fn respond_to<S: 'static>(self, req: &HttpRequest<S>) -> Result<Self::Item, Self::Error> {
+        match self {
+            JsonResult::Ok(t) => Responder::respond_to(Json(t), req),
+            JsonResult::Err(e) => Responder::respond_to(Json(e), req),
+        }
+    }
 }
