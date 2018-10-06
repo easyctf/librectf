@@ -1,2 +1,5 @@
-#[derive(Default)]
-pub struct State {}
+use db::Pool;
+
+pub struct State {
+    pub pool: Pool,
+}

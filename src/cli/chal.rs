@@ -1,10 +1,9 @@
-use std::fs::{read_dir, File};
-use std::io::Read;
+use std::fs::read_dir;
 use std::path::PathBuf;
 
 use toml;
 
-use errors::{CustomError, DirError};
+use errors::{CustomError, DirTraversalError};
 use util::read_file;
 use Error;
 
@@ -33,11 +32,11 @@ pub struct ChalImportCommand {
 impl ChalImportCommand {
     pub fn run(&self) -> Result<(), Error> {
         let mut failed: Vec<(Option<PathBuf>, Error)> = Vec::new();
-        for entry in read_dir(&self.challenge_dir).map_err(|err| DirError(err))? {
+        for entry in read_dir(&self.challenge_dir).map_err(|err| DirTraversalError(err))? {
             let entry = match entry {
                 Ok(entry) => entry,
                 Err(err) => {
-                    failed.push((None, DirError(err).into()));
+                    failed.push((None, DirTraversalError(err).into()));
                     continue;
                 }
             };

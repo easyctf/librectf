@@ -35,6 +35,9 @@ extern crate structopt;
 extern crate task_queue;
 extern crate toml;
 
+#[macro_use]
+mod macros;
+
 mod challenge;
 pub mod cli;
 mod config;

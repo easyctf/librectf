@@ -3,54 +3,21 @@ use std::io;
 
 use failure::Fail;
 
-#[derive(Debug, Fail)]
-#[fail(display = "Error traversing the directory")]
-pub struct DirError(#[cause] pub io::Error);
-
-#[derive(Debug, Fail)]
-#[fail(display = "Error accessing the file")]
-pub struct FileOpenError(#[cause] pub io::Error);
-
-#[derive(Debug, Fail)]
-#[fail(display = "Error reading the file")]
-pub struct FileReadError(#[cause] pub io::Error);
-
-#[derive(Debug, Fail)]
-#[fail(display = "Error binding to the address:port")]
-pub struct AddressBindError(#[cause] pub io::Error);
-
 #[derive(Debug)]
 pub struct CustomError(String);
 
-macro_rules! error_derive_from {
-    ([$($error:path[$v:expr] => $into:ident,)*]) => {
-        #[derive(Debug, Fail)]
-        pub enum Error {
-            #[fail(display = "{}", _0)]
-            Custom(#[cause] CustomError),
-            $(
-                #[fail(display = $v)]
-                $into(#[cause] $error),
-            )*
-        }
+error_wrapper!(AddressBindError: io::Error = "Failed to bind to the address or port");
+error_wrapper!(FileOpenError: io::Error = "Failed to access file");
+error_wrapper!(FileReadError: io::Error = "Failed to read file");
+error_wrapper!(DirTraversalError: io::Error = "Failed to traverse the directory");
 
-        $(
-            impl From<$error> for Error {
-                fn from(err: $error) -> Self {
-                    Error::$into(err)
-                }
-            }
-        )*
-    };
-}
-
-error_derive_from!([
+error_derive_from!(Error = {
     ::serde_json::Error["Error during the serialization of JSON"] => JSONSerialization,
-    DirError[""] => Dir,
+    DirTraversalError[""] => DirTraversal,
     FileOpenError[""] => FileOpen,
     FileReadError[""] => FileRead,
     AddressBindError[""] => AddressBind,
-]);
+});
 
 impl CustomError {
     pub fn new(s: impl AsRef<str>) -> Self {
