@@ -10,7 +10,6 @@ pub struct WebCommand {
 
 impl WebCommand {
     pub fn run(&self) -> Result<(), Error> {
-        let app = web::app(&self.config);
-        Err(app.launch().into())
+        web::run(self.config.clone())
     }
 }

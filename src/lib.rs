@@ -2,16 +2,16 @@
 //!
 //! This crate contains the core of the OpenCTF library.
 
-#![feature(plugin, custom_derive, tool_lints, try_from)]
+// #![feature(custom_derive, tool_lints, try_from)]
+// #![allow(clippy::needless_pass_by_value)]
 #![allow(proc_macro_derive_resolution_fallback)]
-#![plugin(rocket_codegen)]
-#![allow(clippy::needless_pass_by_value)]
 
 #[macro_use]
 extern crate diesel;
 extern crate r2d2;
 extern crate r2d2_diesel;
 
+extern crate actix_web;
 extern crate base64;
 extern crate bcrypt;
 extern crate cache;
@@ -25,8 +25,6 @@ extern crate lazy_static;
 extern crate log;
 extern crate mime_guess;
 extern crate regex;
-extern crate rocket;
-extern crate rocket_contrib;
 extern crate serde;
 extern crate serde_cbor;
 extern crate serde_json;

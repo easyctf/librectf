@@ -2,8 +2,6 @@ use std::fmt;
 use std::io;
 
 use failure::Fail;
-use rocket;
-use serde_json;
 
 #[derive(Debug, Fail)]
 #[fail(display = "Error traversing the directory")]
@@ -16,6 +14,10 @@ pub struct FileOpenError(#[cause] pub io::Error);
 #[derive(Debug, Fail)]
 #[fail(display = "Error reading the file")]
 pub struct FileReadError(#[cause] pub io::Error);
+
+#[derive(Debug, Fail)]
+#[fail(display = "Error binding to the address:port")]
+pub struct AddressBindError(#[cause] pub io::Error);
 
 #[derive(Debug)]
 pub struct CustomError(String);
@@ -43,11 +45,11 @@ macro_rules! error_derive_from {
 }
 
 error_derive_from!([
-    rocket::error::LaunchError["Error launching Rocket application"] => RocketLaunch,
-    serde_json::Error["Error during the serialization of JSON"] => JSONSerialization,
+    ::serde_json::Error["Error during the serialization of JSON"] => JSONSerialization,
     DirError[""] => Dir,
     FileOpenError[""] => FileOpen,
     FileReadError[""] => FileRead,
+    AddressBindError[""] => AddressBind,
 ]);
 
 impl CustomError {
