@@ -1,6 +1,6 @@
 [package]
 name = "openctf"
-version = "0.0.0-8"
+version = "0.1.0"
 authors = ["Michael <localhost>"]
 build = "src/build.rs"
 
@@ -17,7 +17,7 @@ env_logger = "0.5"
 failure = "0.1.1"
 idna = "0.1"
 jail = { path = "components/jail" }
-# jsonwebtoken = "5.0"
+jsonwebtoken = "5.0"
 lazy_static = "1.0"
 log = "0.4"
 mime_guess = "2.0.0-alpha.6"

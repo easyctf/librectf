@@ -1,4 +1,5 @@
 mod db;
+mod config;
 mod errors;
 mod state;
 mod user;
@@ -6,16 +7,16 @@ mod user;
 use actix_web::{self, http::Method, server, App, HttpRequest, HttpResponse, Json, Responder};
 use serde::Serialize;
 
+pub use self::config::WebConfig;
 use self::db::Connection as DbConn;
 use self::state::State;
 use db::establish_connection;
 use errors::AddressBindError;
-use Config;
 use Error;
 
 const POST: Method = Method::POST;
 
-fn app(config: &Config) -> App<State> {
+fn app(config: &WebConfig) -> App<State> {
     let pool = establish_connection(&config.database_url);
 
     let app = App::with_state(State { pool }).prefix("/api/v1");
@@ -26,7 +27,7 @@ fn app(config: &Config) -> App<State> {
     }
 }
 
-pub fn run(config: Config) -> Result<(), Error> {
+pub fn run(config: WebConfig) -> Result<(), Error> {
     server::new(move || app(&config))
         .bind("127.0.0.1:8000")
         .map_err(|err| AddressBindError(err).into())

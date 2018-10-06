@@ -9,6 +9,7 @@ macro_rules! error_wrapper {
 macro_rules! error_derive_from {
     ($error_type:ident = {$($error:path[$v:expr] => $into:ident,)*}) => {
         #[derive(Debug, Fail)]
+        #[allow(dead_code)]
         pub enum $error_type {
             #[fail(display = "{}", _0)]
             Custom(#[cause] ::errors::CustomError),

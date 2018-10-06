@@ -4,7 +4,6 @@ mod web;
 use std::path::PathBuf;
 
 use env_logger;
-use structopt::StructOpt;
 
 use self::chal::ChalCommand;
 use self::web::WebCommand;

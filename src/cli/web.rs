@@ -1,11 +1,10 @@
-use web;
-use Config;
+use web::{self, WebConfig};
 use Error;
 
 #[derive(Debug, StructOpt)]
 pub struct WebCommand {
     #[structopt(flatten)]
-    config: Config,
+    config: WebConfig,
 }
 
 impl WebCommand {

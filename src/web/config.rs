@@ -1,10 +1,18 @@
-/// OpenCTF main configuration
-
 #[derive(Clone, Debug, StructOpt)]
-pub struct Config {
+pub struct WebConfig {
+    /// Whether to run the application in debug mode
     #[structopt(long = "debug", env = "DEBUG")]
     pub debug: bool,
+    
+    /// The secret key used for signing cookies
+    #[structopt(long = "secret-key", env = "SECRET_KEY")]
+    pub secret_key: String,
 
+    /// SMTP server host
+    #[structopt(long = "smtp-host", env = "SMTP_HOST")]
+    pub smtp_host: Option<String>,
+
+    /// The host to bind to
     #[structopt(
         long = "bind_host",
         env = "BIND_HOST",
@@ -12,6 +20,7 @@ pub struct Config {
     )]
     pub bind_host: String,
 
+    /// The port to bind to
     #[structopt(
         long = "bind_port",
         env = "BIND_PORT",
@@ -22,12 +31,4 @@ pub struct Config {
     /// The URL for the database as a MySQL connection string.
     #[structopt(long = "database-url", env = "DATABASE_URL")]
     pub database_url: String,
-
-    /// The secret key used for signing cookies
-    #[structopt(long = "secret-key", env = "SECRET_KEY")]
-    pub secret_key: String,
-
-    /// SMTP server host
-    #[structopt(long = "smtp-host", env = "SMTP_HOST")]
-    pub smtp_host: Option<String>,
 }

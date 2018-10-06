@@ -1,7 +1,6 @@
 use actix_web::{Form, HttpRequest};
 use bcrypt;
 use diesel::{self, RunQueryDsl};
-use serde::Serialize;
 
 use super::{errors::WebError, DbConn, JsonResult, State};
 use models::NewUser;
@@ -38,6 +37,7 @@ pub fn register((form, db): (Form<RegisterForm>, DbConn)) -> JsonResult<String, 
         })
 }
 
+// TODO: this should be a ValidationError instead of WebError
 impl Into<Result<NewUser, WebError>> for RegisterForm {
     fn into(self) -> Result<NewUser, WebError> {
         Ok(NewUser {

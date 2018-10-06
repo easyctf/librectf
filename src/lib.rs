@@ -19,6 +19,7 @@ extern crate env_logger;
 #[macro_use]
 extern crate failure;
 extern crate idna;
+extern crate jsonwebtoken;
 #[macro_use]
 extern crate lazy_static;
 #[macro_use]
@@ -40,7 +41,6 @@ mod macros;
 
 mod challenge;
 pub mod cli;
-mod config;
 mod db;
 mod errors;
 pub mod models;
@@ -50,7 +50,6 @@ mod util;
 pub mod web;
 
 pub use challenge::Challenge;
-pub use config::Config;
 pub use errors::Error;
 
 const INTERNAL_SERVER_ERROR_MESSAGE: &str = "Internal server error, please contact the webmaster.";
