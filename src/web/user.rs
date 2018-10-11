@@ -1,4 +1,4 @@
-use actix_web::{http::Cookie, Form, HttpRequest, HttpResponse};
+use actix_web::{http::Cookie, Json, HttpRequest, HttpResponse};
 use bcrypt;
 use cookie::SameSite;
 use diesel::{self, prelude::*};
@@ -13,7 +13,7 @@ pub struct LoginForm {
     password: String,
 }
 
-pub fn login((req, form, db): (HttpRequest<State>, Form<LoginForm>, DbConn)) -> HttpResponse {
+pub fn login((req, form, db): (HttpRequest<State>, Json<LoginForm>, DbConn)) -> HttpResponse {
     use schema::users::dsl::*;
     let state = req.state();
     let form = form.into_inner();
@@ -57,7 +57,7 @@ pub struct RegisterForm {
     password: String,
 }
 
-pub fn register((form, db): (Form<RegisterForm>, DbConn)) -> HttpResponse {
+pub fn register((form, db): (Json<RegisterForm>, DbConn)) -> HttpResponse {
     use schema::users;
     let new_user: NewUser = match form.into_inner().into() {
         Ok(user) => user,

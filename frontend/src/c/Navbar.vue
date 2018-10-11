@@ -31,6 +31,11 @@
 <script>
     export default {
         name: "Navbar",
+        computed: {
+            loggedIn() {
+                return this.$store.getters.loggedIn;
+            }
+        }
     }
 </script>
 

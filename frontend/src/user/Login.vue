@@ -3,12 +3,13 @@
         <div class="container h-100">
             <div class="row justify-content-md-center h-100">
                 <b-card title="Login">
-                    <b-form @submit="onSubmit">
+                    <b-form @submit.prevent="processForm">
                         <b-form-group id="emailGroup"
                             label="Email Address"
                             label-for="email">
                             <b-form-input id="email"
                                 type="email"
+                                v-model="email"
                                 required
                                 placeholder="Email Address">
                             </b-form-input>
@@ -18,6 +19,7 @@
                             label-for="password">
                             <b-form-input id="password"
                                 type="password"
+                                v-model="password"
                                 required
                                 placeholder="Password">
                             </b-form-input>
@@ -38,13 +40,22 @@
 </template>
 
 <script>
+    import API from "../api";
     export default {
         name: "Login",
+        data: () => ({
+            email: "",
+            password: "",
+        }),
         methods: {
-            onSubmit: (evt) => {
-                evt.preventDefault();
-                console.log(evt);
-                return false;
+            processForm: function() {
+                console.log("processing.", this);
+                this.$store.dispatch("login", {
+                    email: this.email,
+                    password: this.password,
+                }).then(() => {
+                    this.$router.push("/");
+                });
             }
         }
     }

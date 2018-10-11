@@ -2,13 +2,13 @@ mod config;
 mod db;
 mod errors;
 mod state;
+mod team;
 mod user;
 
 use std::net::{Ipv4Addr, SocketAddrV4};
 use std::str::FromStr;
 
-use actix_web::{self, http::Method, server, App, HttpRequest, HttpResponse, Json, Responder};
-use serde::Serialize;
+use actix_web::{server, App};
 
 pub use self::config::WebConfig;
 use self::db::Connection as DbConn;
@@ -17,18 +17,16 @@ use db::establish_connection;
 use errors::AddressBindError;
 use Error;
 
-const POST: Method = Method::POST;
-
 fn app(config: &WebConfig) -> App<State> {
     let pool = establish_connection(&config.database_url);
     let secret_key = config.secret_key.clone().into_bytes();
 
-    let app = App::with_state(State { secret_key, pool }).prefix("/api/v1");
+    let app = App::with_state(State { secret_key, pool });
 
     let app = {
         use self::user::*;
-        app.resource("/user/login", |r| r.method(POST).with(login))
-            .resource("/user/register", |r| r.method(POST).with(register))
+        app.resource("/user/login", |r| r.post().with(login))
+            .resource("/user/register", |r| r.post().with(register))
     };
     app
 }
