@@ -26,7 +26,7 @@
                         </b-form-group>
 
                         <b-form-group class="text-center">
-                            <b-button type="submit" class="col" variant="primary">Submit</b-button>
+                            <b-button type="submit" class="col" variant="primary" :disabled="pending">Submit</b-button>
                         </b-form-group>
 
                         <div class="margin-top20 text-center">
@@ -46,14 +46,17 @@
         data: () => ({
             email: "",
             password: "",
+            pending: false,
         }),
         methods: {
             processForm: function() {
+                this.pending = true;
                 console.log("processing.", this);
                 this.$store.dispatch("login", {
                     email: this.email,
                     password: this.password,
                 }).then(() => {
+                    this.pending = false;
                     this.$router.push("/");
                 });
             }

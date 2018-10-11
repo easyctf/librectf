@@ -1,4 +1,4 @@
-use actix_web::{http::Cookie, Json, HttpRequest, HttpResponse};
+use actix_web::{http::Cookie, HttpRequest, HttpResponse, Json};
 use bcrypt;
 use cookie::SameSite;
 use diesel::{self, prelude::*};
@@ -11,6 +11,11 @@ use models::{NewUser, User};
 pub struct LoginForm {
     email: String,
     password: String,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+struct LoginClaim {
+    username: String,
 }
 
 pub fn login((req, form, db): (HttpRequest<State>, Json<LoginForm>, DbConn)) -> HttpResponse {
@@ -30,23 +35,21 @@ pub fn login((req, form, db): (HttpRequest<State>, Json<LoginForm>, DbConn)) -> 
                     HttpResponse::Unauthorized().json("Check your credentials.".to_owned())
                 })
         }).map(|user| {
-            // TODO: move this struct definition out later
-            #[derive(Debug, Serialize, Deserialize)]
-            struct Claim {}
-
-            let claim = Claim {};
+            let claim = LoginClaim {
+                username: user.name.clone(),
+            };
 
             // generate jwt
             // TODO don't expect() this
             let token = jsonwebtoken::encode(&Header::default(), &claim, state.secret_key.as_ref())
                 .expect("failed to generate jwt");
-            let cookie = Cookie::build("user", token)
-                .same_site(SameSite::Strict)
-                .finish();
+            // let cookie = Cookie::build("user", token)
+            //     .same_site(SameSite::Strict)
+            //     .finish();
 
             HttpResponse::Ok()
-                .cookie(cookie)
-                .json("Logged in successfully.")
+                // .cookie(cookie)
+                .json(token)
         }).unwrap_or_else(|err| err)
 }
 

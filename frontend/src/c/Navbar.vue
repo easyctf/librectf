@@ -2,7 +2,7 @@
     <b-navbar class="navbar" toggleable="md" type="dark" variant="dark">
         <div class="container">
             <b-navbar-toggle target="nav_collapse"></b-navbar-toggle>
-            <b-navbar-brand to="/">OpenCTF</b-navbar-brand>
+            <b-navbar-brand :to="{ name: 'index' }">OpenCTF</b-navbar-brand>
             <b-collapse is-nav id="nav_collapse">
                 <b-navbar-nav>
                     <b-nav-item href="#">Link</b-nav-item>
@@ -12,10 +12,10 @@
                         <template v-if="loggedIn">
                             <b-nav-item-dropdown right>
                                 <template slot="button-content">
-                                    <b>oof</b>
+                                    <b>{{ username }}</b>
                                 </template>
                                 <b-dropdown-item href="/user/profile">Me</b-dropdown-item>
-                                <b-dropdown-item href="/user/logout">Logout</b-dropdown-item>
+                                <b-dropdown-item @click="logout">Logout</b-dropdown-item>
                             </b-nav-item-dropdown>
                         </template>
                         <template v-else>
@@ -31,9 +31,18 @@
 <script>
     export default {
         name: "Navbar",
+        methods: {
+            logout: function() {
+                this.$store.dispatch("logout");
+                this.$router.push("/");
+            }
+        },
         computed: {
             loggedIn() {
                 return this.$store.getters.loggedIn;
+            },
+            username() {
+                return this.$store.getters.username;
             }
         }
     }

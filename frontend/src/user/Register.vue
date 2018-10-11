@@ -3,7 +3,7 @@
         <div class="container h-100">
             <div class="row justify-content-md-center h-100">
                 <b-card title="Register">
-                    <b-form @submit="onSubmit">
+                    <b-form @submit.prevent="processForm">
                         <b-form-group id="emailGroup"
                             label="Email Address"
                             label-for="email">
@@ -48,12 +48,13 @@
 
 <script>
     export default {
-        name: "Login",
+        name: "Register",
+        data: () => ({
+            pending: false,
+        }),
         methods: {
-            onSubmit: (evt) => {
-                evt.preventDefault();
-                console.log(evt);
-                return false;
+            processForm: function() {
+                this.pending = true;
             }
         }
     }
