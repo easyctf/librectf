@@ -16,6 +16,7 @@ pub struct LoginForm {
 #[derive(Debug, Serialize, Deserialize)]
 struct LoginClaim {
     username: String,
+    admin: bool,
 }
 
 pub fn login((req, form, db): (HttpRequest<State>, Json<LoginForm>, DbConn)) -> HttpResponse {
@@ -37,6 +38,7 @@ pub fn login((req, form, db): (HttpRequest<State>, Json<LoginForm>, DbConn)) -> 
         }).map(|user| {
             let claim = LoginClaim {
                 username: user.name.clone(),
+                admin: user.admin,
             };
 
             // generate jwt

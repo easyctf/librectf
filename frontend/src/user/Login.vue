@@ -51,7 +51,6 @@
         methods: {
             processForm: function() {
                 this.pending = true;
-                console.log("processing.", this);
                 this.$store.dispatch("login", {
                     email: this.email,
                     password: this.password,

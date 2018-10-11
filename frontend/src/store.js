@@ -27,6 +27,7 @@ const store = new Vuex.Store({
         login({ commit }, credentials) {
             commit("LOGIN_ATTEMPT");
             return API.Login(credentials.email, credentials.password).then((result) => {
+                localStorage.setItem("token", result.data);
                 let session = jwtDecode(result.data);
                 commit("LOGIN_SUCCESS", session);
             });
@@ -37,8 +38,8 @@ const store = new Vuex.Store({
         }
     },
     getters: {
-        loggedIn: state => {
-            return state.session !== undefined;
+        session: state => {
+            return state.session;
         },
         username: state => {
             if (!state.session) return false;
