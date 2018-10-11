@@ -1,12 +1,53 @@
-use actix_web::{Form, HttpRequest};
+use actix_web::{http::Cookie, Form, HttpRequest, HttpResponse};
 use bcrypt;
-use diesel::{self, RunQueryDsl};
+use cookie::SameSite;
+use diesel::{self, prelude::*};
+use jsonwebtoken::{self, Header};
 
-use super::{errors::WebError, DbConn, JsonResult, State};
-use models::NewUser;
+use super::{errors::WebError, DbConn, State};
+use models::{NewUser, User};
 
-pub fn login(_: &HttpRequest<State>) -> String {
-    String::new()
+#[derive(Deserialize)]
+pub struct LoginForm {
+    email: String,
+    password: String,
+}
+
+pub fn login((req, form, db): (HttpRequest<State>, Form<LoginForm>, DbConn)) -> HttpResponse {
+    use schema::users::dsl::*;
+    let state = req.state();
+    let form = form.into_inner();
+    users
+        .filter(email.eq(&form.email))
+        .first::<User>(&*db)
+        .map_err(|err| {
+            error!("Diesel error on user/login: {}", err);
+            HttpResponse::Unauthorized().json("Check your credentials.".to_owned())
+        }).and_then(|user| {
+            bcrypt::verify(&form.password, &user.password)
+                .map(|_| user)
+                .map_err(|_| {
+                    HttpResponse::Unauthorized().json("Check your credentials.".to_owned())
+                })
+        }).map(|user| {
+            // TODO: move this struct definition out later
+            #[derive(Debug, Serialize, Deserialize)]
+            struct Claim {}
+
+            let claim = Claim {};
+
+            // generate jwt
+            // TODO don't expect() this
+            let token = jsonwebtoken::encode(&Header::default(), &claim, state.secret_key.as_ref())
+                .expect("failed to generate jwt");
+            let cookie = Cookie::build("user", token)
+                .same_site(SameSite::Strict)
+                .finish();
+
+            HttpResponse::Ok()
+                .cookie(cookie)
+                .json("Logged in successfully.")
+        }).unwrap_or_else(|err| err)
 }
 
 #[derive(Deserialize)]
@@ -16,24 +57,23 @@ pub struct RegisterForm {
     password: String,
 }
 
-pub fn register((form, db): (Form<RegisterForm>, DbConn)) -> JsonResult<String, String> {
+pub fn register((form, db): (Form<RegisterForm>, DbConn)) -> HttpResponse {
     use schema::users;
     let new_user: NewUser = match form.into_inner().into() {
         Ok(user) => user,
         Err(err) => {
             error!("Failed to register: {:?}", err);
-            return JsonResult::Err(err.to_string());
+            return HttpResponse::BadRequest().json(err.to_string());
         }
     };
     diesel::insert_into(users::table)
         .values(new_user)
         .execute(&*db)
-        .map(|_| JsonResult::<String, _>::ok("Registered successfully".to_owned()))
+        .map(|_| HttpResponse::Ok().json("Registration successful.".to_owned()))
         .unwrap_or_else(|err| {
-            error!("Failed to insert registration into db: {:?}", err);
-            JsonResult::<_, String>::err(
-                "Failed to complete registration, contact an admin.".to_owned(),
-            )
+            error!("Diesel error on user/register: {}", err);
+            HttpResponse::BadRequest()
+                .json("Failed to complete registration, contact an admin.".to_owned())
         })
 }
 

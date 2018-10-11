@@ -1,8 +1,11 @@
-mod db;
 mod config;
+mod db;
 mod errors;
 mod state;
 mod user;
+
+use std::net::{Ipv4Addr, SocketAddrV4};
+use std::str::FromStr;
 
 use actix_web::{self, http::Method, server, App, HttpRequest, HttpResponse, Json, Responder};
 use serde::Serialize;
@@ -18,45 +21,22 @@ const POST: Method = Method::POST;
 
 fn app(config: &WebConfig) -> App<State> {
     let pool = establish_connection(&config.database_url);
+    let secret_key = config.secret_key.clone().into_bytes();
 
-    let app = App::with_state(State { pool }).prefix("/api/v1");
-    {
+    let app = App::with_state(State { secret_key, pool }).prefix("/api/v1");
+
+    let app = {
         use self::user::*;
-        app.resource("/user/login", |r| r.method(POST).f(login))
+        app.resource("/user/login", |r| r.method(POST).with(login))
             .resource("/user/register", |r| r.method(POST).with(register))
-    }
+    };
+    app
 }
 
 pub fn run(config: WebConfig) -> Result<(), Error> {
+    let addr = SocketAddrV4::new(Ipv4Addr::from_str(&config.bind_host)?, config.bind_port);
     server::new(move || app(&config))
-        .bind("127.0.0.1:8000")
+        .bind(addr)
         .map_err(|err| AddressBindError(err).into())
         .map(|server| server.run())
-}
-
-pub enum JsonResult<T, E> {
-    Ok(T),
-    Err(E),
-}
-
-impl<T, E> JsonResult<T, E> {
-    pub fn ok(v: impl AsRef<str>) -> JsonResult<String, E> {
-        JsonResult::Ok(v.as_ref().to_owned())
-    }
-
-    pub fn err(v: impl AsRef<str>) -> JsonResult<T, String> {
-        JsonResult::Err(v.as_ref().to_owned())
-    }
-}
-
-impl<T: Serialize, E: Serialize> Responder for JsonResult<T, E> {
-    type Item = HttpResponse;
-    type Error = actix_web::Error;
-
-    fn respond_to<S: 'static>(self, req: &HttpRequest<S>) -> Result<Self::Item, Self::Error> {
-        match self {
-            JsonResult::Ok(t) => Responder::respond_to(Json(t), req),
-            JsonResult::Err(e) => Responder::respond_to(Json(e), req),
-        }
-    }
 }

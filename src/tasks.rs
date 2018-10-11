@@ -1,5 +1,6 @@
 use task_queue::Task;
 
+#[allow(dead_code)]
 struct SendEmail {
     priority: u32,
 }

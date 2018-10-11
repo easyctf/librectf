@@ -100,7 +100,7 @@ impl ChalImportCommand {
             };
 
             // check for the existence of required fields
-            let title = match meta_toml.get("title") {
+            let _title = match meta_toml.get("title") {
                 Some(toml::Value::String(title)) => title,
                 _ => {
                     failed.push((
@@ -110,7 +110,7 @@ impl ChalImportCommand {
                     continue;
                 }
             };
-            let description = match (
+            let _description = match (
                 meta_toml.get("description"),
                 meta_toml.get("description_file"),
             ) {
@@ -141,7 +141,7 @@ impl ChalImportCommand {
                     continue;
                 }
             };
-            let grader = match meta_toml.get("grader_file") {
+            let _grader = match meta_toml.get("grader_file") {
                 Some(toml::Value::String(grader_path)) => {
                     let path = path.join(&grader_path);
                     if !path.exists() {

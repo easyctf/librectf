@@ -3,7 +3,7 @@ pub struct WebConfig {
     /// Whether to run the application in debug mode
     #[structopt(long = "debug", env = "DEBUG")]
     pub debug: bool,
-    
+
     /// The secret key used for signing cookies
     #[structopt(long = "secret-key", env = "SECRET_KEY")]
     pub secret_key: String,

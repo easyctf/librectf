@@ -13,6 +13,7 @@ error_wrapper!(DirTraversalError: io::Error = "Failed to traverse the directory"
 
 error_derive_from!(Error = {
     ::serde_json::Error["Error during the serialization of JSON"] => JSONSerialization,
+    ::std::net::AddrParseError["Failed to parse ipv4 host from string."] => Ipv4Parse,
     DirTraversalError[""] => DirTraversal,
     FileOpenError[""] => FileOpen,
     FileReadError[""] => FileRead,

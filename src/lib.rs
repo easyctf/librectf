@@ -15,12 +15,12 @@ extern crate actix_web;
 extern crate base64;
 extern crate bcrypt;
 extern crate cache;
+extern crate cookie;
 extern crate env_logger;
 #[macro_use]
 extern crate failure;
 extern crate idna;
 extern crate jsonwebtoken;
-#[macro_use]
 extern crate lazy_static;
 #[macro_use]
 extern crate log;
@@ -39,7 +39,6 @@ extern crate toml;
 #[macro_use]
 mod macros;
 
-mod challenge;
 pub mod cli;
 mod db;
 mod errors;
@@ -49,7 +48,4 @@ mod tasks;
 mod util;
 pub mod web;
 
-pub use challenge::Challenge;
 pub use errors::Error;
-
-const INTERNAL_SERVER_ERROR_MESSAGE: &str = "Internal server error, please contact the webmaster.";

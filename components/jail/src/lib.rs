@@ -13,6 +13,7 @@ impl JailBuilder {
             ..Default::default()
         }
     }
+
     pub fn build(&self) -> Command {
         Command::new("nsjail")
     }

@@ -12,6 +12,7 @@ actix-web = "0.7"
 base64 = "0.9"
 bcrypt = "0.2"
 cache = { path = "components/cache" }
+cookie = "0.11"
 diesel = { version = "1.3", features = ["mysql"] }
 env_logger = "0.5"
 failure = "0.1.1"
