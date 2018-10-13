@@ -7,10 +7,10 @@ use bcrypt;
 use diesel::{self, prelude::*};
 use jsonwebtoken::{self, Header};
 
-use super::{errors::WebError, DbConn, State, WebConfig};
+use super::{errors::WebError, DbConn, State};
 use models::{NewUser, User};
 
-pub fn app(state: State, config: &WebConfig) -> App<State> {
+pub fn app(state: State) -> App<State> {
     App::with_state(state)
         .resource("/user/login", |r| r.post().with(login))
         .resource("/user/register", |r| r.post().with(register))
@@ -19,17 +19,13 @@ pub fn app(state: State, config: &WebConfig) -> App<State> {
 pub struct LoginMiddleware;
 
 impl<S> Middleware<S> for LoginMiddleware {
-    fn response(
-        &self,
-        req: &HttpRequest<S>,
-        mut resp: HttpResponse,
-    ) -> actix_web::Result<Response> {
+    fn response(&self, _req: &HttpRequest<S>, resp: HttpResponse) -> actix_web::Result<Response> {
         Ok(Response::Done(resp))
     }
 }
 
 #[derive(Deserialize)]
-pub struct LoginForm {
+struct LoginForm {
     email: String,
     password: String,
 }
@@ -40,7 +36,7 @@ struct LoginClaim {
     admin: bool,
 }
 
-pub fn login((req, form, db): (HttpRequest<State>, Json<LoginForm>, DbConn)) -> HttpResponse {
+fn login((req, form, db): (HttpRequest<State>, Json<LoginForm>, DbConn)) -> HttpResponse {
     use schema::users::dsl::*;
     let state = req.state();
     let form = form.into_inner();
@@ -78,13 +74,13 @@ pub fn login((req, form, db): (HttpRequest<State>, Json<LoginForm>, DbConn)) -> 
 }
 
 #[derive(Deserialize)]
-pub struct RegisterForm {
+struct RegisterForm {
     email: String,
     name: String,
     password: String,
 }
 
-pub fn register((form, db): (Json<RegisterForm>, DbConn)) -> HttpResponse {
+fn register((form, db): (Json<RegisterForm>, DbConn)) -> HttpResponse {
     use schema::users;
     let new_user: NewUser = match form.into_inner().into() {
         Ok(user) => user,

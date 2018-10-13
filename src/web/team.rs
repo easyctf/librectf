@@ -1,10 +1,18 @@
-use actix_web::{HttpResponse, Json};
+use actix_web::{App, HttpResponse, Json};
+
+use super::{user::LoginMiddleware, State};
+
+pub fn app(state: State) -> App<State> {
+    App::with_state(state)
+        .middleware(LoginMiddleware)
+        .resource("/team/create", |r| r.post().with(create))
+}
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct CreateTeamForm {
+struct CreateTeamForm {
     name: String,
 }
 
-pub fn create(form: Json<CreateTeamForm>) -> HttpResponse {
+fn create(_form: Json<CreateTeamForm>) -> HttpResponse {
     HttpResponse::Ok().json("lol")
 }

@@ -24,7 +24,7 @@ pub fn run(config: WebConfig) -> Result<(), Error> {
 
     let addr = SocketAddrV4::new(Ipv4Addr::from_str(&config.bind_host)?, config.bind_port);
 
-    server::new(move || vec![user::app(state.clone(), &config)])
+    server::new(move || vec![team::app(state.clone()), user::app(state.clone())])
         .bind(addr)
         .map_err(|err| AddressBindError(err).into())
         .map(|server| server.run())
