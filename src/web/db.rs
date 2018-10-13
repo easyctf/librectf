@@ -5,10 +5,10 @@ use diesel::MysqlConnection;
 use r2d2::PooledConnection;
 use r2d2_diesel::ConnectionManager;
 
-use super::errors::{DbConnectionError, WebError};
+use super::errors::WebError;
 use super::State;
 
-pub struct Connection(PooledConnection<ConnectionManager<MysqlConnection>>);
+pub struct Connection(pub PooledConnection<ConnectionManager<MysqlConnection>>);
 
 impl Deref for Connection {
     type Target = MysqlConnection;
@@ -24,10 +24,6 @@ impl FromRequest<State> for Connection {
 
     #[inline]
     fn from_request(req: &HttpRequest<State>, _: &Self::Config) -> Self::Result {
-        let state = req.state();
-        match state.pool.get() {
-            Ok(conn) => Ok(Connection(conn)),
-            Err(err) => Err(DbConnectionError(err).into()),
-        }
+        req.state().get_connection()
     }
 }

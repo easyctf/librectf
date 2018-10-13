@@ -1,3 +1,4 @@
+/// Web server specific config
 #[derive(Clone, Debug, StructOpt)]
 pub struct WebConfig {
     /// Whether to run the application in debug mode

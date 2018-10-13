@@ -5,6 +5,7 @@
 // #![feature(custom_derive, tool_lints, try_from)]
 // #![allow(clippy::needless_pass_by_value)]
 #![allow(proc_macro_derive_resolution_fallback)]
+// #![deny(missing_docs)]
 
 #[macro_use]
 extern crate diesel;

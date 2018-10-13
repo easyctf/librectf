@@ -1,11 +1,32 @@
-use actix_web::{http::Cookie, HttpRequest, HttpResponse, Json};
+use actix_web::{
+    self,
+    middleware::{Middleware, Response},
+    App, HttpRequest, HttpResponse, Json,
+};
 use bcrypt;
-use cookie::SameSite;
 use diesel::{self, prelude::*};
 use jsonwebtoken::{self, Header};
 
-use super::{errors::WebError, DbConn, State};
+use super::{errors::WebError, DbConn, State, WebConfig};
 use models::{NewUser, User};
+
+pub fn app(state: State, config: &WebConfig) -> App<State> {
+    App::with_state(state)
+        .resource("/user/login", |r| r.post().with(login))
+        .resource("/user/register", |r| r.post().with(register))
+}
+
+pub struct LoginMiddleware;
+
+impl<S> Middleware<S> for LoginMiddleware {
+    fn response(
+        &self,
+        req: &HttpRequest<S>,
+        mut resp: HttpResponse,
+    ) -> actix_web::Result<Response> {
+        Ok(Response::Done(resp))
+    }
+}
 
 #[derive(Deserialize)]
 pub struct LoginForm {
@@ -43,8 +64,9 @@ pub fn login((req, form, db): (HttpRequest<State>, Json<LoginForm>, DbConn)) -> 
 
             // generate jwt
             // TODO don't expect() this
-            let token = jsonwebtoken::encode(&Header::default(), &claim, state.secret_key.as_ref())
-                .expect("failed to generate jwt");
+            let token =
+                jsonwebtoken::encode(&Header::default(), &claim, state.get_secret_key().as_ref())
+                    .expect("failed to generate jwt");
             // let cookie = Cookie::build("user", token)
             //     .same_site(SameSite::Strict)
             //     .finish();

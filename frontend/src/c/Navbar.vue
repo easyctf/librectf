@@ -20,7 +20,7 @@
                                 <template slot="button-content">
                                     {{ username }}
                                 </template>
-                                <b-dropdown-item :to="{ name: 'user/profile' }">Me</b-dropdown-item>
+                                <b-dropdown-item :to="{ name: 'team/profile' }">My Team</b-dropdown-item>
                                 <b-dropdown-item @click="logout">Logout</b-dropdown-item>
                             </b-nav-item-dropdown>
                         </template>
