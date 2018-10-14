@@ -1,3 +1,4 @@
+mod base;
 mod config;
 mod db;
 mod errors;
@@ -24,8 +25,13 @@ pub fn run(config: WebConfig) -> Result<(), Error> {
 
     let addr = SocketAddrV4::new(Ipv4Addr::from_str(&config.bind_host)?, config.bind_port);
 
-    server::new(move || vec![team::app(state.clone()), user::app(state.clone())])
-        .bind(addr)
-        .map_err(|err| AddressBindError(err).into())
-        .map(|server| server.run())
+    server::new(move || {
+        vec![
+            base::app(state.clone()),
+            team::app(state.clone()),
+            user::app(state.clone()),
+        ]
+    }).bind(addr)
+    .map_err(|err| AddressBindError(err).into())
+    .map(|server| server.run())
 }

@@ -16,6 +16,7 @@ extern crate actix_web;
 extern crate base64;
 extern crate bcrypt;
 extern crate cache;
+extern crate chrono;
 extern crate cookie;
 extern crate env_logger;
 #[macro_use]
@@ -29,6 +30,7 @@ extern crate mime_guess;
 extern crate regex;
 extern crate serde;
 extern crate serde_cbor;
+#[macro_use]
 extern crate serde_json;
 #[macro_use]
 extern crate serde_derive;

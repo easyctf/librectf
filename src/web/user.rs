@@ -113,6 +113,7 @@ struct RegisterForm {
 
 fn register((form, db): (Json<RegisterForm>, DbConn)) -> HttpResponse {
     use schema::users;
+
     let new_user: NewUser = match form.into_inner().into() {
         Ok(user) => user,
         Err(err) => {
@@ -120,6 +121,7 @@ fn register((form, db): (Json<RegisterForm>, DbConn)) -> HttpResponse {
             return HttpResponse::BadRequest().json(err.to_string());
         }
     };
+
     diesel::insert_into(users::table)
         .values(new_user)
         .execute(&*db)
