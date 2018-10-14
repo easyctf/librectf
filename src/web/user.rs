@@ -51,6 +51,9 @@ impl Middleware<State> for LoginRequired {
             }
         };
 
+        let mut ext = req.extensions_mut();
+        ext.insert(claims);
+
         Ok(Started::Done)
     }
 }
@@ -62,7 +65,8 @@ struct LoginForm {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-struct LoginClaim {
+pub struct LoginClaim {
+    pub id: i32,
     username: String,
     admin: bool,
 }
@@ -85,6 +89,7 @@ fn login((req, form, db): (HttpRequest<State>, Json<LoginForm>, DbConn)) -> Http
                 })
         }).map(|user| {
             let claim = LoginClaim {
+                id: user.id,
                 username: user.name.clone(),
                 admin: user.admin,
             };

@@ -18,3 +18,11 @@ pub struct User {
     pub admin: bool,
     pub team_id: Option<i32>,
 }
+
+#[derive(Queryable)]
+pub struct Team {
+    pub id: i32,
+    pub name: String,
+    pub affiliation: Option<String>,
+    pub banned: bool,
+}

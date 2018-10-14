@@ -14,7 +14,8 @@ CREATE TABLE `chals` (
 CREATE TABLE `teams` (
     `id` INTEGER PRIMARY KEY AUTO_INCREMENT,
     `name` VARCHAR(20) NOT NULL,
-    `banned` INTEGER NOT NULL,
+    `affiliation` VARCHAR(20),
+    `banned` BOOLEAN NOT NULL,
 
     -- constraints
     UNIQUE (`name`)

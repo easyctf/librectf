@@ -19,7 +19,7 @@ fn scoreboard(db: DbConn) -> HttpResponse {
     struct ScoreboardEntry {
         score: i32,
         #[serde(skip)]
-        last_update: NaiveDateTime,
+        _last_update: NaiveDateTime,
         teamname: String,
     }
 
