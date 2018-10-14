@@ -17,9 +17,9 @@ Each directory *must* have a `meta.toml` that contains metadata about the challe
 As an example, a full configuration for an automatically generated Caesar cipher challenge is provided here:
 
 ```toml
-title: "Caesar cipher"
-description: "Can you crack this Caesar cipher?"
-grader: "grader.py"
+title = "Caesar cipher"
+description = "Can you crack this Caesar cipher?"
+grader = "grader.py"
 ```
 
 ## Grader
