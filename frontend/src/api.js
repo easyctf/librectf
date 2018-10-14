@@ -10,6 +10,14 @@ class API {
         });
     }
 
+    static UserRegister(email, username, password) {
+        return axios.post(baseUrl + "/user/register", {
+            email,
+            username,
+            password,
+        });
+    }
+
     static TeamCreate(name) {
         let token = localStorage.getItem("token");
         if (!token) return new Promise((_, reject) => reject());

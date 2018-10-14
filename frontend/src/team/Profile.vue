@@ -3,13 +3,9 @@
         <!-- Jumbo header -->
         <b-jumbotron>
             <b-container>
-                 <b-dropdown right text="Dropdown Button" class="float-right">
-                    <b-dropdown-item>First Action</b-dropdown-item>
-                    <b-dropdown-item>Second Action</b-dropdown-item>
-                    <b-dropdown-item>Third Action</b-dropdown-item>
-                    <b-dropdown-divider></b-dropdown-divider>
-                    <b-dropdown-item>Something else here...</b-dropdown-item>
-                    <b-dropdown-item disabled>Disabled action</b-dropdown-item>
+                 <b-dropdown right text="Actions" class="float-right">
+                    <b-dropdown-item>Edit Team Information</b-dropdown-item>
+                    <b-dropdown-item>Manage Members</b-dropdown-item>
                 </b-dropdown>
 
                 <h1>My Team Name</h1>
@@ -25,7 +21,7 @@
                     <b-card header="Team Members"
                         header-tag="header"
                         no-body>
-                        <b-list-group flush>
+                        <b-list-group>
                             <b-list-group-item>Cras justo odio</b-list-group-item>
                             <b-list-group-item>Dapibus ac facilisis in</b-list-group-item>
                             <b-list-group-item>Vestibulum at eros</b-list-group-item>

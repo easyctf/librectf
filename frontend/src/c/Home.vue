@@ -1,10 +1,10 @@
 <template>
-    <b-container id="home">
-        <b-jumbotron
-            header="OpenCTF"
-            lead="Open-source CTF framework.">
-        </b-jumbotron>
-    </b-container>
+    <b-jumbotron>
+        <b-container>
+            <h1 class="display-3">OpenCTF</h1>
+            <p class="lead">Open-source CTF framework.</p>
+        </b-container>
+    </b-jumbotron>
 </template>
 
 <script>

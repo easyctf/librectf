@@ -107,7 +107,7 @@ fn login((req, form, db): (HttpRequest<State>, Json<LoginForm>, DbConn)) -> Http
 #[derive(Deserialize)]
 struct RegisterForm {
     email: String,
-    name: String,
+    username: String,
     password: String,
 }
 
@@ -136,7 +136,7 @@ impl Into<Result<NewUser, WebError>> for RegisterForm {
     fn into(self) -> Result<NewUser, WebError> {
         Ok(NewUser {
             email: self.email,
-            name: self.name,
+            name: self.username,
             password: bcrypt::hash(&self.password, bcrypt::DEFAULT_COST)?,
         })
     }
