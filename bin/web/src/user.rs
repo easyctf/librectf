@@ -4,9 +4,9 @@ use actix_web::{
     App, HttpRequest, HttpResponse, Json,
 };
 use bcrypt;
-use openctf_core::models::{NewUser, User};
 use diesel::{self, prelude::*};
 use jsonwebtoken::{self, Header, Validation};
+use openctf_core::models::{NewUser, User};
 
 use super::{errors::WebError, DbConn, State};
 

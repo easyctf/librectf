@@ -1,6 +1,6 @@
 use actix_web::{App, HttpRequest, HttpResponse, Json};
-use openctf_core::models::{Team, User};
 use diesel::prelude::*;
+use openctf_core::models::{Team, User};
 
 use super::{
     user::{LoginClaim, LoginRequired},

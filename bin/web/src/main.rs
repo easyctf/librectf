@@ -35,12 +35,12 @@ use std::net::{Ipv4Addr, SocketAddrV4};
 use std::str::FromStr;
 
 use actix_web::server;
-use openctf_core::{establish_connection};
+use openctf_core::establish_connection;
 use structopt::StructOpt;
 
 use config::WebConfig;
-use errors::WebError;
 use db::Connection as DbConn;
+use errors::WebError;
 use state::State;
 
 #[derive(Debug, StructOpt)]
@@ -54,7 +54,6 @@ impl WebCommand {
         run(self.config.clone())
     }
 }
-
 
 pub fn run(config: WebConfig) -> Result<(), WebError> {
     let pool = establish_connection(&config.database_url);

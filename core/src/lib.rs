@@ -7,7 +7,6 @@
 #![allow(proc_macro_derive_resolution_fallback)]
 // #![deny(missing_docs)]
 
-
 extern crate cache;
 extern crate chrono;
 #[macro_use]
@@ -24,7 +23,6 @@ extern crate serde;
 extern crate serde_json;
 extern crate structopt;
 extern crate task_queue;
-extern crate toml;
 
 #[macro_use]
 mod macros;
@@ -36,5 +34,5 @@ pub mod schema;
 mod db;
 mod tasks;
 
-pub use errors::Error;
 pub use db::{establish_connection, Pool};
+pub use errors::Error;

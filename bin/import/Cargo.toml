@@ -4,3 +4,8 @@ version = "0.1.0"
 authors = ["Michael Zhang <failed.down@gmail.com>"]
 
 [dependencies]
+env_logger = "0.5"
+log = "0.4"
+openctf-core = { path = "../../core" }
+structopt = "0.2"
+toml = "0.4"
