@@ -2,6 +2,8 @@ import Vue from "vue";
 import VueRouter from "vue-router";
 Vue.use(VueRouter);
 
+import NProgress from "nprogress";
+
 import Home from "./c/Home";
 import TeamCreate from "./team/Create";
 import TeamProfile from "./team/Profile";
@@ -49,6 +51,17 @@ const router = new VueRouter({
         document.title = to.meta.title ? (to.meta.title + " - OpenCTF") : "OpenCTF";
         next();
     }
+});
+
+router.beforeResolve((to, from, next) => {
+    if (to.name) {
+        NProgress.start();
+    }
+    next();
+})
+
+router.afterEach((to, from) => {
+    NProgress.done()
 });
 
 export default router;
