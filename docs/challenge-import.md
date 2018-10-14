@@ -18,9 +18,7 @@ As an example, a full configuration for an automatically generated Caesar cipher
 
 ```toml
 title: "Caesar cipher"
-description: """
-    Can you crack this Caesar cipher?
-"""
+description: "Can you crack this Caesar cipher?"
 grader: "grader.py"
 ```
 
