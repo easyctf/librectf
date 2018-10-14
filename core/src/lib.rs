@@ -7,25 +7,20 @@
 #![allow(proc_macro_derive_resolution_fallback)]
 // #![deny(missing_docs)]
 
-#[macro_use]
-extern crate diesel;
-extern crate r2d2;
-extern crate r2d2_diesel;
 
-extern crate base64;
 extern crate cache;
 extern crate chrono;
-extern crate cookie;
+#[macro_use]
+extern crate diesel;
 extern crate env_logger;
 #[macro_use]
 extern crate failure;
-extern crate idna;
 extern crate lazy_static;
 extern crate log;
-extern crate mime_guess;
+extern crate r2d2;
+extern crate r2d2_diesel;
 extern crate regex;
 extern crate serde;
-extern crate serde_cbor;
 extern crate serde_json;
 extern crate structopt;
 extern crate task_queue;
