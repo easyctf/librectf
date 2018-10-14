@@ -1,0 +1,32 @@
+[package]
+name = "openctf-core"
+version = "0.1.0"
+authors = ["Michael <localhost>"]
+build = "src/build.rs"
+
+[dependencies]
+actix-web = "0.7"
+base64 = "0.9"
+bcrypt = "0.2"
+cache = { path = "../components/cache" }
+chrono = "0.4"
+cookie = "0.11"
+diesel = { version = "1.3", features = ["chrono", "mysql"] }
+env_logger = "0.5"
+failure = "0.1.1"
+idna = "0.1"
+jail = { path = "../components/jail" }
+jsonwebtoken = "5.0"
+lazy_static = "1.0"
+log = "0.4"
+mime_guess = "2.0.0-alpha.6"
+r2d2 = "0.8"
+r2d2-diesel = "1.0"
+regex = "1.0"
+serde = "1.0"
+serde_cbor = "0.9"
+serde_derive = "1.0"
+serde_json = "1.0"
+structopt = "0.2"
+task_queue = { path = "../components/task_queue" }
+toml = "0.4"

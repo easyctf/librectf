@@ -1,9 +1,9 @@
 extern crate failure;
-extern crate openctf;
+extern crate openctf_core;
 extern crate structopt;
 
-use openctf::cli::OpenCTF;
-use openctf::Error;
+use openctf_core::cli::OpenCTF;
+use openctf_core::Error;
 use structopt::StructOpt;
 
 fn main() -> Result<(), Error> {

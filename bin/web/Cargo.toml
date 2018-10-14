@@ -1,0 +1,9 @@
+[package]
+name = "openctf-web"
+version = "0.1.0"
+authors = ["Michael Zhang <failed.down@gmail.com>"]
+
+[dependencies]
+openctf-core = { path = "../../core" }
+failure = "0.1"
+structopt = "0.2"

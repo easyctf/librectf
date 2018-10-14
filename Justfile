@@ -5,4 +5,4 @@ check:
     cargo watch --ignore "frontend/*" -x 'check'
 
 run:
-    cargo watch --ignore "frontend/*" -x 'run -- web'
+    cargo watch --ignore "frontend/*" -x 'run -p openctf-web -- web'
