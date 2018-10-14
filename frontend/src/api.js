@@ -3,10 +3,18 @@ import axios from "axios";
 const baseUrl = "/api/v1";
 
 class API {
-    static Login(email, password) {
+    static UserLogin(email, password) {
         return axios.post(baseUrl + "/user/login", {
-            email: email,
-            password: password,
+            email,
+            password,
+        });
+    }
+
+    static TeamCreate(name) {
+        let token = localStorage.getItem("token");
+        if (!token) return new Promise((_, reject) => reject());
+        return axios.post(baseUrl + "/team/create", {
+            name,
         });
     }
 }

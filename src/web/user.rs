@@ -1,26 +1,57 @@
 use actix_web::{
     self,
-    middleware::{Middleware, Response},
+    middleware::{Middleware, Started},
     App, HttpRequest, HttpResponse, Json,
 };
 use bcrypt;
 use diesel::{self, prelude::*};
-use jsonwebtoken::{self, Header};
+use jsonwebtoken::{self, Header, Validation};
 
 use super::{errors::WebError, DbConn, State};
 use models::{NewUser, User};
 
 pub fn app(state: State) -> App<State> {
     App::with_state(state)
-        .resource("/user/login", |r| r.post().with(login))
-        .resource("/user/register", |r| r.post().with(register))
+        .prefix("/user")
+        .resource("/login", |r| r.post().with(login))
+        .resource("/register", |r| r.post().with(register))
 }
 
-pub struct LoginMiddleware;
+pub struct LoginRequired;
 
-impl<S> Middleware<S> for LoginMiddleware {
-    fn response(&self, _req: &HttpRequest<S>, resp: HttpResponse) -> actix_web::Result<Response> {
-        Ok(Response::Done(resp))
+impl Middleware<State> for LoginRequired {
+    fn start(&self, req: &HttpRequest<State>) -> actix_web::Result<Started> {
+        let state = req.state();
+
+        let headers = req.headers();
+        let token = match headers.get("token") {
+            Some(token) => token,
+            None => {
+                return Ok(Started::Response(
+                    HttpResponse::Forbidden().json("access denied"),
+                ))
+            }
+        };
+
+        // TODO: don't unwrap here
+        let validation = Validation {
+            leeway: 60,
+            ..Default::default()
+        };
+        let claims = match jsonwebtoken::decode::<LoginClaim>(
+            token.to_str().unwrap(),
+            &state.get_secret_key(),
+            &validation,
+        ) {
+            Ok(claims) => claims,
+            _ => {
+                return Ok(Started::Response(
+                    HttpResponse::Forbidden().json("access denied"),
+                ))
+            }
+        };
+
+        Ok(Started::Done)
     }
 }
 
@@ -59,10 +90,10 @@ fn login((req, form, db): (HttpRequest<State>, Json<LoginForm>, DbConn)) -> Http
             };
 
             // generate jwt
-            // TODO don't expect() this
+            // TODO don't unwrap() this
             let token =
                 jsonwebtoken::encode(&Header::default(), &claim, state.get_secret_key().as_ref())
-                    .expect("failed to generate jwt");
+                    .unwrap();
             // let cookie = Cookie::build("user", token)
             //     .same_site(SameSite::Strict)
             //     .finish();

@@ -26,7 +26,7 @@ const store = new Vuex.Store({
     actions: {
         login({ commit }, credentials) {
             commit("LOGIN_ATTEMPT");
-            return API.Login(credentials.email, credentials.password).then((result) => {
+            return API.UserLogin(credentials.email, credentials.password).then((result) => {
                 localStorage.setItem("token", result.data);
                 let session = jwtDecode(result.data);
                 commit("LOGIN_SUCCESS", session);

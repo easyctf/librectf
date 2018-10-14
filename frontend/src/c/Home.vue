@@ -1,10 +1,10 @@
 <template>
-    <div class="container">
+    <b-container id="home">
         <b-jumbotron
             header="OpenCTF"
             lead="Open-source CTF framework.">
         </b-jumbotron>
-    </div>
+    </b-container>
 </template>
 
 <script>
@@ -12,3 +12,9 @@
         name: "Home",
     }
 </script>
+
+<style lang="scss" scoped>
+    #home {
+        margin-top: 28px;
+    }
+</style>
