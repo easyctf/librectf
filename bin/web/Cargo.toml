@@ -4,6 +4,18 @@ version = "0.1.0"
 authors = ["Michael Zhang <failed.down@gmail.com>"]
 
 [dependencies]
-openctf-core = { path = "../../core" }
+actix-web = "0.7"
+bcrypt = "0.2"
+chrono = "0.4"
+diesel = { version = "1.3", features = ["chrono", "mysql"] }
+env_logger = "0.5"
 failure = "0.1"
+jsonwebtoken = "5.0"
+log = "0.4"
+openctf-core = { path = "../../core" }
+r2d2 = "0.8"
+r2d2-diesel = "1.0"
+serde = "1.0"
+serde_derive = "1.0"
+serde_json = "1.0"
 structopt = "0.2"

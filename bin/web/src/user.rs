@@ -4,11 +4,11 @@ use actix_web::{
     App, HttpRequest, HttpResponse, Json,
 };
 use bcrypt;
+use openctf_core::models::{NewUser, User};
 use diesel::{self, prelude::*};
 use jsonwebtoken::{self, Header, Validation};
 
 use super::{errors::WebError, DbConn, State};
-use models::{NewUser, User};
 
 pub fn app(state: State) -> App<State> {
     App::with_state(state)
@@ -72,7 +72,7 @@ pub struct LoginClaim {
 }
 
 fn login((req, form, db): (HttpRequest<State>, Json<LoginForm>, DbConn)) -> HttpResponse {
-    use schema::users::dsl::*;
+    use openctf_core::schema::users::dsl::*;
     let state = req.state();
     let form = form.into_inner();
     users
@@ -117,7 +117,7 @@ struct RegisterForm {
 }
 
 fn register((form, db): (Json<RegisterForm>, DbConn)) -> HttpResponse {
-    use schema::users;
+    use openctf_core::schema::users;
 
     let new_user: NewUser = match form.into_inner().into() {
         Ok(user) => user,

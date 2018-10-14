@@ -12,9 +12,7 @@ extern crate diesel;
 extern crate r2d2;
 extern crate r2d2_diesel;
 
-extern crate actix_web;
 extern crate base64;
-extern crate bcrypt;
 extern crate cache;
 extern crate chrono;
 extern crate cookie;
@@ -22,19 +20,13 @@ extern crate env_logger;
 #[macro_use]
 extern crate failure;
 extern crate idna;
-extern crate jsonwebtoken;
 extern crate lazy_static;
-#[macro_use]
 extern crate log;
 extern crate mime_guess;
 extern crate regex;
 extern crate serde;
 extern crate serde_cbor;
-#[macro_use]
 extern crate serde_json;
-#[macro_use]
-extern crate serde_derive;
-#[macro_use]
 extern crate structopt;
 extern crate task_queue;
 extern crate toml;
@@ -42,13 +34,12 @@ extern crate toml;
 #[macro_use]
 mod macros;
 
-pub mod cli;
-mod db;
-mod errors;
+pub mod errors;
 pub mod models;
-mod schema;
+pub mod schema;
+
+mod db;
 mod tasks;
-mod util;
-pub mod web;
 
 pub use errors::Error;
+pub use db::{establish_connection, Pool};

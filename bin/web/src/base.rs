@@ -13,7 +13,7 @@ pub fn app(state: State) -> App<State> {
 }
 
 fn scoreboard(db: DbConn) -> HttpResponse {
-    use schema::{chals, solves, teams};
+    use openctf_core::schema::{chals, solves, teams};
 
     #[derive(Queryable, Serialize)]
     struct ScoreboardEntry {
