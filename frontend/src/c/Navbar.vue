@@ -5,7 +5,7 @@
             <b-navbar-brand :to="{ name: 'index' }">OpenCTF</b-navbar-brand>
             <b-collapse is-nav id="nav_collapse">
                 <b-navbar-nav>
-                    <b-nav-item href="#">Scoreboard</b-nav-item>
+                    <b-nav-item :to="{ name: 'scoreboard' }">Scoreboard</b-nav-item>
                 </b-navbar-nav>
                     <b-navbar-nav class="ml-auto">
                         <template v-if="session">
@@ -20,7 +20,7 @@
                                 <template slot="button-content">
                                     {{ username }}
                                 </template>
-                                <b-dropdown-item :to="{ name: 'team/profile' }">My Team</b-dropdown-item>
+                                <b-dropdown-item :to="{ name: 'team' }">My Team</b-dropdown-item>
                                 <b-dropdown-item :to="{ name: 'user/settings' }">Settings</b-dropdown-item>
                                 <b-dropdown-divider></b-dropdown-divider>
                                 <b-dropdown-item @click="logout">Logout</b-dropdown-item>

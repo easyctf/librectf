@@ -28,7 +28,6 @@ fn profile((req, db): (HttpRequest<State>, DbConn)) -> HttpResponse {
     // TODO: don't unwrap
     let ext = req.extensions();
     let claims = ext.get::<LoginClaim>().unwrap();
-    println!("{:?}", claims);
 
     let user = {
         use openctf_core::schema::users::dsl::*;

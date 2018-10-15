@@ -5,10 +5,11 @@ Vue.use(VueRouter);
 import NProgress from "nprogress";
 
 import Home from "./c/Home";
-import TeamCreate from "./team/Create";
-import TeamProfile from "./team/Profile";
+import Scoreboard from "./c/Scoreboard";
+import Team from "./team/Index";
 import UserLogin from "./user/Login";
 import UserRegister from "./user/Register";
+import UserSettings from "./user/Settings";
 
 const routes = [
     {
@@ -17,15 +18,14 @@ const routes = [
         component: Home,
     },
     {
-        name: "team/create",
-        path: "/team/create",
-        title: "Create Team",
-        component: TeamCreate,
+        name: "scoreboard",
+        path: "/scoreboard",
+        component: Scoreboard,
     },
     {
-        name: "team/profile",
-        path: "/team/profile",
-        component: TeamProfile,
+        name: "team",
+        path: "/team",
+        component: Team,
     },
     {
         name: "user/login",
@@ -40,7 +40,7 @@ const routes = [
     {
         name: "user/settings",
         path: "/user/settings",
-        component: UserRegister,
+        component: UserSettings,
     },
 ];
 

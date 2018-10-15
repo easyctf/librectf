@@ -1,4 +1,4 @@
-use actix_web::{App, HttpResponse};
+use actix_web::{App, HttpRequest, HttpResponse};
 use chrono::NaiveDateTime;
 use diesel::{debug_query, dsl::sql, prelude::*};
 use diesel::{
@@ -8,22 +8,32 @@ use diesel::{
 
 use super::{DbConn, State};
 
+// TODO: make this a config option later
+const RESULTS_PER_PAGE: i64 = 30;
+
 pub fn app(state: State) -> App<State> {
     App::with_state(state)
         .prefix("/base")
+        .resource("/scoreboard/{n}", |r| r.with(scoreboard))
         .resource("/scoreboard", |r| r.with(scoreboard))
 }
 
-fn scoreboard(db: DbConn) -> HttpResponse {
+#[derive(Queryable, Serialize)]
+struct ScoreboardEntry {
+    score: i32,
+    #[serde(skip)]
+    _last_update: NaiveDateTime,
+    teamname: String,
+}
+
+fn scoreboard((req, db): (HttpRequest<State>, DbConn)) -> HttpResponse {
     use openctf_core::schema::{chals, solves, teams};
 
-    #[derive(Queryable, Serialize)]
-    struct ScoreboardEntry {
-        score: i32,
-        #[serde(skip)]
-        _last_update: NaiveDateTime,
-        teamname: String,
-    }
+    let params = req.match_info();
+    let page: i64 = match params.query("n") {
+        Ok(n) if n >= 1 => n,
+        _ => 1,
+    };
 
     let query = solves::table
         .inner_join(teams::table)
@@ -45,6 +55,10 @@ fn scoreboard(db: DbConn) -> HttpResponse {
             sql::<Integer>("`score`").desc(),
             sql::<Datetime>("`last_update`"),
         ));
+
+    let query = query
+        .limit(RESULTS_PER_PAGE)
+        .offset((page - 1) * RESULTS_PER_PAGE);
 
     let dbg = debug_query::<Mysql, _>(&query).to_string();
 

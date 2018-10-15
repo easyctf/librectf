@@ -72,13 +72,15 @@ pub fn run(config: WebConfig) -> Result<(), WebError> {
     .map_err(|err| errors::AddressBindError(err).into())
     .map(|server| {
         error!("starting the server...");
-        println!("FUCK");
+        println!("{:?}", ::std::env::var("RUST_LOG"));
         server.run()
     })
 }
 
 fn main() -> Result<(), WebError> {
-    env_logger::init();
+    let env = env_logger::Env::default().filter_or(env_logger::DEFAULT_FILTER_ENV, "warn");
+    env_logger::Builder::from_env(env).init();
+
     let opt = WebCommand::from_args();
     opt.run()
 }
