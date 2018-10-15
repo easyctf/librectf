@@ -6,13 +6,14 @@ use diesel::{
     sql_types::{Datetime, Integer},
 };
 
-use super::{DbConn, State};
+use super::{APIMiddleware, DbConn, State};
 
 // TODO: make this a config option later
 const RESULTS_PER_PAGE: i64 = 30;
 
 pub fn app(state: State) -> App<State> {
     App::with_state(state)
+        .middleware(APIMiddleware)
         .prefix("/base")
         .resource("/scoreboard/{n}", |r| r.with(scoreboard))
         .resource("/scoreboard", |r| r.with(scoreboard))

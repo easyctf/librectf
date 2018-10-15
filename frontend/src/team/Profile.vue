@@ -61,7 +61,7 @@
         data: () => ({
             team: null,
         }),
-        async created() {
+        async beforeRouteEnter() {
             let result = await API.TeamProfile();
             this.team = result.data.team;
         }

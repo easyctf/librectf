@@ -9,7 +9,7 @@
                 </b-navbar-nav>
                     <b-navbar-nav class="ml-auto">
                         <template v-if="session">
-                            <b-nav-item :to="{ name: 'index' }">Challenges</b-nav-item>
+                            <b-nav-item :to="{ name: 'chal/list' }">Challenges</b-nav-item>
                             <b-nav-item-dropdown right v-if="session.admin">
                                 <template slot="button-content">
                                     Admin

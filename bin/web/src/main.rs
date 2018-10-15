@@ -23,6 +23,7 @@ extern crate serde_derive;
 #[macro_use]
 extern crate serde_json;
 
+mod api;
 mod base;
 mod config;
 mod db;
@@ -38,6 +39,7 @@ use actix_web::server;
 use openctf_core::establish_connection;
 use structopt::StructOpt;
 
+use api::APIMiddleware;
 use config::WebConfig;
 use db::Connection as DbConn;
 use errors::WebError;
@@ -70,11 +72,7 @@ pub fn run(config: WebConfig) -> Result<(), WebError> {
         ]
     }).bind(addr)
     .map_err(|err| errors::AddressBindError(err).into())
-    .map(|server| {
-        error!("starting the server...");
-        println!("{:?}", ::std::env::var("RUST_LOG"));
-        server.run()
-    })
+    .map(|server| server.run())
 }
 
 fn main() -> Result<(), WebError> {

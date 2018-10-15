@@ -6,7 +6,8 @@ import NProgress from "nprogress";
 
 import Home from "./c/Home";
 import Scoreboard from "./c/Scoreboard";
-import Team from "./team/Index";
+import ChalList from "./chal/List";
+import TeamIndex from "./team/Index";
 import UserLogin from "./user/Login";
 import UserRegister from "./user/Register";
 import UserSettings from "./user/Settings";
@@ -23,9 +24,14 @@ const routes = [
         component: Scoreboard,
     },
     {
+        name: "chal/list",
+        path: "/chal/list",
+        component: ChalList,
+    },
+    {
         name: "team",
         path: "/team",
-        component: Team,
+        component: TeamIndex,
     },
     {
         name: "user/login",

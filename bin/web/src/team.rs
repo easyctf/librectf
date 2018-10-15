@@ -4,11 +4,12 @@ use openctf_core::models::{Team, User};
 
 use super::{
     user::{LoginClaim, LoginRequired},
-    DbConn, State,
+    APIMiddleware, DbConn, State,
 };
 
 pub fn app(state: State) -> App<State> {
     App::with_state(state)
+        .middleware(APIMiddleware)
         .middleware(LoginRequired)
         .prefix("/team")
         .resource("/create", |r| r.post().with(create))

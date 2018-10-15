@@ -9,10 +9,11 @@ use diesel::{self, prelude::*};
 use jsonwebtoken::{self, Header, Validation};
 use openctf_core::models::{NewUser, User};
 
-use super::{errors::WebError, DbConn, State};
+use super::{errors::WebError, APIMiddleware, DbConn, State};
 
 pub fn app(state: State) -> App<State> {
     App::with_state(state)
+        .middleware(APIMiddleware)
         .prefix("/user")
         .resource("/login", |r| r.post().with(login))
         .resource("/register", |r| r.post().with(register))
@@ -47,6 +48,7 @@ impl Middleware<State> for LoginRequired {
             match jsonwebtoken::decode::<LoginClaim>(token, &state.get_secret_key(), &validation) {
                 Ok(claims) => claims,
                 err => {
+                    error!("Error decoding JWT from user: {:?}", err);
                     return Ok(Started::Response(
                         HttpResponse::Forbidden().json("access denied 1"),
                     ));
