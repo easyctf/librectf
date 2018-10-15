@@ -1,4 +1,7 @@
 # Summary
 
 - [Intro](./intro.md)
-- [Importing Challenges](./challenge-import.md)
+- Setup
+  - [Importing Challenges](./challenge-import.md)
+- Components
+  - [Filestore](./filestore.md)

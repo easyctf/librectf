@@ -2,6 +2,7 @@
 members = [
     "core",
 
+    "bin/filestore",
     "bin/import",
     "bin/web",
     
