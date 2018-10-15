@@ -20,9 +20,12 @@ Roadmap
 
 See the [milestone](https://github.com/easyctf/openctf/milestone/3) for the 1.0 release for the roadmap.
 
-Contact
+License
 -------
 
-Author: Michael Zhang
+This project is licensed under either of
 
-License: MIT
+ * Apache License, Version 2.0, ([LICENSE-APACHE](LICENSE-APACHE) or http://www.apache.org/licenses/LICENSE-2.0)
+ * MIT license ([LICENSE-MIT](LICENSE-MIT) or http://opensource.org/licenses/MIT)
+
+at your option.
