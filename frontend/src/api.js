@@ -3,6 +3,17 @@ import axios from "axios";
 const baseUrl = "/api/v1";
 
 class API {
+    static jwtGet(url) {
+        let token = localStorage.getItem("token");
+        if (!token) return new Promise((_, reject) => reject());
+        return axios.get(url, { headers: { Authorization: `Token ${token}` }});
+    }
+    static jwtPost(url, data) {
+        let token = localStorage.getItem("token");
+        if (!token) return new Promise((_, reject) => reject());
+        return axios.post(url, data, { headers: { Authorization: `Token ${token}` }});
+    }
+
     static UserLogin(email, password) {
         return axios.post(baseUrl + "/user/login", {
             email,
@@ -19,9 +30,13 @@ class API {
     }
 
     static TeamCreate(name) {
-        let token = localStorage.getItem("token");
-        if (!token) return new Promise((_, reject) => reject());
-        return axios.post(baseUrl + "/team/create", {
+        return API.jwtPost(baseUrl + "/team/create", {
+            name,
+        });
+    }
+
+    static TeamProfile() {
+        return API.jwtGet(baseUrl + "/team/profile", {
             name,
         });
     }

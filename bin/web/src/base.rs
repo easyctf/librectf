@@ -9,7 +9,9 @@ use diesel::{
 use super::{DbConn, State};
 
 pub fn app(state: State) -> App<State> {
-    App::with_state(state).resource("/scoreboard", |r| r.with(scoreboard))
+    App::with_state(state)
+        .prefix("/base")
+        .resource("/scoreboard", |r| r.with(scoreboard))
 }
 
 fn scoreboard(db: DbConn) -> HttpResponse {

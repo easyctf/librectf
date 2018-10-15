@@ -11,7 +11,7 @@ use toml;
 pub enum ImportCommand {
     /// Import challenges from a directory into the database
     #[structopt(name = "import")]
-    Chal(ImporChalCommand),
+    Chal(ImportChalCommand),
 }
 
 impl ImportCommand {
@@ -23,13 +23,13 @@ impl ImportCommand {
 }
 
 #[derive(Debug, StructOpt)]
-pub struct ImporChalCommand {
+pub struct ImportChalCommand {
     /// Root challenge directory
     #[structopt(parse(from_os_str))]
     challenge_dir: PathBuf,
 }
 
-impl ImporChalCommand {
+impl ImportChalCommand {
     pub fn run(&self) -> Result<(), Error> {
         let mut failed: Vec<(Option<PathBuf>, Error)> = Vec::new();
         for entry in read_dir(&self.challenge_dir).map_err(|err| DirTraversalError(err))? {

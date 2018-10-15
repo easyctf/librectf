@@ -70,7 +70,11 @@ pub fn run(config: WebConfig) -> Result<(), WebError> {
         ]
     }).bind(addr)
     .map_err(|err| errors::AddressBindError(err).into())
-    .map(|server| server.run())
+    .map(|server| {
+        error!("starting the server...");
+        println!("FUCK");
+        server.run()
+    })
 }
 
 fn main() -> Result<(), WebError> {

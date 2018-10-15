@@ -12,7 +12,7 @@ pub fn app(state: State) -> App<State> {
         .middleware(LoginRequired)
         .prefix("/team")
         .resource("/create", |r| r.post().with(create))
-        .resource("/profile", |r| r.post().with(profile))
+        .resource("/profile", |r| r.get().with(profile))
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -28,6 +28,7 @@ fn profile((req, db): (HttpRequest<State>, DbConn)) -> HttpResponse {
     // TODO: don't unwrap
     let ext = req.extensions();
     let claims = ext.get::<LoginClaim>().unwrap();
+    println!("{:?}", claims);
 
     let user = {
         use openctf_core::schema::users::dsl::*;
@@ -36,7 +37,7 @@ fn profile((req, db): (HttpRequest<State>, DbConn)) -> HttpResponse {
     let team_id = match user.team_id {
         Some(team_id) => team_id,
         // TODO: think of a better status code for this
-        None => return HttpResponse::BadRequest().json(json!({ "team": null })),
+        None => return HttpResponse::Ok().json(json!({ "team": null })),
     };
 
     let team = {

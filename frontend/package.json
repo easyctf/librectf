@@ -11,6 +11,8 @@
     "@vue/component-compiler-utils": "^2.2.0",
     "babel-core": "^6.26.3",
     "babel-preset-env": "^1.7.0",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-stage-0": "^6.24.1",
     "bootstrap-vue": "^2.0.0-rc.11",
     "parcel": "^1.10.1",
     "sass": "^1.14.1",

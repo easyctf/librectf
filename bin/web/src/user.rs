@@ -4,6 +4,7 @@ use actix_web::{
     App, HttpRequest, HttpResponse, Json,
 };
 use bcrypt;
+use chrono::{self, serde::ts_milliseconds, DateTime, Utc};
 use diesel::{self, prelude::*};
 use jsonwebtoken::{self, Header, Validation};
 use openctf_core::models::{NewUser, User};
@@ -24,11 +25,15 @@ impl Middleware<State> for LoginRequired {
         let state = req.state();
 
         let headers = req.headers();
-        let token = match headers.get("token") {
-            Some(token) => token,
+        let token = match headers.get("Authorization").and_then(|t| t.to_str().ok()) {
+            Some(token) => if token.starts_with("Token ") {
+                token.trim_left_matches("Token ")
+            } else {
+                token
+            },
             None => {
                 return Ok(Started::Response(
-                    HttpResponse::Forbidden().json("access denied"),
+                    HttpResponse::Forbidden().json("access denied 1"),
                 ))
             }
         };
@@ -38,21 +43,18 @@ impl Middleware<State> for LoginRequired {
             leeway: 60,
             ..Default::default()
         };
-        let claims = match jsonwebtoken::decode::<LoginClaim>(
-            token.to_str().unwrap(),
-            &state.get_secret_key(),
-            &validation,
-        ) {
-            Ok(claims) => claims,
-            _ => {
-                return Ok(Started::Response(
-                    HttpResponse::Forbidden().json("access denied"),
-                ))
-            }
-        };
+        let decoded =
+            match jsonwebtoken::decode::<LoginClaim>(token, &state.get_secret_key(), &validation) {
+                Ok(claims) => claims,
+                err => {
+                    return Ok(Started::Response(
+                        HttpResponse::Forbidden().json("access denied 1"),
+                    ));
+                }
+            };
 
         let mut ext = req.extensions_mut();
-        ext.insert(claims);
+        ext.insert(decoded.claims);
 
         Ok(Started::Done)
     }
@@ -66,6 +68,8 @@ struct LoginForm {
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct LoginClaim {
+    #[serde(with = "ts_milliseconds")]
+    exp: DateTime<Utc>,
     pub id: i32,
     username: String,
     admin: bool,
@@ -89,6 +93,7 @@ fn login((req, form, db): (HttpRequest<State>, Json<LoginForm>, DbConn)) -> Http
                 })
         }).map(|user| {
             let claim = LoginClaim {
+                exp: Utc::now() + chrono::Duration::weeks(6),
                 id: user.id,
                 username: user.name.clone(),
                 admin: user.admin,
