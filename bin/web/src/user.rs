@@ -137,11 +137,10 @@ fn register((form, db): (Json<RegisterForm>, DbConn)) -> HttpResponse {
     diesel::insert_into(users::table)
         .values(new_user)
         .execute(&*db)
-        .map(|_| HttpResponse::Ok().json("Registration successful.".to_owned()))
+        .map(|_| HttpResponse::Ok().json("Registration successful."))
         .unwrap_or_else(|err| {
             error!("Diesel error on user/register: {}", err);
-            HttpResponse::BadRequest()
-                .json("Failed to complete registration, contact an admin.".to_owned())
+            HttpResponse::BadRequest().json("Failed to complete registration.")
         })
 }
 

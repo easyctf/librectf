@@ -19,6 +19,12 @@ pub struct User {
     pub team_id: Option<i32>,
 }
 
+#[derive(Insertable)]
+#[table_name = "teams"]
+pub struct NewTeam {
+    pub name: String,
+}
+
 #[derive(Queryable)]
 pub struct Team {
     pub id: i32,

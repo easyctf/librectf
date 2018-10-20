@@ -1,6 +1,6 @@
 use actix_web::{App, HttpRequest, HttpResponse, Json};
-use diesel::prelude::*;
-use openctf_core::models::{Team, User};
+use diesel::{self, prelude::*};
+use openctf_core::models::{NewTeam, Team, User};
 
 use super::{
     user::{LoginClaim, LoginRequired},
@@ -21,8 +21,59 @@ struct CreateTeamForm {
     name: String,
 }
 
-fn create(_form: Json<CreateTeamForm>) -> HttpResponse {
-    HttpResponse::Ok().json("lol")
+fn create((req, form, db): (HttpRequest<State>, Json<CreateTeamForm>, DbConn)) -> HttpResponse {
+    use diesel::result::Error;
+
+    let ext = req.extensions();
+    let claims = ext.get::<LoginClaim>().unwrap();
+    let form = form.into_inner();
+
+    let new_team = NewTeam { name: form.name };
+
+    db.transaction(|| {
+        // first, create the actual team
+        match {
+            use openctf_core::schema::teams;
+            diesel::insert_into(teams::table)
+                .values(new_team)
+                .execute(&*db)
+        } {
+            Err(err) => {
+                error!("Diesel error on team/create (1): {}", err);
+                return Err(Error::RollbackTransaction);
+            }
+            _ => (),
+        };
+
+        // now get the team name
+        let new_team = match {
+            use openctf_core::schema::teams::dsl::*;
+            teams.order_by(id.desc()).first::<Team>(&*db)
+        } {
+            Ok(team) => team,
+            Err(err) => {
+                error!("Diesel error on team/create (2): {}", err);
+                return Err(Error::RollbackTransaction);
+            }
+        };
+
+        // now update the users
+        match {
+            use openctf_core::schema::users::dsl::*;
+            diesel::update(users.find(claims.id))
+                .set(team_id.eq(new_team.id))
+                .execute(&*db)
+        } {
+            Err(err) => {
+                error!("Diesel error on team/create (3): {}", err);
+                return Err(Error::RollbackTransaction);
+            }
+            _ => (),
+        };
+
+        Ok(())
+    }).map(|_| HttpResponse::Ok().json("Created your team!"))
+    .unwrap_or_else(|_| HttpResponse::BadRequest().json("Failed to create a team."))
 }
 
 fn profile((req, db): (HttpRequest<State>, DbConn)) -> HttpResponse {
