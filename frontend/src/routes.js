@@ -8,6 +8,7 @@ import Home from "./c/Home";
 import Scoreboard from "./c/Scoreboard";
 import ChalList from "./chal/List";
 import TeamIndex from "./team/Index";
+import TeamProfile from "./team/Profile";
 import UserLogin from "./user/Login";
 import UserRegister from "./user/Register";
 import UserSettings from "./user/Settings";
@@ -32,6 +33,11 @@ const routes = [
         name: "team",
         path: "/team",
         component: TeamIndex,
+    },
+    {
+        name: "team/profile",
+        path: "/team/profile",
+        component: TeamProfile,
     },
     {
         name: "user/login",

@@ -35,10 +35,16 @@ class API {
         });
     }
 
-    static TeamProfile() {
-        return API.jwtGet(baseUrl + "/team/profile", {
-            name,
-        });
+    static TeamProfile(id) {
+        if (id === undefined) {
+            return API.jwtGet(baseUrl + "/team/me", {
+                name,
+            });
+        } else {
+            return API.jwtGet(baseUrl + "/team/profile/" + id, {
+                name,
+            });
+        }
     }
 }
 

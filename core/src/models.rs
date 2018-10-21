@@ -1,6 +1,6 @@
 use super::schema::*;
 
-#[derive(Insertable)]
+#[derive(Debug, Insertable)]
 #[table_name = "users"]
 pub struct NewUser {
     pub name: String,
@@ -8,7 +8,7 @@ pub struct NewUser {
     pub password: String,
 }
 
-#[derive(Queryable)]
+#[derive(Debug, Queryable)]
 pub struct User {
     pub id: i32,
     pub name: String,
@@ -19,13 +19,13 @@ pub struct User {
     pub team_id: Option<i32>,
 }
 
-#[derive(Insertable)]
+#[derive(Debug, Insertable)]
 #[table_name = "teams"]
 pub struct NewTeam {
     pub name: String,
 }
 
-#[derive(Queryable)]
+#[derive(Debug, Queryable)]
 pub struct Team {
     pub id: i32,
     pub name: String,

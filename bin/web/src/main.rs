@@ -25,6 +25,7 @@ extern crate serde_json;
 
 mod api;
 mod base;
+mod chal;
 mod config;
 mod db;
 mod errors;
@@ -67,6 +68,7 @@ pub fn run(config: WebConfig) -> Result<(), WebError> {
     server::new(move || {
         vec![
             base::app(state.clone()),
+            chal::app(state.clone()),
             team::app(state.clone()),
             user::app(state.clone()),
         ]

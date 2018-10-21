@@ -1,7 +1,6 @@
 <template>
     <div>
-        <Profile v-if="team"></Profile>
-        <Create v-else></Create>
+        <Create v-if="!team"></Create>
     </div>
 </template>
 
@@ -13,16 +12,19 @@
     import Profile from "./Profile";
 
     export default {
-        name: "Profile",
+        name: "Index",
         components: { Create, Profile },
         data: () => ({
-            team: null,
+            team: true,
         }),
         async created() {
             NProgress.start();
             let result = await API.TeamProfile();
             NProgress.done();
-            this.team = result.data.team;
+            if (result.data.team)
+                this.$router.push("/team/profile");
+            else
+                this.team = false;
         }
     }
 </script>

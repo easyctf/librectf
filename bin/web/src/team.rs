@@ -1,6 +1,7 @@
-use actix_web::{App, HttpRequest, HttpResponse, Json};
+use actix_web::{App, HttpRequest, HttpResponse, Json, Path};
 use diesel::{self, prelude::*};
 use openctf_core::models::{NewTeam, Team, User};
+use serde::Serialize;
 
 use super::{
     user::{LoginClaim, LoginRequired},
@@ -12,8 +13,9 @@ pub fn app(state: State) -> App<State> {
         .middleware(APIMiddleware)
         .middleware(LoginRequired)
         .prefix("/team")
+        .resource("/me", |r| r.get().with(me))
         .resource("/create", |r| r.post().with(create))
-        .resource("/profile", |r| r.get().with(profile))
+        .resource("/profile/{id}", |r| r.get().with(profile))
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -76,31 +78,51 @@ fn create((req, form, db): (HttpRequest<State>, Json<CreateTeamForm>, DbConn)) -
     .unwrap_or_else(|_| HttpResponse::BadRequest().json("Failed to create a team."))
 }
 
-fn profile((req, db): (HttpRequest<State>, DbConn)) -> HttpResponse {
+fn get_team_profile(team_id: i32, db: DbConn) -> Option<impl Serialize> {
+    use openctf_core::schema::teams::dsl::*;
+    teams
+        .filter(id.eq(&team_id))
+        .first::<Team>(&*db)
+        .map(|team| {
+            json!({
+                "team": {
+                    "id": team.id,
+                    "name": team.name,
+                    "banned": team.banned,
+                }
+            })
+        }).ok()
+}
+
+fn me((req, db): (HttpRequest<State>, DbConn)) -> HttpResponse {
     // TODO: don't unwrap
     let ext = req.extensions();
-    let claims = ext.get::<LoginClaim>().unwrap();
-
-    let user = {
-        use openctf_core::schema::users::dsl::*;
-        users.filter(id.eq(&claims.id)).first::<User>(&*db).unwrap()
-    };
-    let team_id = match user.team_id {
-        Some(team_id) => team_id,
-        // TODO: think of a better status code for this
-        None => return HttpResponse::Ok().json(json!({ "team": null })),
-    };
-
-    let team = {
-        use openctf_core::schema::teams::dsl::*;
-        teams.filter(id.eq(&team_id)).first::<Team>(&*db).unwrap()
-    };
-
-    HttpResponse::Ok().json(json!({
-        "team": {
-            "id": team.id,
-            "name": team.name,
-            "banned": team.banned,
+    error!("{:?}", ext);
+    let team_id = match ext.get::<LoginClaim>() {
+        Some(claims) => {
+            let user = {
+                use openctf_core::schema::users::dsl::*;
+                users.filter(id.eq(claims.id)).first::<User>(&*db).unwrap()
+            };
+            error!("{:?}", user);
+            match user.team_id {
+                Some(team_id) => team_id,
+                // TODO: think of a better status code for this
+                None => return HttpResponse::Ok().json(json!({ "team": null })),
+            }
         }
-    }))
+        None => return HttpResponse::NotFound().json(json!(null)),
+    };
+
+    match get_team_profile(team_id, db) {
+        Some(team) => HttpResponse::Ok().json(team),
+        None => HttpResponse::NotFound().json(json!(null)),
+    }
+}
+
+fn profile((path, db): (Path<(i32,)>, DbConn)) -> HttpResponse {
+    match get_team_profile(path.0, db) {
+        Some(team) => HttpResponse::Ok().json(team),
+        None => HttpResponse::NotFound().json(json!(null)),
+    }
 }

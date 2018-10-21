@@ -9,8 +9,8 @@
                         <b-dropdown-item>Manage Members</b-dropdown-item>
                     </b-dropdown>
 
-                    <h1>My Team Name</h1>
-                    <p>My Institution</p>
+                    <h1>{{ team.name }}</h1>
+                    <p>{{ team.affiliation || "No affiliation" }}</p>
                 </b-container>
             </b-jumbotron>
 
@@ -47,7 +47,9 @@
         </div>
 
         <div v-else>
-            Lol you have no team.
+            <b-container>
+                Not found.
+            </b-container>
         </div>
     </div>
 </template>
@@ -61,9 +63,10 @@
         data: () => ({
             team: null,
         }),
-        async beforeRouteEnter() {
+        async created() {
             let result = await API.TeamProfile();
             this.team = result.data.team;
+            console.log(this.team);
         }
     }
 </script>
