@@ -3,8 +3,9 @@ CREATE TABLE `chals` (
     `title` VARCHAR(64) NOT NULL,
     `enabled` BOOLEAN NOT NULL DEFAULT FALSE,
 
-    `correct_flag` TEXT NOT NULL,
-    `regex` BOOLEAN NOT NULL DEFAULT FALSE,
+    -- `correct_flag` TEXT NOT NULL,
+    -- `regex` BOOLEAN NOT NULL DEFAULT FALSE,
+    `autogen` BOOLEAN NOT NULL DEFAULT FALSE,
     `value` INTEGER NOT NULL,
 
     -- constraints

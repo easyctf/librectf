@@ -8,3 +8,7 @@ default = ["server"]
 server = []
 
 [dependencies]
+env_logger = "0.5"
+hyper = "0.12"
+log = "0.4"
+structopt = "0.2"
