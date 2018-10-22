@@ -1,8 +1,7 @@
 use actix_web::App;
 
-use super::{State, APIMiddleware};
+use super::{APIMiddleware, State};
 
 pub fn app(state: State) -> App<State> {
-    App::with_state(state)
-    .middleware(APIMiddleware)
+    App::with_state(state).middleware(APIMiddleware)
 }

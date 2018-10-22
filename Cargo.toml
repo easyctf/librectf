@@ -4,9 +4,9 @@ members = [
 
     "bin/filestore",
     "bin/import",
+    "bin/task_queue",
     "bin/web",
     
     "components/cache",
     "components/jail",
-    "components/task_queue",
 ]

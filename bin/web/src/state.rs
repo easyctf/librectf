@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
 use super::{
-    db::Connection,
+    db::DbConn,
     errors::{DbConnectionError, WebError},
 };
 use openctf_core::Pool;
@@ -27,9 +27,9 @@ impl State {
         self.inner.secret_key.clone()
     }
 
-    pub fn get_connection(&self) -> Result<Connection, WebError> {
+    pub fn get_connection(&self) -> Result<DbConn, WebError> {
         match self.inner.pool.get() {
-            Ok(conn) => Ok(Connection(conn)),
+            Ok(conn) => Ok(DbConn::new(conn)),
             Err(err) => Err(DbConnectionError(err).into()),
         }
     }

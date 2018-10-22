@@ -42,7 +42,7 @@ use structopt::StructOpt;
 
 use api::APIMiddleware;
 use config::WebConfig;
-use db::Connection as DbConn;
+use db::DbConn;
 use errors::WebError;
 use state::State;
 

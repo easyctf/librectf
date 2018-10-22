@@ -10,6 +10,8 @@ CREATE TABLE `chals` (
     -- constraints
     UNIQUE(`title`)
 );
+CREATE INDEX `chals_title_idx` ON `chals`(`title`);
+CREATE INDEX `chals_value_idx` ON `chals`(`value`);
 
 CREATE TABLE `teams` (
     `id` INTEGER PRIMARY KEY AUTO_INCREMENT,
@@ -40,7 +42,6 @@ CREATE TABLE `users` (
 
 CREATE TABLE `solves` (
     `id` INTEGER PRIMARY KEY AUTO_INCREMENT,
-
     `timestamp` DATETIME NOT NULL DEFAULT NOW(),
     `flag` TEXT NOT NULL,
 
@@ -54,4 +55,14 @@ CREATE TABLE `solves` (
     CONSTRAINT `solve_chal_fk` FOREIGN KEY (`chal_id`) REFERENCES `chals`(`id`),
     CONSTRAINT `solve_team_fk` FOREIGN KEY (`team_id`) REFERENCES `teams`(`id`),
     CONSTRAINT `solve_user_fk` FOREIGN KEY (`user_id`) REFERENCES `users`(`id`)
+);
+
+CREATE TABLE `tasks` (
+    `id` INTEGER PRIMARY KEY AUTO_INCREMENT,
+    `created` DATETIME NOT NULL DEFAULT NOW(),
+    `claimed` DATETIME DEFAULT NULL,
+    `completed` DATETIME DEFAULT NULL,
+
+    `name` VARCHAR(16) NOT NULL,
+    `payload` TEXT
 );

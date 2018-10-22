@@ -22,16 +22,15 @@ extern crate regex;
 extern crate serde;
 extern crate serde_json;
 extern crate structopt;
-extern crate task_queue;
 
 #[macro_use]
 mod macros;
 
+pub mod db;
 pub mod errors;
 pub mod models;
 pub mod schema;
 
-mod db;
 mod tasks;
 
 pub use db::{establish_connection, Pool};

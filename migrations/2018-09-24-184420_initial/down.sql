@@ -1,3 +1,4 @@
+DROP TABLE `tasks`;
 DROP TABLE `solves`;
 DROP TABLE `chals`;
 DROP TABLE `users`;

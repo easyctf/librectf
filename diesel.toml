@@ -1,2 +1,2 @@
 [print_schema]
-file = "src/schema.rs"
+file = "core/src/schema.rs"

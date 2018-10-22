@@ -1,12 +1,12 @@
-use task_queue::Task;
+use db::Connection;
+
+pub trait Task {}
+
+pub struct TaskClient {
+    inner: Connection,
+}
 
 #[allow(dead_code)]
 struct SendEmail {
     priority: u32,
-}
-
-impl Task for SendEmail {
-    fn get_priority(&self) -> u32 {
-        self.priority
-    }
 }
