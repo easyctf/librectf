@@ -1,4 +1,5 @@
 // based on https://github.com/actix/examples/blob/master/multipart/src/main.rs
+// TODO: mime type on output
 
 extern crate actix_web;
 extern crate env_logger;
@@ -9,10 +10,11 @@ extern crate log;
 extern crate sha2;
 #[macro_use]
 extern crate structopt;
+extern crate tempfile;
 
 mod config;
 
-use std::fs::File;
+use std::fs::copy;
 use std::io::Write;
 use std::net::{Ipv4Addr, SocketAddrV4};
 use std::path::PathBuf;
@@ -20,9 +22,7 @@ use std::str::FromStr;
 
 use actix_web::{
     dev::Payload,
-    error::{
-        ErrorBadRequest, ErrorForbidden, ErrorInternalServerError, MultipartError, PayloadError,
-    },
+    error::{ErrorForbidden, ErrorInternalServerError, MultipartError, PayloadError},
     fs::NamedFile,
     http::Method,
     multipart::{Field, MultipartItem},
@@ -32,6 +32,7 @@ use failure::Error;
 use futures::{future, Future, Stream};
 use sha2::{Digest, Sha256};
 use structopt::StructOpt;
+use tempfile::NamedTempFile;
 
 use config::FsConfig;
 
@@ -85,25 +86,12 @@ fn public(req: &HttpRequest<State>) -> actix_web::Result<NamedFile> {
 }
 
 fn save_file(
+    private: bool,
     storage_dir: PathBuf,
     field: Field<Payload>,
 ) -> Box<Future<Item = String, Error = actix_web::Error>> {
-    let filename = match field
-        .content_disposition()
-        .and_then(|cd| cd.get_name().map(|val| val.to_owned()))
-    {
-        Some(name) => name,
-        None => return Box::new(future::err(ErrorBadRequest("No filename specified."))),
-    };
-
-    let path = storage_dir.join(PathBuf::from(filename));
-    let mut file = match File::create(path) {
-        Ok(file) => file,
-        Err(err) => {
-            error!("Error creating file: {:?}", err);
-            return Box::new(future::err(ErrorInternalServerError(err)));
-        }
-    };
+    let mut file = NamedTempFile::new().unwrap();
+    let temp_path = file.path().to_path_buf();
 
     Box::new(
         field
@@ -121,20 +109,30 @@ fn save_file(
             }).map_err(|err| {
                 error!("Multipart error: {:?}", err);
                 ErrorInternalServerError(err)
-            }).map(|hasher| format!("{:x}", hasher.result())),
+            }).map(move |hasher| {
+                let hash = format!("{:x}", hasher.result());
+                let target_path = storage_dir
+                    .join(if private { "private" } else { "public" })
+                    .join(&hash);
+                copy(temp_path, target_path).unwrap();
+                hash
+            }),
     )
 }
 
 fn handle_multipart(
+    private: bool,
     storage_dir: PathBuf,
     item: MultipartItem<Payload>,
 ) -> Box<Stream<Item = String, Error = actix_web::Error>> {
     match item {
-        MultipartItem::Field(field) => Box::new(save_file(storage_dir, field).into_stream()),
+        MultipartItem::Field(field) => {
+            Box::new(save_file(private, storage_dir, field).into_stream())
+        }
         MultipartItem::Nested(nested) => Box::new(
             nested
                 .map_err(ErrorInternalServerError)
-                .map(move |item| handle_multipart(storage_dir.clone(), item))
+                .map(move |item| handle_multipart(private, storage_dir.clone(), item))
                 .flatten(),
         ),
     }
@@ -144,6 +142,7 @@ fn upload(req: &HttpRequest<State>) -> FutureResponse<HttpResponse> {
     let state = req.state();
     let headers = req.headers();
     let storage_dir = state.0.storage_dir.clone();
+    let private = req.uri().path().ends_with("private");
 
     match headers
         .get("Authorization")
@@ -157,7 +156,7 @@ fn upload(req: &HttpRequest<State>) -> FutureResponse<HttpResponse> {
     Box::new(
         req.multipart()
             .map_err(ErrorInternalServerError)
-            .map(move |item| handle_multipart(storage_dir.clone(), item))
+            .map(move |item| handle_multipart(private, storage_dir.clone(), item))
             .flatten()
             .collect()
             .map(|result| {
@@ -183,7 +182,8 @@ fn main() -> Result<(), Error> {
     server::new(move || {
         let state = State::new(&config);
         App::with_state(state)
-            .resource("/upload", |r| r.method(Method::POST).f(upload))
+            .resource("/upload/public", |r| r.method(Method::POST).f(upload))
+            .resource("/upload/private", |r| r.method(Method::POST).f(upload))
             .resource("/public/{tail:.*}", |r| r.method(Method::GET).f(public))
             .resource("/private/{tail:.*}", |r| r.method(Method::GET).f(private))
     }).bind(addr)
