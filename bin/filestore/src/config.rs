@@ -10,6 +10,14 @@ pub struct FsConfig {
     #[structopt(long = "pull-password", env = "FILESTORE_PULL_PASSWORD")]
     pub pull_password: String,
 
+    /// The prefix for output URLs
+    #[structopt(
+        long = "url-prefix",
+        env = "FILESTORE_URL_PREFIX",
+        default_value = ""
+    )]
+    pub url_prefix: String,
+
     /// The host to bind to
     #[structopt(
         long = "bind_host",
