@@ -1,11 +1,11 @@
 watch:
-    cargo watch --ignore "frontend/*" -x 'build'
+    localenv .env cargo watch --ignore "frontend/*" -x 'build'
 
 check:
-    cargo watch --ignore "frontend/*" -x 'check'
+    localenv .env cargo watch --ignore "frontend/*" -x 'check'
 
 run-fs:
-    cargo watch --ignore "frontend/*" -x 'run -p filestore'
+    localenv .env cargo watch --ignore "frontend/*" -x 'run -p filestore'
 
 run-web:
-    cargo watch --ignore "frontend/*" -x 'run -p openctf-web'
+    localenv .env cargo watch --ignore "frontend/*" -x 'run -p openctf-web'

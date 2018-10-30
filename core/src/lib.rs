@@ -26,6 +26,7 @@ extern crate structopt;
 #[macro_use]
 mod macros;
 
+pub mod api;
 pub mod db;
 pub mod errors;
 pub mod models;
