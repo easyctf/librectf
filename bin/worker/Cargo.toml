@@ -6,3 +6,4 @@ authors = ["Michael Zhang <failed.down@gmail.com>"]
 [dependencies]
 openctf-core = { path = "../../core" }
 shiplift = "0.3"
+structopt = "0.2"

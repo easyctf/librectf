@@ -2217,6 +2217,7 @@ version = "0.1.0"
 dependencies = [
  "openctf-core 0.1.0",
  "shiplift 0.3.2 (registry+https://github.com/rust-lang/crates.io-index)",
+ "structopt 0.2.11 (registry+https://github.com/rust-lang/crates.io-index)",
 ]
 
 [[package]]

@@ -1,0 +1,10 @@
+version: '3'
+
+services:
+  filestore:
+    build: bin/filestore
+    volumes:
+      - rust-build:/build
+
+volumes:
+  rust-build:
