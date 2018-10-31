@@ -8,21 +8,6 @@ use openctf_core::{
 use toml;
 
 #[derive(Debug, StructOpt)]
-pub enum ImportCommand {
-    /// Import challenges from a directory into the database
-    #[structopt(name = "import")]
-    Chal(ImportChalCommand),
-}
-
-impl ImportCommand {
-    pub fn run(&self) -> Result<(), Error> {
-        match self {
-            ImportCommand::Chal(chal) => chal.run(),
-        }
-    }
-}
-
-#[derive(Debug, StructOpt)]
 pub struct ImportChalCommand {
     /// Root challenge directory
     #[structopt(parse(from_os_str))]

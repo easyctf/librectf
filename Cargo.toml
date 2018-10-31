@@ -2,8 +2,8 @@
 members = [
     "core",
 
+    "bin/admin",
     "bin/filestore",
-    "bin/import",
     "bin/web",
     "bin/worker",
     

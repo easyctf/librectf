@@ -7,13 +7,14 @@ extern crate toml;
 extern crate structopt;
 
 mod cmd;
+mod chal;
 
 use structopt::StructOpt;
 
-use cmd::ImportCommand;
+use cmd::AdminCommand;
 
 fn main() -> Result<(), openctf_core::Error> {
     env_logger::init();
-    let opt = ImportCommand::from_args();
+    let opt = AdminCommand::from_args();
     opt.run()
 }

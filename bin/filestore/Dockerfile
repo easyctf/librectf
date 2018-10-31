@@ -10,7 +10,7 @@ RUN cargo build --release
 
 FROM alpine:latest
 
-RUN apk add ca-certificates
+RUN apk update && apk add libgcc gcompat
 WORKDIR /root
 COPY --from=0 /build/target/release/filestore .
 CMD ["./filestore"]
