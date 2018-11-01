@@ -36,14 +36,11 @@ use std::net::{Ipv4Addr, SocketAddrV4};
 use std::str::FromStr;
 
 use actix_web::server;
-// use actix_web::server;
 use core::establish_connection;
-// use structopt::StructOpt;
 
 use api::APIMiddleware;
 pub use config::Config;
 use db::DbConn;
-// use errors::WebError;
 use state::State;
 
 pub fn run(config: Config) {
