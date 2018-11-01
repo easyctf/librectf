@@ -74,10 +74,7 @@ impl ImportChalCommand {
             };
 
             // parse the meta file
-            let meta_toml = match {
-                let mut de = toml::Deserializer::new(&meta_contents);
-                de.end()
-            } {
+            let meta_toml = match { toml::from_str::<Metadata>(&meta_contents) } {
                 Ok(value) => value,
                 Err(err) => {
                     failed.push((Some(path), format_err!("Deserialization error: {}", err)));
@@ -85,13 +82,13 @@ impl ImportChalCommand {
                 }
             };
 
-            println!("{:?}", meta_toml);
+            println!("Successfully loaded: {:?}", meta_toml);
         }
 
         if failed.len() > 0 {
             error!("Failed to load directories:");
             for (path, err) in failed {
-                error!(" - {:?}: {:?}", path, err);
+                error!(" - {:?}: {}", path, err);
             }
             return Err(format_err!("Failed to import some challenges."));
         }
