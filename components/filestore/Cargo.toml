@@ -9,7 +9,6 @@ server = []
 
 [dependencies]
 actix-web = "0.7"
-env_logger = "0.5"
 failure = "0.1"
 futures = "0.1"
 log = "0.4"

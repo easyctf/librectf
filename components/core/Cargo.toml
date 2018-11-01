@@ -8,7 +8,6 @@ build = "src/build.rs"
 cache = { path = "../cache" }
 chrono = "0.4"
 diesel = { version = "1.3", features = ["chrono", "mysql"] }
-env_logger = "0.5"
 failure = "0.1.1"
 jail = { path = "../jail" }
 lazy_static = "1.0"

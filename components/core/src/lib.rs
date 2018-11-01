@@ -1,6 +1,6 @@
-//! # OpenCTF
+//! # LibreCTF
 //!
-//! This crate contains the core of the OpenCTF library.
+//! This crate contains the core of the LibreCTF library.
 
 // #![feature(custom_derive, tool_lints, try_from)]
 // #![allow(clippy::needless_pass_by_value)]
@@ -11,7 +11,6 @@ extern crate cache;
 extern crate chrono;
 #[macro_use]
 extern crate diesel;
-extern crate env_logger;
 #[macro_use]
 extern crate failure;
 extern crate lazy_static;

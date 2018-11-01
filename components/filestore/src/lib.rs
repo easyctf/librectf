@@ -2,7 +2,6 @@
 // TODO: mime type on output
 
 extern crate actix_web;
-extern crate env_logger;
 extern crate failure;
 extern crate futures;
 #[macro_use]
@@ -169,24 +168,21 @@ fn upload(req: &HttpRequest<State>) -> FutureResponse<HttpResponse> {
     )
 }
 
-fn main() -> Result<(), Error> {
-    let env = env_logger::Env::default().filter_or(env_logger::DEFAULT_FILTER_ENV, "warn");
-    env_logger::Builder::from_env(env).init();
+// fn main() -> Result<(), Error> {
+//     let config = FsConfig::from_args();
+//     let addr = SocketAddrV4::new(
+//         Ipv4Addr::from_str(&config.bind_host).unwrap(),
+//         config.bind_port,
+//     );
 
-    let config = FsConfig::from_args();
-    let addr = SocketAddrV4::new(
-        Ipv4Addr::from_str(&config.bind_host).unwrap(),
-        config.bind_port,
-    );
-
-    server::new(move || {
-        let state = State::new(&config);
-        App::with_state(state)
-            .resource("/upload/public", |r| r.method(Method::POST).f(upload))
-            .resource("/upload/private", |r| r.method(Method::POST).f(upload))
-            .resource("/public/{tail:.*}", |r| r.method(Method::GET).f(public))
-            .resource("/private/{tail:.*}", |r| r.method(Method::GET).f(private))
-    }).bind(addr)
-    .map(|server| server.run())?;
-    Ok(())
-}
+//     server::new(move || {
+//         let state = State::new(&config);
+//         App::with_state(state)
+//             .resource("/upload/public", |r| r.method(Method::POST).f(upload))
+//             .resource("/upload/private", |r| r.method(Method::POST).f(upload))
+//             .resource("/public/{tail:.*}", |r| r.method(Method::GET).f(public))
+//             .resource("/private/{tail:.*}", |r| r.method(Method::GET).f(private))
+//     }).bind(addr)
+//     .map(|server| server.run())?;
+//     Ok(())
+// }

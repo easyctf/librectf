@@ -1,14 +1,18 @@
+extern crate actix_web;
 extern crate config as cfg;
 extern crate env_logger;
 extern crate serde;
+#[macro_use]
 extern crate structopt;
 #[macro_use]
 extern crate serde_derive;
 
+extern crate admin;
 extern crate api;
 extern crate core;
 
 mod config;
+mod web;
 
 use std::path::PathBuf;
 
@@ -17,9 +21,24 @@ use structopt::StructOpt;
 use config::Config;
 
 #[derive(Debug, StructOpt)]
+enum Command {
+    /// Admin utilities.
+    #[structopt(name = "admin")]
+    Admin(admin::AdminCommand),
+
+    /// Runs a web server.
+    #[structopt(name = "web")]
+    Web(web::WebCommand),
+}
+
+#[derive(Debug, StructOpt)]
 struct Opt {
-    #[structopt(parse(from_os_str))]
+    /// Configuration file to use.
+    #[structopt(long = "config-file", parse(from_os_str))]
     config_file: Option<PathBuf>,
+
+    #[structopt(subcommand)]
+    command: Command,
 }
 
 fn main() {
