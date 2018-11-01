@@ -3,8 +3,7 @@ table! {
         id -> Integer,
         title -> Varchar,
         enabled -> Bool,
-        correct_flag -> Text,
-        regex -> Bool,
+        autogen -> Bool,
         value -> Integer,
     }
 }
@@ -57,4 +56,10 @@ joinable!(solves -> teams (team_id));
 joinable!(solves -> users (user_id));
 joinable!(users -> teams (team_id));
 
-allow_tables_to_appear_in_same_query!(chals, solves, tasks, teams, users,);
+allow_tables_to_appear_in_same_query!(
+    chals,
+    solves,
+    tasks,
+    teams,
+    users,
+);

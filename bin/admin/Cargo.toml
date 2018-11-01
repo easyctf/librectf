@@ -7,5 +7,6 @@ authors = ["Michael Zhang <failed.down@gmail.com>"]
 env_logger = "0.5"
 log = "0.4"
 openctf-core = { path = "../../core" }
+shiplift = { version = "0.3", git = "https://github.com/softprops/shiplift.git" }
 structopt = "0.2"
 toml = "0.4"

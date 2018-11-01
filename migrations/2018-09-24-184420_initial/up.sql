@@ -16,7 +16,7 @@ CREATE INDEX `chals_value_idx` ON `chals`(`value`);
 
 CREATE TABLE `teams` (
     `id` INTEGER PRIMARY KEY AUTO_INCREMENT,
-    `name` VARCHAR(20) NOT NULL,
+    `name` VARCHAR(20) COLLATE utf8mb4_general_ci NOT NULL,
     `affiliation` VARCHAR(20),
     `banned` BOOLEAN NOT NULL,
 
@@ -26,7 +26,7 @@ CREATE TABLE `teams` (
 
 CREATE TABLE `users` (
     `id` INTEGER PRIMARY KEY AUTO_INCREMENT,
-    `name` VARCHAR(20) NOT NULL,
+    `name` VARCHAR(20) COLLATE utf8mb4_general_ci NOT NULL,
     `email` VARCHAR(128) NOT NULL,
     `email_verified` BOOLEAN NOT NULL DEFAULT FALSE,
     `password` VARCHAR(64) NOT NULL,

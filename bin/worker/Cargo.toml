@@ -5,5 +5,5 @@ authors = ["Michael Zhang <failed.down@gmail.com>"]
 
 [dependencies]
 openctf-core = { path = "../../core" }
-shiplift = "0.3"
+shiplift = { version = "0.3", git = "https://github.com/softprops/shiplift.git" }
 structopt = "0.2"
