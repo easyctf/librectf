@@ -1,9 +1,8 @@
 use std::sync::Arc;
 
-use super::{
-    db::DbConn,
-    errors::{DbConnectionError, WebError},
-};
+use failure::Error;
+
+use super::db::DbConn;
 use core::Pool;
 
 struct InnerState {
@@ -27,10 +26,10 @@ impl State {
         self.inner.secret_key.clone()
     }
 
-    pub fn get_connection(&self) -> Result<DbConn, WebError> {
+    pub fn get_connection(&self) -> Result<DbConn, Error> {
         match self.inner.pool.get() {
             Ok(conn) => Ok(DbConn::new(conn)),
-            Err(err) => Err(DbConnectionError(err).into()),
+            Err(err) => Err(format_err!("Database connection error: {}", err)),
         }
     }
 }

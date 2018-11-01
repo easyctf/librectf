@@ -2,8 +2,8 @@ use std::ops::Deref;
 
 use actix_web::{FromRequest, HttpRequest};
 use core::db::{Connection, PooledConnection};
+use failure::Error;
 
-use super::errors::WebError;
 use super::State;
 
 pub struct DbConn(Connection);
@@ -24,7 +24,7 @@ impl Deref for DbConn {
 
 impl FromRequest<State> for DbConn {
     type Config = ();
-    type Result = Result<Self, WebError>;
+    type Result = Result<Self, Error>;
 
     #[inline]
     fn from_request(req: &HttpRequest<State>, _: &Self::Config) -> Self::Result {

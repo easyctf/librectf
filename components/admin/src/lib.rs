@@ -1,7 +1,12 @@
+extern crate core;
 #[macro_use]
 extern crate log;
-extern crate core;
+#[macro_use]
+extern crate failure;
+extern crate serde;
 extern crate toml;
+#[macro_use]
+extern crate serde_derive;
 #[macro_use]
 extern crate structopt;
 

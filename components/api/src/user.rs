@@ -7,9 +7,10 @@ use bcrypt;
 use chrono::{self, serde::ts_milliseconds, DateTime, Utc};
 use core::models::{NewUser, User};
 use diesel::{self, prelude::*};
+use failure::Error;
 use jsonwebtoken::{self, Header, Validation};
 
-use super::{errors::WebError, APIMiddleware, DbConn, State};
+use super::{APIMiddleware, DbConn, State};
 
 pub fn app(state: State) -> App<State> {
     App::with_state(state)
@@ -145,8 +146,8 @@ fn register((form, db): (Json<RegisterForm>, DbConn)) -> HttpResponse {
 }
 
 // TODO: this should be a ValidationError instead of WebError
-impl Into<Result<NewUser, WebError>> for RegisterForm {
-    fn into(self) -> Result<NewUser, WebError> {
+impl Into<Result<NewUser, Error>> for RegisterForm {
+    fn into(self) -> Result<NewUser, Error> {
         Ok(NewUser {
             email: self.email,
             name: self.username,

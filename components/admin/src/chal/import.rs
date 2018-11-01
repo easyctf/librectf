@@ -1,11 +1,22 @@
 use std::fs::{read_dir, read_to_string};
 use std::path::PathBuf;
 
-use core::{
-    errors::{CustomError, DirTraversalError, FileReadError},
-    Error,
-};
+use failure::Error;
 use toml;
+
+#[derive(Debug, Serialize, Deserialize)]
+struct Autogen {
+    generator: String,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+struct Metadata {
+    title: String,
+    value: i32,
+    description: String,
+    grader: String,
+    autogen: Autogen,
+}
 
 #[derive(Debug, StructOpt)]
 pub struct ImportChalCommand {
@@ -17,11 +28,11 @@ pub struct ImportChalCommand {
 impl ImportChalCommand {
     pub fn run(&self) -> Result<(), Error> {
         let mut failed: Vec<(Option<PathBuf>, Error)> = Vec::new();
-        for entry in read_dir(&self.challenge_dir).map_err(|err| DirTraversalError(err))? {
+        for entry in read_dir(&self.challenge_dir)? {
             let entry = match entry {
                 Ok(entry) => entry,
                 Err(err) => {
-                    failed.push((None, DirTraversalError(err).into()));
+                    failed.push((None, format_err!("Directory traversal error: {}", err)));
                     continue;
                 }
             };
@@ -48,7 +59,7 @@ impl ImportChalCommand {
             if !meta_toml_path.exists() {
                 failed.push((
                     Some(path),
-                    CustomError::new("Could not find meta.toml in this directory.").into(),
+                    format_err!("Could not find meta.toml in this directory."),
                 ));
                 continue;
             }
@@ -57,95 +68,24 @@ impl ImportChalCommand {
             let meta_contents = match read_to_string(&meta_toml_path) {
                 Ok(meta) => meta,
                 Err(err) => {
-                    failed.push((Some(path), FileReadError(err).into()));
+                    failed.push((Some(path), format_err!("Failed to read file: {}", err)));
                     continue;
                 }
             };
 
             // parse the meta file
-            let meta_toml = match toml::from_str::<toml::Value>(&meta_contents) {
+            let meta_toml = match {
+                let mut de = toml::Deserializer::new(&meta_contents);
+                de.end()
+            } {
                 Ok(value) => value,
                 Err(err) => {
-                    failed.push((
-                        Some(path),
-                        CustomError::new(format!("Deserialization error: {}", err)).into(),
-                    ));
-                    continue;
-                }
-            };
-            let meta_toml = match meta_toml {
-                toml::Value::Table(table) => table,
-                _ => {
-                    failed.push((
-                        Some(path),
-                        CustomError::new("meta.toml must be a TOML table.").into(),
-                    ));
+                    failed.push((Some(path), format_err!("Deserialization error: {}", err)));
                     continue;
                 }
             };
 
-            // check for the existence of required fields
-            let _title = match meta_toml.get("title") {
-                Some(toml::Value::String(title)) => title,
-                _ => {
-                    failed.push((
-                        Some(path),
-                        CustomError::new("String key 'title' not found.").into(),
-                    ));
-                    continue;
-                }
-            };
-            let _description = match (
-                meta_toml.get("description"),
-                meta_toml.get("description_file"),
-            ) {
-                (Some(_), Some(_)) => {
-                    failed.push((
-                        Some(path),
-                        CustomError::new("Cannot use both 'description' and 'description_file'.")
-                            .into(),
-                    ));
-                    continue;
-                }
-                (Some(toml::Value::String(description)), None) => description.clone(),
-                (None, Some(toml::Value::String(description_file))) => {
-                    match read_to_string(&description_file) {
-                        Ok(description) => description,
-                        Err(err) => {
-                            failed.push((Some(path), FileReadError(err).into()));
-                            continue;
-                        }
-                    }
-                }
-                _ => {
-                    failed.push((
-                        Some(path),
-                        CustomError::new("Neither 'description' nor 'description_file' found.")
-                            .into(),
-                    ));
-                    continue;
-                }
-            };
-            let _grader = match meta_toml.get("grader_file") {
-                Some(toml::Value::String(grader_path)) => {
-                    let path = path.join(&grader_path);
-                    if !path.exists() {
-                        failed.push((
-                            Some(path),
-                            CustomError::new("Grader file not found.").into(),
-                        ));
-                        continue;
-                    }
-                    path
-                }
-                _ => {
-                    failed.push((
-                        Some(path),
-                        CustomError::new("String key 'grader_file' not found.").into(),
-                    ));
-                    continue;
-                }
-            };
+            println!("{:?}", meta_toml);
         }
 
         if failed.len() > 0 {
@@ -153,7 +93,7 @@ impl ImportChalCommand {
             for (path, err) in failed {
                 error!(" - {:?}: {:?}", path, err);
             }
-            return Err(CustomError::new("Failed to import some challenges.").into());
+            return Err(format_err!("Failed to import some challenges."));
         }
         info!("Successfully imported all challenges.");
         Ok(())

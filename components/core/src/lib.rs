@@ -31,11 +31,9 @@ mod macros;
 pub mod api;
 mod config;
 pub mod db;
-pub mod errors;
 pub mod models;
 pub mod schema;
 
 mod tasks;
 
 pub use db::{establish_connection, Pool};
-pub use errors::Error;

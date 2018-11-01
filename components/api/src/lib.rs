@@ -27,7 +27,6 @@ mod base;
 mod chal;
 mod config;
 mod db;
-mod errors;
 mod state;
 mod team;
 mod user;
