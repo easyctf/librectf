@@ -5,9 +5,9 @@ use actix_web::{
 };
 use bcrypt;
 use chrono::{self, serde::ts_milliseconds, DateTime, Utc};
+use core::models::{NewUser, User};
 use diesel::{self, prelude::*};
 use jsonwebtoken::{self, Header, Validation};
-use core::models::{NewUser, User};
 
 use super::{errors::WebError, APIMiddleware, DbConn, State};
 

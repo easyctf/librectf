@@ -1,6 +1,6 @@
 /// Web server specific config
 #[derive(Clone, Debug, StructOpt)]
-pub struct WebConfig {
+pub struct Config {
     /// Whether to run the application in debug mode
     #[structopt(long = "debug", env = "OPENCTF_DEBUG")]
     pub debug: bool,

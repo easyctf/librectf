@@ -1,6 +1,6 @@
 use actix_web::{App, HttpRequest, HttpResponse, Json, Path};
-use diesel::{self, prelude::*};
 use core::models::{NewTeam, Team, User};
+use diesel::{self, prelude::*};
 use serde::Serialize;
 
 use super::{
@@ -60,17 +60,14 @@ fn create((req, form, db): (HttpRequest<State>, Json<CreateTeamForm>, DbConn)) -
         };
 
         // now update the users
-        match {
+        if let Err(err) = {
             use core::schema::users::dsl::*;
             diesel::update(users.find(claims.id))
                 .set(team_id.eq(new_team.id))
                 .execute(&*db)
         } {
-            Err(err) => {
-                error!("Diesel error on team/create (3): {}", err);
-                return Err(Error::RollbackTransaction);
-            }
-            _ => (),
+            error!("Diesel error on team/create (3): {}", err);
+            return Err(Error::RollbackTransaction);
         };
 
         Ok(())

@@ -1,9 +1,9 @@
 {
-  "name": "openctf",
+  "name": "librectf",
   "version": "0.1.0",
   "description": "CTF Platform",
   "main": "index.js",
-  "repository": "https://github.com/easyctf/openctf",
+  "repository": "https://github.com/easyctf/librectf",
   "author": "Michael Zhang",
   "license": "MIT",
   "private": false,

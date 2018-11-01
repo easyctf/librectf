@@ -1,5 +1,5 @@
-use core::Error;
 use chal::ImportChalCommand;
+use core::Error;
 
 #[derive(Debug, StructOpt)]
 pub enum AdminCommand {

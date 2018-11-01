@@ -6,8 +6,8 @@ extern crate toml;
 #[macro_use]
 extern crate structopt;
 
-mod cmd;
 mod chal;
+mod cmd;
 
 use structopt::StructOpt;
 

@@ -5,7 +5,7 @@ sudo: false
 
 env:
   global:
-    - PROJECT_NAME=openctf
+    - PROJECT_NAME=librectf
 
 matrix:
   include:
@@ -26,7 +26,7 @@ deploy:
     skip_cleanup: true
     file_glob: true
     file:
-      - "openctf-*"
+      - "librectf-*"
     on:
       tags: true
   - provider: script
