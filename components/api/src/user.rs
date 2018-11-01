@@ -82,6 +82,7 @@ fn login((req, form, db): (HttpRequest<State>, Json<LoginForm>, DbConn)) -> Http
     use core::schema::users::dsl::*;
     let state = req.state();
     let form = form.into_inner();
+
     users
         .filter(email.eq(&form.email))
         .first::<User>(&*db)

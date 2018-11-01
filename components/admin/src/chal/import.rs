@@ -11,11 +11,13 @@ struct Autogen {
 
 #[derive(Debug, Serialize, Deserialize)]
 struct Metadata {
+    #[serde(skip, default)]
+    name: String,
     title: String,
     value: i32,
     description: String,
     grader: String,
-    autogen: Autogen,
+    autogen: Option<Autogen>,
 }
 
 #[derive(Debug, StructOpt)]
@@ -37,6 +39,7 @@ impl ImportChalCommand {
                 }
             };
             let path = entry.path();
+            let name = path.file_name().unwrap().to_str().unwrap().to_owned();
 
             match path
                 .file_name()
@@ -75,7 +78,10 @@ impl ImportChalCommand {
 
             // parse the meta file
             let meta_toml = match { toml::from_str::<Metadata>(&meta_contents) } {
-                Ok(value) => value,
+                Ok(mut value) => {
+                    value.name = name;
+                    value
+                }
                 Err(err) => {
                     failed.push((Some(path), format_err!("Deserialization error: {}", err)));
                     continue;
