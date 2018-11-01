@@ -1,7 +1,7 @@
 use std::path::PathBuf;
 
-#[derive(Clone, Debug, StructOpt)]
-pub struct FsConfig {
+#[derive(Clone, Debug, StructOpt, Serialize, Deserialize)]
+pub struct Config {
     /// Password for sending files to the filestore.
     #[structopt(long = "push-password", env = "FILESTORE_PUSH_PASSWORD")]
     pub push_password: String,

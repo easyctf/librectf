@@ -32,10 +32,10 @@ mod state;
 mod team;
 mod user;
 
-// use std::net::{Ipv4Addr, SocketAddrV4};
-// use std::str::FromStr;
+use std::net::{Ipv4Addr, SocketAddrV4};
+use std::str::FromStr;
 
-use actix_web::App;
+use actix_web::server;
 // use actix_web::server;
 use core::establish_connection;
 // use structopt::StructOpt;
@@ -46,13 +46,23 @@ use db::DbConn;
 // use errors::WebError;
 use state::State;
 
-pub fn app(config: Config) -> Vec<App<State>> {
+pub fn run(config: Config) {
+    let addr = SocketAddrV4::new(
+        Ipv4Addr::from_str(&config.bind_host).unwrap(),
+        config.bind_port,
+    );
+
     let pool = establish_connection(&config.database_url);
     let state = State::new(config.secret_key.clone().into_bytes(), pool);
-    vec![
-        base::app(state.clone()),
-        chal::app(state.clone()),
-        team::app(state.clone()),
-        user::app(state.clone()),
-    ]
+
+    server::new(move || {
+        vec![
+            base::app(state.clone()),
+            chal::app(state.clone()),
+            team::app(state.clone()),
+            user::app(state.clone()),
+        ]
+    }).bind(addr)
+    .map(|server| server.run())
+    .unwrap();
 }

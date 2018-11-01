@@ -1,5 +1,14 @@
 use super::schema::*;
 
+#[derive(Debug, Queryable)]
+pub struct Challenge {
+    pub id: i32,
+    pub title: String,
+    pub enabled: bool,
+    pub autogen: bool,
+    pub value: i32,
+}
+
 #[derive(Debug, Insertable)]
 #[table_name = "users"]
 pub struct NewUser {

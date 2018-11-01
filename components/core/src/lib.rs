@@ -9,6 +9,7 @@
 
 extern crate cache;
 extern crate chrono;
+extern crate config as cfg;
 #[macro_use]
 extern crate diesel;
 #[macro_use]
@@ -19,6 +20,8 @@ extern crate r2d2;
 extern crate r2d2_diesel;
 extern crate regex;
 extern crate serde;
+#[macro_use]
+extern crate serde_derive;
 extern crate serde_json;
 extern crate structopt;
 
@@ -26,6 +29,7 @@ extern crate structopt;
 mod macros;
 
 pub mod api;
+mod config;
 pub mod db;
 pub mod errors;
 pub mod models;

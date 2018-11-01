@@ -45,7 +45,7 @@ Note that you may opt to use regular expressions as well to disregard the existe
 
 ## Challenge build dependencies
 
-Sometimes, there may be extra steps you'd like to take before you import the challenges, such as building binaries or generating files. Perhaps you are storing all of your challenges in a code repository and don't want to commit build artifacts. In order to cater to this need, OpenCTF will check for the following build-specific files in your challenge directory:
+Sometimes, there may be extra steps you'd like to take before you import the challenges, such as building binaries or generating files. Perhaps you are storing all of your challenges in a code repository and don't want to commit build artifacts. In order to cater to this need, LibreCTF will check for the following build-specific files in your challenge directory:
 
   - **Makefile**: If your challenge directory contains a Makefile, the challenge platform will attempt to run `make` in that directory (provided `make` is available on the machine) before any importing occurs.
   - **Dockerfile**: If your challenge directory contains a Dockerfile, the challenge platform will attempt to build and run a Docker image from that directory (provided `docker` is available on the machine) before any importing occurs. Since this depends on the connection of a Docker daemon, this command will assume that you're already operating in the Docker env before you ran this command.

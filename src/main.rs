@@ -11,6 +11,7 @@ extern crate serde_derive;
 extern crate admin;
 extern crate api;
 extern crate core;
+extern crate filestore;
 
 mod config;
 mod web;
