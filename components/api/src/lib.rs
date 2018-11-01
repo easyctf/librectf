@@ -46,7 +46,7 @@ use db::DbConn;
 // use errors::WebError;
 use state::State;
 
-pub fn app(config: &Config) -> Vec<App<State>> {
+pub fn app(config: Config) -> Vec<App<State>> {
     let pool = establish_connection(&config.database_url);
     let state = State::new(config.secret_key.clone().into_bytes(), pool);
     vec![

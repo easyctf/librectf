@@ -1,6 +1,7 @@
 extern crate actix_web;
 extern crate config as cfg;
 extern crate env_logger;
+extern crate failure;
 extern crate serde;
 #[macro_use]
 extern crate structopt;
