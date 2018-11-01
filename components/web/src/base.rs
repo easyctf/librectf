@@ -28,7 +28,7 @@ struct ScoreboardEntry {
 }
 
 fn scoreboard((req, db): (HttpRequest<State>, DbConn)) -> HttpResponse {
-    use openctf_core::schema::{chals, solves, teams};
+    use core::schema::{chals, solves, teams};
 
     let params = req.match_info();
     let page: i64 = match params.query("n") {

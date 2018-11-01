@@ -1,7 +1,7 @@
 use std::fs::{read_dir, read_to_string};
 use std::path::PathBuf;
 
-use openctf_core::{
+use core::{
     errors::{CustomError, DirTraversalError, FileReadError},
     Error,
 };

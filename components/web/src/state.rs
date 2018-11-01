@@ -4,7 +4,7 @@ use super::{
     db::DbConn,
     errors::{DbConnectionError, WebError},
 };
-use openctf_core::Pool;
+use core::Pool;
 
 struct InnerState {
     pub(super) secret_key: Vec<u8>,

@@ -7,7 +7,7 @@ use bcrypt;
 use chrono::{self, serde::ts_milliseconds, DateTime, Utc};
 use diesel::{self, prelude::*};
 use jsonwebtoken::{self, Header, Validation};
-use openctf_core::models::{NewUser, User};
+use core::models::{NewUser, User};
 
 use super::{errors::WebError, APIMiddleware, DbConn, State};
 
@@ -78,7 +78,7 @@ pub struct LoginClaim {
 }
 
 fn login((req, form, db): (HttpRequest<State>, Json<LoginForm>, DbConn)) -> HttpResponse {
-    use openctf_core::schema::users::dsl::*;
+    use core::schema::users::dsl::*;
     let state = req.state();
     let form = form.into_inner();
     users
@@ -124,7 +124,7 @@ struct RegisterForm {
 }
 
 fn register((form, db): (Json<RegisterForm>, DbConn)) -> HttpResponse {
-    use openctf_core::schema::users;
+    use core::schema::users;
 
     let new_user: NewUser = match form.into_inner().into() {
         Ok(user) => user,

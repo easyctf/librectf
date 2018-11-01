@@ -1,4 +1,4 @@
-use openctf_core::Error;
+use core::Error;
 use chal::ImportChalCommand;
 
 #[derive(Debug, StructOpt)]

@@ -1,7 +1,7 @@
 use std::ops::Deref;
 
 use actix_web::{FromRequest, HttpRequest};
-use openctf_core::db::{Connection, PooledConnection};
+use core::db::{Connection, PooledConnection};
 
 use super::errors::WebError;
 use super::State;

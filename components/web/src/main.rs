@@ -12,7 +12,7 @@ extern crate jsonwebtoken;
 #[macro_use]
 extern crate log;
 #[macro_use]
-extern crate openctf_core;
+extern crate core;
 extern crate r2d2;
 extern crate r2d2_diesel;
 #[macro_use]
@@ -37,7 +37,7 @@ use std::net::{Ipv4Addr, SocketAddrV4};
 use std::str::FromStr;
 
 use actix_web::server;
-use openctf_core::establish_connection;
+use core::establish_connection;
 use structopt::StructOpt;
 
 use api::APIMiddleware;

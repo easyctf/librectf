@@ -1,12 +1,18 @@
+[package]
+name = "openctf"
+version = "0.1.0"
+authors = ["Michael Zhang <failed.down@gmail.com>"]
+
 [workspace]
 members = [
-    "core",
-
-    "bin/admin",
-    "bin/filestore",
-    "bin/web",
-    "bin/worker",
-    
+    "components/admin",
     "components/cache",
+    "components/core",
+    "components/filestore",
     "components/jail",
+    "components/web",
+    "components/worker",
 ]
+
+[dependencies]
+core = { path = "components/core" }

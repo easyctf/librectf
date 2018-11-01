@@ -12,7 +12,7 @@ env_logger = "0.5"
 failure = "0.1"
 jsonwebtoken = "5.0"
 log = "0.4"
-openctf-core = { path = "../../core" }
+core = { path = "../../components/core" }
 r2d2 = "0.8"
 r2d2-diesel = "1.0"
 serde = "1.0"

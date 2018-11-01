@@ -1,6 +1,6 @@
 use actix_web::{App, HttpRequest, HttpResponse, Json, Path};
 use diesel::{self, prelude::*};
-use openctf_core::models::{NewTeam, Team, User};
+use core::models::{NewTeam, Team, User};
 use serde::Serialize;
 
 use super::{
@@ -35,7 +35,7 @@ fn create((req, form, db): (HttpRequest<State>, Json<CreateTeamForm>, DbConn)) -
     db.transaction(|| {
         // first, create the actual team
         match {
-            use openctf_core::schema::teams;
+            use core::schema::teams;
             diesel::insert_into(teams::table)
                 .values(new_team)
                 .execute(&*db)
@@ -49,7 +49,7 @@ fn create((req, form, db): (HttpRequest<State>, Json<CreateTeamForm>, DbConn)) -
 
         // now get the team name
         let new_team = match {
-            use openctf_core::schema::teams::dsl::*;
+            use core::schema::teams::dsl::*;
             teams.order_by(id.desc()).first::<Team>(&*db)
         } {
             Ok(team) => team,
@@ -61,7 +61,7 @@ fn create((req, form, db): (HttpRequest<State>, Json<CreateTeamForm>, DbConn)) -
 
         // now update the users
         match {
-            use openctf_core::schema::users::dsl::*;
+            use core::schema::users::dsl::*;
             diesel::update(users.find(claims.id))
                 .set(team_id.eq(new_team.id))
                 .execute(&*db)
@@ -79,7 +79,7 @@ fn create((req, form, db): (HttpRequest<State>, Json<CreateTeamForm>, DbConn)) -
 }
 
 fn get_team_profile(team_id: i32, db: DbConn) -> Option<impl Serialize> {
-    use openctf_core::schema::teams::dsl::*;
+    use core::schema::teams::dsl::*;
     teams
         .filter(id.eq(&team_id))
         .first::<Team>(&*db)
@@ -101,7 +101,7 @@ fn me((req, db): (HttpRequest<State>, DbConn)) -> HttpResponse {
     let team_id = match ext.get::<LoginClaim>() {
         Some(claims) => {
             let user = {
-                use openctf_core::schema::users::dsl::*;
+                use core::schema::users::dsl::*;
                 users.filter(id.eq(claims.id)).first::<User>(&*db).unwrap()
             };
             error!("{:?}", user);
