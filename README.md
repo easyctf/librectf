@@ -3,6 +3,11 @@ LibreCTF
 
 [![](https://travis-ci.org/easyctf/librectf.svg?branch=develop)](https://travis-ci.org/easyctf/librectf)
 ![](https://tokei.rs/b1/github/easyctf/librectf)
+[![GitHub version](https://badge.fury.io/gh/easyctf%2Flibrectf.svg)](https://badge.fury.io/gh/easyctf%2Flibrectf)
+[![GitHub issues](https://img.shields.io/github/issues/easyctf/librectf.svg)](https://github.com/easyctf/librectf/issues)
+[![GitHub forks](https://img.shields.io/github/forks/easyctf/librectf.svg)](https://github.com/easyctf/librectf/network)
+[![GitHub stars](https://img.shields.io/github/stars/easyctf/librectf.svg)](https://github.com/easyctf/librectf/stargazers)
+[![Rawsec's CyberSecurity Inventory](https://inventory.rawsec.ml/img/badges/Rawsec-inventoried-FF5050_flat.svg)](https://inventory.rawsec.ml/ctf_platforms.html#LibreCTF)
 
 [Documentation](http://easyctf.github.io/librectf/)
 
