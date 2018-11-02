@@ -18,6 +18,12 @@ pub fn app(state: State) -> App<State> {
         .prefix("/user")
         .resource("/login", |r| r.post().with(login))
         .resource("/register", |r| r.post().with(register))
+        .scope("/settings", |scope| {
+            scope.middleware(LoginRequired).resource("/", |r| {
+                r.get().with(get_settings);
+                r.post().with(post_settings);
+            })
+        })
 }
 
 pub struct LoginRequired;
@@ -155,4 +161,12 @@ impl Into<Result<NewUser, Error>> for RegisterForm {
             password: bcrypt::hash(&self.password, bcrypt::DEFAULT_COST)?,
         })
     }
+}
+
+fn get_settings(db: DbConn) -> HttpResponse {
+    HttpResponse::Ok().json("")
+}
+
+fn post_settings(db: DbConn) -> HttpResponse {
+    HttpResponse::Ok().json("")
 }

@@ -7,13 +7,14 @@ extern crate chrono;
 extern crate diesel;
 #[macro_use]
 extern crate failure;
+extern crate futures;
 extern crate jsonwebtoken;
 #[macro_use]
 extern crate log;
-#[macro_use]
 extern crate core;
 extern crate r2d2;
 extern crate r2d2_diesel;
+extern crate redis;
 #[macro_use]
 extern crate structopt;
 extern crate serde;
@@ -28,6 +29,7 @@ mod chal;
 mod config;
 mod db;
 mod state;
+mod task;
 mod team;
 mod user;
 

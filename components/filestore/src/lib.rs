@@ -27,6 +27,7 @@ use actix_web::{
     http::Method,
     server, App, FutureResponse, HttpMessage, HttpRequest, HttpResponse,
 };
+use failure::Error;
 use futures::{future, Future, Stream};
 use sha2::Digest;
 use structopt::StructOpt;
@@ -35,9 +36,32 @@ pub use config::Config;
 use util::handle_multipart;
 
 #[derive(Debug, StructOpt)]
-struct FsService {
+pub struct FilestoreCommand {
     #[structopt(flatten)]
     config: Config,
+}
+
+impl FilestoreCommand {
+    pub fn run(&self) -> Result<(), Error> {
+        let addr = SocketAddrV4::new(
+            Ipv4Addr::from_str(&self.config.bind_host).unwrap(),
+            self.config.bind_port,
+        );
+        let config = self.config.clone();
+
+        server::new(move || {
+            let state = State::new(&config.clone());
+            App::with_state(state)
+                .resource("/upload/public", |r| r.method(Method::POST).f(upload))
+                .resource("/upload/private", |r| r.method(Method::POST).f(upload))
+                .resource("/public/{tail:.*}", |r| r.method(Method::GET).f(public))
+                .resource("/private/{tail:.*}", |r| r.method(Method::GET).f(private))
+        }).bind(addr)
+        .map(|server| server.run())
+        .unwrap();
+
+        Ok(())
+    }
 }
 
 #[derive(Clone)]
@@ -83,6 +107,12 @@ fn public(req: &HttpRequest<State>) -> actix_web::Result<NamedFile> {
     Ok(NamedFile::open(path)?)
 }
 
+#[derive(Serialize, Deserialize)]
+struct UploadOptions {
+    prefix: Option<String>,
+    suffix: Option<String>,
+}
+
 fn upload(req: &HttpRequest<State>) -> FutureResponse<HttpResponse> {
     let state = req.state();
     let headers = req.headers();
@@ -113,40 +143,3 @@ fn upload(req: &HttpRequest<State>) -> FutureResponse<HttpResponse> {
             }),
     )
 }
-
-pub fn run(config: Config) {
-    let addr = SocketAddrV4::new(
-        Ipv4Addr::from_str(&config.bind_host).unwrap(),
-        config.bind_port,
-    );
-
-    server::new(move || {
-        let state = State::new(&config);
-        App::with_state(state)
-            .resource("/upload/public", |r| r.method(Method::POST).f(upload))
-            .resource("/upload/private", |r| r.method(Method::POST).f(upload))
-            .resource("/public/{tail:.*}", |r| r.method(Method::GET).f(public))
-            .resource("/private/{tail:.*}", |r| r.method(Method::GET).f(private))
-    }).bind(addr)
-    .map(|server| server.run())
-    .unwrap();
-}
-
-// fn main() -> Result<(), Error> {
-//     let config = FsConfig::from_args();
-//     let addr = SocketAddrV4::new(
-//         Ipv4Addr::from_str(&config.bind_host).unwrap(),
-//         config.bind_port,
-//     );
-
-//     server::new(move || {
-//         let state = State::new(&config);
-//         App::with_state(state)
-//             .resource("/upload/public", |r| r.method(Method::POST).f(upload))
-//             .resource("/upload/private", |r| r.method(Method::POST).f(upload))
-//             .resource("/public/{tail:.*}", |r| r.method(Method::GET).f(public))
-//             .resource("/private/{tail:.*}", |r| r.method(Method::GET).f(private))
-//     }).bind(addr)
-//     .map(|server| server.run())?;
-//     Ok(())
-// }

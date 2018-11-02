@@ -3,12 +3,13 @@ name = "filestore"
 version = "0.1.0"
 authors = ["Michael Zhang <failed.down@gmail.com>"]
 
-[features]
-default = ["server"]
-server = []
+[[bin]]
+name = "filestore"
+path = "src/bin.rs"
 
 [dependencies]
 actix-web = "0.7"
+env_logger = "0.5"
 failure = "0.1"
 futures = "0.1"
 log = "0.4"

@@ -29,6 +29,6 @@ pub struct RedisConfig {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct CommonConfig {
+pub struct CoreConfig {
     redis: RedisConfig,
 }

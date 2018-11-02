@@ -2,11 +2,15 @@ use actix_web::{App, HttpRequest, HttpResponse};
 use core::models::Challenge;
 use diesel::RunQueryDsl;
 
-use super::{user::LoginClaim, APIMiddleware, DbConn, State};
+use super::{
+    user::{LoginClaim, LoginRequired},
+    APIMiddleware, DbConn, State,
+};
 
 pub fn app(state: State) -> App<State> {
     App::with_state(state)
         .middleware(APIMiddleware)
+        .middleware(LoginRequired)
         .prefix("/chal")
         .resource("/list", |r| r.get().with(list))
         .resource("/submit", |r| r.post().with(submit))
@@ -26,6 +30,7 @@ fn list((req, db): (HttpRequest<State>, DbConn)) -> HttpResponse {
                 .map(|chal| {
                     json!({
                         "title": chal.title,
+                        "value": chal.value,
                     })
                 }).collect::<Vec<_>>();
             HttpResponse::Ok().json(list)

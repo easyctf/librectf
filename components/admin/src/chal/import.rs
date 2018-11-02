@@ -1,4 +1,4 @@
-use std::fs::{read_dir, read_to_string};
+use std::fs::{read_dir, read_to_string, DirEntry};
 use std::path::PathBuf;
 
 use failure::Error;
@@ -31,64 +31,43 @@ impl ImportChalCommand {
     pub fn run(&self) -> Result<(), Error> {
         let mut failed: Vec<(Option<PathBuf>, Error)> = Vec::new();
         for entry in read_dir(&self.challenge_dir)? {
-            let entry = match entry {
-                Ok(entry) => entry,
-                Err(err) => {
-                    failed.push((None, format_err!("Directory traversal error: {}", err)));
-                    continue;
+            if let Err(err) = (|entry| -> Result<(), Error> {
+                let entry: DirEntry = entry?;
+                let path = entry.path();
+                // TODO unfuck this
+                let name = path.file_name().unwrap().to_str().unwrap().to_owned();
+
+                // skip names that begin with '.'
+                if let Some(true) = path
+                    .file_name()
+                    .and_then(|ostr| ostr.to_str())
+                    .map(|name| !name.starts_with("."))
+                {
+                } else {
+                    return Ok(());
                 }
-            };
-            let path = entry.path();
-            let name = path.file_name().unwrap().to_str().unwrap().to_owned();
 
-            match path
-                .file_name()
-                .and_then(|ostr| ostr.to_str())
-                .and_then(|name| {
-                    if name.starts_with(".") {
-                        None
-                    } else {
-                        Some(())
-                    }
-                }) {
-                Some(_) => (),
-                None => continue,
-            }
+                // TODO: run Make here
 
-            // TODO: run Make here
-
-            // find meta.toml
-            let meta_toml_path = path.join("meta.toml");
-            if !meta_toml_path.exists() {
-                failed.push((
-                    Some(path),
-                    format_err!("Could not find meta.toml in this directory."),
-                ));
-                continue;
-            }
-
-            // read the meta file
-            let meta_contents = match read_to_string(&meta_toml_path) {
-                Ok(meta) => meta,
-                Err(err) => {
-                    failed.push((Some(path), format_err!("Failed to read file: {}", err)));
-                    continue;
+                // find meta.toml
+                let meta_toml_path = path.join("meta.toml");
+                if !meta_toml_path.exists() {
+                    bail!("Could not find meta.toml in this directory.");
                 }
-            };
 
-            // parse the meta file
-            let meta_toml = match { toml::from_str::<Metadata>(&meta_contents) } {
-                Ok(mut value) => {
+                // read and the meta file
+                let meta_contents = read_to_string(&meta_toml_path)?;
+                let meta_toml = toml::from_str::<Metadata>(&meta_contents).map(|mut value| {
                     value.name = name;
                     value
-                }
-                Err(err) => {
-                    failed.push((Some(path), format_err!("Deserialization error: {}", err)));
-                    continue;
-                }
-            };
+                })?;
 
-            println!("Successfully loaded: {:?}", meta_toml);
+                println!("Successfully loaded: {:?}", meta_toml);
+                Ok(())
+            })(entry)
+            {
+                failed.push((None, format_err!("Error loading: {}", err)));
+            }
         }
 
         if failed.len() > 0 {
