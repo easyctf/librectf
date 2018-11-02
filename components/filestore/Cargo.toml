@@ -9,6 +9,7 @@ path = "src/bin.rs"
 
 [dependencies]
 actix-web = "0.7"
+core = { path = "../core" }
 env_logger = "0.5"
 failure = "0.1"
 futures = "0.1"

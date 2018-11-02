@@ -1,19 +1,17 @@
-use std::path::Path;
+use std::path::{PathBuf};
 
 use cfg::{self, Environment};
 use failure::Error;
 use serde::Deserialize;
 
 pub trait Config<'d>: Sized + Deserialize<'d> {
-    fn new<P>(file: Option<P>) -> Result<Self, Error>
-    where
-        P: AsRef<Path>,
+    fn new(file: Option<PathBuf>) -> Result<Self, Error>
     {
         let mut c = cfg::Config::new();
 
         // optionally load from file if provided
         if let Some(path) = file {
-            c.merge::<cfg::File<_>>(path.as_ref().to_path_buf().into())?;
+            c.merge::<cfg::File<_>>(path.into())?;
         }
 
         c.merge(Environment::with_prefix("librectf"))?;

@@ -36,4 +36,5 @@ pub mod schema;
 
 mod tasks;
 
+pub use config::Config;
 pub use db::{establish_connection, Pool};

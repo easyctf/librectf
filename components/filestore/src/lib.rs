@@ -1,5 +1,6 @@
 // based on https://github.com/actix/examples/blob/master/multipart/src/main.rs
 // TODO: mime type on output
+// TODO: prefix/suffix uploading
 
 extern crate actix_web;
 extern crate failure;
@@ -10,7 +11,6 @@ extern crate serde;
 extern crate sha2;
 #[macro_use]
 extern crate serde_derive;
-#[macro_use]
 extern crate structopt;
 extern crate tempfile;
 
@@ -29,25 +29,22 @@ use actix_web::{
 };
 use failure::Error;
 use futures::{future, Future, Stream};
-use sha2::Digest;
-use structopt::StructOpt;
 
 pub use config::Config;
 use util::handle_multipart;
 
-#[derive(Debug, StructOpt)]
+#[derive(Debug, Serialize, Deserialize)]
 pub struct FilestoreCommand {
-    #[structopt(flatten)]
-    config: Config,
+    filestore: Config,
 }
 
 impl FilestoreCommand {
     pub fn run(&self) -> Result<(), Error> {
         let addr = SocketAddrV4::new(
-            Ipv4Addr::from_str(&self.config.bind_host).unwrap(),
-            self.config.bind_port,
+            Ipv4Addr::from_str(&self.filestore.bind_host).unwrap(),
+            self.filestore.bind_port,
         );
-        let config = self.config.clone();
+        let config = self.filestore.clone();
 
         server::new(move || {
             let state = State::new(&config.clone());

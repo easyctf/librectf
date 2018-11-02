@@ -1,0 +1,9 @@
+[filestore]
+url_prefix = "http://localhost/filestore"
+bind_host = "127.0.0.1"
+bind_port = 6201
+
+push_password = "push"
+pull_password = "pull"
+
+storage_dir = "data"
