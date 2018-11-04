@@ -1,5 +1,4 @@
 #![allow(proc_macro_derive_resolution_fallback)]
-#![recursion_limit = "1024"]
 
 extern crate actix_web;
 extern crate bcrypt;

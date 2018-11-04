@@ -42,8 +42,3 @@ impl Middleware<State> for LoginRequired {
             })
     }
 }
-
-#[test]
-fn test_login_required() {
-    panic!();
-}
