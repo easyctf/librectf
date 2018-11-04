@@ -3,7 +3,7 @@ use core::models::Challenge;
 use diesel::RunQueryDsl;
 
 use super::{
-    user::{LoginClaim, LoginRequired},
+    user::{LoginClaims, LoginRequired},
     APIMiddleware, DbConn, State,
 };
 
@@ -20,7 +20,7 @@ fn list((req, db): (HttpRequest<State>, DbConn)) -> HttpResponse {
     use core::schema::chals::dsl::*;
 
     let ext = req.extensions();
-    let claims = ext.get::<LoginClaim>().unwrap();
+    let claims = ext.get::<LoginClaims>().unwrap();
 
     chals
         .load::<Challenge>(&*db)

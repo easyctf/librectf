@@ -2,7 +2,7 @@ use chrono::{serde::ts_milliseconds, DateTime, Utc};
 use core::models::User;
 use diesel::prelude::*;
 use failure::{Compat, Error, Fail};
-use jsonwebtoken::Header;
+use jsonwebtoken::{Header, Validation};
 
 use DbConn;
 
@@ -13,7 +13,7 @@ pub struct LoginForm {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-pub struct LoginClaim {
+pub struct LoginClaims {
     #[serde(with = "ts_milliseconds")]
     exp: DateTime<Utc>,
     pub id: i32,
@@ -30,7 +30,7 @@ pub enum LoginError {
 }
 
 pub fn sign_claims(secret_key: &Vec<u8>, user: &User) -> Result<String, LoginError> {
-    let claim = LoginClaim {
+    let claim = LoginClaims {
         exp: Utc::now() + chrono::Duration::weeks(6),
         id: user.id,
         username: user.name.clone(),
@@ -40,6 +40,16 @@ pub fn sign_claims(secret_key: &Vec<u8>, user: &User) -> Result<String, LoginErr
         use jsonwebtoken::errors::Error as JwtError;
         LoginError::ServerError(<JwtError as Into<Error>>::into(err).compat())
     })
+}
+
+pub fn verify_claims(secret_key: &Vec<u8>, token: &str) -> Result<LoginClaims, Error> {
+    let validation = Validation {
+        leeway: 60,
+        ..Default::default()
+    };
+    jsonwebtoken::decode::<LoginClaims>(token, secret_key, &validation)
+        .map(|data| data.claims)
+        .map_err(|err| err.into())
 }
 
 /// Logs in a given user, given a database connection and the user's credentials.

@@ -3,9 +3,9 @@ use actix_web::{
     middleware::{Middleware, Started},
     HttpRequest, HttpResponse,
 };
-use jsonwebtoken::Validation;
 
-use super::{super::State, LoginClaim};
+use super::auth::verify_claims;
+use State;
 
 pub struct LoginRequired;
 
@@ -28,25 +28,18 @@ impl Middleware<State> for LoginRequired {
         };
 
         // TODO: don't unwrap here
-        let validation = Validation {
-            leeway: 60,
-            ..Default::default()
-        };
-        let decoded =
-            match jsonwebtoken::decode::<LoginClaim>(token, &state.get_secret_key(), &validation) {
-                Ok(claims) => claims,
-                err => {
-                    error!("Error decoding JWT from user: {:?}", err);
-                    return Ok(Started::Response(
-                        HttpResponse::Forbidden().json("access denied 1"),
-                    ));
-                }
-            };
+        verify_claims(&state.get_secret_key(), token)
+            .map(|claims| {
+                let mut ext = req.extensions_mut();
+                ext.insert(claims);
 
-        let mut ext = req.extensions_mut();
-        ext.insert(decoded.claims);
-
-        Ok(Started::Done)
+                Ok(Started::Done)
+            }).unwrap_or_else(|err| {
+                error!("Error decoding JWT from user: {:?}", err);
+                return Ok(Started::Response(
+                    HttpResponse::Forbidden().json("access denied 1"),
+                ));
+            })
     }
 }
 

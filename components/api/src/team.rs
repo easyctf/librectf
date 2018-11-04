@@ -4,7 +4,7 @@ use diesel::{self, prelude::*};
 use serde::Serialize;
 
 use super::{
-    user::{LoginClaim, LoginRequired},
+    user::{LoginClaims, LoginRequired},
     APIMiddleware, DbConn, State,
 };
 
@@ -27,7 +27,7 @@ fn create((req, form, db): (HttpRequest<State>, Json<CreateTeamForm>, DbConn)) -
     use diesel::result::Error;
 
     let ext = req.extensions();
-    let claims = ext.get::<LoginClaim>().unwrap();
+    let claims = ext.get::<LoginClaims>().unwrap();
     let form = form.into_inner();
 
     let new_team = NewTeam { name: form.name };
@@ -95,7 +95,7 @@ fn me((req, db): (HttpRequest<State>, DbConn)) -> HttpResponse {
     // TODO: don't unwrap
     let ext = req.extensions();
     error!("{:?}", ext);
-    let team_id = match ext.get::<LoginClaim>() {
+    let team_id = match ext.get::<LoginClaims>() {
         Some(claims) => {
             let user = {
                 use core::schema::users::dsl::*;

@@ -9,7 +9,7 @@ use failure::Error;
 use super::DbConn;
 use core::models::NewUser;
 
-pub use self::auth::LoginClaim;
+pub use self::auth::LoginClaims;
 pub use self::middleware::LoginRequired;
 
 #[derive(Deserialize)]
