@@ -1,40 +1,36 @@
-use actix_web::{App, HttpRequest, HttpResponse};
 use chrono::NaiveDateTime;
 use diesel::{debug_query, dsl::sql, prelude::*};
 use diesel::{
     mysql::Mysql,
     sql_types::{Datetime, Integer},
 };
+use failure::Error;
 
-use super::{APIMiddleware, DbConn, State};
+use super::DbConn;
 
 // TODO: make this a config option later
 const RESULTS_PER_PAGE: i64 = 30;
 
-pub fn app(state: State) -> App<State> {
-    App::with_state(state)
-        .middleware(APIMiddleware)
-        .prefix("/base")
-        .resource("/scoreboard/{n}", |r| r.with(scoreboard))
-        .resource("/scoreboard", |r| r.with(scoreboard))
+#[derive(Serialize, Deserialize)]
+pub struct ScoreboardOptions {
+    #[serde(default)]
+    page: i64,
 }
 
-#[derive(Queryable, Serialize)]
-struct ScoreboardEntry {
+#[derive(Debug, Queryable, Serialize)]
+pub struct ScoreboardEntry {
     score: i32,
     #[serde(skip)]
     _last_update: NaiveDateTime,
     teamname: String,
 }
 
-fn scoreboard((req, db): (HttpRequest<State>, DbConn)) -> HttpResponse {
+/// Gets a public scoreboard using the options provided.
+pub fn get_scoreboard(
+    db: DbConn,
+    options: &ScoreboardOptions,
+) -> Result<Vec<ScoreboardEntry>, Error> {
     use core::schema::{chals, solves, teams};
-
-    let params = req.match_info();
-    let page: i64 = match params.query("n") {
-        Ok(n) if n >= 1 => n,
-        _ => 1,
-    };
 
     let query = solves::table
         .inner_join(teams::table)
@@ -59,11 +55,13 @@ fn scoreboard((req, db): (HttpRequest<State>, DbConn)) -> HttpResponse {
 
     let query = query
         .limit(RESULTS_PER_PAGE)
-        .offset((page - 1) * RESULTS_PER_PAGE);
+        .offset((options.page - 1) * RESULTS_PER_PAGE);
 
     let dbg = debug_query::<Mysql, _>(&query).to_string();
+    info!("Debug scoreboard query: {}", dbg);
 
     // TOOD: don't unwrap
-    let results: Vec<ScoreboardEntry> = query.load(&*db).unwrap();
-    HttpResponse::Ok().json(json!({ "query": dbg, "results": results }))
+    query
+        .load::<ScoreboardEntry>(&*db)
+        .map_err(|err| err.into())
 }

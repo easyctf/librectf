@@ -24,10 +24,11 @@ extern crate serde_derive;
 extern crate serde_json;
 
 mod api;
-mod base;
 mod chal;
 mod config;
 mod db;
+mod routes;
+mod scoreboard;
 mod state;
 mod task;
 mod team;
@@ -53,14 +54,8 @@ pub fn run(config: Config) {
     let pool = establish_connection(&config.database_url);
     let state = State::new(config.secret_key.clone().into_bytes(), pool);
 
-    server::new(move || {
-        vec![
-            base::app(state.clone()),
-            chal::app(state.clone()),
-            team::app(state.clone()),
-            user::app(state.clone()),
-        ]
-    }).bind(addr)
-    .map(|server| server.run())
-    .unwrap();
+    server::new(move || routes::router(state.clone()))
+        .bind(addr)
+        .map(|server| server.run())
+        .unwrap();
 }

@@ -1,12 +1,11 @@
-use std::path::{PathBuf};
+use std::path::PathBuf;
 
 use cfg::{self, Environment};
 use failure::Error;
 use serde::Deserialize;
 
 pub trait Config<'d>: Sized + Deserialize<'d> {
-    fn new(file: Option<PathBuf>) -> Result<Self, Error>
-    {
+    fn new(file: Option<PathBuf>) -> Result<Self, Error> {
         let mut c = cfg::Config::new();
 
         // optionally load from file if provided

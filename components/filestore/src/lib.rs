@@ -99,7 +99,6 @@ fn public(req: &HttpRequest<State>) -> actix_web::Result<NamedFile> {
     let mut path = state.0.storage_dir.clone();
     path.push("public");
     path.push(tail);
-    error!("path: {:?}", path);
 
     Ok(NamedFile::open(path)?)
 }
