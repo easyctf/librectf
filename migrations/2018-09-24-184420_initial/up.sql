@@ -2,10 +2,10 @@ CREATE TABLE `chals` (
     `id` INTEGER PRIMARY KEY AUTO_INCREMENT,
     `title` VARCHAR(64) NOT NULL,
     `enabled` BOOLEAN NOT NULL DEFAULT FALSE,
+    `description` TEXT NOT NULL,
 
-    -- `correct_flag` TEXT NOT NULL,
-    -- `regex` BOOLEAN NOT NULL DEFAULT FALSE,
-    `autogen` BOOLEAN NOT NULL DEFAULT FALSE,
+    `correct_flag` TEXT NOT NULL,
+    `regex` BOOLEAN NOT NULL DEFAULT FALSE,
     `value` INTEGER NOT NULL,
 
     -- constraints

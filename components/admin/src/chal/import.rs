@@ -5,19 +5,14 @@ use failure::Error;
 use toml;
 
 #[derive(Debug, Serialize, Deserialize)]
-struct Autogen {
-    generator: String,
-}
-
-#[derive(Debug, Serialize, Deserialize)]
 struct Metadata {
     #[serde(skip, default)]
     name: String,
     title: String,
     value: i32,
     description: String,
-    grader: String,
-    autogen: Option<Autogen>,
+    regex: bool,
+    flag: String,
 }
 
 #[derive(Debug, StructOpt)]

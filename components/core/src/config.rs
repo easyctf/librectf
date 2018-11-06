@@ -9,8 +9,16 @@ pub trait Config<'d>: Sized + Deserialize<'d> {
         let mut c = cfg::Config::new();
 
         // optionally load from file if provided
-        if let Some(path) = file {
-            c.merge::<cfg::File<_>>(path.into())?;
+        match file {
+            Some(path) => {
+                c.merge::<cfg::File<_>>(path.into())?;
+            }
+            None => {
+                let path = PathBuf::from("librectf.toml");
+                if path.exists() {
+                    c.merge::<cfg::File<_>>(path.into())?;
+                }
+            }
         }
 
         c.merge(Environment::with_prefix("librectf"))?;

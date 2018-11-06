@@ -5,7 +5,9 @@ pub struct Challenge {
     pub id: i32,
     pub title: String,
     pub enabled: bool,
-    pub autogen: bool,
+    pub description: String,
+    pub correct_flag: String,
+    pub regex: bool,
     pub value: i32,
 }
 

@@ -39,6 +39,8 @@ impl State {
             Err(err) => Err(format_err!("Database connection error: {}", err)),
         }
     }
+
+    pub fn get_file(&self, uri: &str) {}
 }
 
 impl FromRequest<State> for State {

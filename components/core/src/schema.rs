@@ -3,7 +3,9 @@ table! {
         id -> Integer,
         title -> Varchar,
         enabled -> Bool,
-        autogen -> Bool,
+        description -> Text,
+        correct_flag -> Text,
+        regex -> Bool,
         value -> Integer,
     }
 }

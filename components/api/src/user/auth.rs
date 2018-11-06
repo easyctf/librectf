@@ -68,7 +68,7 @@ pub fn login_user(db: DbConn, secret_key: Vec<u8>, form: LoginForm) -> Result<St
     users
         .filter(email.eq(&form.email))
         .first::<User>(&*db)
-        .map_err(|err| UserError::BadUsernameOrPassword)
+        .map_err(|_| UserError::BadUsernameOrPassword)
         .and_then(|user| {
             bcrypt::verify(&form.password, &user.password)
                 .map(|_| user)

@@ -4,12 +4,18 @@ use api::APIMiddleware;
 use State;
 
 pub fn router(state: State) -> App<State> {
+    use user::LoginRequired;
     App::with_state(state)
         .middleware(APIMiddleware)
         .resource("/", |r| r.f(|_| HttpResponse::Ok().json("hello there")))
         .resource("/scoreboard", |r| r.with(self::base::scoreboard))
-        .scope("/user", |scope| {
-            use user::LoginRequired;
+        .scope("/chal", |scope| {
+            scope
+                .middleware(APIMiddleware)
+                .middleware(LoginRequired)
+                .resource("/list", |r| r.get().with(self::chal::list))
+                .resource("/submit", |r| r.post().with(self::chal::submit))
+        }).scope("/user", |scope| {
             scope
                 .middleware(APIMiddleware)
                 .resource("/login", |r| r.post().with(self::user::login))
@@ -39,6 +45,43 @@ mod base {
             })
     }
 }
+
+mod chal {
+    use actix_web::{HttpResponse, Json};
+    use chal::{list_all, submit_flag, SubmitForm};
+    use DbConn;
+
+    pub fn list(db: DbConn) -> HttpResponse {
+        list_all(db)
+            .map(|chals| {
+                HttpResponse::Ok().json(
+                    chals
+                        .iter()
+                        .map(|chal| {
+                            json!({
+                                "title": chal.title,
+                                "value": chal.value,
+                            })
+                        }).collect::<Vec<_>>(),
+                )
+            }).unwrap_or_else(|err| {
+                error!("Error while listing chals: {}", err);
+                HttpResponse::InternalServerError().finish()
+            })
+    }
+
+    pub fn submit((form, db): (Json<SubmitForm>, DbConn)) -> HttpResponse {
+        let form = form.into_inner();
+        submit_flag(db, form)
+            .map(|result| HttpResponse::Ok().json(result))
+            .unwrap_or_else(|err| {
+                error!("Error during submission: {}", err);
+                HttpResponse::InternalServerError().finish()
+            })
+    }
+}
+
+mod team {}
 
 mod user {
     use actix_web::{HttpRequest, HttpResponse, Json};
