@@ -1,7 +1,7 @@
 <template>
     <b-jumbotron>
         <b-container>
-            <h1 class="display-3">OpenCTF</h1>
+            <h1 class="display-3">LibreCTF</h1>
             <p class="lead">Open-source CTF framework.</p>
         </b-container>
     </b-jumbotron>

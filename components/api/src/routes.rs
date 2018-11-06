@@ -18,6 +18,7 @@ pub fn router(state: State) -> App<State> {
             scope
                 .middleware(LoginRequired)
                 .resource("/create", |r| r.post().with(self::team::create))
+                .resource("/me", |r| r.post().with(self::team::me))
         }).scope("/user", |scope| {
             scope
                 .middleware(APIMiddleware)
@@ -86,7 +87,7 @@ mod chal {
 
 mod team {
     use actix_web::{HttpRequest, HttpResponse, Json};
-    use team::{create_team, CreateTeamForm};
+    use team::{self, create_team, CreateTeamForm};
     use user::auth::LoginClaims;
     use {DbConn, State};
 
@@ -100,6 +101,19 @@ mod team {
             .map(|_| HttpResponse::Ok().finish())
             .unwrap_or_else(|err| {
                 error!("Error during team creation: {}", err);
+                HttpResponse::InternalServerError().finish()
+            })
+    }
+
+    pub fn me((req, db): (HttpRequest<State>, DbConn)) -> HttpResponse {
+        // TODO: don't unwrap
+        let ext = req.extensions();
+        let claims = ext.get::<LoginClaims>().unwrap();
+
+        team::me(db, claims.id)
+            .map(|profile| HttpResponse::Ok().json(profile))
+            .unwrap_or_else(|err| {
+                error!("Error fetching profile: {}", err);
                 HttpResponse::InternalServerError().finish()
             })
     }

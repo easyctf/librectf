@@ -1,4 +1,4 @@
-use core::models::{NewTeam, Team};
+use core::models::{NewTeam, Team, User};
 use diesel::{self, prelude::*};
 use failure::Error;
 
@@ -54,21 +54,40 @@ pub fn create_team(db: DbConn, uid: i32, form: CreateTeamForm) -> Result<(), Err
     }).map_err(|err| err.into())
 }
 
-// fn get_team_profile(team_id: i32, db: DbConn) -> Option<impl Serialize> {
-//     use core::schema::teams::dsl::*;
-//     teams
-//         .filter(id.eq(&team_id))
-//         .first::<Team>(&*db)
-//         .map(|team| {
-//             json!({
-//                 "team": {
-//                     "id": team.id,
-//                     "name": team.name,
-//                     "banned": team.banned,
-//                 }
-//             })
-//         }).ok()
-// }
+fn get_team_id(db: &DbConn, user_id: i32) -> Result<Option<i32>, Error> {
+    use core::schema::users::dsl::*;
+    users
+        .filter(id.eq(user_id))
+        .first::<User>(&**db)
+        .map(|user| user.team_id)
+        .map_err(|err| err.into())
+}
+
+pub fn me(db: DbConn, user_id: i32) -> Result<Option<TeamProfile>, Error> {
+    get_team_id(&db, user_id).and_then(|opt| match opt {
+        Some(team_id) => get_team_profile(&db, team_id).map(|team| Some(team)),
+        None => Ok(None),
+    })
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct TeamProfile {
+    pub id: i32,
+    pub name: String,
+    pub banned: bool,
+}
+
+fn get_team_profile(db: &DbConn, team_id: i32) -> Result<TeamProfile, Error> {
+    use core::schema::teams::dsl::*;
+    teams
+        .filter(id.eq(&team_id))
+        .first::<Team>(&**db)
+        .map(|team| TeamProfile {
+            id: team.id,
+            name: team.name,
+            banned: team.banned,
+        }).map_err(|err| err.into())
+}
 
 // fn me((req, db): (HttpRequest<State>, DbConn)) -> HttpResponse {
 //     // TODO: don't unwrap
