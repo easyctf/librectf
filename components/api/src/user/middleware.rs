@@ -32,7 +32,6 @@ impl Middleware<State> for LoginRequired {
             .map(|claims| {
                 let mut ext = req.extensions_mut();
                 ext.insert(claims);
-
                 Ok(Started::Done)
             }).unwrap_or_else(|err| {
                 error!("Error decoding JWT from user: {:?}", err);

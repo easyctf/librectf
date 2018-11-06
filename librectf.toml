@@ -1,6 +1,8 @@
 [api]
+database_url = "mysql://root:password@localhost:3306/openctf"
 bind_host = "127.0.0.1"
 bind_port = 6200
+secret_key = "secret"
 
 [filestore]
 url_prefix = "http://localhost/filestore"

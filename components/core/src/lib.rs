@@ -12,12 +12,13 @@ extern crate chrono;
 extern crate config as cfg;
 #[macro_use]
 extern crate diesel;
-#[macro_use]
 extern crate failure;
+extern crate futures;
 extern crate lazy_static;
 extern crate log;
 extern crate r2d2;
 extern crate r2d2_diesel;
+extern crate redis_async;
 extern crate regex;
 extern crate serde;
 #[macro_use]
