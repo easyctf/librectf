@@ -14,6 +14,7 @@ pub trait Config<'d>: Sized + Deserialize<'d> {
                 c.merge::<cfg::File<_>>(path.into())?;
             }
             None => {
+                // hardcode in the filename 'librectf.toml'
                 let path = PathBuf::from("librectf.toml");
                 if path.exists() {
                     c.merge::<cfg::File<_>>(path.into())?;
