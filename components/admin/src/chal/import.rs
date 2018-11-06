@@ -58,6 +58,9 @@ impl ImportChalCommand {
                 })?;
 
                 println!("Successfully loaded: {:?}", meta_toml);
+
+                // TODO: save required files into filestore
+                // TODO: add it to the database
                 Ok(())
             })(entry)
             {
