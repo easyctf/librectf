@@ -7,7 +7,6 @@
 #![allow(proc_macro_derive_resolution_fallback)]
 // #![deny(missing_docs)]
 
-extern crate cache;
 extern crate chrono;
 extern crate config as cfg;
 #[macro_use]

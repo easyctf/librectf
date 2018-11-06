@@ -2,9 +2,6 @@
 members = [
     "components/admin",
     "components/api",
-    "components/cache",
     "components/core",
     "components/filestore",
-    "components/jail",
-    "components/worker",
 ]
