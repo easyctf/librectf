@@ -14,6 +14,7 @@ extern crate log;
 extern crate core;
 extern crate r2d2;
 extern crate r2d2_diesel;
+extern crate regex;
 extern crate serde;
 extern crate structopt;
 #[macro_use]

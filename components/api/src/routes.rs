@@ -11,10 +11,13 @@ pub fn router(state: State) -> App<State> {
         .resource("/scoreboard", |r| r.with(self::base::scoreboard))
         .scope("/chal", |scope| {
             scope
-                .middleware(APIMiddleware)
                 .middleware(LoginRequired)
                 .resource("/list", |r| r.get().with(self::chal::list))
                 .resource("/submit", |r| r.post().with(self::chal::submit))
+        }).scope("/team", |scope| {
+            scope
+                .middleware(LoginRequired)
+                .resource("/create", |r| r.post().with(self::team::create))
         }).scope("/user", |scope| {
             scope
                 .middleware(APIMiddleware)
@@ -81,7 +84,26 @@ mod chal {
     }
 }
 
-mod team {}
+mod team {
+    use actix_web::{HttpRequest, HttpResponse, Json};
+    use team::{create_team, CreateTeamForm};
+    use user::auth::LoginClaims;
+    use {DbConn, State};
+
+    pub fn create(
+        (req, form, db): (HttpRequest<State>, Json<CreateTeamForm>, DbConn),
+    ) -> HttpResponse {
+        let ext = req.extensions();
+        let claims = ext.get::<LoginClaims>().unwrap();
+        let form = form.into_inner();
+        create_team(db, claims.id, form)
+            .map(|_| HttpResponse::Ok().finish())
+            .unwrap_or_else(|err| {
+                error!("Error during team creation: {}", err);
+                HttpResponse::InternalServerError().finish()
+            })
+    }
+}
 
 mod user {
     use actix_web::{HttpRequest, HttpResponse, Json};
