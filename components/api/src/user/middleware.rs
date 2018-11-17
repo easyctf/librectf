@@ -20,11 +20,7 @@ impl Middleware<State> for LoginRequired {
             } else {
                 token
             },
-            None => {
-                return Ok(Started::Response(
-                    HttpResponse::Forbidden().json("access denied 1"),
-                ))
-            }
+            None => return Ok(Started::Response(HttpResponse::Unauthorized().finish())),
         };
 
         verify_claims(&state.get_secret_key(), token)
@@ -34,9 +30,7 @@ impl Middleware<State> for LoginRequired {
                 Ok(Started::Done)
             }).unwrap_or_else(|err| {
                 error!("Error decoding JWT from user: {:?}", err);
-                return Ok(Started::Response(
-                    HttpResponse::Forbidden().json("access denied 1"),
-                ));
+                Ok(Started::Response(HttpResponse::Unauthorized().finish()))
             })
     }
 }

@@ -35,13 +35,11 @@ pub fn submit_flag(db: DbConn, form: SubmitForm) -> Result<SubmissionResult, Err
             }
         };
 
-        let judgment = if {
-            if chal.regex {
-                let rgx = Regex::new(&chal.correct_flag).unwrap();
-                rgx.is_match(&form.cand)
-            } else {
-                form.cand == chal.correct_flag
-            }
+        let judgment = if if chal.regex {
+            let rgx = Regex::new(&chal.correct_flag).unwrap();
+            rgx.is_match(&form.cand)
+        } else {
+            form.cand == chal.correct_flag
         } {
             // TODO: award points
             SubmissionResult::Correct

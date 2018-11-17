@@ -37,17 +37,17 @@ impl UserError {
     }
 }
 
-pub fn sign_claims(secret_key: &Vec<u8>, user: &User) -> Result<String, UserError> {
+pub fn sign_claims(secret_key: &[u8], user: &User) -> Result<String, UserError> {
     let claim = LoginClaims {
         exp: Utc::now() + chrono::Duration::weeks(6),
         id: user.id,
         username: user.name.clone(),
         admin: user.admin,
     };
-    jsonwebtoken::encode(&Header::default(), &claim, secret_key).map_err(|err| UserError::from(err))
+    jsonwebtoken::encode(&Header::default(), &claim, secret_key).map_err(UserError::from)
 }
 
-pub fn verify_claims(secret_key: &Vec<u8>, token: &str) -> Result<LoginClaims, Error> {
+pub fn verify_claims(secret_key: &[u8], token: &str) -> Result<LoginClaims, Error> {
     let validation = Validation {
         leeway: 60,
         ..Default::default()
@@ -64,7 +64,7 @@ pub fn verify_claims(secret_key: &Vec<u8>, token: &str) -> Result<LoginClaims, E
 /// [1]: `failure::Error`
 pub fn login_user(
     db: DbConn,
-    secret_key: &Vec<u8>,
+    secret_key: &[u8],
     form: LoginForm,
 ) -> Result<(User, String), UserError> {
     use core::schema::users::dsl::*;
@@ -93,14 +93,14 @@ impl RegisterForm {
             email: self.email,
             name: self.username,
             password: bcrypt::hash(&self.password, bcrypt::DEFAULT_COST)
-                .map_err(|err| UserError::from(err))?,
+                .map_err(UserError::from)?,
         })
     }
 }
 
 pub fn register_user(
     db: DbConn,
-    secret_key: &Vec<u8>,
+    secret_key: &[u8],
     form: RegisterForm,
 ) -> Result<(User, String), UserError> {
     use diesel::result::{

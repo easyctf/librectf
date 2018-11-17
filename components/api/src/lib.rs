@@ -36,13 +36,13 @@ use std::net::{Ipv4Addr, SocketAddrV4};
 use std::str::FromStr;
 
 use actix_web::server;
+use failure::Error;
 
-use api::APIMiddleware;
 pub use config::{Config, ConfigWrapper};
 use db::DbConn;
 use state::State;
 
-pub fn run(config: Config) {
+pub fn run(config: Config) -> Result<(), Error> {
     let addr = SocketAddrV4::new(
         Ipv4Addr::from_str(&config.bind_host).unwrap(),
         config.bind_port,
@@ -53,4 +53,6 @@ pub fn run(config: Config) {
         .bind(addr)
         .map(|server| server.run())
         .unwrap();
+
+    Ok(())
 }

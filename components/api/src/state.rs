@@ -29,7 +29,7 @@ impl State {
         State { inner }
     }
 
-    pub fn get_secret_key(&self) -> &Vec<u8> {
+    pub fn get_secret_key(&self) -> &[u8] {
         &self.inner.secret_key
     }
 
@@ -40,7 +40,7 @@ impl State {
         }
     }
 
-    pub fn get_file(&self, uri: &str) {}
+    pub fn get_file(&self, _uri: &str) {}
 }
 
 impl FromRequest<State> for State {

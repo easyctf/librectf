@@ -24,5 +24,5 @@ fn main() -> Result<(), Error> {
 
     // read configuration
     let config = api::ConfigWrapper::new(opt.config_file)?;
-    Ok(api::run(config.api))
+    api::run(config.api)
 }
