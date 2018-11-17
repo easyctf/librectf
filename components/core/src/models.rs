@@ -30,12 +30,13 @@ pub struct NewUser {
     pub password: String,
 }
 
-#[derive(Debug, Queryable)]
+#[derive(Debug, Queryable, Serialize)]
 pub struct User {
     pub id: i32,
     pub name: String,
     pub email: String,
     pub email_verified: bool,
+    #[serde(skip)]
     pub password: String,
     pub admin: bool,
     pub team_id: Option<i32>,
@@ -53,4 +54,13 @@ pub struct Team {
     pub name: String,
     pub affiliation: Option<String>,
     pub banned: bool,
+}
+
+#[derive(Debug, Insertable)]
+#[table_name = "solves"]
+pub struct NewSolve {
+    pub flag: String,
+    pub chal_id: i32,
+    pub team_id: i32,
+    pub user_id: i32,
 }

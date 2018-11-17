@@ -27,7 +27,6 @@ impl Middleware<State> for LoginRequired {
             }
         };
 
-        // TODO: don't unwrap here
         verify_claims(&state.get_secret_key(), token)
             .map(|claims| {
                 let mut ext = req.extensions_mut();

@@ -11,9 +11,13 @@ use super::DbConn;
 // TODO: make this a config option later
 const RESULTS_PER_PAGE: i64 = 30;
 
+fn default_page() -> i64 {
+    1
+}
+
 #[derive(Serialize, Deserialize)]
 pub struct ScoreboardOptions {
-    #[serde(default)]
+    #[serde(default = "default_page")]
     page: i64,
 }
 

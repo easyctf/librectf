@@ -6,10 +6,10 @@ use jsonwebtoken::{Header, Validation};
 
 use DbConn;
 
-#[derive(Deserialize)]
+#[derive(Debug, Deserialize)]
 pub struct LoginForm {
-    email: String,
-    password: String,
+    pub email: String,
+    pub password: String,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -62,7 +62,11 @@ pub fn verify_claims(secret_key: &Vec<u8>, token: &str) -> Result<LoginClaims, E
 /// It either returns a token that was generated from the successful authentication, or an [Error][1].
 ///
 /// [1]: `failure::Error`
-pub fn login_user(db: DbConn, secret_key: Vec<u8>, form: LoginForm) -> Result<String, UserError> {
+pub fn login_user(
+    db: DbConn,
+    secret_key: &Vec<u8>,
+    form: LoginForm,
+) -> Result<(User, String), UserError> {
     use core::schema::users::dsl::*;
 
     users
@@ -73,14 +77,14 @@ pub fn login_user(db: DbConn, secret_key: Vec<u8>, form: LoginForm) -> Result<St
             bcrypt::verify(&form.password, &user.password)
                 .map(|_| user)
                 .map_err(|_| UserError::BadUsernameOrPassword)
-        }).and_then(|user| sign_claims(&secret_key, &user))
+        }).and_then(|user| sign_claims(secret_key, &user).map(|claims| (user, claims)))
 }
 
-#[derive(Deserialize)]
+#[derive(Debug, Deserialize)]
 pub struct RegisterForm {
-    email: String,
-    username: String,
-    password: String,
+    pub email: String,
+    pub username: String,
+    pub password: String,
 }
 
 impl RegisterForm {
@@ -94,18 +98,49 @@ impl RegisterForm {
     }
 }
 
-pub fn register_user(db: DbConn, form: RegisterForm) -> Result<(), UserError> {
-    use core::schema::users;
-    use diesel::result::{DatabaseErrorKind::UniqueViolation, Error::DatabaseError};
+pub fn register_user(
+    db: DbConn,
+    secret_key: &Vec<u8>,
+    form: RegisterForm,
+) -> Result<(User, String), UserError> {
+    use diesel::result::{
+        DatabaseErrorKind::UniqueViolation,
+        Error::{DatabaseError, RollbackTransaction},
+    };
 
     let new_user = form.into_new_user()?;
-    diesel::insert_into(users::table)
-        .values(new_user)
-        .execute(&*db)
-        .map_err(|err| match err {
-            DatabaseError(UniqueViolation, _) => UserError::AlreadyRegistered,
-            _ => UserError::from(err),
-        }).map(|_| {
-            // send an email
-        })
+    db.transaction(|| {
+        if let Err(err) = {
+            use core::schema::users;
+            diesel::insert_into(users::table)
+                .values(new_user)
+                .execute(&*db)
+        } {
+            error!("Diesel error on register: {}", err);
+            return Err(RollbackTransaction);
+        }
+
+        let user = match {
+            use core::schema::users::dsl::{id, users};
+            users.order_by(id.desc()).first::<User>(&*db)
+        } {
+            Ok(user) => user,
+            Err(err) => {
+                error!("Diesel error on register: {}", err);
+                return Err(RollbackTransaction);
+            }
+        };
+
+        Ok(user)
+    }).map_err(|err| match err {
+        DatabaseError(UniqueViolation, _) => UserError::AlreadyRegistered,
+        _ => UserError::from(err),
+    }).and_then(|user| {
+        // login the user
+        let claims = sign_claims(secret_key, &user);
+
+        // send an email
+
+        claims.map(|claims| (user, claims))
+    })
 }

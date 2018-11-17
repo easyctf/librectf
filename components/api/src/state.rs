@@ -29,8 +29,8 @@ impl State {
         State { inner }
     }
 
-    pub fn get_secret_key(&self) -> Vec<u8> {
-        self.inner.secret_key.clone()
+    pub fn get_secret_key(&self) -> &Vec<u8> {
+        &self.inner.secret_key
     }
 
     pub fn get_connection(&self) -> Result<DbConn, Error> {
