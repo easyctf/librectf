@@ -24,12 +24,6 @@ pub fn router(state: State) -> App<State> {
                 .middleware(APIMiddleware)
                 .resource("/login", |r| r.post().with(self::user::login))
                 .resource("/register", |r| r.post().with(self::user::register))
-            // .nested("/settings", |scope| {
-            //     scope.middleware(LoginRequired).resource("/", |r| {
-            //         r.get().with(self::user::get_settings);
-            //         r.post().with(self::user::post_settings);
-            //     })
-            // })
         })
 }
 

@@ -1,3 +1,6 @@
+[admin]
+database_url = "mysql://root:password@localhost:3306/openctf"
+
 [api]
 database_url = "mysql://root:password@localhost:3306/openctf"
 bind_host = "127.0.0.1"

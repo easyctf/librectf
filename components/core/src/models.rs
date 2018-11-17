@@ -1,5 +1,16 @@
 use super::schema::*;
 
+#[derive(Debug, Insertable)]
+#[table_name = "chals"]
+pub struct NewChallenge {
+    pub title: String,
+    pub enabled: bool,
+    pub description: String,
+    pub correct_flag: String,
+    pub regex: bool,
+    pub value: i32,
+}
+
 #[derive(Debug, Queryable)]
 pub struct Challenge {
     pub id: i32,

@@ -1,4 +1,5 @@
 extern crate core;
+extern crate diesel;
 #[macro_use]
 extern crate log;
 #[macro_use]
@@ -11,8 +12,25 @@ extern crate serde_derive;
 extern crate structopt;
 
 mod chal;
-mod cmd;
+mod config;
+mod util;
 
+use failure::Error;
 use structopt::StructOpt;
 
-pub use cmd::AdminCommand;
+use chal::ImportChalCommand;
+use config::Config;
+pub use config::ConfigWrapper;
+
+#[derive(StructOpt)]
+pub enum AdminCommand {
+    /// Import challenges from a directory.
+    #[structopt(name = "import")]
+    Import(ImportChalCommand),
+}
+
+pub fn run(cmd: &AdminCommand, config: &Config) -> Result<(), Error> {
+    match cmd {
+        AdminCommand::Import(cmd) => cmd.run(config),
+    }
+}
