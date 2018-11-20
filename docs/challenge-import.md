@@ -10,17 +10,29 @@ The tool should be run from the root directory of all challenges. Each subdirect
 
 Each directory *must* have a `meta.toml` that contains metadata about the challenge. This must contain a minimum of these fields:
 
-* `title: str` - The title of your challenge.
-* `description: str | description_file: path` - Specifying either of these provides a description. `description_file` will read the description from the file.
-* `grader: path` - The path to the grader file.
+* `title: String` - The title of your challenge.
+* `category: String` - A string representing the category of your challenge.
+* `description: String` - The problem statement.
+* `regex: bool` - Whether or not the flag should be treated as a regex.
+* `flag: String` - The actual flag (string or regex depending on the `regex` option)
+* `value: i32` - Number of points this challenge is worth
+* `files: Option<Map<String, String>>` - The files associated with the challenge (this can be omitted) 
 
 As an example, a full configuration for an automatically generated Caesar cipher challenge is provided here:
 
 ```toml
-title = "Caesar cipher"
-description = "Can you crack this Caesar cipher?"
-grader = "grader.py"
+title = "Caesar Cipher"
+category = "Crypto"
+description = "Can you crack this [Caesar cipher]({{ challenge }})?."
+regex = false
+flag = "flag{nice_job_on_finding_the_flag!}"
+value = 30
+
+[files]
+challenge = "challenge.txt"
 ```
+
+# Ignore all of the following ----------
 
 ## Grader
 
