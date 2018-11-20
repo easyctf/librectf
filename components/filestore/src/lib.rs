@@ -100,6 +100,7 @@ fn public(req: &HttpRequest<State>) -> actix_web::Result<NamedFile> {
     path.push("public");
     path.push(tail);
 
+    info!("Received public upload request: {:?}", path);
     Ok(NamedFile::open(path)?)
 }
 

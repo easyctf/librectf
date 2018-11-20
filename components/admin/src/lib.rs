@@ -1,7 +1,9 @@
 extern crate core;
 extern crate diesel;
+extern crate hyper;
 #[macro_use]
 extern crate log;
+extern crate multipart;
 #[macro_use]
 extern crate failure;
 extern crate serde;

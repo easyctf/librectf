@@ -1,9 +1,12 @@
+use std::collections::HashMap;
 use std::fs::{read_dir, read_to_string, DirEntry};
 use std::path::PathBuf;
 
 use core::models::NewChallenge;
 use diesel::prelude::*;
 use failure::Error;
+use hyper::{client::Request, header::Authorization, method::Method};
+use multipart::client::Multipart;
 use toml;
 
 use config::Config;
@@ -18,6 +21,7 @@ struct Metadata {
     description: String,
     regex: bool,
     flag: String,
+    files: Option<HashMap<String, String>>,
 }
 
 impl Into<NewChallenge> for Metadata {
@@ -44,6 +48,7 @@ impl ImportChalCommand {
     pub fn run(&self, config: &Config) -> Result<(), Error> {
         let mut to_add = Vec::<NewChallenge>::new();
         let mut failed = Vec::<(Option<PathBuf>, Error)>::new();
+        let mut files = Vec::<(String, PathBuf)>::new();
 
         for entry in read_dir(&self.challenge_dir)? {
             if let Err(err) = (|entry| -> Result<(), Error> {
@@ -62,7 +67,7 @@ impl ImportChalCommand {
                     return Ok(());
                 }
 
-                // TODO: run Make here
+                // TODO: build files in the challenge here
 
                 // find meta.toml
                 let meta_toml_path = path.join("meta.toml");
@@ -79,8 +84,19 @@ impl ImportChalCommand {
 
                 println!("Successfully loaded: {:?}", meta);
 
-                // TODO: save required files into filestore
-                // TODO: add it to the database
+                // TODO: queue up uploading files into filestore
+                if let Some(meta_files) = &meta.files {
+                    for (_name, file) in meta_files {
+                        let file_path = path.join(file);
+                        if !file_path.exists() {
+                            continue;
+                        }
+
+                        files.push((file.clone(), file_path));
+                    }
+                }
+
+                // add it to the database
                 let chal = meta.into();
                 to_add.push(chal);
                 Ok(())
@@ -96,6 +112,31 @@ impl ImportChalCommand {
                 error!(" - {:?}: {}", path, err);
             }
             return Err(format_err!("Failed to import some challenges."));
+        }
+
+        // add files into filestore
+        if files.len() > 0 {
+            let filestore_url = match &config.filestore_url {
+                Some(string) => string,
+                None => bail!("Please include a filestore URL."),
+            };
+            let filestore_push_password = match &config.filestore_push_password {
+                Some(string) => string,
+                None => bail!("Please include a filestore push password."),
+            };
+
+            for (_name, path) in files {
+                let mut request = Request::new(Method::Post, filestore_url.parse()?)?;
+                {
+                    let mut headers = request.headers_mut();
+                    headers.set(Authorization(filestore_push_password.clone()));
+                }
+
+                let mut multipart = Multipart::from_request(request)?;
+                multipart.write_file("file", &path)?;
+                let response = multipart.send()?;
+                info!("Filestore response: {:?}", response);
+            }
         }
 
         let conn = establish_connection(config)

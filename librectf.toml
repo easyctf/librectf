@@ -1,5 +1,7 @@
 [admin]
 database_url = "mysql://root:password@localhost:3306/openctf"
+filestore_url = "http://localhost:6201/upload/public"
+filestore_push_password = "push"
 
 [api]
 database_url = "mysql://root:password@localhost:3306/openctf"

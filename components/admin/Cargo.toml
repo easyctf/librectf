@@ -12,10 +12,11 @@ core = { path = "../../components/core" }
 diesel = { version = "1.3", default_features = false }
 env_logger = "0.5"
 failure = "0.1"
-migrations_internals = "1.3"
+hyper = "0.10"
 log = "0.4"
+migrations_internals = "1.3"
+multipart = { version = "0.15", git = "https://github.com/iptq/multipart", default_features = false, features = ["client", "hyper"] }
 serde = "1.0"
 serde_derive = "1.0"
-shiplift = { version = "0.3", git = "https://github.com/softprops/shiplift.git" }
 structopt = "0.2"
 toml = "0.4"

@@ -38,6 +38,7 @@ fn save_file(
                 ErrorInternalServerError(err)
             }).map(move |hasher| {
                 let hash = format!("{:x}", hasher.result());
+                info!("Hash is: {}", hash);
                 let target_path = storage_dir
                     .join(if private { "private" } else { "public" })
                     .join(&hash);
