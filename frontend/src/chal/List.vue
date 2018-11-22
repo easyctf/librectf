@@ -13,7 +13,7 @@
                     </b-card-header>
                     <b-collapse :id="'chalCollapse' + i" visible>
                         <b-card-body>
-                            <p>{{ chal }}</p>
+                            <p v-html="chal.description"></p>
                             <b-form>
                                 <b-input-group>
                                     <b-form-input :id="'flagSubmit' + i"

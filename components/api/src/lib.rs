@@ -3,6 +3,7 @@
 extern crate actix_web;
 extern crate bcrypt;
 extern crate chrono;
+extern crate comrak;
 #[macro_use]
 extern crate diesel;
 #[macro_use]
