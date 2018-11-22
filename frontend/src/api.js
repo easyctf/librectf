@@ -14,6 +14,17 @@ class API {
         return axios.post(url, data, { headers: { Authorization: `Token ${token}` }});
     }
 
+    static ChalList() {
+        return API.jwtGet(baseUrl + "/chal/list");
+    }
+
+    static ChalSubmit(id, flag) {
+        return API.jwtPost(baseUrl + "/chal/submit", {
+            id,
+            flag,
+        });
+    }
+
     static UserLogin(email, password) {
         return axios.post(baseUrl + "/user/login", {
             email,

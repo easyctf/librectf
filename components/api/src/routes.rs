@@ -58,6 +58,7 @@ mod chal {
                             json!({
                                 "title": chal.title,
                                 "value": chal.value,
+                                "description": chal.description,
                             })
                         }).collect::<Vec<_>>(),
                 )
