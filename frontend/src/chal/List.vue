@@ -9,7 +9,7 @@
             <div v-for="(chal, i) in challenges">
                 <b-card no-body role="tab">
                     <b-card-header v-b-toggle="'chalCollapse' + i">
-                        {{ chal.title }}
+                        {{ chal.title }} ({{ chal.value }} point{{ chal.value == 1 ? "" : "s" }})
                     </b-card-header>
                     <b-collapse :id="'chalCollapse' + i" visible>
                         <b-card-body>

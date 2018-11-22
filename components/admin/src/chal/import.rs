@@ -162,7 +162,7 @@ impl ImportChalCommand {
             use core::schema::{chals::dsl::chals, files::dsl::files};
 
             for (id, item) in chals_to_add {
-                conn.transaction(|| {
+                let new_id = conn.transaction(|| {
                     if let Err(err) = diesel::insert_into(chals).values(item).execute(&conn) {
                         error!("get fucked {}", err);
                         return Err(RollbackTransaction);
@@ -179,9 +179,9 @@ impl ImportChalCommand {
                         }
                     };
 
-                    chal_id_map.insert(id, new_chal.id);
-                    Ok(())
+                    Ok(new_chal.id)
                 })?;
+                chal_id_map.insert(id, new_id);
             }
 
             for mut item in files_to_add.iter_mut() {

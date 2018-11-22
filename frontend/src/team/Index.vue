@@ -21,7 +21,7 @@
             NProgress.start();
             let result = await API.TeamProfile();
             NProgress.done();
-            if (result.data.team)
+            if (result.data && result.data.team)
                 this.$router.push("/team/profile");
             else
                 this.team = false;

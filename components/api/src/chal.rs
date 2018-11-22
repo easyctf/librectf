@@ -38,7 +38,8 @@ pub fn list_all(db: DbConn) -> Result<Vec<Challenge>, Error> {
     chals
         .load::<Challenge>(&*db)
         .map(|list| {
-            list.into_iter()
+            let mut list = list
+                .into_iter()
                 .map(|mut chal| {
                     let arena = Arena::new();
                     let desc = parse_document(&arena, &chal.description, &ComrakOptions::default());
@@ -70,7 +71,9 @@ pub fn list_all(db: DbConn) -> Result<Vec<Challenge>, Error> {
 
                     chal.description = String::from_utf8(html).unwrap();
                     chal
-                }).collect::<Vec<_>>()
+                }).collect::<Vec<_>>();
+            list.sort_unstable_by(|a, b| a.value.cmp(&b.value));
+            list
         }).map_err(|err| err.into())
 }
 
@@ -86,13 +89,22 @@ pub enum SubmissionResult {
     Incorrect,
 }
 
-pub fn submit_flag(db: DbConn, form: SubmitForm) -> Result<SubmissionResult, Error> {
+pub struct Submission {
+    pub user_id: i32,
+    pub team_id: i32,
+    pub form: SubmitForm,
+}
+
+pub fn submit_flag(db: DbConn, submission: Submission) -> Result<SubmissionResult, Error> {
     use core::schema::chals::dsl::*;
     use diesel::result::Error::RollbackTransaction;
     use regex::Regex;
 
     db.transaction(|| {
-        let chal = match chals.filter(id.eq(form.id)).first::<Challenge>(&*db) {
+        let chal = match chals
+            .filter(id.eq(submission.form.id))
+            .first::<Challenge>(&*db)
+        {
             Ok(chal) => chal,
             Err(err) => {
                 error!("Diesel error on flag submission: {}", err);
@@ -102,9 +114,9 @@ pub fn submit_flag(db: DbConn, form: SubmitForm) -> Result<SubmissionResult, Err
 
         let judgment = if if chal.regex {
             let rgx = Regex::new(&chal.correct_flag).unwrap();
-            rgx.is_match(&form.flag)
+            rgx.is_match(&submission.form.flag)
         } else {
-            form.flag == chal.correct_flag
+            submission.form.flag == chal.correct_flag
         } {
             // TODO: award points
             SubmissionResult::Correct
@@ -115,7 +127,7 @@ pub fn submit_flag(db: DbConn, form: SubmitForm) -> Result<SubmissionResult, Err
 
         // insert solve
         let new_solve = NewSolve {
-            flag: form.flag,
+            flag: submission.form.flag,
             chal_id: chal.id,
             // TODO: get submitter information here
             team_id: 1,

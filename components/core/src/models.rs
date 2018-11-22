@@ -1,3 +1,5 @@
+use std::cmp::Ordering;
+
 use super::schema::*;
 
 #[derive(Debug, Insertable)]

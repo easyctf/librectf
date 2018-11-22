@@ -45,7 +45,7 @@ mod base {
 
 mod chal {
     use actix_web::{HttpResponse, Json};
-    use chal::{list_all, submit_flag, SubmitForm};
+    use chal::{list_all, submit_flag, Submission, SubmitForm};
     use DbConn;
 
     pub fn list(db: DbConn) -> HttpResponse {
@@ -70,7 +70,12 @@ mod chal {
 
     pub fn submit((form, db): (Json<SubmitForm>, DbConn)) -> HttpResponse {
         let form = form.into_inner();
-        submit_flag(db, form)
+        let submission = Submission {
+            user_id: 1,
+            team_id: 1,
+            form,
+        };
+        submit_flag(db, submission)
             .map(|result| HttpResponse::Ok().json(result))
             .unwrap_or_else(|err| {
                 error!("Error during submission: {}", err);

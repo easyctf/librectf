@@ -1,3 +1,5 @@
+mod middleware;
+
 use core::models::{NewTeam, Team, User};
 use diesel::{self, prelude::*};
 use failure::Error;

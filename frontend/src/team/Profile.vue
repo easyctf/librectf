@@ -65,8 +65,12 @@
         }),
         async created() {
             let result = await API.TeamProfile();
-            this.team = result.data.team;
-            console.log(this.team);
+            if (result.data === null) {
+                this.$router.push("/team/create");
+            } else {
+                this.team = result.data.team;
+                console.log(this.team);
+            }
         }
     }
 </script>
