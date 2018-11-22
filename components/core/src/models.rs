@@ -23,6 +23,24 @@ pub struct Challenge {
 }
 
 #[derive(Debug, Insertable)]
+#[table_name = "files"]
+pub struct NewFile {
+    pub name: String,
+    pub url: String,
+    pub chal_id: i32,
+    pub team_id: Option<i32>,
+}
+
+#[derive(Debug, Queryable)]
+pub struct File {
+    pub id: i32,
+    pub name: String,
+    pub url: String,
+    pub chal_id: i32,
+    pub team_id: Option<i32>,
+}
+
+#[derive(Debug, Insertable)]
 #[table_name = "users"]
 pub struct NewUser {
     pub name: String,

@@ -2,8 +2,8 @@ use std::collections::HashMap;
 use std::fs::{read_dir, read_to_string, DirEntry};
 use std::path::PathBuf;
 
-use core::models::NewChallenge;
-use diesel::prelude::*;
+use core::models::{Challenge, NewChallenge, NewFile};
+use diesel::{prelude::*, result::Error::RollbackTransaction};
 use failure::Error;
 use hyper::{client::Request, header::Authorization, method::Method};
 use multipart::client::Multipart;
@@ -44,11 +44,18 @@ pub struct ImportChalCommand {
     challenge_dir: PathBuf,
 }
 
+// TODO: update instead of insert if it already exists
 impl ImportChalCommand {
     pub fn run(&self, config: &Config) -> Result<(), Error> {
-        let mut to_add = Vec::<NewChallenge>::new();
+        let mut files_to_add = Vec::<NewFile>::new();
+        let mut chals_to_add = Vec::<(i32, NewChallenge)>::new();
+
         let mut failed = Vec::<(Option<PathBuf>, Error)>::new();
-        let mut files = Vec::<(String, PathBuf)>::new();
+        let mut files = Vec::<(i32, String, PathBuf)>::new();
+
+        // hack to get the files to have challenge ids
+        let mut counter = 0;
+        let mut chal_id_map = HashMap::<i32, i32>::new();
 
         for entry in read_dir(&self.challenge_dir)? {
             if let Err(err) = (|entry| -> Result<(), Error> {
@@ -86,19 +93,20 @@ impl ImportChalCommand {
 
                 // TODO: queue up uploading files into filestore
                 if let Some(meta_files) = &meta.files {
-                    for (_name, file) in meta_files {
+                    for (name, file) in meta_files {
                         let file_path = path.join(file);
                         if !file_path.exists() {
                             continue;
                         }
 
-                        files.push((file.clone(), file_path));
+                        files.push((counter, name.to_owned(), file_path));
                     }
                 }
 
                 // add it to the database
                 let chal = meta.into();
-                to_add.push(chal);
+                chals_to_add.push((counter, chal));
+                counter += 1;
                 Ok(())
             })(entry)
             {
@@ -125,7 +133,7 @@ impl ImportChalCommand {
                 None => bail!("Please include a filestore push password."),
             };
 
-            for (_name, path) in files {
+            for (id, name, path) in files {
                 let mut request = Request::new(Method::Post, filestore_url.parse()?)?;
                 {
                     let mut headers = request.headers_mut();
@@ -136,6 +144,14 @@ impl ImportChalCommand {
                 multipart.write_file("file", &path)?;
                 let response = multipart.send()?;
                 info!("Filestore response: {:?}", response);
+
+                let new_file = NewFile {
+                    name,
+                    url: String::from("lol"),
+                    chal_id: id,
+                    team_id: None,
+                };
+                files_to_add.push(new_file);
             }
         }
 
@@ -143,12 +159,40 @@ impl ImportChalCommand {
             .expect("Couldn't connect to database. Did you specify DATABASE_URL?");
 
         {
-            use core::schema::chals::dsl::chals;
-            diesel::insert_into(chals)
-                .values(&to_add)
-                .execute(&conn)
-                .map(|n| info!("Successfully imported {} challenge(s).", n))
-                .map_err(|err| err.into())
+            use core::schema::{chals::dsl::chals, files::dsl::files};
+
+            for (id, item) in chals_to_add {
+                conn.transaction(|| {
+                    if let Err(err) = diesel::insert_into(chals).values(item).execute(&conn) {
+                        error!("get fucked {}", err);
+                        return Err(RollbackTransaction);
+                    };
+
+                    let new_chal = match {
+                        use core::schema::chals::dsl::id;
+                        chals.order_by(id.desc()).first::<Challenge>(&conn)
+                    } {
+                        Ok(team) => team,
+                        Err(err) => {
+                            error!("get fucked {}", err);
+                            return Err(RollbackTransaction);
+                        }
+                    };
+
+                    chal_id_map.insert(id, new_chal.id);
+                    Ok(())
+                })?;
+            }
+
+            for mut item in files_to_add.iter_mut() {
+                item.chal_id = *chal_id_map.get(&item.chal_id).unwrap();
+            }
+            diesel::insert_into(files)
+                .values(&files_to_add)
+                .execute(&conn)?;
+
+            info!("Successfully imported challenge(s).");
+            Ok(())
         }
     }
 }

@@ -1,9 +1,11 @@
+use std::collections::HashMap;
+
 use comrak::{
     format_html,
     nodes::{AstNode, NodeValue},
     parse_document, Arena, ComrakOptions,
 };
-use core::models::{Challenge, NewSolve};
+use core::models::{Challenge, File, NewSolve};
 use diesel::prelude::*;
 use failure::Error;
 
@@ -12,6 +14,27 @@ use super::DbConn;
 // TODO: return a "challenge entry" struct instead of the original challenge
 pub fn list_all(db: DbConn) -> Result<Vec<Challenge>, Error> {
     use core::schema::chals::dsl::*;
+
+    let lookup = {
+        use core::schema::files::dsl::files;
+        files
+            .load::<File>(&*db)
+            .map_err(|err| <_ as Into<Error>>::into(err))
+            .map(|list| {
+                let mut chal_map = HashMap::new();
+                for item in list {
+                    if let None = chal_map.get(&item.chal_id) {
+                        chal_map.insert(item.chal_id, HashMap::new());
+                    }
+
+                    chal_map
+                        .get_mut(&item.chal_id)
+                        .map(|file_map| file_map.insert(item.name.clone().into_bytes(), item.url));
+                }
+                chal_map
+            })?
+    };
+
     chals
         .load::<Challenge>(&*db)
         .map(|list| {
@@ -20,24 +43,27 @@ pub fn list_all(db: DbConn) -> Result<Vec<Challenge>, Error> {
                     let arena = Arena::new();
                     let desc = parse_document(&arena, &chal.description, &ComrakOptions::default());
 
-                    fn iter_nodes<'a, F>(node: &'a AstNode<'a>, f: &F)
-                    where
-                        F: Fn(&'a AstNode<'a>),
-                    {
-                        f(node);
-                        for c in node.children() {
-                            iter_nodes(c, f);
+                    if let Some(file_map) = lookup.get(&chal.id) {
+                        fn iter_nodes<'a, F>(node: &'a AstNode<'a>, f: &F)
+                        where
+                            F: Fn(&'a AstNode<'a>),
+                        {
+                            f(node);
+                            for c in node.children() {
+                                iter_nodes(c, f);
+                            }
                         }
-                    }
 
-                    iter_nodes(desc, &|node| match &mut node.data.borrow_mut().value {
-                        &mut NodeValue::Link(ref mut link)
-                        | &mut NodeValue::Image(ref mut link) => {
-                            // TODO: look up file URL here
-                            link.url = String::from("https://www.example.com").into_bytes();
-                        }
-                        _ => (),
-                    });
+                        iter_nodes(desc, &|node| match &mut node.data.borrow_mut().value {
+                            &mut NodeValue::Link(ref mut link)
+                            | &mut NodeValue::Image(ref mut link) => {
+                                if let Some(url) = file_map.get(&link.url) {
+                                    link.url = url.clone().into_bytes();
+                                }
+                            }
+                            _ => (),
+                        });
+                    }
 
                     let mut html = Vec::new();
                     format_html(desc, &ComrakOptions::default(), &mut html).unwrap();

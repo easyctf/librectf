@@ -27,6 +27,7 @@ CREATE TABLE `teams` (
 CREATE TABLE `files` (
     `id` INTEGER PRIMARY KEY AUTO_INCREMENT,
     `name` VARCHAR(64) NOT NULL,
+    `url` TEXT NOT NULL,
 
     -- foreign keys
     `chal_id` INTEGER NOT NULL,

@@ -14,6 +14,7 @@ table! {
     files (id) {
         id -> Integer,
         name -> Varchar,
+        url -> Text,
         chal_id -> Integer,
         team_id -> Nullable<Integer>,
     }
@@ -69,11 +70,4 @@ joinable!(solves -> teams (team_id));
 joinable!(solves -> users (user_id));
 joinable!(users -> teams (team_id));
 
-allow_tables_to_appear_in_same_query!(
-    chals,
-    files,
-    solves,
-    tasks,
-    teams,
-    users,
-);
+allow_tables_to_appear_in_same_query!(chals, files, solves, tasks, teams, users,);
