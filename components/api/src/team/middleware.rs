@@ -3,24 +3,30 @@ use actix_web::{
     middleware::{Middleware, Started},
     HttpRequest, HttpResponse,
 };
-use core::models::{User, Team};
+use core::models::{Team, User};
 use diesel::prelude::*;
 
+use user::LoginRequired;
 use State;
 
 pub struct TeamRequired;
 
 impl Middleware<State> for TeamRequired {
     fn start(&self, req: &HttpRequest<State>) -> actix_web::Result<Started> {
-        let ext = req.extensions();
+        // first make sure we're logged in
+        LoginRequired::start(&LoginRequired, req)?;
+
         let state = req.state();
 
-        let user = match ext.get::<User>() {
-            Some(user) => user,
-            None => return Ok(Started::Response(HttpResponse::Unauthorized().finish())),
+        let team_id = {
+            let ext = req.extensions();
+            match ext.get::<User>() {
+                Some(user) => user.team_id,
+                None => return Ok(Started::Response(HttpResponse::Unauthorized().finish())),
+            }
         };
 
-        let team_id = match user.team_id {
+        let team_id = match team_id {
             Some(id) => id,
             None => return Ok(Started::Response(HttpResponse::Unauthorized().finish())),
         };

@@ -4,6 +4,7 @@ use api::APIMiddleware;
 use State;
 
 pub fn router(state: State) -> App<State> {
+    use team::TeamRequired;
     use user::LoginRequired;
     App::with_state(state)
         .middleware(APIMiddleware)
@@ -11,7 +12,7 @@ pub fn router(state: State) -> App<State> {
         .resource("/scoreboard", |r| r.with(self::base::scoreboard))
         .scope("/chal", |scope| {
             scope
-                .middleware(LoginRequired)
+                .middleware(TeamRequired)
                 .resource("/list", |r| r.get().with(self::chal::list))
                 .resource("/submit", |r| r.post().with(self::chal::submit))
         }).scope("/team", |scope| {

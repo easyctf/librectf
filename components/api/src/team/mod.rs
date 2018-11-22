@@ -4,6 +4,7 @@ use core::models::{NewTeam, Team, User};
 use diesel::{self, prelude::*};
 use failure::Error;
 
+pub use self::middleware::TeamRequired;
 use DbConn;
 
 #[derive(Debug, Serialize, Deserialize)]
