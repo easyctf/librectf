@@ -24,6 +24,19 @@ CREATE TABLE `teams` (
     UNIQUE (`name`)
 );
 
+CREATE TABLE `files` (
+    `id` INTEGER PRIMARY KEY AUTO_INCREMENT,
+    `name` VARCHAR(64) NOT NULL,
+
+    -- foreign keys
+    `chal_id` INTEGER NOT NULL,
+    `team_id` INTEGER NULL,
+
+    -- constraints
+    CONSTRAINT `file_chal_fk` FOREIGN KEY (`chal_id`) REFERENCES `chals`(`id`),
+    CONSTRAINT `file_team_fk` FOREIGN KEY (`team_id`) REFERENCES `teams`(`id`)
+);
+
 CREATE TABLE `users` (
     `id` INTEGER PRIMARY KEY AUTO_INCREMENT,
     `name` VARCHAR(20) COLLATE utf8mb4_general_ci NOT NULL,
