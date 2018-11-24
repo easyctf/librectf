@@ -21,6 +21,13 @@ table! {
 }
 
 table! {
+    invitations (team_id, user_id) {
+        team_id -> Integer,
+        user_id -> Integer,
+    }
+}
+
+table! {
     solves (id) {
         id -> Integer,
         timestamp -> Datetime,
@@ -70,4 +77,12 @@ joinable!(solves -> teams (team_id));
 joinable!(solves -> users (user_id));
 joinable!(users -> teams (team_id));
 
-allow_tables_to_appear_in_same_query!(chals, files, solves, tasks, teams, users,);
+allow_tables_to_appear_in_same_query!(
+    chals,
+    files,
+    invitations,
+    solves,
+    tasks,
+    teams,
+    users,
+);

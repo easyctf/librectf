@@ -24,6 +24,13 @@ CREATE TABLE `teams` (
     UNIQUE (`name`)
 );
 
+CREATE TABLE `invitations` (
+    `team_id` INTEGER NOT NULL,
+    `user_id` INTEGER NOT NULL,
+
+    PRIMARY KEY (`team_id`, `user_id`)
+);
+
 CREATE TABLE `files` (
     `id` INTEGER PRIMARY KEY AUTO_INCREMENT,
     `name` VARCHAR(64) NOT NULL,
