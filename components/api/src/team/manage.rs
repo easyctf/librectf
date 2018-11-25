@@ -6,7 +6,7 @@ use DbConn;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct InviteUserForm {
-    user_id: i32,
+    pub user_id: i32,
 }
 
 pub fn invite_user(db: DbConn, team_id: i32, form: InviteUserForm) -> Result<(), Error> {

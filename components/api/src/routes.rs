@@ -21,6 +21,7 @@ pub fn router(state: State) -> App<State> {
                 .resource("/create", |r| r.post().with(self::team::create))
                 .resource("/me", |r| r.get().with(self::team::me))
                 .resource("/accept", |r| r.post().with(self::team::accept))
+                .resource("/invites", |r| r.get().with(self::team::invites))
                 .nested("/manage", |scope| {
                     scope
                         .middleware(TeamRequired(True))
@@ -52,35 +53,40 @@ mod base {
 }
 
 mod chal {
-    use actix_web::{HttpResponse, Json};
+    use actix_web::{HttpRequest, HttpResponse, Json};
     use chal::{list_all, submit_flag, Submission, SubmitForm};
-    use DbConn;
+    use core::models::{Team, User};
+    use {DbConn, State};
 
     pub fn list(db: DbConn) -> HttpResponse {
         list_all(db)
             .map(|chals| {
-                HttpResponse::Ok().json(
-                    chals
-                        .iter()
-                        .map(|chal| {
-                            json!({
-                                "title": chal.title,
-                                "value": chal.value,
-                                "description": chal.description,
-                            })
-                        }).collect::<Vec<_>>(),
-                )
+                let chals = chals
+                    .iter()
+                    .map(|chal| {
+                        json!({
+                            "title": chal.title,
+                            "value": chal.value,
+                            "description": chal.description,
+                        })
+                    }).collect::<Vec<_>>();
+                HttpResponse::Ok().json(chals)
             }).unwrap_or_else(|err| {
                 error!("Error while listing chals: {}", err);
                 HttpResponse::InternalServerError().finish()
             })
     }
 
-    pub fn submit((form, db): (Json<SubmitForm>, DbConn)) -> HttpResponse {
+    pub fn submit((req, form, db): (HttpRequest<State>, Json<SubmitForm>, DbConn)) -> HttpResponse {
         let form = form.into_inner();
+        let ext = req.extensions();
+
+        let user = ext.get::<User>().unwrap();
+        let team = ext.get::<Team>().unwrap();
+
         let submission = Submission {
-            user_id: 1,
-            team_id: 1,
+            user_id: user.id,
+            team_id: team.id,
             form,
         };
         submit_flag(db, submission)
@@ -94,7 +100,8 @@ mod chal {
 
 mod team {
     use actix_web::{HttpRequest, HttpResponse, Json};
-    use team::{create_team, my_profile, CreateTeamForm};
+    use core::models::User;
+    use team::{accept_invite, create_team, get_invites, my_profile, AcceptForm, CreateTeamForm};
     use user::auth::LoginClaims;
     use {DbConn, State};
 
@@ -124,9 +131,34 @@ mod team {
             })
     }
 
-    pub fn accept(_db: DbConn) -> HttpResponse {
+    pub fn accept((req, form, db): (HttpRequest<State>, Json<AcceptForm>, DbConn)) -> HttpResponse {
         // TODO: finish this
-        HttpResponse::Ok().finish()
+        let form = form.into_inner();
+        let ext = req.extensions();
+        let user = ext.get::<User>().unwrap();
+        let team_id = form.team_id;
+
+        accept_invite(db, user.id, form)
+            .map(|_| HttpResponse::Ok().finish())
+            .unwrap_or_else(|err| {
+                error!(
+                    "Error accepting invite: uid={} tid={} err={}",
+                    user.id, team_id, err
+                );
+                HttpResponse::InternalServerError().finish()
+            })
+    }
+
+    pub fn invites((req, db): (HttpRequest<State>, DbConn)) -> HttpResponse {
+        let ext = req.extensions();
+        let user = ext.get::<User>().unwrap();
+
+        get_invites(db, user.id)
+            .map(|invites| HttpResponse::Ok().json(json!(invites)))
+            .unwrap_or_else(|err| {
+                error!("Error fetching invites: {}", err);
+                HttpResponse::InternalServerError().finish()
+            })
     }
 
     pub mod manage {

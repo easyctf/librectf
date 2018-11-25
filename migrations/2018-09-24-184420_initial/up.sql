@@ -25,13 +25,6 @@ CREATE TABLE `teams` (
     UNIQUE (`name`)
 );
 
-CREATE TABLE `invitations` (
-    `team_id` INTEGER NOT NULL,
-    `user_id` INTEGER NOT NULL,
-
-    PRIMARY KEY (`team_id`, `user_id`)
-);
-
 CREATE TABLE `users` (
     `id` INTEGER PRIMARY KEY AUTO_INCREMENT,
     `name` VARCHAR(20) COLLATE utf8mb4_general_ci NOT NULL,
@@ -47,6 +40,15 @@ CREATE TABLE `users` (
     UNIQUE (`name`),
     UNIQUE (`email`),
     CONSTRAINT `user_team_fk` FOREIGN KEY (`team_id`) REFERENCES `teams`(`id`)
+);
+
+CREATE TABLE `invitations` (
+    `team_id` INTEGER NOT NULL,
+    `user_id` INTEGER NOT NULL,
+
+    CONSTRAINT `invitation_user_fk` FOREIGN KEY (`user_id`) REFERENCES `users`(`id`),
+    CONSTRAINT `invitation_team_fk` FOREIGN KEY (`team_id`) REFERENCES `teams`(`id`),
+    PRIMARY KEY (`team_id`, `user_id`)
 );
 
 CREATE TABLE `files` (

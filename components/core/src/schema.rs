@@ -73,6 +73,8 @@ table! {
 
 joinable!(files -> chals (chal_id));
 joinable!(files -> teams (team_id));
+joinable!(invitations -> teams (team_id));
+joinable!(invitations -> users (user_id));
 joinable!(solves -> chals (chal_id));
 joinable!(solves -> teams (team_id));
 joinable!(solves -> users (user_id));
