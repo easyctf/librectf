@@ -130,13 +130,19 @@ mod team {
     }
 
     pub mod manage {
-        use actix_web::{HttpResponse, Json};
+        use actix_web::{HttpRequest, HttpResponse, Json};
+        use core::models::Team;
         use team::manage::{invite_user, InviteUserForm};
-        use DbConn;
+        use {DbConn, State};
 
-        pub fn invite((form, db): (Json<InviteUserForm>, DbConn)) -> HttpResponse {
+        pub fn invite(
+            (req, form, db): (HttpRequest<State>, Json<InviteUserForm>, DbConn),
+        ) -> HttpResponse {
             let form = form.into_inner();
-            invite_user(db, form)
+            let ext = req.extensions();
+
+            let team = ext.get::<Team>().unwrap();
+            invite_user(db, team.id, form)
                 .map(|_| HttpResponse::Ok().finish())
                 .unwrap_or_else(|err| {
                     error!("Error inviting user: {}", err);

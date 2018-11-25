@@ -1,6 +1,12 @@
 use chrono::{serde::ts_milliseconds, DateTime, Utc};
 use core::models::{NewUser, User};
-use diesel::prelude::*;
+use diesel::{
+    prelude::*,
+    result::{
+        DatabaseErrorKind::UniqueViolation,
+        Error::{DatabaseError, RollbackTransaction},
+    },
+};
 use failure::{Compat, Error, Fail};
 use jsonwebtoken::{Header, Validation};
 
@@ -103,11 +109,6 @@ pub fn register_user(
     secret_key: &[u8],
     form: RegisterForm,
 ) -> Result<(User, String), UserError> {
-    use diesel::result::{
-        DatabaseErrorKind::UniqueViolation,
-        Error::{DatabaseError, RollbackTransaction},
-    };
-
     let new_user = form.into_new_user()?;
     db.transaction(|| {
         if let Err(err) = {
