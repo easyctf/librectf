@@ -70,6 +70,7 @@ pub struct User {
 #[table_name = "teams"]
 pub struct NewTeam {
     pub name: String,
+    pub captain_id: i32,
 }
 
 #[derive(Debug, Queryable)]

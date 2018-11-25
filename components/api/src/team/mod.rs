@@ -1,3 +1,4 @@
+pub mod manage;
 pub mod middleware;
 
 use core::models::{NewTeam, Team, User};
@@ -14,7 +15,12 @@ pub struct CreateTeamForm {
 
 pub fn create_team(db: DbConn, uid: i32, form: CreateTeamForm) -> Result<(), Error> {
     use diesel::result::Error::RollbackTransaction;
-    let new_team = NewTeam { name: form.name };
+
+    let new_team = NewTeam {
+        name: form.name,
+        captain_id: uid,
+    };
+
     db.transaction(|| {
         // first, create the actual team
         match {

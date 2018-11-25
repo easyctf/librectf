@@ -20,10 +20,12 @@ pub fn router(state: State) -> App<State> {
                 .middleware(LoginRequired)
                 .resource("/create", |r| r.post().with(self::team::create))
                 .resource("/me", |r| r.get().with(self::team::me))
+                .resource("/accept", |r| r.post().with(self::team::accept))
                 .nested("/manage", |scope| {
                     scope
                         .middleware(TeamRequired(True))
                         .resource("/invite", |r| r.post().with(self::team::manage::invite))
+                        .resource("/kick", |r| r.post().with(self::team::manage::kick))
                 })
         }).scope("/user", |scope| {
             scope
@@ -92,7 +94,7 @@ mod chal {
 
 mod team {
     use actix_web::{HttpRequest, HttpResponse, Json};
-    use team::{my_profile, create_team, CreateTeamForm};
+    use team::{create_team, my_profile, CreateTeamForm};
     use user::auth::LoginClaims;
     use {DbConn, State};
 
@@ -122,11 +124,28 @@ mod team {
             })
     }
 
+    pub fn accept(_db: DbConn) -> HttpResponse {
+        // TODO: finish this
+        HttpResponse::Ok().finish()
+    }
+
     pub mod manage {
-        use actix_web::HttpResponse;
+        use actix_web::{HttpResponse, Json};
+        use team::manage::{invite_user, InviteUserForm};
         use DbConn;
 
-        pub fn invite(db: DbConn) -> HttpResponse {
+        pub fn invite((form, db): (Json<InviteUserForm>, DbConn)) -> HttpResponse {
+            let form = form.into_inner();
+            invite_user(db, form)
+                .map(|_| HttpResponse::Ok().finish())
+                .unwrap_or_else(|err| {
+                    error!("Error inviting user: {}", err);
+                    HttpResponse::InternalServerError().finish()
+                })
+        }
+
+        pub fn kick(_db: DbConn) -> HttpResponse {
+            // TODO: finish this
             HttpResponse::Ok().finish()
         }
     }
