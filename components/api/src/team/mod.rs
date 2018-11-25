@@ -1,4 +1,4 @@
-mod middleware;
+pub mod middleware;
 
 use core::models::{NewTeam, Team, User};
 use diesel::{self, prelude::*};
@@ -66,7 +66,7 @@ fn get_team_id(db: &DbConn, user_id: i32) -> Result<Option<i32>, Error> {
         .map_err(|err| err.into())
 }
 
-pub fn me(db: DbConn, user_id: i32) -> Result<Option<TeamProfile>, Error> {
+pub fn my_profile(db: DbConn, user_id: i32) -> Result<Option<TeamProfile>, Error> {
     get_team_id(&db, user_id).and_then(|opt| match opt {
         Some(team_id) => get_team_profile(&db, team_id).map(|team| Some(team)),
         None => Ok(None),

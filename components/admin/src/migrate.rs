@@ -41,11 +41,7 @@ impl MigrateCommand {
         let migrations = mark_migrations_in_directory(&conn, &migrations_dir)?;
 
         for (migration, _) in migrations {
-            run_migrations(
-                &conn,
-                vec![migration],
-                &mut io::stdout(),
-            )?;
+            run_migrations(&conn, vec![migration], &mut io::stdout())?;
         }
 
         Ok(())

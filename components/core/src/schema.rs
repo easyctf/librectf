@@ -52,6 +52,7 @@ table! {
 table! {
     teams (id) {
         id -> Integer,
+        captain_id -> Integer,
         name -> Varchar,
         affiliation -> Nullable<Varchar>,
         banned -> Bool,

@@ -4,7 +4,7 @@ use api::APIMiddleware;
 use State;
 
 pub fn router(state: State) -> App<State> {
-    use team::TeamRequired;
+    use team::{middleware::Boolean::*, TeamRequired};
     use user::LoginRequired;
     App::with_state(state)
         .middleware(APIMiddleware)
@@ -12,7 +12,7 @@ pub fn router(state: State) -> App<State> {
         .resource("/scoreboard", |r| r.with(self::base::scoreboard))
         .scope("/chal", |scope| {
             scope
-                .middleware(TeamRequired)
+                .middleware(TeamRequired(False))
                 .resource("/list", |r| r.get().with(self::chal::list))
                 .resource("/submit", |r| r.post().with(self::chal::submit))
         }).scope("/team", |scope| {
@@ -20,6 +20,11 @@ pub fn router(state: State) -> App<State> {
                 .middleware(LoginRequired)
                 .resource("/create", |r| r.post().with(self::team::create))
                 .resource("/me", |r| r.get().with(self::team::me))
+                .nested("/manage", |scope| {
+                    scope
+                        .middleware(TeamRequired(True))
+                        .resource("/invite", |r| r.post().with(self::team::manage::invite))
+                })
         }).scope("/user", |scope| {
             scope
                 .resource("/login", |r| r.post().with(self::user::login))
@@ -87,7 +92,7 @@ mod chal {
 
 mod team {
     use actix_web::{HttpRequest, HttpResponse, Json};
-    use team::{self, create_team, CreateTeamForm};
+    use team::{my_profile, create_team, CreateTeamForm};
     use user::auth::LoginClaims;
     use {DbConn, State};
 
@@ -109,12 +114,21 @@ mod team {
         let ext = req.extensions();
         let claims = ext.get::<LoginClaims>().unwrap();
 
-        team::me(db, claims.id)
+        my_profile(db, claims.id)
             .map(|profile| HttpResponse::Ok().json(profile))
             .unwrap_or_else(|err| {
                 error!("Error fetching profile: {}", err);
                 HttpResponse::InternalServerError().finish()
             })
+    }
+
+    pub mod manage {
+        use actix_web::HttpResponse;
+        use DbConn;
+
+        pub fn invite(db: DbConn) -> HttpResponse {
+            HttpResponse::Ok().finish()
+        }
     }
 }
 

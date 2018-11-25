@@ -2,7 +2,6 @@
 name = "core"
 version = "0.1.0"
 authors = ["Michael <localhost>"]
-build = "src/build.rs"
 
 [dependencies]
 chrono = "0.4"

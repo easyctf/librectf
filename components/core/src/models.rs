@@ -1,5 +1,3 @@
-use std::cmp::Ordering;
-
 use super::schema::*;
 
 #[derive(Debug, Insertable)]
@@ -22,6 +20,12 @@ pub struct Challenge {
     pub correct_flag: String,
     pub regex: bool,
     pub value: i32,
+}
+
+#[derive(Debug, Queryable, Insertable)]
+pub struct Invitation {
+    pub team_id: i32,
+    pub user_id: i32,
 }
 
 #[derive(Debug, Insertable)]
@@ -71,6 +75,7 @@ pub struct NewTeam {
 #[derive(Debug, Queryable)]
 pub struct Team {
     pub id: i32,
+    pub captain_id: i32,
     pub name: String,
     pub affiliation: Option<String>,
     pub banned: bool,

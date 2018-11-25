@@ -9,19 +9,32 @@ use diesel::prelude::*;
 use user::LoginRequired;
 use State;
 
-pub struct TeamRequired;
+pub enum Boolean {
+    True,
+    False,
+}
 
-impl Middleware<State> for TeamRequired {
+impl Default for Boolean {
+    fn default() -> Boolean {
+        Boolean::False
+    }
+}
+
+/// C is whether or not it's required that the user is the team captain.
+#[derive(Default)]
+pub struct TeamRequired<C>(pub C);
+
+impl Middleware<State> for TeamRequired<Boolean> {
     fn start(&self, req: &HttpRequest<State>) -> actix_web::Result<Started> {
         // first make sure we're logged in
         LoginRequired::start(&LoginRequired, req)?;
 
         let state = req.state();
 
-        let team_id = {
+        let (user_id, team_id) = {
             let ext = req.extensions();
             match ext.get::<User>() {
-                Some(user) => user.team_id,
+                Some(user) => (user.id, user.team_id),
                 None => return Ok(Started::Response(HttpResponse::Unauthorized().finish())),
             }
         };
@@ -42,6 +55,12 @@ impl Middleware<State> for TeamRequired {
                 return Ok(Started::Response(HttpResponse::Unauthorized().finish()));
             }
         };
+
+        if let Boolean::True = self.0 {
+            if user_id != team.captain_id {
+                return Ok(Started::Response(HttpResponse::Unauthorized().finish()));
+            }
+        }
 
         let mut ext = req.extensions_mut();
         ext.insert(team);
