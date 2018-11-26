@@ -18,6 +18,14 @@
             "error",
             4
         ],
+        "quotes": [
+            "error",
+            "double"
+        ],
+        "semi": [
+            "error",
+            "always"
+        ],
         "brace-style": [
             "error",
             "1tbs"

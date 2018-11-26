@@ -70,10 +70,11 @@ router.beforeResolve((to, _from, next) => {
         NProgress.start();
     }
     next();
-})
+});
 
-router.afterEach((_to, _from) => {
-    NProgress.done()
+router.afterEach((_to, _from, next) => {
+    NProgress.done();
+    next();
 });
 
 export default router;

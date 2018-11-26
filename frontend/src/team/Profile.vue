@@ -70,5 +70,5 @@ export default {
             this.team = result.data.team;
         }
     }
-}
+};
 </script>
