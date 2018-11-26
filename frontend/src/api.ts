@@ -28,7 +28,7 @@ class API {
         return API.jwtGet(baseUrl + "/chal/list");
     }
 
-    static ChalSubmit(id: string, flag: string) {
+    static ChalSubmit(id: number, flag: string) {
         return API.jwtPost(baseUrl + "/chal/submit", {
             id,
             flag,

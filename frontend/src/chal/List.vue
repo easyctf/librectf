@@ -6,7 +6,7 @@
             </b-container>
         </b-jumbotron>
         <b-container>
-            <div v-for="(chal, i) in challenges">
+            <div v-for="(chal, i) in challenges" :key="chal.id">
                 <b-card no-body role="tab">
                     <b-card-header v-b-toggle="'chalCollapse' + i">
                         {{ chal.title }} ({{ chal.value }} point{{ chal.value == 1 ? "" : "s" }})
@@ -36,16 +36,22 @@
 </template>
 
 <script>
+import Vue from "vue";
+import Component from "vue-class-component";
+
 import API from "../api";
 
-export default {
-    name: "List",
-    data: () => ({
-        challenges: []
-    }),
+@Component
+export default class List extends Vue {
+    challenges = []
+
     async created() {
         let result = await API.ChalList();
         this.challenges = result.data;
     }
-};
+
+    async submitFlag(id, flag) {
+        let result = await API.ChalSubmit(id, flag);
+    }
+}
 </script>

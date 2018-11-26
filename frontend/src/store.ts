@@ -2,15 +2,19 @@ import Vue from "vue";
 import Vuex from "vuex";
 Vue.use(Vuex);
 
-import jwtDecode from "jwt-decode";
+import JwtDecode from "jwt-decode";
 
 import API from "./api";
+
+interface Token {
+    username: string,
+}
 
 const store = new Vuex.Store({
     state: {
         session: (x => {
             try {
-                return x ? jwtDecode(x) : null;
+                return x ? JwtDecode<Token>(x) : null;
             } catch (_) {
                 return null;
             }
@@ -47,7 +51,7 @@ const store = new Vuex.Store({
             commit("LOGIN_ATTEMPT");
             return API.UserLogin(credentials.user, credentials.password).then((result) => {
                 localStorage.setItem("token", result.data);
-                let session = jwtDecode(result.data);
+                let session = JwtDecode<Token>(result.data);
                 commit("LOGIN_SUCCESS", session);
             });
         },
@@ -65,7 +69,10 @@ const store = new Vuex.Store({
                 return false;
             }
             return state.session.username;
-        }
+        },
+        hasTeam: state => {
+            return false;
+        },
     }
 });
 

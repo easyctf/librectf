@@ -1,7 +1,7 @@
 <template>
     <b-navbar-nav class="ml-auto">
         <template v-if="session">
-            <b-nav-item :to="{ name: 'chal/list' }">Challenges</b-nav-item>
+            <b-nav-item v-if="hasTeam" :to="{ name: 'chal/list' }">Challenges</b-nav-item>
             <b-nav-item-dropdown right v-if="session.admin">
                 <template slot="button-content">
                     Admin
@@ -20,20 +20,23 @@
 </template>
 
 <script>
-export default {
-    computed: {
-        session() {
-            return this.$store.getters.session;
-        }
-    },
-    methods: {
-        logout: function() {
-            this.$store.dispatch("logout");
-            this.$toaster.success("Logged out.");
-            this.$router.push("/");
-        }
+import Vue from "vue";
+import Component from "vue-class-component";
+
+@Component
+export default class User extends Vue {
+    get session() {
+        return this.$store.getters.session;
     }
-};
+    get hasTeam() {
+        return this.$store.getters.hasTeam;
+    }
+    logout() {
+        this.$store.dispatch("logout");
+        this.$toaster.success("Logged out.");
+        this.$router.push("/");
+    }
+}
 </script>
 
 <style scoped>

@@ -14,6 +14,10 @@
             "error",
             "all"
         ],
+        "eol-last": [
+            "error",
+            "always"
+        ],
         "indent": [
             "error",
             4

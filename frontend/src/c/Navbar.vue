@@ -23,6 +23,9 @@ import User from "./User";
     components: { User }
 })
 export default class Navbar extends Vue {
+    mounted() {
+        console.log("session:", this.$store.getters.session);
+    }
     get session() {
         return this.$store.getters.session;
     }

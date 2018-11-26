@@ -47,30 +47,29 @@
 </template>
 
 <script>
+import Vue from "vue";
+import Component from "vue-class-component";
 import NProgress from "nprogress";
 
-export default {
-    name: "Login",
-    data: () => ({
-        user: "",
-        password: "",
-        pending: false,
-    }),
-    methods: {
-        processForm: function() {
-            NProgress.start();
-            this.pending = true;
-            this.$store.dispatch("login", {
-                user: this.user,
-                password: this.password,
-            }).then(() => {
-                NProgress.done();
-                this.pending = false;
-                this.$router.push("/");
-            });
-        }
+@Component
+export default class Login extends Vue {
+    user = ""
+    password = ""
+    pending = false
+
+    processForm() {
+        NProgress.start();
+        this.pending = true;
+        this.$store.dispatch("login", {
+            user: this.user,
+            password: this.password,
+        }).then(() => {
+            NProgress.done();
+            this.pending = false;
+            this.$router.push("/");
+        });
     }
-};
+}
 </script>
 
 <style lang="scss" scoped>
