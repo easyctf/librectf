@@ -11,13 +11,13 @@
                     <b-card>
                         <b-form @submit.prevent="processForm">
                             <b-form-group id="emailGroup"
-                                label="Email Address"
-                                label-for="email">
-                                <b-form-input id="email"
-                                    type="email"
-                                    v-model="email"
+                                label="Email or Username"
+                                label-for="user">
+                                <b-form-input id="user"
+                                    type="text"
+                                    v-model="user"
                                     required
-                                    placeholder="Email Address">
+                                    placeholder="Email or Username">
                                 </b-form-input>
                             </b-form-group>
                             <b-form-group id="passwordGroup"
@@ -52,7 +52,7 @@ import NProgress from "nprogress";
 export default {
     name: "Login",
     data: () => ({
-        email: "",
+        user: "",
         password: "",
         pending: false,
     }),
@@ -61,7 +61,7 @@ export default {
             NProgress.start();
             this.pending = true;
             this.$store.dispatch("login", {
-                email: this.email,
+                user: this.user,
                 password: this.password,
             }).then(() => {
                 NProgress.done();

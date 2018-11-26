@@ -29,6 +29,7 @@ export default {
     methods: {
         logout: function() {
             this.$store.dispatch("logout");
+            this.$toaster.success("Logged out.");
             this.$router.push("/");
         }
     }

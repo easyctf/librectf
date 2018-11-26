@@ -28,7 +28,7 @@ export default class Navbar extends Vue {
     }
     get username() {
         return this.$store.getters.username;
-    }    
+    }
 }
 </script>
 

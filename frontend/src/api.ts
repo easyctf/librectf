@@ -35,9 +35,9 @@ class API {
         });
     }
 
-    static UserLogin(email: string, password: string) {
+    static UserLogin(user: string, password: string) {
         return axios.post(baseUrl + "/user/login", {
-            email,
+            user,
             password,
         });
     }

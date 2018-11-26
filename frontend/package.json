@@ -28,6 +28,7 @@
     "axios": "^0.18.0",
     "jwt-decode": "^2.2.0",
     "nprogress": "^0.2.0",
+    "v-toaster": "^1.0.3",
     "vue": "^2.5.17",
     "vue-class-component": "^6.3.2",
     "vue-hot-reload-api": "^2.3.1",

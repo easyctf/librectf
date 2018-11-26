@@ -5114,6 +5114,11 @@ util@^0.10.3:
   dependencies:
     inherits "2.0.3"
 
+v-toaster@^1.0.3:
+  version "1.0.3"
+  resolved "https://registry.yarnpkg.com/v-toaster/-/v-toaster-1.0.3.tgz#2c768cea82a5a9e5324f3e0b02703230ce98146f"
+  integrity sha512-B+yhvuUDiYykh1g4jgAKTRmnrJa4vrc+O1+/A57HSl4rA3R7OX0+8GGz2kr3eZ9YKkpaRlew9zWSjtksVa0+Bg==
+
 v8-compile-cache@^2.0.0:
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/v8-compile-cache/-/v8-compile-cache-2.0.2.tgz#a428b28bb26790734c4fc8bc9fa106fccebf6a6c"

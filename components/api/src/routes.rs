@@ -198,7 +198,7 @@ mod user {
         let state = req.state();
         let form = form.into_inner();
 
-        info!("Login request: email={:?}", form.email);
+        info!("Login request: user={:?}", form.user);
         login_user(db, state.get_secret_key(), form)
             .map(|(user, token)| {
                 info!(

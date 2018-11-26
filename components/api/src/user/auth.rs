@@ -14,7 +14,7 @@ use DbConn;
 
 #[derive(Debug, Deserialize)]
 pub struct LoginForm {
-    pub email: String,
+    pub user: String,
     pub password: String,
 }
 
@@ -76,7 +76,8 @@ pub fn login_user(
     use core::schema::users::dsl::*;
 
     users
-        .filter(email.eq(&form.email))
+        .filter(email.eq(&form.user))
+        .or_filter(name.eq(&form.user))
         .first::<User>(&*db)
         .map_err(|_| UserError::BadUsernameOrPassword)
         .and_then(|user| {
