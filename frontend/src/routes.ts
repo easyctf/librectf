@@ -1,17 +1,16 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
+import * as NProgress from "nprogress";
 Vue.use(VueRouter);
 
-import NProgress from "nprogress";
-
-import Home from "./c/Home";
-import Scoreboard from "./c/Scoreboard";
-import ChalList from "./chal/List";
-import TeamIndex from "./team/Index";
-import TeamProfile from "./team/Profile";
-import UserLogin from "./user/Login";
-import UserRegister from "./user/Register";
-import UserSettings from "./user/Settings";
+import Home from "./c/Home.vue";
+import Scoreboard from "./c/Scoreboard.vue";
+import ChalList from "./chal/List.vue";
+import TeamIndex from "./team/Index.vue";
+import TeamProfile from "./team/Profile.vue";
+import UserLogin from "./user/Login.vue";
+import UserRegister from "./user/Register.vue";
+import UserSettings from "./user/Settings.vue";
 
 const routes = [
     {

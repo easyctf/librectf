@@ -50,7 +50,7 @@ class API {
         });
     }
 
-    static TeamCreate(name: number) {
+    static TeamCreate(name: string) {
         return API.jwtPost(baseUrl + "/team/create", {
             name,
         });

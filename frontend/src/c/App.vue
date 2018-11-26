@@ -11,7 +11,7 @@
 import Vue from "vue";
 import Component from "vue-class-component";
 
-import Navbar from "./Navbar";
+import Navbar from "./Navbar.vue";
 
 @Component({
     components: { Navbar }

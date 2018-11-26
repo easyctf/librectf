@@ -54,21 +54,22 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
+import Vue from "vue";
+import Component from "vue-class-component";
 import API from "../api";
 
-export default {
-    name: "Profile",
-    data: () => ({
-        team: null,
-    }),
-    created: async () => {
-        let result = await API.TeamProfile();
+@Component
+export default class Profile extends Vue {
+    team = null
+
+    async created() {
+        let result = await API.TeamProfile(0);
         if (result.data === null) {
             this.$router.push("/team/create");
         } else {
             this.team = result.data.team;
         }
     }
-};
+}
 </script>

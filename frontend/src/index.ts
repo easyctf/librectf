@@ -2,9 +2,9 @@ import "babel-core/register";
 import "babel-polyfill";
 
 import Vue from "vue";
-import Toaster from "v-toaster";
+import Snotify from "vue-snotify";
 
-import App from "./c/App";
+import App from "./c/App.vue";
 import router from "./routes";
 import store from "./store";
 
@@ -15,14 +15,13 @@ import "bootstrap-vue/dist/bootstrap-vue.css";
 import "v-toaster/dist/v-toaster.css";
 
 Vue.use(BootstrapVue);
-Vue.use(Toaster, {timeout: 5000});
+Vue.use(Snotify);
 
-document.addEventListener("DOMContentLoaded", function(_event) { 
+document.addEventListener("DOMContentLoaded", function(_) { 
     new Vue({
         store,
         router,
-        el: "#app",
         components: { App },
         render: h => h(App),
-    });
+    }).$mount("#app");
 });

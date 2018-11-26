@@ -6,5 +6,8 @@
         "moduleResolution": "node",
         "experimentalDecorators": true,
         "strictFunctionTypes": false
-    }
+    },
+    "files": [
+        "src/rip.d.ts"
+    ]
 }

@@ -5,13 +5,13 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
 import Vue from "vue";
 import Component from "vue-class-component";
 import API from "../api";
 
-import Create from "./Create";
-import Profile from "./Profile";
+import Create from "./Create.vue";
+import Profile from "./Profile.vue";
 
 @Component({
     components: { Create, Profile }

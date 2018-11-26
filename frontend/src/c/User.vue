@@ -10,7 +10,7 @@
             </b-nav-item-dropdown>
             <b-nav-item :to="{ name: 'team' }">Team</b-nav-item>
             <b-nav-item :to="{ name: 'user/settings' }">Settings</b-nav-item>
-            <b-nav-item @click="logout">Logout</b-nav-item>
+            <b-nav-item @click="doLogout">Logout</b-nav-item>
         </template>
         <template v-else>
             <b-nav-item :to="{ name: 'user/login' }">Login</b-nav-item>
@@ -19,20 +19,18 @@
     </b-navbar-nav>
 </template>
 
-<script>
+<script lang="ts">
 import Vue from "vue";
 import Component from "vue-class-component";
+import {
+    Getter,
+    Action,
+} from "vuex-class";
 
 @Component
 export default class User extends Vue {
-    get session() {
-        return this.$store.getters.session;
-    }
-    get hasTeam() {
-        return this.$store.getters.hasTeam;
-    }
-    logout() {
-        this.$store.dispatch("logout");
+    doLogout() {
+        this.logout();
         this.$toaster.success("Logged out.");
         this.$router.push("/");
     }

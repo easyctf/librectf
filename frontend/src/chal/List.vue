@@ -14,7 +14,7 @@
                     <b-collapse :id="'chalCollapse' + i" visible>
                         <b-card-body>
                             <p v-html="chal.description"></p>
-                            <b-form>
+                            <b-form @submit.prevent="submitFlag">
                                 <b-input-group>
                                     <b-form-input :id="'flagSubmit' + i"
                                         type="text"
@@ -35,7 +35,7 @@
     </div>
 </template>
 
-<script>
+<script lang="ts">
 import Vue from "vue";
 import Component from "vue-class-component";
 
@@ -50,8 +50,12 @@ export default class List extends Vue {
         this.challenges = result.data;
     }
 
-    async submitFlag(id, flag) {
-        let result = await API.ChalSubmit(id, flag);
+    async submitFlag(evt: Event) {
+        console.log(arguments);
+        return async function(flag: string) {
+            // console.log(`id=${id}, flag=${flag}`);
+            let result = await API.ChalSubmit(0, flag);
+        };
     }
 }
 </script>

@@ -31,10 +31,12 @@
     "jwt-decode": "^2.2.0",
     "nprogress": "^0.2.0",
     "v-toaster": "^1.0.3",
-    "vue": "^2.5.17",
-    "vue-class-component": "^6.3.2",
+    "vue": "^2.5.0",
+    "vue-class-component": "^6.0.0",
     "vue-hot-reload-api": "^2.3.1",
     "vue-property-decorator": "^7.2.0",
-    "vuex": "^3.0.1"
+    "vue-snotify": "^3.2.1",
+    "vuex": "^3.0.0",
+    "vuex-class": "^0.3.1"
   }
 }

@@ -33,30 +33,29 @@
     </b-container>
 </template>
 
-<script>
+<script lang="ts">
+import Vue from "vue";
+import Component from "vue-class-component";
 import API from "../api";
 import NProgress from "nprogress";
 
-export default {
-    name: "Create",
-    data: () => ({
-        name: "",
-        pending: false,
-    }),
-    methods: {
-        processForm: function() {
-            NProgress.start();
-            this.pending = true;
-            API.TeamCreate(
-                this.name,
-            ).then(() => {
-                NProgress.done();
-                this.pending = false;
-                this.$router.push("/");
-            });
-        }
+@Component
+export default class Create extends Vue {
+    name = ""
+    pending = false
+
+    processForm() {
+        NProgress.start();
+        this.pending = true;
+        API.TeamCreate(
+            this.name,
+        ).then(() => {
+            NProgress.done();
+            this.pending = false;
+            this.$router.push("/");
+        });
     }
-};
+}
 </script>
 
 <style lang="scss" scoped>
