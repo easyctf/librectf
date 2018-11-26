@@ -3,7 +3,7 @@
 </template>
 
 <script>
-    export default {
-        name: "Scoreboard",
-    }
+export default {
+  name: "Scoreboard"
+};
 </script>

@@ -34,29 +34,29 @@
 </template>
 
 <script>
-    import API from "../api";
-    import NProgress from "nprogress";
+import API from "../api";
+import NProgress from "nprogress";
 
-    export default {
-        name: "Create",
-        data: () => ({
-            name: "",
-            pending: false,
-        }),
-        methods: {
-            processForm: function() {
-                NProgress.start();
-                this.pending = true;
-                API.TeamCreate(
-                    this.name,
-                ).then(() => {
-                    NProgress.done();
-                    this.pending = false;
-                    this.$router.push("/");
-                });
-            }
-        }
+export default {
+  name: "Create",
+  data: () => ({
+    name: "",
+    pending: false,
+  }),
+  methods: {
+    processForm: function() {
+      NProgress.start();
+      this.pending = true;
+      API.TeamCreate(
+        this.name,
+      ).then(() => {
+        NProgress.done();
+        this.pending = false;
+        this.$router.push("/");
+      });
     }
+  }
+}
 </script>
 
 <style lang="scss" scoped>

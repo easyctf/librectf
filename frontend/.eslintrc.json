@@ -1,0 +1,16 @@
+{
+    "parserOptions": {
+        "ecmaVersion": 8,
+        "sourceType": "module"
+    },
+    "extends": [
+        "plugin:vue/essential"
+    ],
+    "rules": {
+        "vue/require-v-for-key": "off",
+        "indent": [
+            "error",
+            2
+        ]
+    }
+}

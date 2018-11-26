@@ -36,17 +36,17 @@
 </template>
 
 <script>
-    import API from "../api";
+import API from "../api";
 
-    export default {
-        name: "List",
-        data: () => ({
-            challenges: [],
-        }),
-        async created() {
-            let result = await API.ChalList();
-            this.challenges = result.data;
-            console.log(result);
-        }
-    }
+export default {
+  name: "List",
+  data: () => ({
+    challenges: []
+  }),
+  async created() {
+    let result = await API.ChalList();
+    this.challenges = result.data;
+    console.log(result);
+  }
+};
 </script>
