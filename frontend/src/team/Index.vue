@@ -12,19 +12,20 @@ import Create from "./Create";
 import Profile from "./Profile";
 
 export default {
-  name: "Index",
-  components: { Create, Profile },
-  data: () => ({
-    team: true,
-  }),
-  async created() {
-    NProgress.start();
-    let result = await API.TeamProfile();
-    NProgress.done();
-    if (result.data && result.data.team)
-      this.$router.push("/team/profile");
-    else
-      this.team = false;
-  }
+    name: "Index",
+    components: { Create, Profile },
+    data: () => ({
+        team: true,
+    }),
+    async created() {
+        NProgress.start();
+        let result = await API.TeamProfile();
+        NProgress.done();
+        if (result.data && result.data.team) {
+            this.$router.push("/team/profile");
+        } else {
+            this.team = false;
+        }
+    }
 }
 </script>

@@ -2,8 +2,6 @@ import "babel-core/register";
 import "babel-polyfill";
 
 import Vue from "vue";
-import Vuex from "vuex";
-import VueRouter from "vue-router";
 
 import BootstrapVue from "bootstrap-vue";
 import "bootstrap/dist/css/bootstrap.css";
@@ -15,12 +13,12 @@ import store from "./store";
 
 Vue.use(BootstrapVue);
 
-document.addEventListener("DOMContentLoaded", function(event) { 
-  new Vue({
-    store,
-    router,
-    el: "#app",
-    components: { App },
-    render: h => h(App),
-  });
+document.addEventListener("DOMContentLoaded", function(_event) { 
+    new Vue({
+        store,
+        router,
+        el: "#app",
+        components: { App },
+        render: h => h(App),
+    });
 });

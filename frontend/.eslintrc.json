@@ -1,16 +1,32 @@
 {
+    "parser": "vue-eslint-parser",
     "parserOptions": {
         "ecmaVersion": 8,
-        "sourceType": "module"
+        "sourceType": "module",
+        "parser": "typescript-eslint-parser"
     },
     "extends": [
+        "eslint:recommended",
         "plugin:vue/essential"
     ],
     "rules": {
-        "vue/require-v-for-key": "off",
+        "curly": [
+            "error",
+            "all"
+        ],
         "indent": [
             "error",
-            2
+            4
+        ],
+        "brace-style": [
+            "error",
+            "1tbs"
+        ],
+        "no-unused-vars": [
+            "error",
+            {
+                "argsIgnorePattern": "^_"
+            }
         ]
     }
 }

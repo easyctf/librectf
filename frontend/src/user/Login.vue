@@ -50,26 +50,26 @@
 import NProgress from "nprogress";
 
 export default {
-  name: "Login",
-  data: () => ({
-    email: "",
-    password: "",
-    pending: false,
-  }),
-  methods: {
-    processForm: function() {
-      NProgress.start();
-      this.pending = true;
-      this.$store.dispatch("login", {
-        email: this.email,
-        password: this.password,
-      }).then(() => {
-        NProgress.done();
-        this.pending = false;
-        this.$router.push("/");
-      });
+    name: "Login",
+    data: () => ({
+        email: "",
+        password: "",
+        pending: false,
+    }),
+    methods: {
+        processForm: function() {
+            NProgress.start();
+            this.pending = true;
+            this.$store.dispatch("login", {
+                email: this.email,
+                password: this.password,
+            }).then(() => {
+                NProgress.done();
+                this.pending = false;
+                this.$router.push("/");
+            });
+        }
     }
-  }
 }
 </script>
 

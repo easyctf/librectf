@@ -56,21 +56,19 @@
 
 <script>
 import API from "../api";
-import NProgress from "nprogress";
 
 export default {
-  name: "Profile",
-  data: () => ({
-    team: null,
-  }),
-  created: async () => {
-    let result = await API.TeamProfile();
-    if (result.data === null) {
-      this.$router.push("/team/create");
-    } else {
-      this.team = result.data.team;
-      console.log(this.team);
+    name: "Profile",
+    data: () => ({
+        team: null,
+    }),
+    created: async () => {
+        let result = await API.TeamProfile();
+        if (result.data === null) {
+            this.$router.push("/team/create");
+        } else {
+            this.team = result.data.team;
+        }
     }
-  }
 }
 </script>

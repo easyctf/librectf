@@ -61,28 +61,28 @@ import API from "../api";
 import NProgress from "nprogress";
     
 export default {
-  name: "Register",
-  data: () => ({
-    email: "",
-    username: "",
-    password: "",
-    pending: false,
-  }),
-  methods: {
-    processForm: function() {
-      NProgress.start();
-      this.pending = true;
-      API.UserRegister(
-        this.email,
-        this.username,
-        this.password,
-      ).then(() => {
-        NProgress.done();
-        this.pending = false;
-        this.$router.push("/");
-      });
+    name: "Register",
+    data: () => ({
+        email: "",
+        username: "",
+        password: "",
+        pending: false,
+    }),
+    methods: {
+        processForm: function() {
+            NProgress.start();
+            this.pending = true;
+            API.UserRegister(
+                this.email,
+                this.username,
+                this.password,
+            ).then(() => {
+                NProgress.done();
+                this.pending = false;
+                this.$router.push("/");
+            });
+        }
     }
-  }
 }
 </script>
 

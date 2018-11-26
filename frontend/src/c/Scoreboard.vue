@@ -4,6 +4,6 @@
 
 <script>
 export default {
-  name: "Scoreboard"
+    name: "Scoreboard"
 };
 </script>

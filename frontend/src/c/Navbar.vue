@@ -14,20 +14,22 @@
 </template>
 
 <script>
+import Vue from "vue";
+import Component from "vue-class-component";
+
 import User from "./User";
 
-export default {
-  name: "Navbar",
-  components: { User },
-  computed: {
-    session() {
-      return this.$store.getters.session;
-    },
-    username() {
-      return this.$store.getters.username;
+@Component({
+    components: { User }
+})
+export default class Navbar extends Vue {
+    get session() {
+        return this.$store.getters.session;
     }
-  }
-};
+    get username() {
+        return this.$store.getters.username;
+    }    
+}
 </script>
 
 <style lang="scss" scoped>

@@ -23,14 +23,26 @@ impl Middleware<State> for LoginRequired {
             } else {
                 token
             },
-            None => return Ok(Started::Response(HttpResponse::Unauthorized().finish())),
+            None => {
+                return Ok(Started::Response(HttpResponse::Unauthorized().json(
+                    json!({
+                        "error": "unauthorized::no_login::missing_header",
+                        "redirect": "user/login",
+                    }),
+                )))
+            }
         };
 
         let claims = match verify_claims(&state.get_secret_key(), token) {
             Ok(claims) => claims,
             Err(err) => {
                 error!("Error decoding JWT from user: {:?}", err);
-                return Ok(Started::Response(HttpResponse::Unauthorized().finish()));
+                return Ok(Started::Response(HttpResponse::Unauthorized().json(
+                    json!({
+                        "error": "unauthorized::no_login::invalid_jwt",
+                        "redirect": "user/login",
+                    }),
+                )));
             }
         };
 

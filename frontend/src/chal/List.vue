@@ -39,14 +39,13 @@
 import API from "../api";
 
 export default {
-  name: "List",
-  data: () => ({
-    challenges: []
-  }),
-  async created() {
-    let result = await API.ChalList();
-    this.challenges = result.data;
-    console.log(result);
-  }
+    name: "List",
+    data: () => ({
+        challenges: []
+    }),
+    async created() {
+        let result = await API.ChalList();
+        this.challenges = result.data;
+    }
 };
 </script>

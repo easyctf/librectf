@@ -33,10 +33,8 @@ impl Middleware<State> for TeamRequired<Boolean> {
 
         let (user_id, team_id) = {
             let ext = req.extensions();
-            match ext.get::<User>() {
-                Some(user) => (user.id, user.team_id),
-                None => return Ok(Started::Response(HttpResponse::Unauthorized().finish())),
-            }
+            let user = ext.get::<User>().expect("we should be logged in by now");
+            (user.id, user.team_id)
         };
 
         let team_id = match team_id {
@@ -52,7 +50,11 @@ impl Middleware<State> for TeamRequired<Boolean> {
             Ok(team) => team,
             Err(err) => {
                 error!("Error loading team from database: {:?}", err);
-                return Ok(Started::Response(HttpResponse::Unauthorized().finish()));
+                return Ok(Started::Response(HttpResponse::Unauthorized().json(
+                    json!({
+                        "error": "no_team::",
+                    }),
+                )));
             }
         };
 

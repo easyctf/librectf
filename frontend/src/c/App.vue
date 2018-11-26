@@ -1,23 +1,23 @@
 <template>
     <div>
-        <navbar v-bind:loggedIn="loggedIn" v-bind:isAdmin="isAdmin"></navbar>
+        <navbar></navbar>
         <transition>
             <router-view></router-view>
         </transition>
     </div>
 </template>
 
-<script>
+<script lang="ts">
+import Vue from "vue";
+import Component from "vue-class-component";
+
 import Navbar from "./Navbar";
 
-export default {
-  components: { Navbar },
-  data: () => ({
-    loggedIn: false,
-    isAdmin: false
-  }),
-  name: "App"
-};
+@Component({
+    components: { Navbar }
+})
+export default class App extends Vue {
+}
 </script>
 
 <style lang="scss" scoped>

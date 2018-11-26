@@ -21,17 +21,17 @@
 
 <script>
 export default {
-  computed: {
-    session() {
-      return this.$store.getters.session;
+    computed: {
+        session() {
+            return this.$store.getters.session;
+        }
+    },
+    methods: {
+        logout: function() {
+            this.$store.dispatch("logout");
+            this.$router.push("/");
+        }
     }
-  },
-  methods: {
-    logout: function() {
-      this.$store.dispatch("logout");
-      this.$router.push("/");
-    }
-  }
 };
 </script>
 
