@@ -1,5 +1,11 @@
 <template>
-    <div></div>
+    <div>
+        <b-jumbotron>
+            <b-container>
+                <h1>Scoreboard</h1>
+            </b-container>
+        </b-jumbotron>
+    </div>
 </template>
 
 <script lang="ts">

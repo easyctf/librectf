@@ -5,7 +5,7 @@ const baseUrl = "/api/v1";
 const alwaysReject = new Promise((_, reject) => reject());
 
 class API {
-    static jwtGet(url: string) {
+    static jwtGet(url: string): Promise<any> {
         let token = localStorage.getItem("token");
         if (!token) {
             return alwaysReject;
@@ -14,7 +14,7 @@ class API {
             .get(url, { headers: { Authorization: `Token ${token}` }})
             .catch((err) => console.dir(err));
     }
-    static jwtPost(url: string, data: object) {
+    static jwtPost(url: string, data: object): Promise<any> {
         let token = localStorage.getItem("token");
         if (!token) {
             return alwaysReject;

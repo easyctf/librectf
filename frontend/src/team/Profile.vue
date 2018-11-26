@@ -48,7 +48,7 @@
 
         <div v-else>
             <b-container>
-                Not found.
+                <p>Not found.</p>
             </b-container>
         </div>
     </div>

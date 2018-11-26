@@ -27,6 +27,7 @@ impl Middleware<State> for LoginRequired {
                 return Ok(Started::Response(HttpResponse::Unauthorized().json(
                     json!({
                         "error": "unauthorized::no_login::missing_header",
+                        "message": "You're not logged in. Please log in to see this page.",
                         "redirect": "user/login",
                     }),
                 )))
@@ -40,6 +41,7 @@ impl Middleware<State> for LoginRequired {
                 return Ok(Started::Response(HttpResponse::Unauthorized().json(
                     json!({
                         "error": "unauthorized::no_login::invalid_jwt",
+                        "message": "Invalid login. Please log in to see this page.",
                         "redirect": "user/login",
                     }),
                 )));

@@ -1,31 +1,26 @@
 <template>
     <div>
-        <Create v-if="!team"></Create>
+        <create v-if="!team"></create>
+        <profile v-if="team"></profile>
     </div>
 </template>
 
 <script>
+import Vue from "vue";
+import Component from "vue-class-component";
 import API from "../api";
-import NProgress from "nprogress";
 
 import Create from "./Create";
 import Profile from "./Profile";
 
-export default {
-    name: "Index",
-    components: { Create, Profile },
-    data: () => ({
-        team: true,
-    }),
+@Component({
+    components: { Create, Profile }
+})
+export default class Index extends Vue {
+    team = true
     async created() {
-        NProgress.start();
         let result = await API.TeamProfile();
-        NProgress.done();
-        if (result.data && result.data.team) {
-            this.$router.push("/team/profile");
-        } else {
-            this.team = false;
-        }
+        console.log(result);
     }
-};
+}
 </script>

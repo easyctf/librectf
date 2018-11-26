@@ -10,11 +10,13 @@ const store = new Vuex.Store({
     state: {
         session: (x => {
             try {
-                return x ? jwtDecode(x) : undefined;
+                return x ? jwtDecode(x) : null;
             } catch (_) {
-                return undefined;
+                return null;
             }
         })(localStorage.getItem("token")),
+        team: null,
+        user: null,
         pending: false,
     },
     mutations: {
@@ -26,10 +28,21 @@ const store = new Vuex.Store({
             state.pending = false;
         },
         ["LOGOUT"](state) {
-            state.session = undefined;
+            state.session = null;
+        },
+        ["SET_TEAM"](state, team) {
+            state.team = team;
+        },
+        ["SET_USER"](state, user) {
+            state.user = user;
         }
     },
     actions: {
+        getTeam({ commit }, id) {
+            return API.TeamProfile(id).then((result) => {
+                commit("SET_TEAM", result.team);
+            });
+        },
         login({ commit }, credentials) {
             commit("LOGIN_ATTEMPT");
             return API.UserLogin(credentials.user, credentials.password).then((result) => {

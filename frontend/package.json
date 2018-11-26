@@ -25,6 +25,7 @@
     "serve": "parcel serve index.html"
   },
   "dependencies": {
+    "@types/jwt-decode": "2.2.1",
     "axios": "^0.18.0",
     "jwt-decode": "^2.2.0",
     "nprogress": "^0.2.0",
