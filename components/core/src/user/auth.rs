@@ -18,15 +18,6 @@ pub struct LoginForm {
     pub password: String,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
-pub struct LoginClaims {
-    #[serde(with = "ts_milliseconds")]
-    exp: DateTime<Utc>,
-    pub id: i32,
-    username: String,
-    admin: bool,
-}
-
 #[derive(Debug, Fail)]
 pub enum UserError {
     #[fail(display = "An account was already found with these credentials")]

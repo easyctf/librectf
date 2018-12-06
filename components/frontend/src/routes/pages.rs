@@ -1,8 +1,8 @@
-use std::path::PathBuf;
-
 use actix_web::{HttpRequest, HttpResponse};
 use core::{pages::get_page, State};
 use tera::Context;
+
+use Request;
 
 const WELCOME_MESSAGE: &'static str = "Welcome to LibreCTF! You're seeing this message because you probably haven't set up your index page yet. Head over to the admin panel to set it up!";
 
@@ -10,9 +10,8 @@ const WELCOME_MESSAGE: &'static str = "Welcome to LibreCTF! You're seeing this m
 #[folder = "components/frontend/static"]
 struct Static;
 
-pub fn handler(req: HttpRequest<State>) -> HttpResponse {
-    let state = req.state();
-    let mut ctx = Context::new();
+pub fn handler(req: Request) -> HttpResponse {
+    let Request { state, mut ctx, .. } = req;
 
     // TODO: look up the page
     match get_page("") {
