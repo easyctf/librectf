@@ -16,11 +16,17 @@ use core::State;
 struct Templates;
 
 pub fn app(mut state: State) -> App<State> {
-    let templates = Templates::list().filter_map(|name| {
-        Templates::get(name)
-            .and_then(|contents| String::from_utf8(contents).ok())
-            .map(|contents| (name, contents))
-    });
-    state.add_templates(templates);
+    let templates = Templates::list()
+        .filter_map(|name| {
+            Templates::get(name)
+                .and_then(|contents| String::from_utf8(contents).ok())
+                .map(|contents| (String::from(name), contents))
+        }).collect::<Vec<_>>();
+    state.add_templates(
+        templates
+            .iter()
+            .map(|(a, b)| (a.as_ref(), b.as_ref()))
+            .collect::<Vec<_>>(),
+    );
     routes::router(state)
 }
