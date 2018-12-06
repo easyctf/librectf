@@ -2,6 +2,9 @@ body {
     max-width: 854px;
     margin: auto;
     font-size: 11pt;
+}
+
+body * {
     font-family: monospace;
 }
 
