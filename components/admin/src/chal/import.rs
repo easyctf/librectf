@@ -47,6 +47,11 @@ pub struct ImportChalCommand {
 // TODO: update instead of insert if it already exists
 impl ImportChalCommand {
     pub fn run(&self, config: &Config) -> Result<(), Error> {
+        let cfg = match config.inner {
+            Some(ref cfg) => cfg,
+            None => bail!("You didn't provide filestore push credentials!"),
+        };
+
         let mut files_to_add = Vec::<NewFile>::new();
         let mut chals_to_add = Vec::<(i32, NewChallenge)>::new();
 
@@ -124,8 +129,8 @@ impl ImportChalCommand {
 
         // add files into filestore
         if files.len() > 0 {
-            let filestore_url = &config.inner.filestore_url;
-            let filestore_push_password = &config.inner.filestore_push_password;
+            let filestore_url = &cfg.filestore_url;
+            let filestore_push_password = &cfg.filestore_push_password;
 
             for (id, name, path) in files {
                 let mut request = Request::new(Method::Post, filestore_url.parse()?)?;

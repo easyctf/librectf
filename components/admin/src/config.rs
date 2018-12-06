@@ -4,11 +4,11 @@ use core::{self, config::AdminConfig};
 
 pub struct Config {
     pub database_url: String,
-    pub inner: AdminConfig,
+    pub inner: Option<AdminConfig>,
 }
 
 impl Deref for Config {
-    type Target = AdminConfig;
+    type Target = Option<AdminConfig>;
 
     fn deref(&self) -> &Self::Target {
         &self.inner
@@ -19,7 +19,7 @@ impl From<core::Config> for Config {
     fn from(config: core::Config) -> Self {
         Config {
             database_url: config.database_url.clone(),
-            inner: config.admin.unwrap().clone(),
+            inner: config.admin.clone(),
         }
     }
 }

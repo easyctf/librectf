@@ -8,7 +8,6 @@ use diesel::{
     Connection,
 };
 use failure::{Compat, Error, Fail};
-use jsonwebtoken::{Header, Validation};
 
 use db::Connection as DbConn;
 use models::{NewUser, User};
@@ -49,7 +48,7 @@ impl UserError {
 /// It either returns a token that was generated from the successful authentication, or an [Error][1].
 ///
 /// [1]: `failure::Error`
-pub fn login_user(db: DbConn, secret_key: &[u8], form: LoginForm) -> Result<User, UserError> {
+pub fn login_user(db: DbConn, form: LoginForm) -> Result<User, UserError> {
     use schema::users::dsl::*;
 
     users
@@ -82,11 +81,7 @@ impl RegisterForm {
     }
 }
 
-pub fn register_user(
-    db: DbConn,
-    secret_key: &[u8],
-    form: RegisterForm,
-) -> Result<User, UserError> {
+pub fn register_user(db: DbConn, form: RegisterForm) -> Result<User, UserError> {
     let new_user = form.into_new_user()?;
     db.transaction(|| {
         if let Err(err) = {

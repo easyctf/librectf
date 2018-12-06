@@ -32,7 +32,7 @@ pub fn handler(req: HttpRequest<State>) -> HttpResponse {
 
 pub fn statics(req: HttpRequest<State>) -> HttpResponse {
     let path = req.match_info().query::<String>("path").unwrap();
-    println!("{:?}", path);
+    // println!("{:?}", path);
     match Static::get(&path) {
         Some(contents) => HttpResponse::Ok().body(contents),
         None => HttpResponse::NotFound().finish(),

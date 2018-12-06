@@ -12,7 +12,6 @@ extern crate diesel;
 #[macro_use]
 extern crate failure;
 extern crate futures;
-extern crate jsonwebtoken;
 extern crate lazy_static;
 #[macro_use]
 extern crate log;

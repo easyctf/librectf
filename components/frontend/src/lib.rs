@@ -1,15 +1,23 @@
 extern crate actix_web;
 extern crate core;
 #[macro_use]
+extern crate failure;
+#[macro_use]
 extern crate embed;
 #[macro_use]
 extern crate log;
+extern crate serde;
+#[macro_use]
+extern crate serde_derive;
 extern crate tera;
 
+mod request;
 mod routes;
 
 use actix_web::App;
 use core::State;
+
+use request::Request;
 
 #[derive(Embed)]
 #[folder = "components/frontend/templates"]
