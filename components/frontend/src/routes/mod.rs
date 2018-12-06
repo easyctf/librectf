@@ -8,9 +8,10 @@ use actix_web::{
 use core::State;
 
 pub fn router(state: State) -> App<State> {
-    App::with_state(state)
+    let config = state.get_web_config().unwrap();
+    App::with_state(state.clone())
         .middleware(SessionStorage::new(
-            CookieSessionBackend::signed(&[0; 32]).secure(false),
+            CookieSessionBackend::signed(config.secret_key.as_bytes()).secure(false),
         )).resource("/", |r| r.get().with(self::pages::handler))
         .resource("/static/{path:.*}", |r| r.get().with(self::pages::statics))
         .scope("/user", self::user::scope)

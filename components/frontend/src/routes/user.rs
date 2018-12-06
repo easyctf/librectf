@@ -58,11 +58,19 @@ fn get_register(req: Request) -> HttpResponse {
         })
 }
 
-fn post_register((req, form): (Request, Form<RegisterForm>)) -> HttpResponse {
+fn post_register(
+    (r, req, form): (HttpRequest<State>, Request, Form<RegisterForm>),
+) -> HttpResponse {
     let db = req.state.get_connection().unwrap();
     let form = form.into_inner();
 
     register_user(db, form)
-        .map(|user| HttpResponse::Ok().body(format!("{:?}", user)))
-        .unwrap_or_else(|err| HttpResponse::InternalServerError().finish())
+        .map(|user| {
+            let s_user = SessionUser {
+                id: user.id,
+                name: user.name.clone(),
+            };
+            r.session().set("user", s_user);
+            HttpResponse::SeeOther().header("Location", "/").finish()
+        }).unwrap_or_else(|err| HttpResponse::InternalServerError().finish())
 }
