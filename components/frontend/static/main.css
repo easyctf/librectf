@@ -1,0 +1,37 @@
+body {
+    max-width: 854px;
+    margin: auto;
+    font-size: 11pt;
+    font-family: monospace;
+}
+
+header {
+    margin-bottom: 14px;
+}
+
+header > nav {
+    background-color: black;
+}
+
+header > nav > ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+header > nav > ul > li {
+    display: inline-block;
+}
+
+header > nav > ul > li.right {
+    float: right;
+}
+
+header > nav > ul > li > a {
+    display: inline-block;
+    color: white;
+    padding: 5px;
+}
+
+header > nav > ul > li > a:visited {
+    color: white;
+}

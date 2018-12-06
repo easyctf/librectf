@@ -1,7 +1,7 @@
 use std::sync::{Arc, Mutex};
 
 use failure::Error;
-use tera::Tera;
+use tera::{Context, Tera};
 
 use config::{Config, FilestoreConfig, WebConfig};
 use db::{establish_connection, Connection, Pool};
@@ -40,15 +40,13 @@ impl State {
         self.get_web_config().and_then(|cfg| cfg.filestore.as_ref())
     }
 
-    pub fn renderer<F, T>(&self, f: F) -> Result<T, Error>
-    where
-        F: Fn(&Tera) -> T,
-    {
+    pub fn render(&self, page: impl AsRef<str>, ctx: &Context) -> Result<String, Error> {
         let t = self
             .tera
             .lock()
             .map_err(|err| format_err!("Internal error acquiring Tera lock: {}", err))?;
-        Ok(f(&t))
+        t.render(page.as_ref(), ctx)
+            .map_err(|err| format_err!("Internal error rendering template: {}", err))
     }
 
     pub fn add_templates(&mut self, templates: Vec<(&str, &str)>) -> Result<(), Error> {
