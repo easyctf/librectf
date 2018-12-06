@@ -3,10 +3,6 @@ name = "admin"
 version = "0.1.0"
 authors = ["Michael Zhang <failed.down@gmail.com>"]
 
-[[bin]]
-name = "admin"
-path = "src/bin.rs"
-
 [dependencies]
 core = { path = "../../components/core" }
 diesel = { version = "1.3", default_features = false }

@@ -3,6 +3,7 @@
 // TODO: prefix/suffix uploading
 
 extern crate actix_web;
+extern crate core;
 extern crate failure;
 extern crate futures;
 #[macro_use]
@@ -17,67 +18,39 @@ extern crate tempfile;
 mod config;
 mod util;
 
-use std::net::{Ipv4Addr, SocketAddrV4};
 use std::path::PathBuf;
-use std::str::FromStr;
 
 use actix_web::{
     error::{ErrorForbidden, ErrorInternalServerError},
     fs::NamedFile,
     http::Method,
-    server, App, FutureResponse, HttpMessage, HttpRequest, HttpResponse,
+    App, FromRequest, FutureResponse, HttpMessage, HttpRequest, HttpResponse,
 };
+use core::State;
 use failure::Error;
 use futures::{future, Future, Stream};
 
 pub use config::Config;
 use util::handle_multipart;
 
-#[derive(Debug, Serialize, Deserialize)]
-pub struct FilestoreCommand {
-    filestore: Config,
-}
-
-impl FilestoreCommand {
-    pub fn run(&self) -> Result<(), Error> {
-        let addr = SocketAddrV4::new(
-            Ipv4Addr::from_str(&self.filestore.bind_host).unwrap(),
-            self.filestore.bind_port,
-        );
-        let config = self.filestore.clone();
-
-        server::new(move || {
-            let state = State::new(&config.clone());
-            App::with_state(state)
-                .resource("/upload/public", |r| r.method(Method::POST).f(upload))
-                .resource("/upload/private", |r| r.method(Method::POST).f(upload))
-                .resource("/public/{tail:.*}", |r| r.method(Method::GET).f(public))
-                .resource("/private/{tail:.*}", |r| r.method(Method::GET).f(private))
-        }).bind(addr)
-        .map(|server| server.run())
-        .unwrap();
-
-        Ok(())
-    }
-}
-
-#[derive(Clone)]
-struct State(pub Config);
-
-impl State {
-    fn new(config: &Config) -> Self {
-        State(config.clone())
-    }
+pub fn app(state: State) -> Result<App<State>, Error> {
+    let app = App::with_state(state)
+        .resource("/upload/public", |r| r.method(Method::POST).f(upload))
+        .resource("/upload/private", |r| r.method(Method::POST).f(upload))
+        .resource("/public/{tail:.*}", |r| r.method(Method::GET).f(public))
+        .resource("/private/{tail:.*}", |r| r.method(Method::GET).f(private));
+    Ok(app)
 }
 
 fn private(req: &HttpRequest<State>) -> actix_web::Result<NamedFile> {
     let state = req.state();
     let headers = req.headers();
+    let cfg = Config::from_request(&req, &())?;
 
     match headers
         .get("Authorization")
         .and_then(|value| value.to_str().ok())
-        .map(|token| token == state.0.pull_password)
+        .map(|token| token == cfg.pull_password)
     {
         Some(true) => (),
         _ => return Err(ErrorForbidden("Not authorized.")),
@@ -85,18 +58,15 @@ fn private(req: &HttpRequest<State>) -> actix_web::Result<NamedFile> {
 
     let tail: PathBuf = req.match_info().query("tail")?;
 
-    let mut path = state.0.storage_dir.clone();
-    path.push("private");
-    path.push(tail);
-
+    let path = cfg.storage_dir.join("private").join(tail);
     Ok(NamedFile::open(path)?)
 }
 
 fn public(req: &HttpRequest<State>) -> actix_web::Result<NamedFile> {
-    let state = req.state();
     let tail: PathBuf = req.match_info().query("tail")?;
+    let cfg = Config::from_request(&req, &())?;
 
-    let mut path = state.0.storage_dir.clone();
+    let mut path = cfg.storage_dir.clone();
     path.push("public");
     path.push(tail);
 
@@ -111,15 +81,22 @@ struct UploadOptions {
 }
 
 fn upload(req: &HttpRequest<State>) -> FutureResponse<HttpResponse> {
-    let state = req.state();
     let headers = req.headers();
-    let storage_dir = state.0.storage_dir.clone();
+    let cfg = match Config::from_request(&req, &()) {
+        Ok(cfg) => cfg,
+        Err(err) => {
+            error!("TODO: decipher this {}", err);
+            return Box::new(future::err(err.into()));
+        }
+    };
+
+    let storage_dir = cfg.storage_dir.clone();
     let private = req.uri().path().ends_with("private");
 
     match headers
         .get("Authorization")
         .and_then(|value| value.to_str().ok())
-        .map(|token| token == state.0.push_password)
+        .map(|token| token == cfg.push_password)
     {
         Some(true) => (),
         _ => return Box::new(future::err(ErrorForbidden("Not authorized."))),

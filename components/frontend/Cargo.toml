@@ -1,17 +1,12 @@
 [package]
-name = "filestore"
+name = "frontend"
 version = "0.1.0"
 authors = ["Michael Zhang <failed.down@gmail.com>"]
 
 [dependencies]
 actix-web = "0.7"
 core = { path = "../core" }
-env_logger = "0.5"
+embed = { git = "https://github.com/iptq/embed" }
 failure = "0.1"
-futures = "0.1"
 log = "0.4"
-sha2 = "0.8"
-serde = "1.0"
-serde_derive = "1.0"
-structopt = "0.2"
-tempfile = "3"
+tera = "0.11"

@@ -1,15 +1,17 @@
-[admin]
 database_url = "mysql://root:password@localhost:3306/openctf"
+
+[admin]
 filestore_url = "http://localhost:6201/upload/public"
 filestore_push_password = "push"
 
-[api]
-database_url = "mysql://root:password@localhost:3306/openctf"
+[web]
 bind_host = "127.0.0.1"
 bind_port = 8000
 secret_key = "secret"
 
-[filestore]
+[web.api]
+
+[web.filestore]
 url_prefix = "http://localhost/filestore"
 bind_host = "127.0.0.1"
 bind_port = 6201

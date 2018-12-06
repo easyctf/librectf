@@ -199,7 +199,8 @@ mod user {
         let form = form.into_inner();
 
         info!("Login request: user={:?}", form.user);
-        login_user(db, state.get_secret_key(), form)
+        let cfg = state.get_web_config().unwrap();
+        login_user(db, cfg.secret_key.as_ref(), form)
             .map(|(user, token)| {
                 info!(
                     "Successfully logged in: id={:?}, email={:?}",
@@ -225,7 +226,8 @@ mod user {
             "Register request: username={:?}, email={:?}",
             form.username, form.email
         );
-        register_user(db, state.get_secret_key(), form)
+        let cfg = state.get_web_config().unwrap();
+        register_user(db, cfg.secret_key.as_ref(), form)
             .map(|(user, token)| {
                 info!(
                     "Successfully registered: id={:?}, username={:?}",

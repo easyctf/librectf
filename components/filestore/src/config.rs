@@ -1,22 +1,28 @@
-use std::path::PathBuf;
+use std::ops::Deref;
 
-#[derive(Clone, Debug, Serialize, Deserialize)]
-pub struct Config {
-    /// Password for sending files to the filestore.
-    pub push_password: String,
+use actix_web::{FromRequest, HttpRequest};
+use core::{config::FilestoreConfig, State};
+use failure::Error;
 
-    /// Password for retrieving files from the protected filestore.
-    pub pull_password: String,
+pub struct Config(FilestoreConfig);
 
-    /// The prefix for output URLs
-    pub url_prefix: String,
+impl Deref for Config {
+    type Target = FilestoreConfig;
 
-    /// The host to bind to
-    pub bind_host: String,
+    fn deref(&self) -> &Self::Target {
+        &self.0
+    }
+}
 
-    /// The port to bind to
-    pub bind_port: u16,
+impl FromRequest<State> for Config {
+    type Config = ();
+    type Result = Result<Config, Error>;
 
-    /// Location for storing files (must exist).
-    pub storage_dir: PathBuf,
+    fn from_request(req: &HttpRequest<State>, _: &Self::Config) -> Self::Result {
+        let state = req.state();
+        state
+            .get_filestore_config()
+            .map(|cfg| Config(cfg.clone()))
+            .ok_or_else(|| unreachable!())
+    }
 }

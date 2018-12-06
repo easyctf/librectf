@@ -1,26 +1,26 @@
 extern crate actix_web;
 extern crate config as cfg;
 extern crate env_logger;
+#[macro_use]
 extern crate failure;
 extern crate serde;
 #[macro_use]
 extern crate structopt;
-#[macro_use]
 extern crate serde_derive;
 
 extern crate admin;
 extern crate api;
 extern crate core;
 extern crate filestore;
+extern crate frontend;
 
-mod config;
 mod web;
 
 use std::path::PathBuf;
 
+use core::config::{Config, ReadConfig};
+use failure::Error;
 use structopt::StructOpt;
-
-use config::Config;
 
 #[derive(Debug, StructOpt)]
 enum Command {
@@ -43,10 +43,15 @@ struct Opt {
     command: Command,
 }
 
-fn main() {
+fn main() -> Result<(), Error> {
     let env = env_logger::Env::default().filter_or(env_logger::DEFAULT_FILTER_ENV, "warn");
     env_logger::Builder::from_env(env).init();
 
+    let config = Config::new(None)?;
     let args = Opt::from_args();
-    println!("{:?}", args);
+
+    match args.command {
+        Command::Admin(cmd) => cmd.run(&config),
+        Command::Web(web) => web.run(&config),
+    }
 }

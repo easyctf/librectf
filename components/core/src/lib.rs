@@ -8,6 +8,7 @@ extern crate chrono;
 extern crate config as cfg;
 #[macro_use]
 extern crate diesel;
+#[macro_use]
 extern crate failure;
 extern crate futures;
 extern crate lazy_static;
@@ -21,16 +22,20 @@ extern crate serde;
 extern crate serde_derive;
 extern crate serde_json;
 extern crate structopt;
+extern crate tera;
 
 #[macro_use]
 mod macros;
 
-mod config;
+pub mod config;
 pub mod db;
 pub mod models;
+pub mod pages;
 pub mod schema;
+mod state;
 
 mod tasks;
 
 pub use config::Config;
 pub use db::{establish_connection, Pool};
+pub use state::State;

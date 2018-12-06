@@ -4,7 +4,7 @@ use cfg::{self, Environment};
 use failure::Error;
 use serde::Deserialize;
 
-pub trait Config<'d>: Sized + Deserialize<'d> {
+pub trait ReadConfig<'d>: Sized + Deserialize<'d> {
     fn new(file: Option<PathBuf>) -> Result<Self, Error> {
         let mut c = cfg::Config::new();
 
@@ -27,14 +27,49 @@ pub trait Config<'d>: Sized + Deserialize<'d> {
     }
 }
 
-impl<'d, T: Deserialize<'d>> Config<'d> for T {}
+impl<'d, T: Deserialize<'d>> ReadConfig<'d> for T {}
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct RedisConfig {
-    uri: String,
+    pub uri: String,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
-pub struct CoreConfig {
-    redis: RedisConfig,
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub enum MailCredentials {
+    SMTP { host: String },
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct AdminConfig {
+    pub filestore_url: String,
+    pub filestore_push_password: String,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct ApiConfig {}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct FilestoreConfig {
+    pub push_password: String,
+    pub pull_password: String,
+    pub url_prefix: String,
+    pub storage_dir: PathBuf,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct WebConfig {
+    pub bind_host: String,
+    pub bind_port: u16,
+    pub secret_key: String,
+
+    pub api: Option<ApiConfig>,
+    pub filestore: Option<FilestoreConfig>,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct Config {
+    pub database_url: String,
+
+    pub admin: Option<AdminConfig>,
+    pub web: Option<WebConfig>,
 }

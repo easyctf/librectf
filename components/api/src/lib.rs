@@ -25,35 +25,18 @@ extern crate serde_json;
 
 mod api;
 mod chal;
-mod config;
 mod db;
 mod routes;
 mod scoreboard;
-mod state;
 mod team;
 mod user;
 
-use std::net::{Ipv4Addr, SocketAddrV4};
-use std::str::FromStr;
-
-use actix_web::server;
+use actix_web::App;
 use failure::Error;
 
-pub use config::{Config, ConfigWrapper};
+use core::State;
 use db::DbConn;
-use state::State;
 
-pub fn run(config: Config) -> Result<(), Error> {
-    let addr = SocketAddrV4::new(
-        Ipv4Addr::from_str(&config.bind_host).unwrap(),
-        config.bind_port,
-    );
-    let state = State::from(config);
-
-    server::new(move || routes::router(state.clone()))
-        .bind(addr)
-        .map(|server| server.run())
-        .unwrap();
-
-    Ok(())
+pub fn app(state: State) -> Result<App<State>, Error> {
+    Ok(routes::router(state))
 }

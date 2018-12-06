@@ -11,7 +11,7 @@ use util::establish_connection;
 use Config;
 use Migrations;
 
-#[derive(StructOpt)]
+#[derive(Debug, StructOpt)]
 pub struct MigrateCommand {}
 
 impl MigrateCommand {
@@ -33,7 +33,7 @@ impl MigrateCommand {
             println!("{:?}", path);
         }
 
-        let conn = establish_connection(config)
+        let conn = establish_connection(&config.database_url)
             .expect("Couldn't connect to database. Did you specify DATABASE_URL?");
 
         // run the migrations

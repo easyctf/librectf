@@ -1,18 +1,12 @@
 use std::ops::Deref;
 
 use actix_web::{FromRequest, HttpRequest};
-use core::db::{Connection, PooledConnection};
+use core::db::Connection;
 use failure::Error;
 
 use super::State;
 
 pub struct DbConn(Connection);
-
-impl DbConn {
-    pub fn new(conn: PooledConnection) -> Self {
-        DbConn(Connection(conn))
-    }
-}
 
 impl Deref for DbConn {
     type Target = <Connection as Deref>::Target;
@@ -28,6 +22,6 @@ impl FromRequest<State> for DbConn {
 
     #[inline]
     fn from_request(req: &HttpRequest<State>, _: &Self::Config) -> Self::Result {
-        req.state().get_connection()
+        req.state().get_connection().map(|conn| DbConn(conn))
     }
 }

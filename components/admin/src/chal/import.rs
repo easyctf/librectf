@@ -124,14 +124,8 @@ impl ImportChalCommand {
 
         // add files into filestore
         if files.len() > 0 {
-            let filestore_url = match &config.filestore_url {
-                Some(string) => string,
-                None => bail!("Please include a filestore URL."),
-            };
-            let filestore_push_password = match &config.filestore_push_password {
-                Some(string) => string,
-                None => bail!("Please include a filestore push password."),
-            };
+            let filestore_url = &config.inner.filestore_url;
+            let filestore_push_password = &config.inner.filestore_push_password;
 
             for (id, name, path) in files {
                 let mut request = Request::new(Method::Post, filestore_url.parse()?)?;
@@ -155,7 +149,7 @@ impl ImportChalCommand {
             }
         }
 
-        let conn = establish_connection(config)
+        let conn = establish_connection(&config.database_url)
             .expect("Couldn't connect to database. Did you specify DATABASE_URL?");
 
         {
