@@ -4,7 +4,7 @@ body {
     font-size: 11pt;
 }
 
-body * {
+body, body * {
     font-family: monospace;
 }
 
@@ -37,4 +37,16 @@ header > nav > ul > li > a {
 
 header > nav > ul > li > a:visited {
     color: white;
+}
+
+footer {
+    margin-top: 18px;
+    padding: 5px;
+    text-align: center;
+    background-color: #ccc;
+    color: #666;
+}
+
+footer > a {
+    color: #999;
 }
