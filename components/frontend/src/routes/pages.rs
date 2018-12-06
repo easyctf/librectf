@@ -14,7 +14,7 @@ pub fn handler(req: HttpRequest<State>) -> HttpResponse {
     let state = req.state();
     let mut ctx = Context::new();
 
-    // look up the page
+    // TODO: look up the page
     match get_page("") {
         Ok(content) => ctx.insert("content", &content),
         Err(_) => ctx.insert("content", WELCOME_MESSAGE),

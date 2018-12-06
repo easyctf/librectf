@@ -10,8 +10,16 @@
                 <ul>
                     <li><a href="/">home</a></li>
                     <li><a href="/scoreboard">scoreboard</a></li>
-                    <li class="right"><a href="/user/login">login</a></li>
-                    <li class="right"><a href="/user/register">register</a></li>
+
+                    {% if true %}
+                        <li class="right"><a href="/user/logout">logout</a></li>
+                        <li class="right"><a href="/user/settings">settings</a></li>
+                        <li class="right"><a href="/user/profile">profile</a></li>
+                        <li class="right"><a href="/user/challenges">challenges</a></li>
+                    {% else %}
+                        <li class="right"><a href="/user/login">login</a></li>
+                        <li class="right"><a href="/user/register">register</a></li>
+                    {% endif %}
                 </ul>
             </nav>
         </header>
