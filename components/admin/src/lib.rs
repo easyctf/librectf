@@ -22,19 +22,18 @@ mod config;
 mod migrate;
 mod util;
 
+use config::Config;
 use failure::Error;
 use structopt::StructOpt;
 
 use chal::ImportChalCommand;
-use config::Config;
-pub use config::ConfigWrapper;
 use migrate::MigrateCommand;
 
 #[derive(Embed)]
 #[folder = "migrations"]
 struct Migrations;
 
-#[derive(StructOpt)]
+#[derive(Debug, StructOpt)]
 pub enum AdminCommand {
     /// Import challenges from a directory.
     #[structopt(name = "import")]
@@ -44,9 +43,12 @@ pub enum AdminCommand {
     Migrate(MigrateCommand),
 }
 
-pub fn run(cmd: &AdminCommand, config: &Config) -> Result<(), Error> {
-    match cmd {
-        AdminCommand::Import(cmd) => cmd.run(config),
-        AdminCommand::Migrate(cmd) => cmd.run(config),
+impl AdminCommand {
+    pub fn run(&self, config: &core::Config) -> Result<(), Error> {
+        let config = config.clone();
+        match self {
+            AdminCommand::Import(cmd) => cmd.run(&config.into()),
+            AdminCommand::Migrate(cmd) => cmd.run(&config.into()),
+        }
     }
 }

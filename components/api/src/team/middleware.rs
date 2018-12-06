@@ -27,7 +27,10 @@ pub struct TeamRequired<C>(pub C);
 impl Middleware<State> for TeamRequired<Boolean> {
     fn start(&self, req: &HttpRequest<State>) -> actix_web::Result<Started> {
         // first make sure we're logged in
-        LoginRequired::start(&LoginRequired, req)?;
+        match LoginRequired::start(&LoginRequired, req)? {
+            Started::Done => (),
+            response => return Ok(response),
+        };
 
         let state = req.state();
 

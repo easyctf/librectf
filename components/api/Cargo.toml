@@ -3,10 +3,6 @@ name = "api"
 version = "0.1.0"
 authors = ["Michael Zhang <failed.down@gmail.com>"]
 
-[[bin]]
-name = "api"
-path = "src/bin.rs"
-
 [dependencies]
 actix-web = "0.7"
 bcrypt = "0.2"

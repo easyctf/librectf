@@ -28,13 +28,13 @@ impl Middleware<State> for LoginRequired {
                     json!({
                         "error": "unauthorized::no_login::missing_header",
                         "message": "You're not logged in. Please log in to see this page.",
-                        "redirect": "user/login",
                     }),
                 )))
             }
         };
 
-        let claims = match verify_claims(&state.get_secret_key(), token) {
+        let cfg = state.get_web_config().unwrap();
+        let claims = match verify_claims(cfg.secret_key.as_ref(), token) {
             Ok(claims) => claims,
             Err(err) => {
                 error!("Error decoding JWT from user: {:?}", err);
@@ -42,7 +42,6 @@ impl Middleware<State> for LoginRequired {
                     json!({
                         "error": "unauthorized::no_login::invalid_jwt",
                         "message": "Invalid login. Please log in to see this page.",
-                        "redirect": "user/login",
                     }),
                 )));
             }

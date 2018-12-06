@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <link rel="stylesheet" href="/static/main.css" />
+    </head>
+    <body>
+        <header>
+            <h1>LibreCTF</h1>
+            <nav>
+                <ul>
+                    <li><a href="/">home</a></li>
+                    <li><a href="/scoreboard">scoreboard</a></li>
+                    <li class="right"><a href="/user/login">login</a></li>
+                    <li class="right"><a href="/user/register">register</a></li>
+                </ul>
+            </nav>
+        </header>
+        <div>
+            {% block content %}{% endblock %}
+        </div>
+        <footer>
+            Powered by <a href="https://github.com/easyctf/librectf" target="_blank">LibreCTF</a>.
+        </footer>
+    </body>
+</html>

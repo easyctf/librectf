@@ -1,13 +1,6 @@
 use diesel::{Connection, MysqlConnection};
 
-use config::Config;
-
-pub fn establish_connection(config: &Config) -> Option<MysqlConnection> {
-    match &config.database_url {
-        Some(database_url) => Some(
-            MysqlConnection::establish(&database_url)
-                .expect(&format!("Error connecting to {}", &database_url)),
-        ),
-        None => None,
-    }
+pub fn establish_connection(database_url: impl AsRef<str>) -> Option<MysqlConnection> {
+    let database_url = database_url.as_ref();
+    MysqlConnection::establish(database_url).ok()
 }

@@ -1,16 +1,25 @@
-#[derive(Clone, Debug, Serialize, Deserialize)]
+use std::ops::Deref;
+
+use core::{self, config::AdminConfig};
+
 pub struct Config {
-    /// The URL for the database as a MySQL connection string
-    pub database_url: Option<String>,
-
-    /// The URL of the filestore
-    pub filestore_url: Option<String>,
-
-    /// Upload password for filestore
-    pub filestore_push_password: Option<String>,
+    pub database_url: String,
+    pub inner: AdminConfig,
 }
 
-#[derive(Clone, Debug, Serialize, Deserialize)]
-pub struct ConfigWrapper {
-    pub admin: Config,
+impl Deref for Config {
+    type Target = AdminConfig;
+
+    fn deref(&self) -> &Self::Target {
+        &self.inner
+    }
+}
+
+impl From<core::Config> for Config {
+    fn from(config: core::Config) -> Self {
+        Config {
+            database_url: config.database_url.clone(),
+            inner: config.admin.unwrap().clone(),
+        }
+    }
 }
