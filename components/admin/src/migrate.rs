@@ -33,8 +33,10 @@ impl MigrateCommand {
             println!("{:?}", path);
         }
 
-        let conn = establish_connection(&config.database_url)
-            .expect("Couldn't connect to database. Did you specify DATABASE_URL?");
+        let conn = establish_connection(&config.database_url).expect(&format!(
+            "Couldn't connect to database '{}'. Did you specify DATABASE_URL?",
+            &config.database_url
+        ));
 
         // run the migrations
         let migrations_dir = search_for_migrations_directory(dir.path())?;
