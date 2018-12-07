@@ -1,12 +1,25 @@
 use actix_web::{middleware::session::RequestSession, FromRequest, HttpRequest};
-use core::{config::WebConfig as Config, db::Connection, State};
+use core::{config::WebConfig as Config, db::Connection, models::User, State};
 use failure::Error;
 use tera::Context;
+
+use flash::RequestFlash;
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct SessionUser {
     pub id: i32,
+    pub admin: bool,
     pub name: String,
+}
+
+impl From<User> for SessionUser {
+    fn from(user: User) -> Self {
+        SessionUser {
+            id: user.id,
+            admin: user.admin,
+            name: user.name,
+        }
+    }
 }
 
 pub struct Request {
@@ -41,6 +54,10 @@ impl FromRequest<State> for Request {
                 user
             });
         ctx.insert("logged_in", &user.is_some());
+
+        let flashes = req.flashes()?;
+        req.session().remove("flashes");
+        ctx.insert("flashes", &flashes);
 
         Ok(Request {
             cfg,

@@ -11,6 +11,7 @@ extern crate serde;
 extern crate serde_derive;
 extern crate tera;
 
+mod flash;
 mod request;
 mod routes;
 

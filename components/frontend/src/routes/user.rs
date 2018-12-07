@@ -1,9 +1,10 @@
 use actix_web::{middleware::session::RequestSession, Form, HttpRequest, HttpResponse, Scope};
 use core::{
-    user::auth::{login_user, register_user, LoginForm, RegisterForm},
+    user::auth::{login_user, register_user, LoginForm, RegisterForm, UserError},
     State,
 };
 
+use flash::RequestFlash;
 use request::{Request, SessionUser};
 
 pub fn scope(app: Scope<State>) -> Scope<State> {
@@ -33,17 +34,25 @@ fn post_login((r, req, form): (HttpRequest<State>, Request, Form<LoginForm>)) ->
 
     login_user(db, form)
         .map(|user| {
-            let s_user = SessionUser {
-                id: user.id,
-                name: user.name.clone(),
-            };
+            println!("successfully logged: {:?}", user);
+            let s_user: SessionUser = user.into();
             r.session().set("user", s_user);
+            r.flash(("Successfully logged in.", "success"));
             HttpResponse::SeeOther().header("Location", "/").finish()
-        }).unwrap_or_else(|err| HttpResponse::InternalServerError().finish())
+        }).unwrap_or_else(|err| match err {
+            UserError::BadUsernameOrPassword => {
+                r.flash(("Your username or password was incorrect.", "error"));
+                HttpResponse::SeeOther()
+                    .header("Location", "/user/login")
+                    .finish()
+            }
+            _ => HttpResponse::InternalServerError().finish(),
+        })
 }
 
 fn get_logout(req: HttpRequest<State>) -> HttpResponse {
     req.session().clear();
+    req.flash(("Successfully logged out.", "success"));
     HttpResponse::SeeOther().header("Location", "/").finish()
 }
 
@@ -66,11 +75,9 @@ fn post_register(
 
     register_user(db, form)
         .map(|user| {
-            let s_user = SessionUser {
-                id: user.id,
-                name: user.name.clone(),
-            };
+            let s_user: SessionUser = user.into();
             r.session().set("user", s_user);
+            r.flash(("Successfully registered.", "success"));
             HttpResponse::SeeOther().header("Location", "/").finish()
         }).unwrap_or_else(|err| HttpResponse::InternalServerError().finish())
 }

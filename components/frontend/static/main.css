@@ -39,6 +39,19 @@ header > nav > ul > li > a:visited {
     color: white;
 }
 
+.flash {
+    padding: 5px;
+    margin-bottom: 10px;
+}
+
+.flash.success {
+    background-color: #afa;
+}
+
+.flash.error {
+    background-color: #faa;
+}
+
 footer {
     margin-top: 18px;
     padding: 5px;

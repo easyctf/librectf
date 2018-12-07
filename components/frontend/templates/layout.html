@@ -24,6 +24,9 @@
             </nav>
         </header>
         <div>
+            {% for flash in flashes %}
+                <div class="flash {{ flash.category }}">{{ flash.message }}</div>
+            {% endfor %}
             {% block content %}{% endblock %}
         </div>
         <footer>

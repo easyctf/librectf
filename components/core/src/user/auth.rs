@@ -46,11 +46,18 @@ pub fn login_user(db: DbConn, form: LoginForm) -> Result<User, UserError> {
         .filter(email.eq(&form.user))
         .or_filter(name.eq(&form.user))
         .first::<User>(&*db)
+        // TODO: match this
         .map_err(|_| UserError::BadUsernameOrPassword)
         .and_then(|user| {
             bcrypt::verify(&form.password, &user.password)
-                .map(|_| user)
-                .map_err(|_| UserError::BadUsernameOrPassword)
+                .map_err(|err| UserError::from(err))
+                .and_then(|correct| {
+                    if correct {
+                        Ok(user)
+                    } else {
+                        Err(UserError::BadUsernameOrPassword)
+                    }
+                })
         })
 }
 
