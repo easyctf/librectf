@@ -8,6 +8,17 @@ body, body * {
     font-family: monospace;
 }
 
+.admin {
+    margin-top: 5px;
+    background-color: #d95;
+    padding: 5px;
+    color: white;
+}
+
+.admin a {
+    color: white;
+}
+
 header {
     margin-bottom: 14px;
 }
