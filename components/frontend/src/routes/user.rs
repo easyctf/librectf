@@ -21,7 +21,6 @@ fn get_login(req: Request) -> HttpResponse {
     req.state
         .render("user/login.html", &req.ctx)
         .map(|content| HttpResponse::Ok().body(content))
-        .map(|err| err.into())
         .unwrap_or_else(|err| {
             error!("Error during Tera rendering: {}", err);
             HttpResponse::InternalServerError().finish()
@@ -33,12 +32,11 @@ fn post_login((r, req, form): (HttpRequest<State>, Request, Form<LoginForm>)) ->
     let form = form.into_inner();
 
     login_user(db, form)
-        .map(|user| {
-            println!("successfully logged: {:?}", user);
+        .and_then(|user| {
             let s_user: SessionUser = user.into();
-            r.session().set("user", s_user);
-            r.flash(("Successfully logged in.", "success"));
-            HttpResponse::SeeOther().header("Location", "/").finish()
+            r.session().set("user", s_user).unwrap();
+            r.flash(("Successfully logged in.", "success")).unwrap();
+            Ok(HttpResponse::SeeOther().header("Location", "/").finish())
         }).unwrap_or_else(|err| match err {
             UserError::BadUsernameOrPassword => {
                 r.flash(("Your username or password was incorrect.", "error"));
@@ -60,7 +58,6 @@ fn get_register(req: Request) -> HttpResponse {
     req.state
         .render("user/register.html", &req.ctx)
         .map(|content| HttpResponse::Ok().body(content))
-        .map(|err| err.into())
         .unwrap_or_else(|err| {
             error!("Error during Tera rendering: {}", err);
             HttpResponse::InternalServerError().finish()

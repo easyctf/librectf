@@ -5,7 +5,7 @@ version = "0.1.0"
 [workspace]
 members = [
     "components/admin",
-    "components/api",
+    # "components/api",
     "components/core",
     "components/filestore",
     "components/frontend",
@@ -21,7 +21,7 @@ serde_derive = "1.0"
 structopt = "0.2"
 
 admin = { path = "./components/admin" }
-api = { path = "./components/api" }
+# api = { path = "./components/api" }
 core = { path = "./components/core" }
 filestore = { path = "./components/filestore" }
 frontend = { path = "./components/frontend" }

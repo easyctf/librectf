@@ -30,7 +30,6 @@ impl MigrateCommand {
 
             let mut file = File::create(&path)?;
             file.write_all(&Migrations::get(filename).unwrap())?;
-            println!("{:?}", path);
         }
 
         let conn = establish_connection(&config.database_url).expect(&format!(

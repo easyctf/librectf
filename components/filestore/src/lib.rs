@@ -23,7 +23,6 @@ use std::path::PathBuf;
 use actix_web::{
     error::{ErrorForbidden, ErrorInternalServerError},
     fs::NamedFile,
-    http::Method,
     App, FromRequest, FutureResponse, HttpMessage, HttpRequest, HttpResponse,
 };
 use core::State;
@@ -35,15 +34,14 @@ use util::handle_multipart;
 
 pub fn app(state: State) -> Result<App<State>, Error> {
     let app = App::with_state(state)
-        .resource("/upload/public", |r| r.method(Method::POST).f(upload))
-        .resource("/upload/private", |r| r.method(Method::POST).f(upload))
-        .resource("/public/{tail:.*}", |r| r.method(Method::GET).f(public))
-        .resource("/private/{tail:.*}", |r| r.method(Method::GET).f(private));
+        .resource("/upload/public", |r| r.post().f(upload))
+        .resource("/upload/private", |r| r.post().f(upload))
+        .resource("/public/{tail:.*}", |r| r.get().f(public))
+        .resource("/private/{tail:.*}", |r| r.get().f(private));
     Ok(app)
 }
 
 fn private(req: &HttpRequest<State>) -> actix_web::Result<NamedFile> {
-    let state = req.state();
     let headers = req.headers();
     let cfg = Config::from_request(&req, &())?;
 
@@ -64,13 +62,14 @@ fn private(req: &HttpRequest<State>) -> actix_web::Result<NamedFile> {
 
 fn public(req: &HttpRequest<State>) -> actix_web::Result<NamedFile> {
     let tail: PathBuf = req.match_info().query("tail")?;
+    info!("tail = {}", tail.display());
     let cfg = Config::from_request(&req, &())?;
 
     let mut path = cfg.storage_dir.clone();
     path.push("public");
     path.push(tail);
 
-    info!("Received public upload request: {:?}", path);
+    info!("Received public request: {:?}", path);
     Ok(NamedFile::open(path)?)
 }
 
@@ -109,7 +108,6 @@ fn upload(req: &HttpRequest<State>) -> FutureResponse<HttpResponse> {
             .flatten()
             .collect()
             .map(|result| {
-                println!("{:?}", result);
                 HttpResponse::Ok().json(result)
             }).map_err(|err| {
                 error!("Error during upload: {:?}", err);

@@ -9,7 +9,7 @@ extern crate structopt;
 extern crate serde_derive;
 
 extern crate admin;
-extern crate api;
+// extern crate api;
 extern crate core;
 extern crate filestore;
 extern crate frontend;
@@ -43,7 +43,7 @@ struct Opt {
     command: Command,
 }
 
-fn main() -> Result<(), Error> {
+fn run() -> Result<(), Error> {
     let env = env_logger::Env::default().filter_or(env_logger::DEFAULT_FILTER_ENV, "warn");
     env_logger::Builder::from_env(env).init();
 
@@ -53,5 +53,12 @@ fn main() -> Result<(), Error> {
     match args.command {
         Command::Admin(cmd) => cmd.run(&config),
         Command::Web(web) => web.run(&config),
+    }
+}
+
+fn main() {
+    match run() {
+        Ok(()) => (),
+        Err(err) => eprintln!("Error: {}\n{}", err, err.backtrace()),
     }
 }

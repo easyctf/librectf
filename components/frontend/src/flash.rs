@@ -25,7 +25,7 @@ impl<S> RequestFlash for HttpRequest<S> {
     fn flash(&self, flash: impl Into<Flash>) -> Result<(), Error> {
         let mut flashes = self.flashes()?;
         flashes.push(flash.into());
-        self.session().set("flashes", flashes);
+        self.session().set("flashes", flashes).map_err(|err| format_err!("{}", err))?;
         Ok(())
     }
 

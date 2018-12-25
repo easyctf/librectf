@@ -94,8 +94,6 @@ impl ImportChalCommand {
                     value
                 })?;
 
-                println!("Successfully loaded: {:?}", meta);
-
                 // TODO: queue up uploading files into filestore
                 if let Some(meta_files) = &meta.files {
                     for (name, file) in meta_files {

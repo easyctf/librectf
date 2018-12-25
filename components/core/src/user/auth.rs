@@ -1,4 +1,3 @@
-use chrono::{serde::ts_milliseconds, DateTime, Utc};
 use diesel::{
     prelude::*,
     result::{
@@ -7,6 +6,7 @@ use diesel::{
     },
     Connection,
 };
+use actix_web;
 use failure::{Compat, Error, Fail};
 
 use db::Connection as DbConn;
@@ -34,6 +34,12 @@ impl UserError {
     }
 }
 
+impl From<actix_web::Error> for UserError {
+    fn from(err: actix_web::Error) -> Self {
+        UserError::from(format_err!("{}", err))
+    }
+}
+
 /// Logs in a given user, given a database connection and the user's credentials.
 ///
 /// It either returns a token that was generated from the successful authentication, or an [Error][1].
@@ -50,7 +56,7 @@ pub fn login_user(db: DbConn, form: LoginForm) -> Result<User, UserError> {
         .map_err(|_| UserError::BadUsernameOrPassword)
         .and_then(|user| {
             bcrypt::verify(&form.password, &user.password)
-                .map_err(|err| UserError::from(err))
+                .map_err(UserError::from)
                 .and_then(|correct| {
                     if correct {
                         Ok(user)

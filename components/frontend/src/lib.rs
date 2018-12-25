@@ -17,6 +17,7 @@ mod routes;
 
 use actix_web::App;
 use core::State;
+use failure::Error;
 
 use request::Request;
 
@@ -24,7 +25,7 @@ use request::Request;
 #[folder = "components/frontend/templates"]
 struct Templates;
 
-pub fn app(mut state: State) -> App<State> {
+pub fn app(mut state: State) -> Result<App<State>, Error> {
     let templates = Templates::list()
         .filter_map(|name| {
             Templates::get(name)
@@ -36,6 +37,6 @@ pub fn app(mut state: State) -> App<State> {
             .iter()
             .map(|(a, b)| (a.as_ref(), b.as_ref()))
             .collect::<Vec<_>>(),
-    );
-    routes::router(state)
+    )?;
+    Ok(routes::router(state))
 }

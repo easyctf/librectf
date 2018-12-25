@@ -1,3 +1,4 @@
+mod chal;
 mod pages;
 mod user;
 
@@ -14,5 +15,6 @@ pub fn router(state: State) -> App<State> {
             CookieSessionBackend::signed(config.secret_key.as_bytes()).secure(false),
         )).resource("/", |r| r.get().with(self::pages::handler))
         .resource("/static/{path:.*}", |r| r.get().with(self::pages::statics))
+        .scope("/chal", self::chal::scope)
         .scope("/user", self::user::scope)
 }

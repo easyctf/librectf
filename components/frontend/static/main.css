@@ -10,17 +10,22 @@ body, body * {
 
 .admin {
     margin-top: 5px;
-    background-color: #d95;
+    background-color: #fca;
     padding: 5px;
-    color: white;
+    color: black;
 }
 
 .admin a {
-    color: white;
+    color: black;
 }
 
 header {
     margin-bottom: 14px;
+}
+
+header > h1 > a {
+    color: black;
+    text-decoration: none;
 }
 
 header > nav {
@@ -71,6 +76,10 @@ footer {
     color: #666;
 }
 
-footer > a {
+footer p {
+    margin: 0;
+}
+
+footer a {
     color: #999;
 }

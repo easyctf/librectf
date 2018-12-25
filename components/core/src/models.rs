@@ -11,7 +11,7 @@ pub struct NewChallenge {
     pub value: i32,
 }
 
-#[derive(Debug, Queryable)]
+#[derive(Debug, Queryable, Serialize)]
 pub struct Challenge {
     pub id: i32,
     pub title: String,

@@ -4,8 +4,10 @@
 
 #![allow(proc_macro_derive_resolution_fallback)]
 
+extern crate actix_web;
 extern crate bcrypt;
 extern crate chrono;
+extern crate comrak;
 extern crate config as cfg;
 #[macro_use]
 extern crate diesel;
@@ -29,6 +31,7 @@ extern crate tera;
 #[macro_use]
 mod macros;
 
+pub mod chal;
 pub mod config;
 pub mod db;
 pub mod models;
@@ -36,8 +39,6 @@ pub mod pages;
 pub mod schema;
 mod state;
 pub mod user;
-
-mod tasks;
 
 pub use config::Config;
 pub use db::{establish_connection, Pool};

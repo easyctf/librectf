@@ -4,8 +4,10 @@ version = "0.1.0"
 authors = ["Michael <localhost>"]
 
 [dependencies]
+actix-web = "0.7"
 bcrypt = "0.2"
 chrono = "0.4"
+comrak = "0.3"
 config = { version = "0.9", default_features = false, features = ["toml"] }
 diesel = { version = "1.3", features = ["chrono", "mysql"] }
 failure = "0.1.1"
