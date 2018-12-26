@@ -2,15 +2,16 @@
 
 use std::collections::HashMap;
 
-use diesel::prelude::*;
+use diesel::{prelude::*, result::Error::RollbackTransaction};
 use comrak::{
     format_html,
     nodes::{AstNode, NodeValue},
     parse_document, Arena, ComrakOptions,
 };
 use failure::Error;
+use regex::Regex;
 
-use models::{Challenge, File};
+use models::{Challenge, File, NewSolve};
 use db::Connection as DbConn;
 
 pub fn list_all(db: DbConn) -> Result<Vec<Challenge>, Error> {
@@ -76,4 +77,65 @@ pub fn list_all(db: DbConn) -> Result<Vec<Challenge>, Error> {
             list.sort_unstable_by(|a, b| a.value.cmp(&b.value));
             list
         }).map_err(|err| err.into())
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct SubmitForm {
+    pub id: i32,
+    pub flag: String,
+}
+
+pub struct Submission {
+    pub user_id: i32,
+    pub team_id: i32,
+    pub form: SubmitForm,
+}
+
+pub fn submit(db: DbConn, submission: Submission) -> Result<Result<(), ()>, Error> {
+    use schema::chals::dsl::*;
+    db.transaction(|| {
+        let chal = match chals
+            .filter(id.eq(submission.form.id))
+            .first::<Challenge>(&*db)
+        {
+            Ok(chal) => chal,
+            Err(err) => {
+                error!("Diesel error on flag submission: {}", err);
+                return Err(RollbackTransaction);
+            }
+        };
+
+        let judgment = if if chal.regex {
+            let rgx = Regex::new(&chal.correct_flag).unwrap();
+            rgx.is_match(&submission.form.flag)
+        } else {
+            submission.form.flag == chal.correct_flag
+        } {
+            // TODO: award points
+            Ok(())
+        } else {
+            // TODO: count up incorrect solves?
+            Err(())
+        };
+
+        // insert solve
+        let new_solve = NewSolve {
+            flag: submission.form.flag,
+            chal_id: chal.id,
+            // TODO: get submitter information here
+            team_id: 1,
+            user_id: 12,
+        };
+        if let Err(err) = {
+            use schema::solves;
+            diesel::insert_into(solves::table)
+                .values(&new_solve)
+                .execute(&*db)
+        } {
+            error!("Diesel error on solve insertion: {}", err);
+            return Err(RollbackTransaction);
+        }
+
+        Ok(judgment)
+    }).map_err(|err| err.into())
 }

@@ -83,3 +83,24 @@ footer p {
 footer a {
     color: #999;
 }
+
+#challenges {
+    list-style-type: none;
+}
+
+#challenges li {
+    padding-left: .5em;
+    text-indent: -.5em;
+    padding-bottom: 1em;
+}
+
+#challenges li:before {
+    content: '\25b6';
+    vertical-align: top;
+    padding-right: .5em;
+}
+
+#challenges li .title {
+    margin: 0;
+    display: inline-block;
+}
