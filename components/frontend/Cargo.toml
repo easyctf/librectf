@@ -7,7 +7,6 @@ authors = ["Michael Zhang <failed.down@gmail.com>"]
 actix-web = "0.7"
 core = { path = "../core" }
 embed = { git = "https://github.com/iptq/embed" }
-failure = "0.1"
 futures = "0.1"
 lazy_static = "1.0"
 log = "0.4"

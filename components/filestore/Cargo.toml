@@ -7,7 +7,6 @@ authors = ["Michael Zhang <failed.down@gmail.com>"]
 actix-web = "0.7"
 core = { path = "../core" }
 env_logger = "0.6"
-failure = "0.1"
 futures = "0.1"
 log = "0.4"
 sha2 = "0.8"
