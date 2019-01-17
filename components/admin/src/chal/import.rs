@@ -1,14 +1,14 @@
 use std::collections::HashMap;
 use std::fs::{read_dir, read_to_string, DirEntry};
 use std::path::PathBuf;
+use std::str::FromStr;
 
 use core::{
     models::{Challenge, NewChallenge, NewFile},
     Error,
 };
 use diesel::{prelude::*, result::Error::RollbackTransaction};
-use hyper::{client::Request, header::Authorization, method::Method};
-use multipart::client::Multipart;
+use hyper::{header::AUTHORIZATION, Uri, Method, Request};
 use toml;
 
 use config::Config;
@@ -143,21 +143,20 @@ impl ImportChalCommand {
             let filestore_push_password = &cfg.filestore_push_password;
 
             for (id, name, path) in files {
-                let mut request = Request::new(
-                    Method::Post,
-                    filestore_url
-                        .parse()
-                        .map_err(|err| Error::Custom(format!("url parse error: {}", err)))?,
-                )?;
-                {
-                    let mut headers = request.headers_mut();
-                    headers.set(Authorization(filestore_push_password.clone()));
-                }
+                let uri = Uri::from_str(filestore_url)
+                    .map_err(|err| Error::Custom(format!("url parse error: {}", err)))?;
+                let request = Request::builder()
+                    .method(Method::POST)
+                    .uri(uri)
+                    .header(AUTHORIZATION, filestore_push_password.clone())
+                    .body(())
+                    .unwrap();
 
-                let mut multipart = Multipart::from_request(request)?;
-                multipart.write_file("file", &path)?;
-                let response = multipart.send()?;
-                info!("Filestore response: {:?}", response);
+                // TODO: figure out multipart again
+                // let mut multipart = Multipart::from_request(request)?;
+                // multipart.write_file("file", &path)?;
+                // let response = multipart.send()?;
+                // info!("Filestore response: {:?}", response);
 
                 let new_file = NewFile {
                     name,

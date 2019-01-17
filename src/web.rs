@@ -3,7 +3,7 @@ use std::str::FromStr;
 
 use actix_web::server;
 // use api;
-use core::{Config, State, Error};
+use core::{Config, Error, State};
 
 #[derive(Clone, Debug, StructOpt)]
 pub struct WebCommand {

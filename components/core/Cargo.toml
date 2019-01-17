@@ -8,11 +8,11 @@ actix-web = "0.7"
 backtrace = "0.3"
 bcrypt = "0.2"
 chrono = "0.4"
-comrak = "0.3"
+comrak = "0.4"
 config = { version = "0.9", default_features = false, features = ["toml"] }
 diesel = { version = "1.3", features = ["chrono", "mysql"] }
 futures = "0.1"
-hyper = "0.10"
+hyper = "0.12"
 lazy_static = "1.0"
 log = "0.4"
 r2d2 = "0.8"

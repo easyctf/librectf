@@ -6,10 +6,10 @@ authors = ["Michael Zhang <failed.down@gmail.com>"]
 [dependencies]
 core = { path = "../../components/core" }
 diesel = { version = "1.3", default_features = false }
-env_logger = "0.5"
+env_logger = "0.6"
 embed = { git = "https://github.com/iptq/embed" }
 failure = "0.1"
-hyper = "0.10"
+hyper = "0.12"
 log = "0.4"
 migrations_internals = "1.3"
 multipart = { version = "0.15", git = "https://github.com/iptq/multipart", default_features = false, features = ["client", "hyper"] }
