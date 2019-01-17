@@ -28,15 +28,18 @@ fn save_file(
                     .map(|_| {
                         hasher.input(bytes.as_ref());
                         hasher
-                    }).map_err(|err| {
+                    })
+                    .map_err(|err| {
                         error!("Failed to write to file: {:?}", err);
                         MultipartError::Payload(PayloadError::Io(err))
                     });;
                 future::result(result)
-            }).map_err(|err| {
+            })
+            .map_err(|err| {
                 error!("Multipart error: {:?}", err);
                 ErrorInternalServerError(err)
-            }).map(move |hasher| {
+            })
+            .map(move |hasher| {
                 let hash = format!("{:x}", hasher.result());
                 info!("Hash is: {}", hash);
                 let target_path = storage_dir

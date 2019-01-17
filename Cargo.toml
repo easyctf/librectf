@@ -15,7 +15,6 @@ members = [
 actix-web = "0.7"
 config = { version = "0.9", default_features = false, features = ["toml"] }
 env_logger = "0.6"
-failure = "0.1"
 serde = "1.0"
 serde_derive = "1.0"
 structopt = "0.2"
@@ -25,3 +24,6 @@ admin = { path = "./components/admin" }
 core = { path = "./components/core" }
 filestore = { path = "./components/filestore" }
 frontend = { path = "./components/frontend" }
+
+[patch.crates-io]
+tera = { git = "https://github.com/Keats/tera.git", branch = "v1" }

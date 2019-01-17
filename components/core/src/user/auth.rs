@@ -1,3 +1,6 @@
+use std::fmt;
+
+use actix_web;
 use diesel::{
     prelude::*,
     result::{
@@ -6,9 +9,8 @@ use diesel::{
     },
     Connection,
 };
-use actix_web;
-use failure::{Compat, Error, Fail};
 
+use crate::Error;
 use db::Connection as DbConn;
 use models::{NewUser, User};
 
@@ -18,33 +20,40 @@ pub struct LoginForm {
     pub password: String,
 }
 
-#[derive(Debug, Fail)]
+#[derive(Debug)]
 pub enum UserError {
-    #[fail(display = "An account was already found with these credentials")]
     AlreadyRegistered,
-    #[fail(display = "Bad username or password")]
     BadUsernameOrPassword,
-    #[fail(display = "Internal server error")]
-    ServerError(#[cause] Compat<Error>),
+    ServerError(Error),
+}
+
+impl fmt::Display for UserError {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            UserError::AlreadyRegistered => {
+                write!(f, "An account was already found with these credentials")
+            }
+            UserError::BadUsernameOrPassword => write!(f, "Bad username or password"),
+            UserError::ServerError(cause) => write!(f, "Internal server error: {}", cause),
+        }
+    }
 }
 
 impl UserError {
     pub fn from<T: Into<Error>>(err: T) -> Self {
-        UserError::ServerError(<T as Into<Error>>::into(err).compat())
+        UserError::ServerError(<T as Into<Error>>::into(err))
     }
 }
 
 impl From<actix_web::Error> for UserError {
     fn from(err: actix_web::Error) -> Self {
-        UserError::from(format_err!("{}", err))
+        UserError::from(err)
     }
 }
 
 /// Logs in a given user, given a database connection and the user's credentials.
 ///
-/// It either returns a token that was generated from the successful authentication, or an [Error][1].
-///
-/// [1]: `failure::Error`
+/// It either returns a token that was generated from the successful authentication, or an [Error][crate::errors::Error].
 pub fn login_user(db: DbConn, form: LoginForm) -> Result<User, UserError> {
     use schema::users::dsl::*;
 
@@ -110,7 +119,8 @@ pub fn register_user(db: DbConn, form: RegisterForm) -> Result<User, UserError> 
         };
 
         Ok(user)
-    }).map_err(|err| match err {
+    })
+    .map_err(|err| match err {
         DatabaseError(UniqueViolation, _) => UserError::AlreadyRegistered,
         _ => UserError::from(err),
     })

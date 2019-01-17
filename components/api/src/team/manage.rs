@@ -1,6 +1,5 @@
 use core::models::Invitation;
 use diesel::{prelude::*, result::Error::RollbackTransaction};
-use failure::Error;
 
 use DbConn;
 

@@ -4,7 +4,6 @@
 
 extern crate actix_web;
 extern crate core;
-extern crate failure;
 extern crate futures;
 #[macro_use]
 extern crate log;
@@ -25,20 +24,25 @@ use actix_web::{
     fs::NamedFile,
     App, FromRequest, FutureResponse, HttpMessage, HttpRequest, HttpResponse,
 };
-use core::State;
-use failure::Error;
+use core::{Error, State};
 use futures::{future, Future, Stream};
 
 pub use config::Config;
 use util::handle_multipart;
 
 pub fn app(state: State) -> Result<App<State>, Error> {
-    let app = App::with_state(state)
-        .resource("/upload/public", |r| r.post().f(upload))
-        .resource("/upload/private", |r| r.post().f(upload))
-        .resource("/public/{tail:.*}", |r| r.get().f(public))
-        .resource("/private/{tail:.*}", |r| r.get().f(private));
-    Ok(app)
+    state
+        .get_filestore_config()
+        .ok_or_else(|| Error::Custom("No filestore config provided.".to_owned()))
+        .map(|config| {
+            let app = App::with_state(state.clone())
+                .prefix(config.url_prefix.clone())
+                .resource("/upload/public", |r| r.post().f(upload))
+                .resource("/upload/private", |r| r.post().f(upload))
+                .resource("/public/{tail:.*}", |r| r.get().f(public))
+                .resource("/private/{tail:.*}", |r| r.get().f(private));
+            app
+        })
 }
 
 fn private(req: &HttpRequest<State>) -> actix_web::Result<NamedFile> {
@@ -107,9 +111,8 @@ fn upload(req: &HttpRequest<State>) -> FutureResponse<HttpResponse> {
             .map(move |item| handle_multipart(private, storage_dir.clone(), item))
             .flatten()
             .collect()
-            .map(|result| {
-                HttpResponse::Ok().json(result)
-            }).map_err(|err| {
+            .map(|result| HttpResponse::Ok().json(result))
+            .map_err(|err| {
                 error!("Error during upload: {:?}", err);
                 err
             }),

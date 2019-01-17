@@ -7,7 +7,6 @@ use diesel::{
         Error::{DatabaseError, RollbackTransaction},
     },
 };
-use failure::{Compat, Error, Fail};
 use jsonwebtoken::{Header, Validation};
 
 use DbConn;

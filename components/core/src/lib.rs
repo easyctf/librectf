@@ -5,15 +5,15 @@
 #![allow(proc_macro_derive_resolution_fallback)]
 
 extern crate actix_web;
+extern crate backtrace;
 extern crate bcrypt;
 extern crate chrono;
 extern crate comrak;
 extern crate config as cfg;
 #[macro_use]
 extern crate diesel;
-#[macro_use]
-extern crate failure;
 extern crate futures;
+extern crate hyper;
 extern crate lazy_static;
 #[macro_use]
 extern crate log;
@@ -34,6 +34,7 @@ mod macros;
 pub mod chal;
 pub mod config;
 pub mod db;
+mod errors;
 pub mod models;
 pub mod pages;
 pub mod schema;
@@ -42,4 +43,5 @@ pub mod user;
 
 pub use config::Config;
 pub use db::{establish_connection, Pool};
+pub use errors::Error;
 pub use state::State;

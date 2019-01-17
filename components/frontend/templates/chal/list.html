@@ -6,7 +6,7 @@
     <ul id="challenges">
     {% for chal in challenges %}
         <li>
-            <a name="c{{ c.id }}" />
+            <a name="c{{ c.id }}" />                
             <h3 class="title">{{ chal.title }}</h3>
             <p>{{ chal.description | safe }}</p>
             <form>

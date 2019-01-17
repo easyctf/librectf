@@ -1,7 +1,9 @@
 use std::fs::{create_dir_all, File};
 use std::io::{self, Write};
+use std::path::Path;
 
-use failure::Error;
+use core::Error;
+use diesel::MysqlConnection;
 use migrations_internals::{
     mark_migrations_in_directory, run_migrations, search_for_migrations_directory,
 };
@@ -15,6 +17,20 @@ use Migrations;
 pub struct MigrateCommand {}
 
 impl MigrateCommand {
+    fn run_migrations(
+        &self,
+        dir: impl AsRef<Path>,
+        conn: &MysqlConnection,
+    ) -> Result<(), ::migrations_internals::RunMigrationsError> {
+        let migrations_dir = search_for_migrations_directory(dir.as_ref())?;
+        let migrations = mark_migrations_in_directory(conn, &migrations_dir)?;
+
+        for (migration, _) in migrations {
+            run_migrations(conn, vec![migration], &mut io::stdout())?;
+        }
+        Ok(())
+    }
+
     pub fn run(&self, config: &Config) -> Result<(), Error> {
         let dir = TempDir::new()?;
 
@@ -38,12 +54,7 @@ impl MigrateCommand {
         ));
 
         // run the migrations
-        let migrations_dir = search_for_migrations_directory(dir.path())?;
-        let migrations = mark_migrations_in_directory(&conn, &migrations_dir)?;
-
-        for (migration, _) in migrations {
-            run_migrations(&conn, vec![migration], &mut io::stdout())?;
-        }
+        self.run_migrations(dir.path(), &conn);
 
         Ok(())
     }

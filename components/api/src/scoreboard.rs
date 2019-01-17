@@ -4,7 +4,6 @@ use diesel::{
     mysql::Mysql,
     sql_types::{Datetime, Integer},
 };
-use failure::Error;
 
 use super::DbConn;
 

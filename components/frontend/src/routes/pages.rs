@@ -20,7 +20,11 @@ pub fn handler(req: Request) -> HttpResponse {
 
     state
         .render("page.html", &ctx)
-        .map(|content| HttpResponse::Ok().header("Content-Type", "text/html").body(content))
+        .map(|content| {
+            HttpResponse::Ok()
+                .header("Content-Type", "text/html")
+                .body(content)
+        })
         .unwrap_or_else(|err| {
             error!("Error during Tera rendering: {}", err);
             HttpResponse::InternalServerError().finish()

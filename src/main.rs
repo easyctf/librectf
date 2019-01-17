@@ -1,8 +1,6 @@
 extern crate actix_web;
 extern crate config as cfg;
 extern crate env_logger;
-#[macro_use]
-extern crate failure;
 extern crate serde;
 #[macro_use]
 extern crate structopt;
@@ -18,8 +16,10 @@ mod web;
 
 use std::path::PathBuf;
 
-use core::config::{Config, ReadConfig};
-use failure::Error;
+use core::{
+    config::{Config, ReadConfig},
+    Error,
+};
 use structopt::StructOpt;
 
 #[derive(Debug, StructOpt)]
@@ -59,6 +59,6 @@ fn run() -> Result<(), Error> {
 fn main() {
     match run() {
         Ok(()) => (),
-        Err(err) => eprintln!("Error: {}\n{}", err, err.backtrace()),
+        Err(err) => eprintln!("Error: {}", err),
     }
 }

@@ -7,7 +7,6 @@ use comrak::{
 };
 use core::models::{Challenge, File, NewSolve};
 use diesel::prelude::*;
-use failure::Error;
 
 use super::DbConn;
 

@@ -1,9 +1,10 @@
 extern crate actix_web;
 extern crate core;
-#[macro_use]
-extern crate failure;
+extern crate futures;
 #[macro_use]
 extern crate embed;
+#[macro_use]
+extern crate lazy_static;
 #[macro_use]
 extern crate log;
 extern crate serde;
@@ -17,8 +18,8 @@ mod routes;
 
 use actix_web::App;
 use core::State;
-use failure::Error;
 
+use core::Error;
 use request::Request;
 
 #[derive(Embed)]
@@ -31,7 +32,8 @@ pub fn app(mut state: State) -> Result<App<State>, Error> {
             Templates::get(name)
                 .and_then(|contents| String::from_utf8(contents).ok())
                 .map(|contents| (String::from(name), contents))
-        }).collect::<Vec<_>>();
+        })
+        .collect::<Vec<_>>();
     state.add_templates(
         templates
             .iter()

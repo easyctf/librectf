@@ -11,10 +11,12 @@ pub fn scope(app: Scope<State>) -> Scope<State> {
     app.resource("/login", |r| {
         r.get().with(get_login);
         r.post().with(post_login)
-    }).resource("/register", |r| {
+    })
+    .resource("/register", |r| {
         r.get().with(get_register);
         r.post().with(post_register)
-    }).resource("/logout", |r| r.get().with(get_logout))
+    })
+    .resource("/logout", |r| r.get().with(get_logout))
 }
 
 fn get_login(req: Request) -> HttpResponse {
@@ -37,7 +39,8 @@ fn post_login((r, req, form): (HttpRequest<State>, Request, Form<LoginForm>)) ->
             r.session().set("user", s_user).unwrap();
             r.flash(("Successfully logged in.", "success")).unwrap();
             Ok(HttpResponse::SeeOther().header("Location", "/").finish())
-        }).unwrap_or_else(|err| match err {
+        })
+        .unwrap_or_else(|err| match err {
             UserError::BadUsernameOrPassword => {
                 r.flash(("Your username or password was incorrect.", "error"));
                 HttpResponse::SeeOther()
@@ -76,5 +79,6 @@ fn post_register(
             r.session().set("user", s_user);
             r.flash(("Successfully registered.", "success"));
             HttpResponse::SeeOther().header("Location", "/").finish()
-        }).unwrap_or_else(|err| HttpResponse::InternalServerError().finish())
+        })
+        .unwrap_or_else(|err| HttpResponse::InternalServerError().finish())
 }

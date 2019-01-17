@@ -2,7 +2,6 @@ use std::ops::Deref;
 
 use actix_web::{FromRequest, HttpRequest};
 use core::db::Connection;
-use failure::Error;
 
 use super::State;
 

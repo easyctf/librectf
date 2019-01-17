@@ -1,8 +1,9 @@
 use std::path::PathBuf;
 
 use cfg::{self, Environment};
-use failure::Error;
 use serde::Deserialize;
+
+use crate::Error;
 
 pub trait ReadConfig<'d>: Sized + Deserialize<'d> {
     fn new(file: Option<PathBuf>) -> Result<Self, Error> {

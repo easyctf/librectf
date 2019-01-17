@@ -2,9 +2,11 @@ use std::collections::HashMap;
 use std::fs::{read_dir, read_to_string, DirEntry};
 use std::path::PathBuf;
 
-use core::models::{Challenge, NewChallenge, NewFile};
+use core::{
+    models::{Challenge, NewChallenge, NewFile},
+    Error,
+};
 use diesel::{prelude::*, result::Error::RollbackTransaction};
-use failure::Error;
 use hyper::{client::Request, header::Authorization, method::Method};
 use multipart::client::Multipart;
 use toml;
@@ -49,7 +51,11 @@ impl ImportChalCommand {
     pub fn run(&self, config: &Config) -> Result<(), Error> {
         let cfg = match config.inner {
             Some(ref cfg) => cfg,
-            None => bail!("You didn't provide filestore push credentials!"),
+            None => {
+                return Err(Error::Custom(
+                    "You didn't provide filestore push credentials!".to_owned(),
+                ))
+            }
         };
 
         let mut files_to_add = Vec::<NewFile>::new();
@@ -84,15 +90,19 @@ impl ImportChalCommand {
                 // find meta.toml
                 let meta_toml_path = path.join("meta.toml");
                 if !meta_toml_path.exists() {
-                    bail!("Could not find meta.toml in this directory.");
+                    return Err(Error::Custom(
+                        "Could not find meta.toml in this directory.".to_owned(),
+                    ));
                 }
 
                 // read and the meta file
                 let meta_contents = read_to_string(&meta_toml_path)?;
-                let meta = toml::from_str::<Metadata>(&meta_contents).map(|mut value| {
-                    value.name = name;
-                    value
-                })?;
+                let meta = toml::from_str::<Metadata>(&meta_contents)
+                    .map(|mut value| {
+                        value.name = name;
+                        value
+                    })
+                    .map_err(|err| Error::Custom(format!("toml deserialize error: {}", err)))?;
 
                 // TODO: queue up uploading files into filestore
                 if let Some(meta_files) = &meta.files {
@@ -113,7 +123,7 @@ impl ImportChalCommand {
                 Ok(())
             })(entry)
             {
-                failed.push((None, format_err!("Error loading: {}", err)));
+                failed.push((None, err));
             }
         }
 
@@ -122,7 +132,9 @@ impl ImportChalCommand {
             for (path, err) in failed {
                 error!(" - {:?}: {}", path, err);
             }
-            return Err(format_err!("Failed to import some challenges."));
+            return Err(Error::Custom(
+                "Failed to import some challenges.".to_owned(),
+            ));
         }
 
         // add files into filestore
@@ -131,7 +143,12 @@ impl ImportChalCommand {
             let filestore_push_password = &cfg.filestore_push_password;
 
             for (id, name, path) in files {
-                let mut request = Request::new(Method::Post, filestore_url.parse()?)?;
+                let mut request = Request::new(
+                    Method::Post,
+                    filestore_url
+                        .parse()
+                        .map_err(|err| Error::Custom(format!("url parse error: {}", err)))?,
+                )?;
                 {
                     let mut headers = request.headers_mut();
                     headers.set(Authorization(filestore_push_password.clone()));

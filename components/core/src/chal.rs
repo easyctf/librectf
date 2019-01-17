@@ -2,17 +2,17 @@
 
 use std::collections::HashMap;
 
-use diesel::{prelude::*, result::Error::RollbackTransaction};
 use comrak::{
     format_html,
     nodes::{AstNode, NodeValue},
     parse_document, Arena, ComrakOptions,
 };
-use failure::Error;
+use diesel::{prelude::*, result::Error::RollbackTransaction};
 use regex::Regex;
 
-use models::{Challenge, File, NewSolve};
+use crate::Error;
 use db::Connection as DbConn;
+use models::{Challenge, File, NewSolve};
 
 pub fn list_all(db: DbConn) -> Result<Vec<Challenge>, Error> {
     use schema::chals::dsl::*;
@@ -58,8 +58,7 @@ pub fn list_all(db: DbConn) -> Result<Vec<Challenge>, Error> {
                         }
 
                         iter_nodes(desc, &|node| match &mut node.data.borrow_mut().value {
-                            NodeValue::Link(ref mut link)
-                            | NodeValue::Image(ref mut link) => {
+                            NodeValue::Link(ref mut link) | NodeValue::Image(ref mut link) => {
                                 if let Some(url) = file_map.get(&link.url) {
                                     link.url = url.clone().into_bytes();
                                 }
@@ -73,10 +72,12 @@ pub fn list_all(db: DbConn) -> Result<Vec<Challenge>, Error> {
 
                     chal.description = String::from_utf8(html).unwrap();
                     chal
-                }).collect::<Vec<_>>();
+                })
+                .collect::<Vec<_>>();
             list.sort_unstable_by(|a, b| a.value.cmp(&b.value));
             list
-        }).map_err(|err| err.into())
+        })
+        .map_err(|err| err.into())
 }
 
 #[derive(Serialize, Deserialize)]
@@ -123,8 +124,8 @@ pub fn submit(db: DbConn, submission: Submission) -> Result<Result<(), ()>, Erro
             flag: submission.form.flag,
             chal_id: chal.id,
             // TODO: get submitter information here
-            team_id: 1,
-            user_id: 12,
+            team_id: submission.team_id,
+            user_id: submission.user_id,
         };
         if let Err(err) = {
             use schema::solves;
@@ -137,5 +138,6 @@ pub fn submit(db: DbConn, submission: Submission) -> Result<Result<(), ()>, Erro
         }
 
         Ok(judgment)
-    }).map_err(|err| err.into())
+    })
+    .map_err(|err| err.into())
 }

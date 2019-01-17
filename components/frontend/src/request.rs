@@ -1,6 +1,7 @@
-use actix_web::{middleware::session::RequestSession, FromRequest, HttpRequest};
-use core::{config::WebConfig as Config, db::Connection, models::User, State};
-use failure::Error;
+use std::fmt;
+
+use actix_web::{middleware::session::RequestSession, FromRequest, HttpRequest, ResponseError};
+use core::{config::WebConfig as Config, db::Connection, models::User, Error, State};
 use tera::Context;
 
 use flash::RequestFlash;
@@ -45,14 +46,10 @@ impl FromRequest<State> for Request {
 
         let mut ctx = Context::new();
 
-        let user = req
-            .session()
-            .get::<SessionUser>("user")
-            .map_err(|err| format_err!("Error extracting user: {}", err))?
-            .map(|user| {
-                ctx.insert("user", &user);
-                user
-            });
+        let user = req.session().get::<SessionUser>("user")?.map(|user| {
+            ctx.insert("user", &user);
+            user
+        });
         ctx.insert("logged_in", &user.is_some());
 
         let flashes = req.flashes()?;

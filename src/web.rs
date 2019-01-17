@@ -3,15 +3,13 @@ use std::str::FromStr;
 
 use actix_web::server;
 // use api;
-use core::{Config, State};
-use failure::Error;
+use core::{Config, State, Error};
 
 #[derive(Clone, Debug, StructOpt)]
 pub struct WebCommand {
     // /// Run the API server.
     // #[structopt(long = "api")]
     // api: bool,
-
     /// Run the static file server.
     #[structopt(long = "filestore")]
     filestore: bool,
@@ -22,13 +20,12 @@ impl WebCommand {
         // TODO: clean this up
         let web = match &config.web {
             Some(cfg) => cfg.clone(),
-            None => bail!("Missing web config section."),
+            None => return Err(Error::Custom("Missing web config section.".to_owned())),
         };
-        println!("{:?} {:?}", self, config);
 
         let addr = SocketAddrV4::new(Ipv4Addr::from_str(&web.bind_host).unwrap(), web.bind_port);
-
         let state = State::from(&config.clone());
+
         server::new(move || {
             // let api = web.api.as_ref();
             let filestore = web.filestore.as_ref();
@@ -36,10 +33,12 @@ impl WebCommand {
                 Some(frontend::app(state.clone()).unwrap()),
                 // api.and_then(|_| api::app(state.clone()).ok()),
                 filestore.and_then(|_| filestore::app(state.clone()).ok()),
-            ].into_iter()
+            ]
+            .into_iter()
             .filter_map(|app| app)
             .collect::<Vec<_>>()
-        }).bind(addr)
+        })
+        .bind(addr)
         .map(|server| server.run())?;
 
         Ok(())

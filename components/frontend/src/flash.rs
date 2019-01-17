@@ -1,5 +1,5 @@
 use actix_web::{middleware::session::RequestSession, HttpRequest};
-use failure::Error;
+use core::Error;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Flash {
@@ -25,16 +25,12 @@ impl<S> RequestFlash for HttpRequest<S> {
     fn flash(&self, flash: impl Into<Flash>) -> Result<(), Error> {
         let mut flashes = self.flashes()?;
         flashes.push(flash.into());
-        self.session().set("flashes", flashes).map_err(|err| format_err!("{}", err))?;
+        self.session().set("flashes", flashes)?;
         Ok(())
     }
 
     fn flashes(&self) -> Result<Vec<Flash>, Error> {
-        match self
-            .session()
-            .get::<Vec<Flash>>("flashes")
-            .map_err(|err| format_err!("Failed to retrieve flashes"))?
-        {
+        match self.session().get::<Vec<Flash>>("flashes")? {
             Some(flashes) => Ok(flashes),
             None => Ok(Vec::new()),
         }

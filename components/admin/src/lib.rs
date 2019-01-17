@@ -7,8 +7,6 @@ extern crate hyper;
 extern crate log;
 extern crate migrations_internals;
 extern crate multipart;
-#[macro_use]
-extern crate failure;
 extern crate serde;
 #[macro_use]
 extern crate serde_derive;
@@ -23,7 +21,7 @@ mod migrate;
 mod util;
 
 use config::Config;
-use failure::Error;
+use core::Error;
 use structopt::StructOpt;
 
 use chal::ImportChalCommand;

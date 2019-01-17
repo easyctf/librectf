@@ -3,7 +3,6 @@ pub mod middleware;
 
 use core::models::{Invitation, NewTeam, Team, User};
 use diesel::{prelude::*, result::Error::RollbackTransaction};
-use failure::Error;
 
 pub use self::middleware::TeamRequired;
 use DbConn;

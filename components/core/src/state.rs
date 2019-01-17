@@ -1,8 +1,8 @@
 use std::sync::{Arc, Mutex};
 
-use failure::Error;
 use tera::{Context, Tera};
 
+use crate::Error;
 use config::{Config, FilestoreConfig, WebConfig};
 use db::{establish_connection, Connection, Pool};
 
@@ -41,27 +41,21 @@ impl State {
     }
 
     pub fn render(&self, page: impl AsRef<str>, ctx: &Context) -> Result<String, Error> {
-        let t = self
-            .tera
-            .lock()
-            .map_err(|err| format_err!("Internal error acquiring Tera lock: {}", err))?;
-        t.render(page.as_ref(), ctx)
-            .map_err(|err| format_err!("Internal error rendering template: {}", err))
+        let t = self.tera.lock().unwrap();
+        t.render(page.as_ref(), ctx.clone())
+            .map_err(|err| Error::from(err))
     }
 
     pub fn add_templates(&mut self, templates: Vec<(&str, &str)>) -> Result<(), Error> {
-        let mut t = self
-            .tera
-            .lock()
-            .map_err(|err| format_err!("Internal error acquiring Tera lock: {}", err))?;
-        t.add_raw_templates(templates)
-            .map_err(|err| format_err!("Error adding Tera templates: {}", err))
+        let mut t = self.tera.lock()?;
+        t.add_raw_templates(templates).map_err(|err| err.into())
     }
 
     pub fn get_connection(&self) -> Result<Connection, Error> {
-        match self.inner.db_pool.get() {
-            Ok(conn) => Ok(Connection(conn)),
-            Err(err) => Err(format_err!("Database connection error: {}", err)),
-        }
+        self.inner
+            .db_pool
+            .get()
+            .map(|conn| Connection(conn))
+            .map_err(|err| err.into())
     }
 }

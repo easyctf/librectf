@@ -6,8 +6,6 @@ extern crate chrono;
 extern crate comrak;
 #[macro_use]
 extern crate diesel;
-#[macro_use]
-extern crate failure;
 extern crate futures;
 extern crate jsonwebtoken;
 #[macro_use]
@@ -32,7 +30,6 @@ mod team;
 mod user;
 
 use actix_web::App;
-use failure::Error;
 
 use core::State;
 use db::DbConn;

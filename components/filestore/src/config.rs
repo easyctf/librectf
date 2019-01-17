@@ -1,8 +1,7 @@
 use std::ops::Deref;
 
 use actix_web::{FromRequest, HttpRequest};
-use core::{config::FilestoreConfig, State};
-use failure::Error;
+use core::{config::FilestoreConfig, Error, State};
 
 pub struct Config(FilestoreConfig);
 

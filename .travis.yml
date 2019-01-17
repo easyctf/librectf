@@ -28,10 +28,13 @@ deploy:
     file:
       - "librectf-*"
     on:
+      branch: develop
       tags: true
   - provider: script
     script: ./ci/book
     skip_cleanup: true
+    on:
+      branch: develop
 
 notifications:
   email: false

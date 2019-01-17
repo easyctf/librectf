@@ -34,11 +34,16 @@ header > nav {
 
 header > nav > ul {
     list-style-type: none;
-    padding: 0;
+    padding: 8px;
 }
 
 header > nav > ul > li {
     display: inline-block;
+    margin: 0 5px;
+}
+
+header > nav > ul > li.left {
+    float: left;
 }
 
 header > nav > ul > li.right {
@@ -48,7 +53,6 @@ header > nav > ul > li.right {
 header > nav > ul > li > a {
     display: inline-block;
     color: white;
-    padding: 5px;
 }
 
 header > nav > ul > li > a:visited {
