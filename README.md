@@ -4,6 +4,7 @@ LibreCTF
 [![](https://travis-ci.org/easyctf/librectf.svg?branch=develop)](https://travis-ci.org/easyctf/librectf)
 ![](https://tokei.rs/b1/github/easyctf/librectf)
 [![GitHub version](https://badge.fury.io/gh/easyctf%2Flibrectf.svg)](https://badge.fury.io/gh/easyctf%2Flibrectf)
+[![dependency status](https://deps.rs/repo/github/easyctf/librectf/status.svg)](https://deps.rs/repo/github/easyctf/librectf)
 [![GitHub issues](https://img.shields.io/github/issues/easyctf/librectf.svg)](https://github.com/easyctf/librectf/issues)
 [![GitHub forks](https://img.shields.io/github/forks/easyctf/librectf.svg)](https://github.com/easyctf/librectf/network)
 [![GitHub stars](https://img.shields.io/github/stars/easyctf/librectf.svg)](https://github.com/easyctf/librectf/stargazers)
