@@ -3,3 +3,4 @@
 .env
 /data
 librectf.toml
+/test.db

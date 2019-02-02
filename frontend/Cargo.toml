@@ -1,0 +1,15 @@
+[package]
+name = "frontend"
+version = "0.1.0"
+authors = ["Michael Zhang <iptq@protonmail.com>"]
+edition = "2018"
+
+[dependencies]
+core = { path = "../core" }
+lazy_static = "0.1"
+packer = "0.3"
+serde = "1.0"
+serde_derive = "1.0"
+tera = "1.0.0-alpha.4"
+warp = "0.1"
+wtforms = { path = "../../wtforms" }

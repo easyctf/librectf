@@ -1,0 +1,22 @@
+[package]
+name = "core"
+version = "0.1.0"
+authors = ["Michael Zhang <iptq@protonmail.com>"]
+edition = "2018"
+
+[dependencies]
+chrono = "0.4"
+diesel = { version = "1.4", features = ["extras"] }
+r2d2 = "0.8"
+serde = "1.0"
+serde_derive = "1.0"
+tera = "1.0.0-alpha.4"
+url = "1.7"
+warp = "0.1"
+wtforms = { path = "../../wtforms" }
+
+[features]
+default = ["mysql", "postgres", "sqlite"]
+mysql = ["diesel/mysql"]
+postgres = ["diesel/postgres"]
+sqlite = ["diesel/sqlite"]
