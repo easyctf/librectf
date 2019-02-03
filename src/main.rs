@@ -1,6 +1,7 @@
 use std::net::SocketAddr;
+use std::sync::Arc;
 
-use core::DatabaseUri;
+use core::{State, DatabaseUri};
 use structopt::StructOpt;
 
 #[derive(StructOpt)]
@@ -15,5 +16,6 @@ fn main() {
         .database_uri
         .establish_connection()
         .expect("couldn't connect to db");
-    warp::serve(frontend::routes(&db)).run(opt.addr);
+    let state = State::new(Arc::new(db));
+    warp::serve(frontend::routes(state)).run(opt.addr);
 }

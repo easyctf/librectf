@@ -1,11 +1,11 @@
 #[macro_use]
 extern crate serde_derive;
 
-use core::{DbPool, Error};
+use core::{Error, State};
 use lazy_static::lazy_static;
 use packer::Packer;
 use tera::Tera;
-use warp::{filters::BoxedFilter, http::Response, Filter, Reply};
+use warp::{filters::BoxedFilter, http::Response, Filter, Rejection, Reply};
 
 #[macro_use]
 mod macros;
@@ -36,11 +36,20 @@ lazy_static! {
     };
 }
 
-pub fn routes(db: &DbPool) -> BoxedFilter<(impl Reply,)> {
+fn set<T: 'static + Clone + Send + Sync>(
+    t: T,
+) -> impl Clone + Filter<Extract = (), Error = Rejection> {
+    warp::any()
+        .map(move || warp::ext::set(t.clone()))
+        .and_then(|()| -> Result<(), Rejection> { Ok(()) })
+        .untuple_one()
+}
+
+pub fn routes(state: State) -> BoxedFilter<(impl Reply,)> {
     let routes = route_any! {
+        GET () => base::get_index(),
         GET ("users" / "register") => users::get_register(),
         POST ("users" / "register") => users::post_register(),
-        GET () => base::get_index(),
     }
     .recover(Error::reply);
 
@@ -48,5 +57,6 @@ pub fn routes(db: &DbPool) -> BoxedFilter<(impl Reply,)> {
         .and(warp::path::param())
         .and_then(|path: String| Assets::get(&path).ok_or_else(warp::reject::not_found))
         .map(|contents| Response::builder().body(contents));
-    statics.or(routes).boxed()
+
+    set(state).and(statics.or(routes)).boxed()
 }

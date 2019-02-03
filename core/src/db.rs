@@ -18,23 +18,25 @@ use crate::Error;
 pub enum DbPool {
     #[cfg(feature = "mysql")]
     Mysql(Pool<ConnectionManager<MysqlConnection>>),
-    
+
     #[cfg(feature = "postgres")]
     Postgres(Pool<ConnectionManager<PgConnection>>),
-    
+
     #[cfg(feature = "sqlite")]
     Sqlite(Pool<ConnectionManager<SqliteConnection>>),
 }
 
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(untagged)]
 pub enum DatabaseUri {
     #[cfg(feature = "mysql")]
-    Mysql(Url),
+    Mysql(String),
 
     #[cfg(feature = "postgres")]
-    Postgres(Url),
+    Postgres(String),
 
     #[cfg(feature = "sqlite")]
-    Sqlite(Url),
+    Sqlite(String),
 }
 
 impl DatabaseUri {
@@ -42,17 +44,17 @@ impl DatabaseUri {
         match self {
             #[cfg(feature = "mysql")]
             DatabaseUri::Mysql(url) => {
-                let manager = ConnectionManager::<MysqlConnection>::new(url.as_str());
+                let manager = ConnectionManager::<MysqlConnection>::new(url.as_ref());
                 Ok(DbPool::Mysql(Pool::new(manager)?))
             }
             #[cfg(feature = "postgres")]
             DatabaseUri::Postgres(url) => {
-                let manager = ConnectionManager::<PgConnection>::new(url.as_str());
+                let manager = ConnectionManager::<PgConnection>::new(url.as_ref());
                 Ok(DbPool::Postgres(Pool::new(manager)?))
             }
             #[cfg(feature = "sqlite")]
             DatabaseUri::Sqlite(url) => {
-                let manager = ConnectionManager::<SqliteConnection>::new(url.path());
+                let manager = ConnectionManager::<SqliteConnection>::new(url.as_ref());
                 Ok(DbPool::Sqlite(Pool::new(manager)?))
             }
         }
@@ -65,11 +67,11 @@ impl FromStr for DatabaseUri {
         let url = Url::parse(string)?;
         match url.scheme() {
             #[cfg(feature = "mysql")]
-            "mysql" => Ok(DatabaseUri::Mysql(url)),
+            "mysql" => Ok(DatabaseUri::Mysql(url.as_str().to_owned())),
             #[cfg(feature = "postgres")]
-            "postgres" => Ok(DatabaseUri::Postgres(url)),
+            "postgres" => Ok(DatabaseUri::Postgres(url.as_str().to_owned())),
             #[cfg(feature = "sqlite")]
-            "sqlite" => Ok(DatabaseUri::Sqlite(url)),
+            "sqlite" => Ok(DatabaseUri::Sqlite(url.path().to_owned())),
             // TODO: an actual error
             _ => Err(ParseError::IdnaError),
         }
