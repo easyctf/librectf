@@ -281,6 +281,20 @@ impl UsefulFunctions<sqlite::Sqlite> for sqlite::SqlitePooledConnection {
 }
 
 impl DbConn {
+    /// Tries to fetch the user with the given id.
+    pub fn fetch_user_id(&self, id: i32) -> Result<User, Error> {
+        use crate::schema::users::dsl;
+        let query = dsl::users.filter(dsl::id.eq(id));
+        match self {
+            #[cfg(feature = "mysql")]
+            DbConn::Mysql(conn) => query.first(conn),
+            #[cfg(feature = "postgres")]
+            DbConn::Postgres(conn) => query.first(conn),
+            #[cfg(feature = "sqlite")]
+            DbConn::Sqlite(conn) => query.first(conn),
+        }
+        .map_err(Error::from)
+    }
     /// Tries to fetch the user with the given email. (TODO: lookup by username)
     pub fn fetch_user(&self, email: impl AsRef<str>) -> Result<User, Error> {
         use crate::schema::users::dsl;

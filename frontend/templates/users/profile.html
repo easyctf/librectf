@@ -1,5 +1,32 @@
 {% extends "layout.html" %}
-{% block title %}Register{% endblock %}
+{% block title %}Profile{% endblock %}
 
 {% block content %}
+<section class="container">
+    <div class="columns">
+        <div class="column is-one-quarter">
+            <nav class="panel">
+                <div class="panel-block">
+                    <p class="control has-icons-left">
+                        <input class="input" type="text" placeholder="search">
+                        <span class="icon is-left">
+                            <i class="fas fa-search" aria-hidden="true"></i>
+                        </span>
+                    </p>
+                </div>
+            </nav>
+        </div>
+        <div class="column">
+            <a href="/users/settings" class="button is-link" style="float: right; margin-right: 30px;">Settings</a>
+            <div class="tabs is-boxed">
+                <ul>
+                    <li class="is-active"><a>Profile</a></li>
+                    <li><a>Music</a></li>
+                    <li><a>Videos</a></li>
+                    <li><a>Documents</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</section>
 {% endblock %}

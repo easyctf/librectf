@@ -6,6 +6,7 @@ use warp::{Filter, Rejection};
 #[derive(Debug, Copy, Clone, Default, Serialize, Deserialize)]
 pub struct Session {
     pub user_id: Option<i32>,
+    pub team_id: Option<i32>,
 }
 
 pub fn extract() -> impl Clone + Filter<Extract = (), Error = Rejection> {
@@ -48,8 +49,9 @@ pub fn apply() -> impl Clone + Filter<Extract = (Option<String>,), Error = Rejec
                 .map(|data| {
                     jar.private(&key).add(
                         Cookie::build("session", data)
-                            .secure(true)
+                            // .secure(true) // TODO: enable this based on a config
                             .http_only(true)
+                            .path("/")
                             .same_site(SameSite::Strict)
                             .finish(),
                     );

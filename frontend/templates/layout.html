@@ -9,7 +9,7 @@
     <title>{% block title %}{% endblock %} - LibreCTF</title>
 </head>
 <body>
-    <nav class="container navbar" role="navigation" aria-label="main navigation">
+    <nav class="container navbar" style="margin-bottom: 20px;" role="navigation" aria-label="main navigation">
         <div class="navbar-brand">
             <a class="navbar-item" href="/"><h3>LibreCTF</h3></a>
 
@@ -22,7 +22,7 @@
 
         <div id="navbarBasicExample" class="navbar-menu">
             <div class="navbar-start">
-                <a class="navbar-item">Home</a>
+                <a class="navbar-item" href="/">Home</a>
                 <a class="navbar-item">Documentation</a>
 
                 <div class="navbar-item has-dropdown is-hoverable">
@@ -39,10 +39,22 @@
 
             <div class="navbar-end">
                 <div class="navbar-item">
-                    <div class="buttons">
-                        <a href="/users/register" class="button is-primary"><strong>Sign up</strong></a>
-                        <a href="/users/login" class="button is-light">Log in</a>
-                    </div>
+                    {% if user %}
+                        <a class="navbar-item">My Team</a>
+                        <div class="navbar-item has-dropdown is-hoverable">
+                            <a class="navbar-link">{{ user.name }}</a>
+                            <div class="navbar-dropdown">
+                                <a class="navbar-item" href="/users/profile">Profile</a>
+                                <hr class="navbar-divider">
+                                <a class="navbar-item" href="/users/logout">Logout</a>
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="buttons">
+                            <a href="/users/register" class="button is-primary"><strong>Sign up</strong></a>
+                            <a href="/users/login" class="button is-light">Log in</a>
+                        </div>
+                    {% endif %}
                 </div>
             </div>
         </div>

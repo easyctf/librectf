@@ -4,16 +4,18 @@ use core::{
     Error, State,
 };
 use http::uri::Uri;
-use tera::Context;
 use warp::Filter;
 use wtforms::Form;
 
-use crate::extractors::navbar;
+use crate::extractors::{get_context, navbar, Context};
 use crate::render::render_template;
 use crate::session::Session;
 
 pub fn get_login() -> Resp!() {
-    navbar().and_then(|| render_template("users/login.html", Context::new()))
+    warp::path::end()
+        .and(navbar())
+        .and(get_context())
+        .and_then(|ctx: Context| render_template("users/login.html", ctx.into()))
 }
 
 pub fn post_login() -> Resp!() {
@@ -39,11 +41,17 @@ pub fn post_login() -> Resp!() {
 }
 
 pub fn get_profile() -> Resp!() {
-    navbar().and_then(|| render_template("users/profile.html", Context::new()))
+    warp::path::end()
+        .and(navbar())
+        .and(get_context())
+        .and_then(|ctx: Context| render_template("users/profile.html", ctx.into()))
 }
 
 pub fn get_register() -> Resp!() {
-    navbar().and_then(|| render_template("users/register.html", Context::new()))
+    warp::path::end()
+        .and(navbar())
+        .and(get_context())
+        .and_then(|ctx: Context| render_template("users/register.html", ctx.into()))
 }
 
 pub fn post_register() -> Resp!() {
