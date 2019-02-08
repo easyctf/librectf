@@ -5,11 +5,14 @@ authors = ["Michael Zhang <iptq@protonmail.com>"]
 edition = "2018"
 
 [dependencies]
+cookie = { version = "0.11", features = ["secure", "percent-encode"] }
 core = { path = "../core" }
+http = "0.1"
 lazy_static = "0.1"
 packer = "0.3"
 serde = "1.0"
 serde_derive = "1.0"
+serde_urlencoded = "0.5"
 tera = "1.0.0-alpha.4"
 warp = "0.1"
 wtforms = { path = "../../wtforms" }

@@ -1,20 +1,14 @@
 {% extends "layout.html" %}
-{% block title %}Register{% endblock %}
+{% block title %}Login{% endblock %}
 
 {% block content %}
 <section class="hero is-fullheight">
     <div class="hero-body">
         <div class="container has-text-centered">
             <div class="column is-4 is-offset-4">
-                <h3 class="title has-text-grey">Register</h3>
+                <h3 class="title has-text-grey">Login</h3>
                 <div class="box">
-                    <form action="/users/register" method="POST">
-                        <div class="field">
-                            <div class="control">
-                                <input class="input" type="text" name="name" placeholder="Username" autofocus="">
-                            </div>
-                        </div>
-
+                    <form action="/users/login" method="POST">
                         <div class="field">
                             <div class="control">
                                 <input class="input" type="email" name="email" placeholder="Email" autofocus="">
@@ -26,8 +20,13 @@
                                 <input class="input" type="password" name="password" placeholder="Password">
                             </div>
                         </div>
-
-                        <button class="button is-block is-info is-fullwidth">Register</button>
+                        <div class="field">
+                            <label class="checkbox">
+                                <input type="checkbox">
+                                Remember me
+                            </label>
+                        </div>
+                        <button class="button is-block is-info is-fullwidth">Login</button>
                     </form>
                 </div>
                 <p class="has-text-grey">

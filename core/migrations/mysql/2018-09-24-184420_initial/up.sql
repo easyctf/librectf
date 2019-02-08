@@ -1,4 +1,4 @@
-CREATE TABLE `chals` (
+CREATE TABLE IF NOT EXISTS `chals` (
     `id` INTEGER PRIMARY KEY AUTO_INCREMENT,
     `title` VARCHAR(64) NOT NULL,
     `enabled` BOOLEAN NOT NULL DEFAULT FALSE,
@@ -14,7 +14,7 @@ CREATE TABLE `chals` (
 CREATE INDEX `chals_title_idx` ON `chals`(`title`);
 CREATE INDEX `chals_value_idx` ON `chals`(`value`);
 
-CREATE TABLE `teams` (
+CREATE TABLE IF NOT EXISTS `teams` (
     `id` INTEGER PRIMARY KEY AUTO_INCREMENT,
     `captain_id` INTEGER NOT NULL,
     `name` VARCHAR(20) COLLATE utf8mb4_general_ci NOT NULL,
@@ -25,7 +25,7 @@ CREATE TABLE `teams` (
     UNIQUE (`name`)
 );
 
-CREATE TABLE `users` (
+CREATE TABLE IF NOT EXISTS `users` (
     `id` INTEGER PRIMARY KEY AUTO_INCREMENT,
     `name` VARCHAR(20) COLLATE utf8mb4_general_ci NOT NULL,
     `email` VARCHAR(128) NOT NULL,
@@ -42,7 +42,7 @@ CREATE TABLE `users` (
     CONSTRAINT `user_team_fk` FOREIGN KEY (`team_id`) REFERENCES `teams`(`id`)
 );
 
-CREATE TABLE `invitations` (
+CREATE TABLE IF NOT EXISTS `invitations` (
     `team_id` INTEGER NOT NULL,
     `user_id` INTEGER NOT NULL,
 
@@ -51,7 +51,7 @@ CREATE TABLE `invitations` (
     PRIMARY KEY (`team_id`, `user_id`)
 );
 
-CREATE TABLE `files` (
+CREATE TABLE IF NOT EXISTS `files` (
     `id` INTEGER PRIMARY KEY AUTO_INCREMENT,
     `name` VARCHAR(64) NOT NULL,
     `url` TEXT NOT NULL,
@@ -65,7 +65,7 @@ CREATE TABLE `files` (
     CONSTRAINT `file_team_fk` FOREIGN KEY (`team_id`) REFERENCES `teams`(`id`)
 );
 
-CREATE TABLE `solves` (
+CREATE TABLE IF NOT EXISTS `solves` (
     `id` INTEGER PRIMARY KEY AUTO_INCREMENT,
     `timestamp` DATETIME NOT NULL DEFAULT NOW(),
     `flag` TEXT NOT NULL,
@@ -82,7 +82,7 @@ CREATE TABLE `solves` (
     CONSTRAINT `solve_user_fk` FOREIGN KEY (`user_id`) REFERENCES `users`(`id`)
 );
 
-CREATE TABLE `tasks` (
+CREATE TABLE IF NOT EXISTS `tasks` (
     `id` INTEGER PRIMARY KEY AUTO_INCREMENT,
     `created` DATETIME NOT NULL DEFAULT NOW(),
     `claimed` DATETIME DEFAULT NULL,

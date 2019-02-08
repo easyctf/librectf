@@ -5,8 +5,10 @@ authors = ["Michael Zhang <iptq@protonmail.com>"]
 edition = "2018"
 
 [dependencies]
+bcrypt = "0.3"
 chrono = "0.4"
 diesel = { version = "1.4", features = ["extras"] }
+diesel_migrations = "1.4"
 r2d2 = "0.8"
 serde = "1.0"
 serde_derive = "1.0"
@@ -17,6 +19,6 @@ wtforms = { path = "../../wtforms" }
 
 [features]
 default = ["mysql", "postgres", "sqlite"]
-mysql = ["diesel/mysql"]
-postgres = ["diesel/postgres"]
-sqlite = ["diesel/sqlite"]
+mysql = ["diesel/mysql", "diesel_migrations/mysql"]
+postgres = ["diesel/postgres", "diesel_migrations/postgres"]
+sqlite = ["diesel/sqlite", "diesel_migrations/sqlite"]

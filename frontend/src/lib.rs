@@ -1,19 +1,17 @@
 #[macro_use]
-extern crate serde_derive;
+mod macros;
+
+mod base;
+mod extractors;
+mod render;
+mod session;
+mod users;
 
 use core::{Error, State};
 use lazy_static::lazy_static;
 use packer::Packer;
 use tera::Tera;
 use warp::{filters::BoxedFilter, http::Response, Filter, Rejection, Reply};
-
-#[macro_use]
-mod macros;
-
-mod base;
-mod extractors;
-mod render;
-mod users;
 
 #[derive(Packer)]
 #[folder = "frontend/static"]
@@ -48,6 +46,8 @@ fn set<T: 'static + Clone + Send + Sync>(
 pub fn routes(state: State) -> BoxedFilter<(impl Reply,)> {
     let routes = route_any! {
         GET () => base::get_index(),
+        GET ("users" / "login") => users::get_login(),
+        POST ("users" / "login") => users::post_login(),
         GET ("users" / "register") => users::get_register(),
         POST ("users" / "register") => users::post_register(),
     }
@@ -58,5 +58,14 @@ pub fn routes(state: State) -> BoxedFilter<(impl Reply,)> {
         .and_then(|path: String| Assets::get(&path).ok_or_else(warp::reject::not_found))
         .map(|contents| Response::builder().body(contents));
 
-    set(state).and(statics.or(routes)).boxed()
+    let routes = set(state.clone())
+        .and(session::extract())
+        .and(routes)
+        .and(session::apply())
+        .map(|reply, cookie| match cookie {
+            Some(cookie) => warp::reply::with_header(reply, "Set-Cookie", cookie),
+            None => warp::reply::with_header(reply, "please", "fix this"),
+        });
+
+    statics.or(routes).boxed()
 }

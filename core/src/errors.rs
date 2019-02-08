@@ -5,10 +5,15 @@ use std::sync::Arc;
 use warp::{Rejection, Reply};
 
 #[derive(Clone, Debug)]
-pub enum UserError {}
+pub enum UserError {
+    BadUsernameOrPassword,
+}
 
 #[derive(Clone, Debug)]
 pub enum Error {
+    Bcrypt(Arc<::bcrypt::BcryptError>),
+    Diesel(Arc<::diesel::result::Error>),
+    Migrations(Arc<::diesel_migrations::RunMigrationsError>),
     R2d2(Arc<::r2d2::Error>),
     Tera(Arc<::tera::ErrorKind>),
     User(UserError),
@@ -18,8 +23,8 @@ pub enum Error {
 
 impl Error {
     pub fn reply(err: Rejection) -> Result<impl Reply, Rejection> {
-        if let Some(_err) = &err.find_cause::<Error>() {
-            Ok("hello")
+        if let Some(err) = &err.find_cause::<Error>() {
+            Ok(format!("there's an error: {:?}", err))
         } else {
             Err(err)
         }
@@ -34,6 +39,24 @@ impl fmt::Display for Error {
 }
 
 impl StdError for Error {}
+
+impl From<::bcrypt::BcryptError> for Error {
+    fn from(err: ::bcrypt::BcryptError) -> Self {
+        Error::Bcrypt(Arc::new(err))
+    }
+}
+
+impl From<::diesel::result::Error> for Error {
+    fn from(err: ::diesel::result::Error) -> Self {
+        Error::Diesel(Arc::new(err))
+    }
+}
+
+impl From<::diesel_migrations::RunMigrationsError> for Error {
+    fn from(err: ::diesel_migrations::RunMigrationsError) -> Self {
+        Error::Migrations(Arc::new(err))
+    }
+}
 
 impl From<::r2d2::Error> for Error {
     fn from(err: ::r2d2::Error) -> Self {
