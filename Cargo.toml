@@ -21,6 +21,6 @@ frontend = { path = "./frontend" }
 
 [features]
 default = ["sqlite"]
-mysql = ["core/mysql"]
-postgres = ["core/postgres"]
-sqlite = ["core/sqlite"]
+mysql = ["core/mysql", "frontend/mysql"]
+postgres = ["core/postgres", "frontend/postgres"]
+sqlite = ["core/sqlite", "frontend/sqlite"]

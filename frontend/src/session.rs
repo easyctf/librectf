@@ -9,29 +9,29 @@ pub struct Session {
 }
 
 pub fn extract() -> impl Clone + Filter<Extract = (), Error = Rejection> {
-    warp::any()
-        .map(|| {
-            warp::ext::set::<Session>(Session::default());
+    warp::ext::get::<State>()
+        .and(warp::filters::header::header::<String>("cookie"))
+        .map(move |state: State, data: String| {
+            let mut jar = CookieJar::new();
+            let cookies = data.split(";");
+            for cookie in cookies {
+                if let Ok(cookie) = Cookie::parse_encoded(cookie) {
+                    jar.add(cookie.into_owned());
+                }
+            }
+
+            let key = Key::from_master(state.get_secret_key().as_bytes());
+            warp::ext::set::<Session>(
+                jar.private(&key)
+                    .get("session")
+                    .and_then(|data| serde_urlencoded::from_str(data.value()).ok())
+                    .unwrap_or_else(|| Session::default()),
+            );
         })
         .untuple_one()
-        .or(warp::ext::get::<State>()
-            .and(warp::filters::header::header::<String>("cookie"))
-            .map(move |state: State, data: String| {
-                let mut jar = CookieJar::new();
-                let cookies = data.split(";");
-                for cookie in cookies {
-                    if let Ok(cookie) = Cookie::parse_encoded(cookie) {
-                        jar.add(cookie.into_owned());
-                    }
-                }
-
-                let key = Key::from_master(state.get_secret_key().as_bytes());
-                warp::ext::set::<Session>(
-                    jar.private(&key)
-                        .get("session")
-                        .and_then(|data| serde_urlencoded::from_str(data.value()).ok())
-                        .unwrap_or_else(|| Session::default()),
-                );
+        .or(warp::any()
+            .map(|| {
+                warp::ext::set::<Session>(Session::default());
             })
             .untuple_one())
         .unify()

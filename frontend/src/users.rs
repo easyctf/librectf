@@ -8,11 +8,12 @@ use tera::Context;
 use warp::Filter;
 use wtforms::Form;
 
+use crate::extractors::navbar;
 use crate::render::render_template;
 use crate::session::Session;
 
 pub fn get_login() -> Resp!() {
-    warp::any().and_then(|| render_template("users/login.html", Context::new()))
+    navbar().and_then(|| render_template("users/login.html", Context::new()))
 }
 
 pub fn post_login() -> Resp!() {
@@ -37,8 +38,12 @@ pub fn post_login() -> Resp!() {
         })
 }
 
+pub fn get_profile() -> Resp!() {
+    navbar().and_then(|| render_template("users/profile.html", Context::new()))
+}
+
 pub fn get_register() -> Resp!() {
-    warp::any().and_then(|| render_template("users/register.html", Context::new()))
+    navbar().and_then(|| render_template("users/register.html", Context::new()))
 }
 
 pub fn post_register() -> Resp!() {

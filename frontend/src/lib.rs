@@ -47,8 +47,9 @@ pub fn routes(state: State) -> BoxedFilter<(impl Reply,)> {
     let routes = route_any! {
         GET () => base::get_index(),
         GET ("users" / "login") => users::get_login(),
-        POST ("users" / "login") => users::post_login(),
         GET ("users" / "register") => users::get_register(),
+        GET ("users" / "profile") => users::get_profile(),
+        POST ("users" / "login") => users::post_login(),
         POST ("users" / "register") => users::post_register(),
     }
     .recover(Error::reply);

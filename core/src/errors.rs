@@ -4,24 +4,40 @@ use std::sync::Arc;
 
 use warp::{Rejection, Reply};
 
+/// An error caused by the user.
 #[derive(Clone, Debug)]
 pub enum UserError {
+    /// The user supplied bad credentials during login.
     BadUsernameOrPassword,
 }
 
+/// An error.
 #[derive(Clone, Debug)]
 pub enum Error {
+    #[doc(hidden)]
     Bcrypt(Arc<::bcrypt::BcryptError>),
+    #[doc(hidden)]
     Diesel(Arc<::diesel::result::Error>),
+    #[doc(hidden)]
     Migrations(Arc<::diesel_migrations::RunMigrationsError>),
+    #[doc(hidden)]
     R2d2(Arc<::r2d2::Error>),
+    #[doc(hidden)]
     Tera(Arc<::tera::ErrorKind>),
+
+    /// An error caused by the user.
+    ///
+    /// During rendering, other errors will result in a 500 page, while user
+    /// errors will be propagated to the generated page and presented to the 
+    /// user.
     User(UserError),
     // DEBUG
+    #[doc(hidden)]
     Unit,
 }
 
 impl Error {
+    /// Converts this error into a response. (TODO: generate flashes and a redirect)
     pub fn reply(err: Rejection) -> Result<impl Reply, Rejection> {
         if let Some(err) = &err.find_cause::<Error>() {
             Ok(format!("there's an error: {:?}", err))

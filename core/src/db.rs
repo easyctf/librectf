@@ -3,17 +3,16 @@ use std::str::FromStr;
 
 use diesel::{
     backend::Backend,
-    connection::{Connection as DieselConnection, SimpleConnection},
+    connection::SimpleConnection,
+    deserialize::FromSql,
+    expression::NonAggregate,
     insertable::{CanInsertInSingleQuery, Insertable},
     prelude::*,
-    sql_types::HasSqlType,
-    expression::NonAggregate,
-    SelectableExpression,
     query_builder::QueryFragment,
     query_source::Table,
     r2d2::ConnectionManager,
-    deserialize::FromSql,
-    RunQueryDsl,
+    sql_types::HasSqlType,
+    RunQueryDsl, SelectableExpression,
 };
 use r2d2::Pool;
 use url::{ParseError, Url};
@@ -54,6 +53,8 @@ mod sqlite {
 
 use crate::Error;
 
+/// A single connection to a database.
+#[allow(missing_docs)]
 pub enum DbConn {
     #[cfg(feature = "mysql")]
     Mysql(mysql::MysqlPooledConnection),
@@ -66,6 +67,7 @@ pub enum DbConn {
 }
 
 impl DbConn {
+    /// Runs the embedded migrations against the database.
     pub fn run_migrations(&self, out: &mut dyn Write) -> Result<(), Error> {
         match self {
             #[cfg(feature = "mysql")]
@@ -81,6 +83,8 @@ impl DbConn {
     }
 }
 
+/// A database pool.
+#[allow(missing_docs)]
 pub enum DbPool {
     #[cfg(feature = "mysql")]
     Mysql(Pool<ConnectionManager<self::mysql::MysqlConnection>>),
@@ -93,6 +97,7 @@ pub enum DbPool {
 }
 
 impl DbPool {
+    /// Gets a single database connection from the pool.
     pub fn get(&self) -> Result<DbConn, Error> {
         match self {
             #[cfg(feature = "mysql")]
@@ -108,8 +113,20 @@ impl DbPool {
     }
 }
 
+/// A database connection string, for the MySQL, PostgreSQL, or SQLite backends.
+///
+/// The `FromStr` implementation for this will use the schema (part before the
+/// `://`) to determine which one it is.
+///
+/// - MySQL: `mysql://user:pass@host:port/dbname`
+/// - PostgreSQL: `postgres://user:pass@host:port/dbname`
+/// - SQLite: `sqlite:///home/user/path/to/db`
+///
+/// Each of these possible detections is **only** possible if that respective
+/// feature has been enabled.
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(untagged)]
+#[allow(missing_docs)]
 pub enum DatabaseUri {
     #[cfg(feature = "mysql")]
     Mysql(String),
@@ -122,6 +139,8 @@ pub enum DatabaseUri {
 }
 
 impl DatabaseUri {
+    /// Opens a connection to the database using the connection type and the
+    /// uri given.
     pub fn establish_connection(&self) -> Result<DbPool, Error> {
         match self {
             #[cfg(feature = "mysql")]
@@ -186,8 +205,8 @@ trait UsefulFunctions<B: Backend>: Sized {
 
     fn create_and_return<T, V, R>(&self, target: T, values: V, id: R) -> Result<i32, Error>
     where
-    Self::Backend: HasSqlType<R::SqlType>,
-    i32: FromSql<R::SqlType, Self::Backend>,
+        Self::Backend: HasSqlType<R::SqlType>,
+        i32: FromSql<R::SqlType, Self::Backend>,
         R: SelectableExpression<T> + NonAggregate + QueryFragment<Self::Backend>,
         T: Table,
         T::FromClause: QueryFragment<Self::Backend>,
@@ -201,8 +220,8 @@ impl UsefulFunctions<mysql::Mysql> for mysql::MysqlPooledConnection {
 
     fn create_and_return<T, V, R>(&self, target: T, values: V, _id: R) -> Result<i32, Error>
     where
-    Self::Backend: HasSqlType<R::SqlType>,
-    i32: FromSql<R::SqlType, Self::Backend>,
+        Self::Backend: HasSqlType<R::SqlType>,
+        i32: FromSql<R::SqlType, Self::Backend>,
         R: SelectableExpression<T> + NonAggregate + QueryFragment<Self::Backend>,
         T: Table,
         T::FromClause: QueryFragment<Self::Backend>,
@@ -223,8 +242,8 @@ impl UsefulFunctions<postgres::Pg> for postgres::PostgresPooledConnection {
 
     fn create_and_return<T, V, R>(&self, target: T, values: V, id: R) -> Result<i32, Error>
     where
-    Self::Backend: HasSqlType<R::SqlType>,
-    i32: FromSql<R::SqlType, Self::Backend>,
+        Self::Backend: HasSqlType<R::SqlType>,
+        i32: FromSql<R::SqlType, Self::Backend>,
         R: SelectableExpression<T> + NonAggregate + QueryFragment<Self::Backend>,
         T: Table,
         T::FromClause: QueryFragment<Self::Backend>,
@@ -245,8 +264,8 @@ impl UsefulFunctions<sqlite::Sqlite> for sqlite::SqlitePooledConnection {
 
     fn create_and_return<T, V, R>(&self, target: T, values: V, _id: R) -> Result<i32, Error>
     where
-    Self::Backend: HasSqlType<R::SqlType>,
-    i32: FromSql<R::SqlType, Self::Backend>,
+        Self::Backend: HasSqlType<R::SqlType>,
+        i32: FromSql<R::SqlType, Self::Backend>,
         R: SelectableExpression<T> + NonAggregate + QueryFragment<Self::Backend>,
         T: Table,
         T::FromClause: QueryFragment<Self::Backend>,
@@ -262,6 +281,7 @@ impl UsefulFunctions<sqlite::Sqlite> for sqlite::SqlitePooledConnection {
 }
 
 impl DbConn {
+    /// Tries to fetch the user with the given email. (TODO: lookup by username)
     pub fn fetch_user(&self, email: impl AsRef<str>) -> Result<User, Error> {
         use crate::schema::users::dsl;
         let query = dsl::users.filter(dsl::email.eq(email.as_ref()));
@@ -275,6 +295,8 @@ impl DbConn {
         }
         .map_err(Error::from)
     }
+
+    /// Tries to insert `user` into the database.
     pub fn create_user(&self, user: &NewUser) -> Result<i32, Error> {
         use crate::schema::users;
         match self {

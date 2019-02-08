@@ -16,3 +16,9 @@ serde_urlencoded = "0.5"
 tera = "1.0.0-alpha.4"
 warp = "0.1"
 wtforms = { path = "../../wtforms" }
+
+[features]
+default = ["mysql", "postgres", "sqlite"]
+mysql = ["core/mysql"]
+postgres = ["core/postgres"]
+sqlite = ["core/sqlite"]
