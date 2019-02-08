@@ -7,7 +7,7 @@ use http::uri::Uri;
 use warp::Filter;
 use wtforms::Form;
 
-use crate::extractors::{get_context, navbar, Context};
+use crate::extractors::{get_context, get, navbar, Context};
 use crate::render::render_template;
 use crate::session::Session;
 
@@ -25,19 +25,26 @@ pub fn post_login() -> Resp!() {
                 .map_err(Error::from)
                 .map_err(warp::reject::custom)
         })
-        .and(warp::ext::get::<State>())
+        .and(get::<State>())
         .and_then(|form: LoginForm, state: State| {
             state
                 .get_connection()
                 .and_then(|conn| core::users::login_user(&conn, &form))
                 .map_err(warp::reject::custom)
         })
-        .and(warp::ext::get::<Session>())
+        .and(get::<Session>())
         .map(|user: User, mut session: Session| {
-            session.user_id = Some(user.id);
+            session.user = Some(user);
             warp::ext::set::<Session>(session);
             warp::redirect::redirect(Uri::from_static("/users/profile"))
         })
+}
+
+pub fn get_logout() -> Resp!() {
+    warp::get2().map(|| {
+        warp::ext::set::<Session>(Session::default());
+        warp::redirect::redirect(Uri::from_static("/users/profile"))
+    })
 }
 
 pub fn get_profile() -> Resp!() {
@@ -61,17 +68,12 @@ pub fn post_register() -> Resp!() {
                 .map_err(Error::from)
                 .map_err(warp::reject::custom)
         })
-        .and(warp::ext::get::<State>())
+        .and(get::<State>())
         .and_then(|form: RegisterForm, state: State| {
             state
                 .get_connection()
                 .and_then(|conn| core::users::register_user(&conn, &form))
                 .map_err(warp::reject::custom)
         })
-        .and(warp::ext::get::<Session>())
-        .map(|user_id: i32, mut session: Session| {
-            session.user_id = Some(user_id);
-            warp::ext::set::<Session>(session);
-            warp::redirect::redirect(Uri::from_static("/users/profile"))
-        })
+        .map(|_user_id: i32| warp::redirect::redirect(Uri::from_static("/users/login")))
 }

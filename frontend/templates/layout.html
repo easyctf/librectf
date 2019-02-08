@@ -40,11 +40,12 @@
             <div class="navbar-end">
                 <div class="navbar-item">
                     {% if user %}
-                        <a class="navbar-item">My Team</a>
+                        <a class="navbar-item" href="/teams/index">My Team</a>
                         <div class="navbar-item has-dropdown is-hoverable">
                             <a class="navbar-link">{{ user.name }}</a>
                             <div class="navbar-dropdown">
                                 <a class="navbar-item" href="/users/profile">Profile</a>
+                                <a class="navbar-item" href="/users/settings">Settings</a>
                                 <hr class="navbar-divider">
                                 <a class="navbar-item" href="/users/logout">Logout</a>
                             </div>

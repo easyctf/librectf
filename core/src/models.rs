@@ -96,7 +96,7 @@ pub struct NewUser {
 }
 
 /// A user.
-#[derive(Debug, Queryable, Serialize)]
+#[derive(Clone, Debug, Queryable, Serialize)]
 pub struct User {
     /// Numerical id of the user.
     pub id: i32,
@@ -130,7 +130,7 @@ pub struct NewTeam {
 }
 
 /// A team.
-#[derive(Debug, Queryable)]
+#[derive(Clone, Debug, Queryable)]
 pub struct Team {
     /// Numerical id of the team.
     pub id: i32,

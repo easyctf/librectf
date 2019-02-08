@@ -3,8 +3,10 @@ mod macros;
 
 mod base;
 mod extractors;
+mod guards;
 mod render;
 mod session;
+mod teams;
 mod users;
 
 use core::{Error, State};
@@ -46,9 +48,12 @@ fn set<T: 'static + Clone + Send + Sync>(
 pub fn routes(state: State) -> BoxedFilter<(impl Reply,)> {
     let routes = route_any! {
         GET () => base::get_index(),
+        GET ("teams" / "create") => teams::get_create(),
+        GET ("teams" / "index") => teams::get_index(),
         GET ("users" / "login") => users::get_login(),
-        GET ("users" / "register") => users::get_register(),
+        GET ("users" / "logout") => users::get_logout(),
         GET ("users" / "profile") => users::get_profile(),
+        GET ("users" / "register") => users::get_register(),
         POST ("users" / "login") => users::post_login(),
         POST ("users" / "register") => users::post_register(),
     }

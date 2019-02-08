@@ -1,9 +1,10 @@
-use core::{Error, State};
+use core::Error;
 use std::ops::{Deref, DerefMut};
 use tera::Context as TeraContext;
 use warp::{Filter, Rejection};
 
 use crate::session::Session;
+pub use warp::ext::get as get;
 
 #[derive(Clone, Default)]
 pub struct Context(pub TeraContext);
@@ -28,18 +29,15 @@ impl Into<TeraContext> for Context {
 }
 
 pub fn get_context() -> impl Clone + Filter<Extract = (Context,), Error = Rejection> {
-    warp::ext::get::<Context>()
+    get::<Context>()
         .or(warp::any().map(|| Context::default()))
         .unify()
 }
 
-fn render_navbar(state: &State, session: &Session, ctx: &mut Context) -> Result<(), Error> {
-    let conn = state.get_connection()?;
-
+fn render_navbar(session: &Session, ctx: &mut Context) -> Result<(), Error> {
     // retrieve the user data
-    if let Some(user_id) = session.user_id {
-        conn.fetch_user_id(user_id)
-            .map(|user| ctx.insert("user", &user))?;
+    if let Some(user) = &session.user {
+        ctx.insert("user", &user);
     }
 
     Ok(())
@@ -47,11 +45,10 @@ fn render_navbar(state: &State, session: &Session, ctx: &mut Context) -> Result<
 
 /// Generates all of the information needed to populate the navbar.
 pub fn navbar() -> impl Clone + Filter<Extract = (), Error = Rejection> {
-    warp::ext::get::<State>()
-        .and(warp::ext::get::<Session>())
+    get::<Session>()
         .and(get_context())
-        .map(|state: State, session: Session, mut ctx: Context| {
-            render_navbar(&state, &session, &mut ctx).unwrap_or_else(|err| {
+        .map(|session: Session, mut ctx: Context| {
+            render_navbar(&session, &mut ctx).unwrap_or_else(|err| {
                 println!("err: {:?}", err);
             });
             warp::ext::set::<Context>(ctx);
