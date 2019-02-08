@@ -4,7 +4,7 @@ use crate::{DbConn, DbPool, Error};
 
 /// The state associated with the running application.
 ///
-/// Since everything inside this is a reference-counted pointer, this struct 
+/// Since everything inside this is a reference-counted pointer, this struct
 /// implements `Clone` to allow it to be easily passed around.
 #[derive(Clone)]
 pub struct State {

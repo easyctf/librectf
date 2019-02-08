@@ -28,7 +28,7 @@ pub enum Error {
     /// An error caused by the user.
     ///
     /// During rendering, other errors will result in a 500 page, while user
-    /// errors will be propagated to the generated page and presented to the 
+    /// errors will be propagated to the generated page and presented to the
     /// user.
     User(UserError),
     // DEBUG
