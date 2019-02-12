@@ -4,7 +4,7 @@ use tera::Context as TeraContext;
 use warp::{Filter, Rejection};
 
 use crate::session::Session;
-pub use warp::ext::get as get;
+pub use warp::ext::get;
 
 #[derive(Clone, Default)]
 pub struct Context(pub TeraContext);
@@ -36,7 +36,7 @@ pub fn get_context() -> impl Clone + Filter<Extract = (Context,), Error = Reject
 
 fn render_navbar(session: &Session, ctx: &mut Context) -> Result<(), Error> {
     // retrieve the user data
-    if let Some(user) = &session.user {
+    if let Some(user) = session.get_user() {
         ctx.insert("user", &user);
     }
 

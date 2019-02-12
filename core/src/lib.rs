@@ -27,5 +27,5 @@ pub mod users;
 
 pub use crate::config::Config;
 pub use crate::db::{DatabaseUri, DbConn, DbPool};
-pub use crate::errors::{Error, UserError};
+pub use crate::errors::{Error, ErrorKind, UserErrorKind};
 pub use crate::state::State;

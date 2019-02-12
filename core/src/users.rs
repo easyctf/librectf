@@ -4,7 +4,7 @@ use wtforms::Form;
 
 use crate::db::DbConn;
 use crate::models::{NewUser, User};
-use crate::{Error, UserError};
+use crate::{Error, UserErrorKind};
 
 /// The struct behind the form used in the login page.
 #[derive(Form, Serialize, Deserialize)]
@@ -16,7 +16,7 @@ pub struct LoginForm {
 
 /// Attempts to log in a user using a LoginForm. Upon success, the user struct
 /// associated with that account is returned. If the user supplies bad
-/// credentials, a `UserError::BadUsernameOrPassword` will be returned.
+/// credentials, a `UserErrorKind::BadUsernameOrPassword` will be returned.
 pub fn login_user(db: &DbConn, form: &LoginForm) -> Result<User, Error> {
     db.fetch_user(&form.email)
         .and_then(|user| {
@@ -28,7 +28,10 @@ pub fn login_user(db: &DbConn, form: &LoginForm) -> Result<User, Error> {
             if result {
                 Ok(user)
             } else {
-                Err(Error::User(UserError::BadUsernameOrPassword))
+                Err(Error::user(
+                    "bad username or password",
+                    UserErrorKind::BadUsernameOrPassword,
+                ))
             }
         })
 }
@@ -44,7 +47,7 @@ pub struct RegisterForm {
 
 /// Attempts to create a user using the given information. If the user tries
 /// to create an account with an email or username that already exists, then
-/// a `UserError` will be generated. (TODO: implement this)
+/// a `UserErrorKind` will be generated. (TODO: implement this)
 pub fn register_user(db: &DbConn, form: &RegisterForm) -> Result<i32, Error> {
     let password = bcrypt::hash(form.password.to_owned(), bcrypt::DEFAULT_COST)?;
     let new_user = NewUser {

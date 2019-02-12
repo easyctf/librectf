@@ -11,6 +11,7 @@ members = [
 ]
 
 [dependencies]
+backtrace = "0.3"
 diesel = { version = "1.4", optional = true }
 env_logger = "0.6"
 structopt = "0.2"

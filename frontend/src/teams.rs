@@ -2,7 +2,7 @@ use core::models::Team;
 use http::uri::Uri;
 use warp::Filter;
 
-use crate::extractors::{get_context, get, navbar, Context};
+use crate::extractors::{get, get_context, navbar, Context};
 use crate::guards::require_login;
 use crate::render::render_template;
 

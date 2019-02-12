@@ -2,7 +2,8 @@ use std::io;
 use std::net::SocketAddr;
 use std::sync::Arc;
 
-use core::{DatabaseUri, State};
+use backtrace::Backtrace;
+use core::{DatabaseUri, Error, State};
 use structopt::StructOpt;
 
 #[derive(StructOpt)]
@@ -44,10 +45,7 @@ struct RunOpts {
     secret_key: String,
 }
 
-fn main() {
-    env_logger::init();
-    let opt = Opt::from_args();
-
+fn run(opt: Opt) -> Result<(), Error> {
     match opt.command {
         Commands::Migrate(opts) => {
             let db = opts
@@ -67,6 +65,19 @@ fn main() {
 
             let state = State::new(opts.secret_key, Arc::new(db));
             warp::serve(frontend::routes(state)).run(opts.addr);
+        }
+    }
+    Ok(())
+}
+
+fn main() {
+    env_logger::init();
+    let backtrace = Backtrace::new();
+    let opt = Opt::from_args();
+    match run(opt) {
+        Ok(_) => (),
+        Err(err) => {
+            println!("backtrace: {:?}", backtrace);
         }
     }
 }

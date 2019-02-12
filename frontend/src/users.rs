@@ -1,13 +1,13 @@
 use core::{
     models::User,
     users::{LoginForm, RegisterForm},
-    Error, State,
+    Error, State, UserErrorKind,
 };
 use http::uri::Uri;
 use warp::Filter;
 use wtforms::Form;
 
-use crate::extractors::{get_context, get, navbar, Context};
+use crate::extractors::{get, get_context, navbar, Context};
 use crate::render::render_template;
 use crate::session::Session;
 
@@ -22,7 +22,12 @@ pub fn post_login() -> Resp!() {
     warp::body::form()
         .and_then(|form: LoginForm| {
             form.validate()
-                .map_err(Error::from)
+                .map_err(|_| {
+                    Error::user(
+                        "bad username or password",
+                        UserErrorKind::BadUsernameOrPassword,
+                    )
+                })
                 .map_err(warp::reject::custom)
         })
         .and(get::<State>())
@@ -34,7 +39,7 @@ pub fn post_login() -> Resp!() {
         })
         .and(get::<Session>())
         .map(|user: User, mut session: Session| {
-            session.user = Some(user);
+            session.set_user(user);
             warp::ext::set::<Session>(session);
             warp::redirect::redirect(Uri::from_static("/users/profile"))
         })
@@ -65,7 +70,12 @@ pub fn post_register() -> Resp!() {
     warp::body::form()
         .and_then(|form: RegisterForm| {
             form.validate()
-                .map_err(Error::from)
+                .map_err(|_| {
+                    Error::user(
+                        "bad registration info",
+                        UserErrorKind::BadUsernameOrPassword,
+                    )
+                })
                 .map_err(warp::reject::custom)
         })
         .and(get::<State>())
