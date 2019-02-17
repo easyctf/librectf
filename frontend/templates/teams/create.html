@@ -2,4 +2,33 @@
 {% block title %}Create Team{% endblock %}
 
 {% block content %}
+<section class="hero">
+    <div class="hero-body">
+        <div class="container has-text-centered">
+            <div class="column is-4 is-offset-4">
+                <h3 class="title has-text-grey">Create Team</h3>
+                <div class="box">
+                    <form action="/teams/create" method="POST">
+                        <div class="field">
+                            <div class="control">
+                                <input class="input" type="text" name="name" placeholder="Team name" autofocus="">
+                            </div>
+                        </div>
+                        <div class="field">
+                            <div class="control">
+                                <input class="input" type="text" name="affiliation" placeholder="(optional) affiliation" autofocus="">
+                            </div>
+                        </div>
+                        <button class="button is-block is-info is-fullwidth">Login</button>
+                    </form>
+                </div>
+                <p>&nbsp;</p>
+                <h3 class="title has-text-grey">Join Team</h3>
+                <div class="box">
+                	<p>You need an invitation to join another team!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
 {% endblock %}

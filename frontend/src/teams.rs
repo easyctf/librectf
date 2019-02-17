@@ -10,7 +10,7 @@ pub fn get_create() -> Resp!() {
     require_login()
         .and(navbar())
         .and(get_context())
-        .and_then(|ctx: Context| render_template("users/login.html", ctx.into()))
+        .and_then(|ctx: Context| render_template("teams/create.html", ctx.into()))
 }
 
 pub fn get_index() -> Resp!() {

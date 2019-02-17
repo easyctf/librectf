@@ -28,6 +28,9 @@ pub trait ErrorExt: StdError {
 /// An error caused by the user.
 #[derive(Copy, Clone, Debug)]
 pub enum UserErrorKind {
+    /// Forbidden
+    Forbidden,
+
     /// The user supplied bad credentials during login.
     BadUsernameOrPassword,
 }
@@ -37,12 +40,16 @@ pub enum UserErrorKind {
 pub enum ErrorKind {
     #[doc(hidden)]
     Bcrypt,
+
     #[doc(hidden)]
     Diesel,
+
     #[doc(hidden)]
     Migrations,
+
     #[doc(hidden)]
     R2d2,
+
     #[doc(hidden)]
     Tera,
 

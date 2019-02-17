@@ -56,8 +56,7 @@ pub fn routes(state: State) -> BoxedFilter<(impl Reply,)> {
         GET ("users" / "register") => users::get_register(),
         POST ("users" / "login") => users::post_login(),
         POST ("users" / "register") => users::post_register(),
-    }
-    .recover(Error::reply);
+    };
 
     let statics = warp::path("static")
         .and(warp::path::param())
@@ -73,5 +72,5 @@ pub fn routes(state: State) -> BoxedFilter<(impl Reply,)> {
             None => warp::reply::with_header(reply, "please", "fix this"),
         });
 
-    statics.or(routes).boxed()
+    statics.or(routes).recover(Error::reply).boxed()
 }
