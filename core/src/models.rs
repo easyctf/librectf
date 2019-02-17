@@ -16,7 +16,7 @@ pub struct NewChallenge {
 }
 
 /// Represents a single challenge.
-#[derive(Debug, Queryable, Serialize)]
+#[derive(Clone, Debug, Queryable, Serialize)]
 pub struct Challenge {
     /// Numerical id of the challenge.
     pub id: i32,

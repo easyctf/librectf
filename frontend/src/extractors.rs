@@ -1,10 +1,14 @@
-use core::Error;
+use core::{DbConn, Error, State};
 use std::ops::{Deref, DerefMut};
 use tera::Context as TeraContext;
 use warp::{Filter, Rejection};
 
 use crate::session::Session;
 pub use warp::ext::get;
+
+pub fn db_conn() -> impl Clone + Filter<Extract = (DbConn,), Error = Rejection> {
+    get::<State>().and_then(|state: State| state.get_connection().map_err(warp::reject::custom))
+}
 
 #[derive(Clone, Default)]
 pub struct Context(pub TeraContext);

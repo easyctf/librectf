@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS `teams` (
     `captain_id` INTEGER NOT NULL,
     `name` VARCHAR(20) COLLATE utf8mb4_general_ci NOT NULL,
     `affiliation` VARCHAR(20),
-    `banned` BOOLEAN NOT NULL,
+    `banned` BOOLEAN NOT NULL DEFAULT FALSE,
 
     -- constraints
     UNIQUE (`name`)

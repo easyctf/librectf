@@ -1,13 +1,13 @@
 use core::{
     models::User,
     users::{LoginForm, RegisterForm},
-    Error, State, UserErrorKind,
+    Error, UserErrorKind,
 };
 use http::uri::Uri;
 use warp::Filter;
 use wtforms::Form;
 
-use crate::extractors::{get, get_context, navbar, Context};
+use crate::extractors::{db_conn, get, get_context, navbar, Context};
 use crate::render::render_template;
 use crate::session::Session;
 
@@ -30,13 +30,8 @@ pub fn post_login() -> Resp!() {
                 })
                 .map_err(warp::reject::custom)
         })
-        .and(get::<State>())
-        .and_then(|form: LoginForm, state: State| {
-            state
-                .get_connection()
-                .and_then(|conn| core::users::login_user(&conn, &form))
-                .map_err(warp::reject::custom)
-        })
+        .and(db_conn())
+        .and_then(|form, conn| core::users::login_user(&conn, &form).map_err(warp::reject::custom))
         .and(get::<Session>())
         .map(|user: User, mut session: Session| {
             session.set_user(user);
@@ -78,12 +73,9 @@ pub fn post_register() -> Resp!() {
                 })
                 .map_err(warp::reject::custom)
         })
-        .and(get::<State>())
-        .and_then(|form: RegisterForm, state: State| {
-            state
-                .get_connection()
-                .and_then(|conn| core::users::register_user(&conn, &form))
-                .map_err(warp::reject::custom)
+        .and(db_conn())
+        .and_then(|form, conn| {
+            core::users::register_user(&conn, &form).map_err(warp::reject::custom)
         })
         .map(|_user_id: i32| warp::redirect::redirect(Uri::from_static("/users/login")))
 }

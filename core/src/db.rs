@@ -17,7 +17,7 @@ use diesel::{
 use r2d2::Pool;
 use url::{ParseError, Url};
 
-use crate::models::{NewUser, Team, User};
+use crate::models::{NewTeam, NewUser, Team, User};
 
 #[cfg(feature = "mysql")]
 mod mysql {
@@ -295,6 +295,7 @@ impl DbConn {
         }
         .map_err(Error::from)
     }
+
     /// Tries to fetch the user with the given email. (TODO: lookup by username)
     pub fn fetch_user(&self, email: impl AsRef<str>) -> Result<User, Error> {
         use crate::schema::users::dsl;
@@ -309,6 +310,7 @@ impl DbConn {
         }
         .map_err(Error::from)
     }
+
     /// Tries to insert `user` into the database.
     pub fn create_user(&self, user: &NewUser) -> Result<i32, Error> {
         use crate::schema::users;
@@ -319,6 +321,20 @@ impl DbConn {
             DbConn::Postgres(conn) => conn.create_and_return(users::table, user, users::dsl::id),
             #[cfg(feature = "sqlite")]
             DbConn::Sqlite(conn) => conn.create_and_return(users::table, user, users::dsl::id),
+        }
+        .map_err(Error::from)
+    }
+
+    /// Tries to insert `user` into the database.
+    pub fn create_team(&self, team: &NewTeam) -> Result<i32, Error> {
+        use crate::schema::teams;
+        match self {
+            #[cfg(feature = "mysql")]
+            DbConn::Mysql(conn) => conn.create_and_return(teams::table, team, teams::dsl::id),
+            #[cfg(feature = "postgres")]
+            DbConn::Postgres(conn) => conn.create_and_return(teams::table, team, teams::dsl::id),
+            #[cfg(feature = "sqlite")]
+            DbConn::Sqlite(conn) => conn.create_and_return(teams::table, team, teams::dsl::id),
         }
         .map_err(Error::from)
     }

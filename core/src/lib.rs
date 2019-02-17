@@ -23,6 +23,8 @@ mod schema;
 mod state;
 
 #[doc(flatten)]
+pub mod teams;
+#[doc(flatten)]
 pub mod users;
 
 pub use crate::config::Config;

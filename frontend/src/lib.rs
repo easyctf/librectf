@@ -54,6 +54,7 @@ pub fn routes(state: State) -> BoxedFilter<(impl Reply,)> {
         GET ("users" / "logout") => users::get_logout(),
         GET ("users" / "profile") => users::get_profile(),
         GET ("users" / "register") => users::get_register(),
+        POST ("teams" / "create") => teams::post_create(),
         POST ("users" / "login") => users::post_login(),
         POST ("users" / "register") => users::post_register(),
     };
