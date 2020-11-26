@@ -151,7 +151,10 @@
                     <main>
                         <h1><a class="header" href="#configuration" id="configuration">Configuration</a></h1>
 <p>LibreCTF is configured using the language <a href="https://dhall-lang.org/">Dhall</a>. It introduces many
-type-safety-related benefits. </p>
+type-safety-related benefits. Before running, make sure the config files
+<code>deploy.dhall</code> and <code>contest.dhall</code> live in the same directory as
+<code>docker-compose.yml</code>. The docker compose config will mount these dhall files
+into the volume when it starts the application.</p>
 <p>There's 2 sets of configuration:</p>
 <ul>
 <li>the deployment config, which is loaded once when the platform is started. The
@@ -159,7 +162,6 @@ platform must be restarted in order to reload this config</li>
 <li>the contest config, which can be freely hot-reloaded as the platform is
 running</li>
 </ul>
-<p>TODO: docker environment variables</p>
 <h2><a class="header" href="#deployment-config" id="deployment-config">Deployment Config</a></h2>
 <p>The schema for the deployment config can be found in <code>./schema/deploy.dhall</code>.</p>
 <h2><a class="header" href="#contest-config" id="contest-config">Contest Config</a></h2>
