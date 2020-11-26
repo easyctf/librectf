@@ -39,6 +39,7 @@ raven = {extras = ["flask"], version = "*"}
 redis = "*"
 requests = "*"
 wtforms = "*"
+dhall = "*"
 
 [dev-packages]
 pyls = "*"

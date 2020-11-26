@@ -22,6 +22,9 @@ services:
         links:
             - db
             - redis
+        volumes:
+            - "./contest.dhall:/contest.dhall"
+            - "./deploy.dhall:/deploy.dhall"
         environment:
             - "SECRET_KEY=${SECRET_KEY}"
             - "ADMIN_EMAIL=${ADMIN_EMAIL}"
