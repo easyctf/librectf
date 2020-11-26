@@ -23,8 +23,7 @@ services:
             - db
             - redis
         volumes:
-            - "./contest.dhall:/app/contest.dhall"
-            - "./deploy.dhall:/app/deploy.dhall"
+            - "${CONFIG_DIR}:/app/config"
         environment:
             - "FLASK_DEBUG=1"
             - "SECRET_KEY=${SECRET_KEY}"

@@ -12,10 +12,12 @@ def create_app(config=None):
     app = Flask(__name__, static_folder="assets", static_url_path="/assets")
     hostname = socket.gethostname()
 
-    print("CONFIG IS", config)
     if config is None:
         from easyctf.config import Config
-        config = Config.from_dhall_file("deploy.dhall")
+        # TODO: look for this file everywhere
+        # TODO: drop it in the right place so the schema import is guaranteed to work
+        config_path = Config.locate_config_directory()
+        config = Config.from_dhall_file(config_path / "deploy.dhall")
     app.config.from_object(config)
 
     from easyctf.objects import cache, db, login_manager, sentry

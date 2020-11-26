@@ -1,10 +1,7 @@
 # Configuration
 
 LibreCTF is configured using the language [Dhall][1]. It introduces many
-type-safety-related benefits. Before running, make sure the config files
-`deploy.dhall` and `contest.dhall` live in the same directory as
-`docker-compose.yml`. The docker compose config will mount these dhall files
-into the volume when it starts the application.
+type-safety-related benefits. 
 
 There's 2 sets of configuration:
 
@@ -12,6 +9,8 @@ There's 2 sets of configuration:
   platform must be restarted in order to reload this config
 - the contest config, which can be freely hot-reloaded as the platform is
   running
+
+TODO: docker environment variables
 
 ## Deployment Config
 
