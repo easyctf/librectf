@@ -1,7 +1,0 @@
-{
-    "resource_prefix": "staging_",
-    "region": "nyc3",
-    "load_balancer": {
-        "name": "load_balancer"
-    }
-}

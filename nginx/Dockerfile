@@ -1,4 +1,4 @@
 FROM nginx:alpine
 
 COPY nginx.conf /etc/nginx/nginx.conf
-COPY easyctf.conf /etc/nginx/easyctf.conf
+COPY librectf.conf /etc/nginx/librectf.conf
