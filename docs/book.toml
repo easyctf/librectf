@@ -1,0 +1,6 @@
+[book]
+authors = ["Michael Zhang"]
+language = "en"
+multilingual = false
+src = "src"
+title = "LibreCTF Documentation"
