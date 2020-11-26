@@ -1,0 +1,150 @@
+{% from "templates.html" import render_field, render_generic_field %}
+{% extends "layout.html" %}
+{% block title %}Problems{% endblock %}
+
+{% block content %}
+    <script type="text/javascript" src="/assets/js/selectize.min.js"></script>
+    <link rel="stylesheet" href="/assets/css/selectize.min.css" />
+    <link rel="stylesheet" href="/assets/css/main.min.css" />
+    <style>
+        .problem img {
+            display: block;
+            max-height: 200px;
+            max-width: 100%;
+        }
+    </style>
+    <div class="section gradient">
+        <div class="container">
+            <div style="float: right;">
+                <h3>Points: {{ current_user.team.points() }}</h3>
+            </div>
+            <h1>Problems</h1>
+        </div>
+    </div>
+    <div class="section">
+        <div class="container">
+            <nav class="navbar navbar-default">
+                <div class="container">
+                    <!-- <form class="navbar-form">
+                        <input type="text" class="form-control" />
+                    </form> -->
+                    <span class="navbar-text">Categories</span>
+                    <select id="category-select" multiple>
+                        {% for category in categories %}
+                        <option value="{{ category }}" selected>{{ category }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </nav>
+            <p></p>
+            <div class="panel-group" id="problems"></div>
+        </div>
+    </div>
+    <script type="text/javascript">
+        var submitForm = {
+            "csrf": `{{ problem_submit_form.csrf_token }}`,
+        };
+        var problems = [
+            {% for problem in problems %}
+            {
+                "pid": {{ problem.pid }},
+                "title": "{{ problem.title }}",
+                "value": {{ problem.value }},
+                "author": "{{ problem.author }}",
+                "category": "{{ problem.category }}",
+                "solved": {{ "true" if problem.solved else "false" }},
+                "nsolves": {{ problem.solves | length }},
+                "hint": "{{ problem.hint }}",
+                "programming": {{ "true" if problem.programming else "false" }},
+                {% if problem.programming %}"programmingUrl": "{{ url_for("chals.programming", pid=problem.pid) }}",{% endif %}
+                "description": `{{ problem.render_description(tid=current_user.tid) | safe }}`,
+                "solvesUrl": "{{ url_for("chals.solves", pid=problem.pid) }}",
+                "form": {
+                    "pid": `{{ problem_submit_form.pid(value=problem.pid) }}`,
+                }
+            },
+            {% endfor %}
+        ];
+        var toggleHint = function (pid) {
+            $("#" + pid + "_hint").slideToggle("fast");
+        }
+        var renderProblems = function(list) {
+            let html = "";
+            for (let problem of list) {
+                html += `<div class="panel panel-${problem.solved ? "success" : "default"}">
+                    <div class="panel-heading" data-toggle="collapse" data-target="#${problem.pid}_body">
+                        <h4 class="panel-title">
+                            <b>${problem.title}</b> ${problem.value} points
+                            <div class="pull-right">${problem.category} - ${problem.solved ? "Solved" : "Unsolved"} (${ problem.nsolves } ${"solve" + (problem.nsolves == 1 ? "" : "s")})</div>
+                        </h4>
+                    </div>
+                    <div id="${problem.pid}_body" class="panel-collapse collapse${problem.solved ? "" : " in"}">
+                        <div class="panel-body problem">
+                            <div>
+                                <p>
+                                    <small>Written by
+                                        <b>${problem.author}</b></small>
+                                </p>
+                                ${problem.description}
+                            </div>
+                            <form class="horizontal-form" method="POST">
+                                ${submitForm.csrf}
+                                ${problem.form.pid}
+                                <div class="row">
+                                    <div class="col-md-6">` + 
+                                        (problem.programming ? `
+                                            <div class="btn-group">
+                                                <input onclick="toggleHint(${problem.pid}); return false;" type="button" class="btn btn-info" value="Hint"/>
+                                                ` + (problem.solved ? "" : `
+                                                    <a type="button" class="btn btn-success" href="${problem.programmingUrl}" target="_blank" rel="noopener">Open in Programming Editor
+                                                        <i class="fa fa-fw fa-external-link"></i></a>
+                                                `) + `
+                                                <a href="${problem.solvesUrl}" type="button" class="btn btn-primary">View Solves</a>
+                                            </div>
+                                        ` : `
+                                            <div class="input-group">
+                                                <span class="input-group-btn">
+                                                    <input onclick="toggleHint(${problem.pid}); return false;" type="button" class="btn btn-info" value="Hint"/>
+                                                </span>
+                                                <input class="form-control" name="flag" placeholder="${problem.solved ? "Already solved!" : "Enter flag..."}" autocomplete="off"
+                                                        ` + (problem.solved ? " disabled" : "") + `/>
+                                                ` + (!problem.solved ? `
+                                                    <span class="input-group-btn">
+                                                        <button type="submit" class="btn btn-success">Submit <i class="fa fa-fw fa-arrow-right"></i></button>
+                                                        <a href="${problem.solvesUrl}" type="button" class="btn btn-primary">View Solves</a>
+                                                    </span>
+                                                ` : `
+                                                    <span class="input-group-btn">
+                                                        <a href="${problem.solvesUrl}" type="button" class="btn btn-primary">View Solves</a>
+                                                    </span>
+                                                `) + `
+                                            </div>
+                                        `) + `
+                                    </div>
+                                </div>
+                            </form>
+                            <p></p>
+                            <div hidden id="${problem.pid}_hint" class="well">
+                                ${problem.hint}
+                            </div>
+                        </div>
+                    </div>
+                </div>`;
+            }
+            $("#problems").html(html);
+        }
+        var updateCategories = function() {
+            var catFilter = new Set();
+            for (var el of $("#category-select")[0].options) catFilter.add(el.value);
+            var limitedProblems = problems.filter(problem => catFilter.has(problem.category));
+            renderProblems(limitedProblems);
+        }
+        $(function() {
+            $("#category-select").selectize({
+            }).on("change", () => {
+                updateCategories();
+            });
+            updateCategories();
+        });
+    </script>
+{% endblock %}

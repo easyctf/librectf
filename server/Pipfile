@@ -1,0 +1,49 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+Flask = "*"
+Flask-Breadcrumbs = "*"
+Flask-Caching = "*"
+Flask-Celery-Helper = "*"
+Flask-Login = "*"
+Flask-Migrate = "*"
+Flask-SQLAlchemy = "*"
+Flask-Script = "*"
+Flask-WTF = "*"
+GitPython = "*"
+Pillow = "*"
+PyQRCode = "*"
+PyYAML = "*"
+SQLAlchemy = "*"
+WTForms-Components = "*"
+bcrypt = "*"
+celery = "*"
+coverage = "*"
+cryptography = "*"
+email-validator = "*"
+flask-csp = "*"
+gitdb = "*"
+markdown2 = "*"
+mysqlclient = "*"
+onetimepass = "*"
+paramiko = "*"
+passlib = "*"
+pathlib = "*"
+pycryptodome = "*"
+pytest = "*"
+rauth = "*"
+raven = {extras = ["flask"], version = "*"}
+redis = "*"
+requests = "*"
+
+[dev-packages]
+pyls = "*"
+pyls-mypy = "*"
+mypy = "*"
+neovim = "*"
+
+[requires]
+python_version = "3.8"

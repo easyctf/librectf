@@ -1,0 +1,31 @@
+{% from "templates.html" import render_field %}
+{% extends "layout.html" %}
+{% block title %}New Classroom{% endblock %}
+
+{% block content %}
+    <div class="section">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 col-md-offset-3 col-sm-10 col-sm-offset-1">
+                    <p>
+                        <a href="{{ url_for('classroom.index') }}">&laquo; Back</a>
+                    </p>
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h2 class="panel-title">New Classroom</h2>
+                        </div>
+                        <div class="panel-body">
+                            <form method="POST">
+                                {{ new_classroom_form.csrf_token }}
+                                <fieldset>
+                                    {{ render_field(new_classroom_form.name) }}
+                                </fieldset>
+                                {{ new_classroom_form.submit(class_="btn btn-primary") }}
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

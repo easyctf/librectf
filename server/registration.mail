@@ -1,0 +1,12 @@
+<h2>Hey ${username}!</h2>
+
+<p>You recently signed up for EasyCTF IV with this email. To confirm your
+email, please click on the following link (or copy-paste it into your browser
+your email client didn't render a link).</p>
+
+<a href="${link}" target="_blank">${link}</a>
+
+<p>We hope you have fun!</p>
+
+<p>__<br />
+The EasyCTF Team</p>

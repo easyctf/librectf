@@ -1,2 +1,0 @@
-[print_schema]
-file = "core/src/schema.rs"

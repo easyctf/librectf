@@ -1,0 +1,61 @@
+{% extends "layout.html" %}
+{% block title %}Submission #{{ job.id }} on {{ problem.title }}{% endblock %}
+
+{% block content %}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ace/1.2.2/ace.js" integrity="sha384-niN+bRlaXMBoq/f5L4zKOEYGxuD0YRGBocto9LP2fB1UiMfxrymATRN4GqjVUt6J" crossorigin="anonymous"></script>
+    <div class="section">
+        <div class="container">
+            <div class="page-header">
+                <h1>Submission #{{ job.id }} on {{ problem.title }}</h1>
+            </div>
+            <ul class="nav nav-tabs" role="tablist">
+                <li role="presentation"><a href="{{ url_for("chals.programming") }}" role="tab">Editor</a></li>
+                <li role="presentation"><a href="{{ url_for("chals.status") }}" role="tab">Submissions</a></li>
+                <li role="presentation" class="active"><a href="javascript:void(0);" role="tab">Submission #{{ job.id }}</a></li>
+            </ul>
+
+            <div class="tab-content">
+                <div role="tabpanel" class="tab-pane active">
+                    <label class="control-label">Overview</label>
+                    <p>
+                        Submitted by <a href="{{ url_for("users.profile", uid=job.uid) }}" target="_blank" rel="noopener">{{ user.username }}</a>
+                        <time data-livestamp="{{ job.submitted | to_timestamp }}"></time>.
+                    </p>
+                    <label class="control-label">Code</label>
+                    <div id="code" style="width: 100%; min-height:20vh;">{{ job.contents }}</div>
+
+                    <p>
+                        <b>Status:</b> {{ job.status }}<br />
+                        {% if job.status == 2 %}
+                            <b>Verdict:</b> {{ job.verdict }}<br />
+                            <b>Time:</b> {{ job.execution_time }}<br />
+                            <b>Memory:</b> {{ job.execution_memory }}<br />
+                        {% endif %}
+                    </p>
+                    <h3>Verdict Abbreviation</h3>
+                    <ul>
+                        <li>AC = Accepted</li>
+                        <li>IS = Invalid Source</li>
+                        <li>WA = Wrong Answer</li>
+                        <li>TLE = Time Limit Exceeded</li>
+                        <li>RTE = RunTime Error</li>
+                        <li>ISC = Illegal SysCall</li>
+                        <li>CE = Compilation Error</li>
+                        <li>JE = Judge Error (you should probably report this)</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        $(document).ready(function () {
+            var editor = ace.edit("code");
+            editor.setOptions({
+                fontFamily: "monospace",
+                fontSize: "10pt"
+            });
+            editor.setReadOnly(true);
+            editor.getSession().setMode("ace/mode/" + {"python2": "python", "python3": "python", "cxx": "c_cpp", "java": "java"}["{{ job.language }}"]);
+        });
+    </script>
+{% endblock %}

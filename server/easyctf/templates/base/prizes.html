@@ -1,0 +1,20 @@
+{% extends "layout.html" %}
+{% block title %}Prizes{% endblock %}
+
+{% block content %}
+    <div class="section gradient">
+        <div class="container">
+            <h1>Prizes</h1>
+        </div>
+    </div>
+    <div class="section">
+        <div class="container">
+            <h2>Confirmed Prizes</h2>
+            <ul>
+                <li>Top 10 eligible teams will receive <b>EasyCTF stickers</b>.</li>
+            </ul>
+            <h3>More prizes incoming!</h3>
+            <p>Join us on <a href="{{ url_for('base.updates') }}" target="_blank"><i class="fa fa-comment"></i> Discord</a> to get notified when this information is available.</p>
+        </div>
+    </div>
+{% endblock %}

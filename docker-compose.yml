@@ -1,0 +1,45 @@
+version: "3"
+
+services:
+    web:
+        build: nginx
+        ports:
+            - "8000:80"
+        links:
+            - app
+            - filestore
+        volumes:
+            - filestore:/filestore-data
+    filestore:
+        build: filestore
+        volumes:
+            - filestore:/filestore-data
+        environment:
+            - "UPLOAD_FOLDER=/filestore-data"
+            - "FILESTORE_PORT=80"
+    app:
+        build: server
+        links:
+            - db
+            - redis
+        environment:
+            - "SECRET_KEY=${SECRET_KEY}"
+            - "ADMIN_EMAIL=${ADMIN_EMAIL}"
+            - "ENVIRONMENT=${ENVIRONMENT}"
+            - "FLASK_APP=app"
+            - "CACHE_REDIS_HOST=redis"
+            - "MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}"
+            - "MYSQL_HOST=db"
+            - "MYSQL_DATABASE=easyctf"
+            - "FILESTORE_SAVE_ENDPOINT=http://filestore/save"
+    db:
+        image: mariadb:10
+        expose:
+            - 3306
+        environment:
+            - "MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}"
+            - "MYSQL_DATABASE=easyctf"
+    redis:
+        image: redis:6-alpine
+volumes:
+    filestore:

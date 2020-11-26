@@ -1,0 +1,4146 @@
+{
+  "images": {
+    "game_interface_bg": "https://i.imgur.com/IHEUAT4.gif",
+    "A": "https://imgur.com/Zxl68XK.png",
+    "B": "https://i.imgur.com/v0oCH21.png",
+    "C": "https://i.imgur.com/bUv0V7J.png",
+    "D": "https://i.imgur.com/d7t07Rx.png",
+    "E": "https://i.imgur.com/TPlcxap.png",
+    "bg": "https://i.imgur.com/IHEUAT4.gif",
+    "blue": "https://i.imgur.com/6PJUIW3.png"
+  },
+  "category_icons": {
+    "crypto": "",
+    "web": "",
+    "forensics": "",
+    "binary": "",
+    "reversing": "",
+    "misc": ""
+  },
+  "scenes": {
+    "B0": {
+      "background_image": "blue",
+      "choreography": [
+        {
+          "action": "dialogue",
+          "speaker": null,
+          "text": "WELCOME TO A NEW REPUBLIC."
+        },
+        {
+          "action": "dialogue",
+          "speaker": null,
+          "text": "DO YOUR DUTY WELL."
+        },
+        {
+          "action": "dialogue",
+          "speaker": null,
+          "text": " "
+        }
+      ],
+      "on": {
+        "return": true
+      }
+    },
+    "1": {
+      "background_image": "bg",
+      "choreography": [
+        {
+          "action": "show_character",
+          "sprite": "E",
+          "position": 1
+        },
+        {
+          "action": "dialogue",
+          "speaker": "Minako",
+          "text": "H-hi! Could I ask you for a favor?"
+        },
+        {
+          "action": "dialogue",
+          "speaker": "You",
+          "text": "Sure."
+        },
+        {
+          "action": "show_problem",
+          "problem_id": 91
+        },
+        {
+          "action": "dialogue",
+          "speaker": "Minako",
+          "text": "Could you look something up for me?"
+        },
+        {
+          "action": "dialogue",
+          "speaker": "You",
+          "text": "Sure, that’s what I’m here for."
+        },
+        {
+          "action": "hide_character",
+          "position": 1
+        },
+        {
+          "action": "dialogue",
+          "speaker": null,
+          "text": " "
+        }
+      ],
+      "on": {
+        "after_scenes": [
+          "B0"
+        ]
+      }
+    },
+    "2": {
+      "background_image": "bg",
+      "choreography": [
+        {
+          "action": "show_character",
+          "sprite": "B",
+          "position": 1
+        },
+        {
+          "action": "dialogue",
+          "speaker": "Director",
+          "text": "Greetings, servant of the Republic."
+        },
+        {
+          "action": "dialogue",
+          "speaker": "You",
+          "text": "..."
+        },
+        {
+          "action": "dialogue",
+          "speaker": "You",
+          "text": "Glory to the Republic."
+        },
+        {
+          "action": "dialogue",
+          "speaker": "Director",
+          "text": "..."
+        },
+        {
+          "action": "dialogue",
+          "speaker": "Director",
+          "text": "You may recognize me as the director of the Department of Security."
+        },
+        {
+          "action": "show_problem",
+          "problem_id": 66
+        },
+        {
+          "action": "dialogue",
+          "speaker": "Director",
+          "text": "I expect my request to be given first priority."
+        },
+        {
+          "action": "hide_character",
+          "position": 1
+        },
+        {
+          "action": "dialogue",
+          "speaker": null,
+          "text": " "
+        }
+      ],
+      "on": {
+        "after_scenes": [
+          "1"
+        ]
+      }
+    },
+    "3": {
+      "choreography": [
+        {
+          "action": "show_character",
+          "sprite": "D",
+          "position": 1
+        },
+        {
+          "action": "dialogue",
+          "text": "Hey.",
+          "speaker": "Julia"
+        },
+        {
+          "action": "dialogue",
+          "text": "\u2026 Yes?",
+          "speaker": "You"
+        },
+        {
+          "action": "dialogue",
+          "text": "You work here?",
+          "speaker": "Julia"
+        },
+        {
+          "action": "dialogue",
+          "text": "I sure hope so, or I\u2019ll find myself arrested soon.",
+          "speaker": "You"
+        },
+        {
+          "action": "dialogue",
+          "text": "Ha-ha.",
+          "speaker": "Julia"
+        },
+        {
+          "action": "dialogue",
+          "text": "...",
+          "speaker": "Julia"
+        },
+        {
+          "action": "show_problem",
+          "problem_id": 65
+        },
+        {
+          "action": "dialogue",
+          "text": "I\u2019m from the Department of Prosperity. I need an agricultural report, or something?",
+          "speaker": "Julia"
+        },
+        {
+          "action": "hide_character",
+          "position": 1
+        },
+        {
+          "action": "dialogue",
+          "speaker": null,
+          "text": " "
+        }
+      ],
+      "on": {
+        "after_scenes": [
+          "2"
+        ]
+      }
+    },
+    "4": {
+      "on": {
+        "after_scenes": [
+          "3"
+        ]
+      },
+      "choreography": [
+        {
+          "action": "show_character",
+          "sprite": "C",
+          "position": 1
+        },
+        {
+          "action": "dialogue",
+          "text": "heww0! c0uld u pw3ase help m3?? :3",
+          "speaker": "x_SLAYER_X"
+        },
+        {
+          "action": "dialogue",
+          "text": "Um\u2026 why do you talk like that?",
+          "speaker": "You"
+        },
+        {
+          "action": "show_problem",
+          "problem_id": 89
+        },
+        {
+          "action": "dialogue",
+          "text": "dw0nt be rude >:3 im not fwom aw0und h3r3, u kn0.",
+          "speaker": "x_SLAYER_X"
+        },
+        {
+          "action": "dialogue",
+          "text": "\u2026 OK.",
+          "speaker": "You"
+        },
+        {
+          "action": "hide_character",
+          "position": 1
+        },
+        {
+          "action": "dialogue",
+          "text": " ",
+          "speaker": null
+        }
+      ]
+    },
+    "5": {
+      "on": {
+        "after_scenes": [
+          "4"
+        ]
+      },
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "A"
+        },
+        {
+          "action": "dialogue",
+          "text": "We come seeking the truth.",
+          "speaker": "???"
+        },
+        {
+          "action": "dialogue",
+          "text": "...",
+          "speaker": "???"
+        },
+        {
+          "action": "dialogue",
+          "text": "Yes\u2026 you\u2019re in the Department of Truth. Can I help you?",
+          "speaker": "You"
+        },
+        {
+          "action": "show_problem",
+          "problem_id": 92
+        },
+        {
+          "action": "dialogue",
+          "text": "\u2026 ",
+          "speaker": "???"
+        },
+        {
+          "action": "dialogue",
+          "text": "\u2026",
+          "speaker": "You"
+        },
+        {
+          "action": "hide_character",
+          "position": 1
+        },
+        {
+          "action": "dialogue",
+          "text": " ",
+          "speaker": null
+        }
+      ]
+    },
+    "6": {
+      "on": {
+        "problems_solved": {
+          "problems": [
+            89,
+            91
+          ],
+          "thresh": 1
+        }
+      },
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "C"
+        },
+        {
+          "action": "dialogue",
+          "text": "h1!!!11 w4nt 2 kno my st4r sign?? :0",
+          "speaker": "x_SLAYER_X"
+        },
+        {
+          "action": "dialogue",
+          "text": "Sorry, your what? ",
+          "speaker": "You"
+        },
+        {
+          "action": "dialogue",
+          "text": "3: my astrowogicalw s1gn!! l1ke t3h constewwations!! ",
+          "speaker": "x_SLAYER_X"
+        },
+        {
+          "action": "dialogue",
+          "text": "Oh. I don\u2019t really believe in that stuff.",
+          "speaker": "You"
+        },
+        {
+          "action": "dialogue",
+          "text": "I mean, you can\u2019t even see them anymore anyway because of the screens. So what\u2019s the point?",
+          "speaker": "You"
+        },
+        {
+          "action": "dialogue",
+          "text": "... But sure, what is it?",
+          "speaker": "You"
+        },
+        {
+          "action": "show_problem",
+          "problem_id": 103
+        },
+        {
+          "action": "dialogue",
+          "text": " 1t\u2019s cancer!!11 :3",
+          "speaker": "x_SLAYER_X"
+        },
+        {
+          "action": "dialogue",
+          "text": "\u2026 OK.",
+          "speaker": "You"
+        },
+        {
+          "action": "hide_character",
+          "position": 1
+        },
+        {
+          "action": "dialogue",
+          "text": " ",
+          "speaker": null
+        }
+      ]
+    },
+    "7": {
+      "on": {
+        "problems_solved": {
+          "thresh": 1,
+          "problems": [
+            66,
+            89
+          ]
+        }
+      },
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "B"
+        },
+        {
+          "action": "dialogue",
+          "text": "These are sensitive times that we live in, Investigator, with the war, you know. ",
+          "speaker": "Director"
+        },
+        {
+          "action": "dialogue",
+          "text": "They are, Director. ",
+          "speaker": "You"
+        },
+        {
+          "action": "show_problem",
+          "problem_id": 87
+        },
+        {
+          "action": "dialogue",
+          "text": "Remember in these times that the Minister sees all. ",
+          "speaker": "Director"
+        },
+        {
+          "action": "hide_character",
+          "position": 1
+        },
+        {
+          "action": "dialogue",
+          "text": " ",
+          "speaker": null
+        }
+      ]
+    },
+    "8": {
+      "on": {
+        "problems_solved": {
+          "thresh": 1,
+          "problems": [
+            92,
+            66
+          ]
+        }
+      },
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "A"
+        },
+        {
+          "action": "show_problem",
+          "problem_id": 81
+        },
+        {
+          "action": "dialogue",
+          "text": "Tell me, when did the war start? ",
+          "speaker": "???"
+        },
+        {
+          "action": "dialogue",
+          "text": "\u2026 A long time ago\u2026 I think...",
+          "speaker": "You"
+        },
+        {
+          "action": "dialogue",
+          "text": "...",
+          "speaker": "???"
+        },
+        {
+          "action": "dialogue",
+          "text": "I can find you the date. ",
+          "speaker": "You"
+        },
+        {
+          "action": "hide_character",
+          "position": 1
+        },
+        {
+          "action": "dialogue",
+          "text": " ",
+          "speaker": null
+        }
+      ]
+    },
+    "9": {
+      "on": {
+        "problems_solved": {
+          "thresh": 1,
+          "problems": [
+            92,
+            65
+          ]
+        }
+      },
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "D"
+        },
+        {
+          "action": "dialogue",
+          "text": "You like your job?",
+          "speaker": "Julia"
+        },
+        {
+          "action": "dialogue",
+          "text": "Yes, I do. Maybe not all aspects of it, but yes. ",
+          "speaker": "You"
+        },
+        {
+          "action": "dialogue",
+          "text": "Sucks, I don\u2019t like mine. I\u2019m basically a glorified messenger. ",
+          "speaker": "Julia"
+        },
+        {
+          "action": "show_problem",
+          "problem_id": 75
+        },
+        {
+          "action": "dialogue",
+          "text": "I guess it\u2019s more fun being a glorified record-keeper, Investigator. ",
+          "speaker": "Julia"
+        },
+        {
+          "action": "dialogue",
+          "text": "...",
+          "speaker": "You"
+        },
+        {
+          "action": "dialogue",
+          "text": "You\u2019d think living under an oppressive regime would at least be interesting.",
+          "speaker": "Julia"
+        },
+        {
+          "action": "hide_character",
+          "position": 1
+        },
+        {
+          "action": "dialogue",
+          "text": " ",
+          "speaker": null
+        }
+      ]
+    },
+    "10": {
+      "on": {
+        "problems_solved": {
+          "thresh": 1,
+          "problems": [
+            65,
+            91
+          ]
+        }
+      },
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "E"
+        },
+        {
+          "action": "dialogue",
+          "text": "H-hi again!",
+          "speaker": "Minako"
+        },
+        {
+          "action": "dialogue",
+          "text": "I\u2019ve seen you around before, haven\u2019t I?",
+          "speaker": "You"
+        },
+        {
+          "action": "show_problem",
+          "problem_id": 82
+        },
+        {
+          "action": "dialogue",
+          "text": "U-um, I asked you for something else, the other day\u2026",
+          "speaker": "Minako"
+        },
+        {
+          "action": "dialogue",
+          "text": "No, before that maybe?",
+          "speaker": "You"
+        },
+        {
+          "action": "dialogue",
+          "text": "Um, I also work here, I suppose\u2026",
+          "speaker": "Minako"
+        },
+        {
+          "action": "dialogue",
+          "text": "I\u2019m cleaning staff. Like, um, cleaning the building.",
+          "speaker": "Minako"
+        },
+        {
+          "action": "dialogue",
+          "text": "\u2026",
+          "speaker": "You"
+        },
+        {
+          "action": "dialogue",
+          "text": "\u2026 Ah, I guess I didn\u2019t notice.",
+          "speaker": "You"
+        },
+        {
+          "action": "dialogue",
+          "text": "Oh, that\u2019s okay.",
+          "speaker": "Minako"
+        },
+        {
+          "action": "hide_character",
+          "position": 1
+        },
+        {
+          "action": "dialogue",
+          "text": " ",
+          "speaker": null
+        }
+      ]
+    },
+    "11": {
+      "on": {
+        "problems_solved": {
+          "thresh": 1,
+          "problems": [
+            75,
+            81
+          ]
+        }
+      },
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "D"
+        },
+        {
+          "action": "show_problem",
+          "problem_id": 78
+        },
+        {
+          "action": "dialogue",
+          "text": "I\u2019m back, I need a study on some new strain of grain. ",
+          "speaker": "Julia"
+        },
+        {
+          "action": "dialogue",
+          "text": "Sure. ",
+          "speaker": "You"
+        },
+        {
+          "action": "dialogue",
+          "text": "...",
+          "speaker": "Julia"
+        },
+        {
+          "action": "dialogue",
+          "text": "You ever read what\u2019s in the stuff you hand out? ",
+          "speaker": "Julia"
+        },
+        {
+          "action": "dialogue",
+          "text": "Don\u2019t read too closely. ",
+          "speaker": "Julia"
+        },
+        {
+          "action": "dialogue",
+          "text": "I\u2019ll keep that in mind.",
+          "speaker": "You"
+        },
+        {
+          "action": "hide_character",
+          "position": 1
+        },
+        {
+          "action": "dialogue",
+          "text": " ",
+          "speaker": null
+        }
+      ]
+    },
+    "12": {
+      "on": {
+        "problems_solved": {
+          "thresh": 1,
+          "problems": [
+            103,
+            75
+          ]
+        }
+      },
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "C"
+        },
+        {
+          "action": "dialogue",
+          "text": "0w0 ",
+          "speaker": "x_SLAYER_X"
+        },
+        {
+          "action": "dialogue",
+          "text": "What?",
+          "speaker": "You"
+        },
+        {
+          "action": "dialogue",
+          "text": "Sorry\u2026 It\u2019s a bit hard to understand your accent. Exposure, I guess -- this isn\u2019t the hottest travel destination. ",
+          "speaker": "You"
+        },
+        {
+          "action": "show_problem",
+          "problem_id": 69
+        },
+        {
+          "action": "dialogue",
+          "text": "0w0 ",
+          "speaker": "x_SLAYER_X"
+        },
+        {
+          "action": "dialogue",
+          "text": "Where did you say you were from, again?",
+          "speaker": "You"
+        },
+        {
+          "action": "dialogue",
+          "text": "UwU",
+          "speaker": "x_SLAYER_X"
+        },
+        {
+          "action": "hide_character",
+          "position": 1
+        },
+        {
+          "action": "dialogue",
+          "text": " ",
+          "speaker": null
+        }
+      ]
+    },
+    "13": {
+      "on": {
+        "problems_solved": {
+          "thresh": 1,
+          "problems": [
+            103,
+            82
+          ]
+        }
+      },
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "E"
+        },
+        {
+          "action": "show_problem",
+          "problem_id": 99
+        },
+        {
+          "action": "dialogue",
+          "text": "Can you get me a copy of the June 15 and July 15 official Economic Reports? From 2142? ",
+          "speaker": "Minako"
+        },
+        {
+          "action": "dialogue",
+          "text": "\u2026",
+          "speaker": "You"
+        },
+        {
+          "action": "dialogue",
+          "text": "Odd, but okay. This is for work?",
+          "speaker": "You"
+        },
+        {
+          "action": "dialogue",
+          "text": "O-odd? I don\u2019t think so.",
+          "speaker": "Minako"
+        },
+        {
+          "action": "hide_character",
+          "position": 1
+        },
+        {
+          "action": "dialogue",
+          "text": " ",
+          "speaker": null
+        }
+      ]
+    },
+    "14": {
+      "on": {
+        "problems_solved": {
+          "thresh": 1,
+          "problems": [
+            82,
+            87
+          ]
+        }
+      },
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "B"
+        },
+        {
+          "action": "dialogue",
+          "text": "I require last month\u2019s Social Report -- ",
+          "speaker": "Director"
+        },
+        {
+          "action": "dialogue",
+          "text": "The Report? Surely you know --",
+          "speaker": "You"
+        },
+        {
+          "action": "dialogue",
+          "text": "Don\u2019t interrupt me. You tread a fine line, Investigator.",
+          "speaker": "Director"
+        },
+        {
+          "action": "show_problem",
+          "problem_id": 100
+        },
+        {
+          "action": "dialogue",
+          "text": "The one we don\u2019t publish. You know where to find it, I presume.",
+          "speaker": "Director"
+        },
+        {
+          "action": "dialogue",
+          "text": "Of course. ",
+          "speaker": "You"
+        },
+        {
+          "action": "hide_character",
+          "position": 1
+        },
+        {
+          "action": "dialogue",
+          "text": " ",
+          "speaker": null
+        }
+      ]
+    },
+    "15": {
+      "on": {
+        "problems_solved": {
+          "thresh": 1,
+          "problems": [
+            87,
+            81
+          ]
+        }
+      },
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "A"
+        },
+        {
+          "action": "dialogue",
+          "text": "How far do your records stretch?",
+          "speaker": "???"
+        },
+        {
+          "action": "dialogue",
+          "text": "Do you mean, chronologically? Spatially? Geographically? ",
+          "speaker": "You"
+        },
+        {
+          "action": "dialogue",
+          "text": "\u2026",
+          "speaker": "???"
+        },
+        {
+          "action": "dialogue",
+          "text": "Whatever you need to know, I know. ",
+          "speaker": "You"
+        },
+        {
+          "action": "show_problem",
+          "problem_id": 88
+        },
+        {
+          "action": "dialogue",
+          "text": " Do you know anything the Minister does not?",
+          "speaker": "???"
+        },
+        {
+          "action": "hide_character",
+          "position": 1
+        },
+        {
+          "action": "dialogue",
+          "text": " ",
+          "speaker": null
+        }
+      ]
+    },
+    "16": {
+      "on": {
+        "problems_solved": {
+          "thresh": 1,
+          "problems": [
+            99,
+            100
+          ]
+        }
+      },
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "B"
+        },
+        {
+          "action": "dialogue",
+          "text": "Are you a native of the capital, Investigator?",
+          "speaker": "Director"
+        },
+        {
+          "action": "dialogue",
+          "text": "No. I come from a town in the East. ",
+          "speaker": "You"
+        },
+        {
+          "action": "show_problem",
+          "problem_id": 62
+        },
+        {
+          "action": "dialogue",
+          "text": "Was the capital what you imagined when you came here?",
+          "speaker": "Director"
+        },
+        {
+          "action": "dialogue",
+          "text": "No, it isn\u2019t. But I didn\u2019t come here for the sightseeing. I came here for the work. ",
+          "speaker": "You"
+        },
+        {
+          "action": "hide_character",
+          "position": 1
+        },
+        {
+          "action": "dialogue",
+          "text": " ",
+          "speaker": null
+        }
+      ]
+    },
+    "17": {
+      "on": {
+        "problems_solved": {
+          "thresh": 1,
+          "problems": [
+            100,
+            69
+          ]
+        }
+      },
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "C"
+        },
+        {
+          "action": "show_problem",
+          "problem_id": 85
+        },
+        {
+          "action": "dialogue",
+          "text": "wat r th3  b3st pwaces to v1s1t in t3h repubwic??",
+          "speaker": "x_SLAYER_X"
+        },
+        {
+          "action": "dialogue",
+          "text": "Would you like our official Travel Guide? ",
+          "speaker": "You"
+        },
+        {
+          "action": "dialogue",
+          "text": "n0 wh0 cares waht t3h m1n1ster think5!! w4t do u th1nk??",
+          "speaker": "x_SLAYER_X"
+        },
+        {
+          "action": "dialogue",
+          "text": "\u2026 You shouldn\u2019t let people hear you say that, you know.",
+          "speaker": "You"
+        },
+        {
+          "action": "hide_character",
+          "position": 1
+        },
+        {
+          "action": "dialogue",
+          "text": " ",
+          "speaker": null
+        }
+      ]
+    },
+    "18": {
+      "on": {
+        "problems_solved": {
+          "thresh": 1,
+          "problems": [
+            69,
+            78
+          ]
+        }
+      },
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "D"
+        },
+        {
+          "action": "dialogue",
+          "text": "Hi.  ",
+          "speaker": "Julia"
+        },
+        {
+          "action": "dialogue",
+          "text": "Didn\u2019t notice your bracelet before. ",
+          "speaker": "You"
+        },
+        {
+          "action": "dialogue",
+          "text": "Yeah, silver. Nice, isn\u2019t it.",
+          "speaker": "Julia"
+        },
+        {
+          "action": "dialogue",
+          "text": "Is that regulation? ",
+          "speaker": "You"
+        },
+        {
+          "action": "dialogue",
+          "text": "What, are you gonna report me for a bracelet? ",
+          "speaker": "Julia"
+        },
+        {
+          "action": "dialogue",
+          "text": "I\u2019m not",
+          "speaker": "You"
+        },
+        {
+          "action": "dialogue",
+          "text": "\u2026",
+          "speaker": "Julia"
+        },
+        {
+          "action": "show_problem",
+          "problem_id": 90
+        },
+        {
+          "action": "dialogue",
+          "text": "Nice to have something of physical value...",
+          "speaker": "Julia"
+        },
+        {
+          "action": "hide_character",
+          "position": 1
+        },
+        {
+          "action": "dialogue",
+          "text": " ",
+          "speaker": null
+        }
+      ]
+    },
+    "19": {
+      "on": {
+        "problems_solved": {
+          "thresh": 1,
+          "problems": [
+            78,
+            88
+          ]
+        }
+      },
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "A"
+        },
+        {
+          "action": "show_problem",
+          "problem_id": 63
+        },
+        {
+          "action": "dialogue",
+          "text": "To whom does the Republic belong?",
+          "speaker": "???"
+        },
+        {
+          "action": "dialogue",
+          "text": "\u2026 The Minister, of course.",
+          "speaker": "You"
+        },
+        {
+          "action": "dialogue",
+          "text": "I thought this was the Department of Truth.",
+          "speaker": "???"
+        },
+        {
+          "action": "dialogue",
+          "text": "It is.",
+          "speaker": "You"
+        },
+        {
+          "action": "hide_character",
+          "position": 1
+        },
+        {
+          "action": "dialogue",
+          "text": " ",
+          "speaker": null
+        }
+      ]
+    },
+    "20": {
+      "on": {
+        "problems_solved": {
+          "thresh": 1,
+          "problems": [
+            88,
+            99
+          ]
+        }
+      },
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "E"
+        },
+        {
+          "action": "dialogue",
+          "text": "H-haha, I know this is weird, but...",
+          "speaker": "Minako"
+        },
+        {
+          "action": "show_problem",
+          "problem_id": 94
+        },
+        {
+          "action": "dialogue",
+          "text": "Could I have the original broadcast on January 28, 2066 of the Minister\u2019s speech?",
+          "speaker": "Minako"
+        },
+        {
+          "action": "dialogue",
+          "text": "\u2026",
+          "speaker": "You"
+        },
+        {
+          "action": "dialogue",
+          "text": "G-glory to the Minister! Glory to the Republic!",
+          "speaker": "Minako"
+        },
+        {
+          "action": "dialogue",
+          "text": "You don\u2019t have to say that, you know. ",
+          "speaker": "You"
+        },
+        {
+          "action": "dialogue",
+          "text": "W-well, you know with the war and all\u2026 ",
+          "speaker": "Minako"
+        },
+        {
+          "action": "dialogue",
+          "text": "You never know\u2026",
+          "speaker": "Minako"
+        },
+        {
+          "action": "hide_character",
+          "position": 1
+        },
+        {
+          "action": "dialogue",
+          "text": " ",
+          "speaker": null
+        }
+      ]
+    },
+    "21": {
+      "on": {
+        "problems_solved": {
+          "thresh": 1,
+          "problems": [
+            85,
+            63
+          ]
+        }
+      },
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "A"
+        },
+        {
+          "action": "dialogue",
+          "text": "Do you love the Republic? ",
+          "speaker": "???"
+        },
+        {
+          "action": "dialogue",
+          "text": "\u2026 ",
+          "speaker": "You"
+        },
+        {
+          "action": "dialogue",
+          "text": "I do. ",
+          "speaker": "You"
+        },
+        {
+          "action": "show_problem",
+          "problem_id": 57
+        },
+        {
+          "action": "dialogue",
+          "text": "So does the Order. ",
+          "speaker": "???"
+        },
+        {
+          "action": "dialogue",
+          "text": "We are more numerous than you think.",
+          "speaker": "???"
+        },
+        {
+          "action": "hide_character",
+          "position": 1
+        },
+        {
+          "action": "dialogue",
+          "text": " ",
+          "speaker": null
+        }
+      ]
+    },
+    "22": {
+      "on": {
+        "problems_solved": {
+          "thresh": 1,
+          "problems": [
+            63,
+            90
+          ]
+        }
+      },
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "D"
+        },
+        {
+          "action": "dialogue",
+          "text": "Hear the news lately?",
+          "speaker": "Julia"
+        },
+        {
+          "action": "dialogue",
+          "text": "What news? ",
+          "speaker": "You"
+        },
+        {
+          "action": "show_problem",
+          "problem_id": 61
+        },
+        {
+          "action": "dialogue",
+          "text": "Fire three buildings down from Department of Liberty. ",
+          "speaker": "Julia"
+        },
+        {
+          "action": "dialogue",
+          "text": "How do you know this before I do? ",
+          "speaker": "You"
+        },
+        {
+          "action": "dialogue",
+          "text": "\u2026",
+          "speaker": "Julia"
+        },
+        {
+          "action": "dialogue",
+          "text": "Better that you pretend you never heard this, actually. ",
+          "speaker": "Julia"
+        },
+        {
+          "action": "dialogue",
+          "text": "Keep your head down.",
+          "speaker": "Julia"
+        },
+        {
+          "action": "hide_character",
+          "position": 1
+        },
+        {
+          "action": "dialogue",
+          "text": " ",
+          "speaker": null
+        }
+      ]
+    },
+    "23": {
+      "on": {
+        "problems_solved": {
+          "thresh": 1,
+          "problems": [
+            90,
+            94
+          ]
+        }
+      },
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "E"
+        },
+        {
+          "action": "dialogue",
+          "text": "I-I know your name.",
+          "speaker": "Minako"
+        },
+        {
+          "action": "dialogue",
+          "text": "Um, yes. It\u2019s on my desk. ",
+          "speaker": "You"
+        },
+        {
+          "action": "show_problem",
+          "problem_id": 74
+        },
+        {
+          "action": "dialogue",
+          "text": "Um, would you like to know mine?",
+          "speaker": "Minako"
+        },
+        {
+          "action": "dialogue",
+          "text": "Your name is Minako. ",
+          "speaker": "You"
+        },
+        {
+          "action": "dialogue",
+          "text": "H-how do you know that? There should be no way! Um, I mean, it\u2019s fine, like the Minister always says, a clean mind -- ",
+          "speaker": "Minako"
+        },
+        {
+          "action": "dialogue",
+          "text": "It\u2019s on your name tag.",
+          "speaker": "You"
+        },
+        {
+          "action": "dialogue",
+          "text": "\u2026",
+          "speaker": "Minako"
+        },
+        {
+          "action": "dialogue",
+          "text": "Oh. What a relief\u2026",
+          "speaker": "Minako"
+        },
+        {
+          "action": "hide_character",
+          "position": 1
+        },
+        {
+          "action": "dialogue",
+          "text": " ",
+          "speaker": null
+        }
+      ]
+    },
+    "24": {
+      "on": {
+        "problems_solved": {
+          "thresh": 1,
+          "problems": [
+            94,
+            62
+          ]
+        }
+      },
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "B"
+        },
+        {
+          "action": "dialogue",
+          "text": "I hope for the fortune of knowing that everyone in the Department of Truth is loyal to the Republic. ",
+          "speaker": "Director"
+        },
+        {
+          "action": "show_problem",
+          "problem_id": 64
+        },
+        {
+          "action": "dialogue",
+          "text": "Remember to report all suspicion of treason to the Department of Security. ",
+          "speaker": "Director"
+        },
+        {
+          "action": "dialogue",
+          "text": "Glory to the Republic. ",
+          "speaker": "Director"
+        },
+        {
+          "action": "dialogue",
+          "text": "...",
+          "speaker": "You"
+        },
+        {
+          "action": "dialogue",
+          "text": "Glory to the Republic.",
+          "speaker": "You"
+        },
+        {
+          "action": "hide_character",
+          "position": 1
+        },
+        {
+          "action": "dialogue",
+          "text": " ",
+          "speaker": null
+        }
+      ]
+    },
+    "25": {
+      "on": {
+        "problems_solved": {
+          "thresh": 1,
+          "problems": [
+            62,
+            85
+          ]
+        }
+      },
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "C"
+        },
+        {
+          "action": "dialogue",
+          "text": "w0w u ppl R so p00r!! :0",
+          "speaker": "x_SLAYER_X"
+        },
+        {
+          "action": "show_problem",
+          "problem_id": 70
+        },
+        {
+          "action": "dialogue",
+          "text": "t3h bu1ld1ngs r all so cramped 4nd ugwy!!!11 ",
+          "speaker": "x_SLAYER_X"
+        },
+        {
+          "action": "dialogue",
+          "text": "all th3s3 ppl in t3h str33t :\u20159",
+          "speaker": "x_SLAYER_X"
+        },
+        {
+          "action": "dialogue",
+          "text": "...",
+          "speaker": "You"
+        },
+        {
+          "action": "dialogue",
+          "text": "Would you mind tipping then?  ",
+          "speaker": "You"
+        },
+        {
+          "action": "hide_character",
+          "position": 1
+        },
+        {
+          "action": "dialogue",
+          "text": " ",
+          "speaker": null
+        }
+      ]
+    },
+    "26": {
+      "on": {
+        "problems_solved": {
+          "thresh": 1,
+          "problems": [
+            57
+          ]
+        }
+      },
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "A"
+        },
+        {
+          "action": "dialogue",
+          "text": "Great change is upon us. ",
+          "speaker": "???"
+        },
+        {
+          "action": "show_problem",
+          "problem_id": 67
+        },
+        {
+          "action": "dialogue",
+          "text": "Will you aid us, or be swept away by the current?",
+          "speaker": "???"
+        },
+        {
+          "action": "dialogue",
+          "text": "... ",
+          "speaker": "You"
+        },
+        {
+          "action": "dialogue",
+          "text": "The Order must be informed. ",
+          "speaker": "???"
+        },
+        {
+          "action": "dialogue",
+          "text": "I understand. ",
+          "speaker": "You"
+        },
+        {
+          "action": "dialogue",
+          "text": "Where is the Minister\u2019s arsenal?",
+          "speaker": "???"
+        },
+        {
+          "action": "hide_character",
+          "position": 1
+        },
+        {
+          "action": "dialogue",
+          "text": " ",
+          "speaker": null
+        }
+      ]
+    },
+    "27": {
+      "on": {
+        "problems_solved": {
+          "thresh": 1,
+          "problems": [
+            64
+          ]
+        }
+      },
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "B"
+        },
+        {
+          "action": "dialogue",
+          "text": "You have served your nation well in the years you have been here. ",
+          "speaker": "Director"
+        },
+        {
+          "action": "dialogue",
+          "text": "Am I right to believe you trustworthy?",
+          "speaker": "Director"
+        },
+        {
+          "action": "dialogue",
+          "text": "\u2026 ",
+          "speaker": "You"
+        },
+        {
+          "action": "dialogue",
+          "text": "You are. ",
+          "speaker": "You"
+        },
+        {
+          "action": "dialogue",
+          "text": "...",
+          "speaker": "Director"
+        },
+        {
+          "action": "dialogue",
+          "text": "What I ask of you must be conducted with the utmost secrecy. ",
+          "speaker": "Director"
+        },
+        {
+          "action": "dialogue",
+          "text": "This is a great honor. ",
+          "speaker": "Director"
+        },
+        {
+          "action": "dialogue",
+          "text": "And what do you ask of me? ",
+          "speaker": "You"
+        },
+        {
+          "action": "show_problem",
+          "problem_id": 58
+        },
+        {
+          "action": "dialogue",
+          "text": "In times of tension, minds are easily swayed. ",
+          "speaker": "Director"
+        },
+        {
+          "action": "dialogue",
+          "text": "I have reason to suspect\u2026 ",
+          "speaker": "Director"
+        },
+        {
+          "action": "dialogue",
+          "text": "I would like a file on the Directors of Truth and Justice. ",
+          "speaker": "Director"
+        },
+        {
+          "action": "dialogue",
+          "text": "There are several members on the Minister\u2019s Committee of Public Safety, as well\u2026 ",
+          "speaker": "Director"
+        },
+        {
+          "action": "dialogue",
+          "text": "Glory to the Republic.",
+          "speaker": "Director"
+        },
+        {
+          "action": "hide_character",
+          "position": 1
+        },
+        {
+          "action": "dialogue",
+          "text": " ",
+          "speaker": null
+        }
+      ]
+    },
+    "28": {
+      "on": {
+        "problems_solved": {
+          "thresh": 1,
+          "problems": [
+            70
+          ]
+        }
+      },
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "C"
+        },
+        {
+          "action": "dialogue",
+          "text": "rawr xd :33",
+          "speaker": "x_SLAYER_X"
+        },
+        {
+          "action": "dialogue",
+          "text": "hiii!!!1",
+          "speaker": "x_SLAYER_X"
+        },
+        {
+          "action": "show_problem",
+          "problem_id": 60
+        },
+        {
+          "action": "dialogue",
+          "text": "u lik livin her3 ?? ",
+          "speaker": "x_SLAYER_X"
+        },
+        {
+          "action": "dialogue",
+          "text": "I do feel some patriotism\u2026 ",
+          "speaker": "You"
+        },
+        {
+          "action": "dialogue",
+          "text": "But at the same time, living here\u2026",
+          "speaker": "You"
+        },
+        {
+          "action": "dialogue",
+          "text": "I know this is not what the Republic is supposed to be. ",
+          "speaker": "You"
+        },
+        {
+          "action": "hide_character",
+          "position": 1
+        },
+        {
+          "action": "dialogue",
+          "text": " ",
+          "speaker": null
+        }
+      ]
+    },
+    "29": {
+      "on": {
+        "problems_solved": {
+          "thresh": 1,
+          "problems": [
+            61
+          ]
+        }
+      },
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "D"
+        },
+        {
+          "action": "dialogue",
+          "text": "You might hear of a lot more stuff like that fire lately. ",
+          "speaker": "Julia"
+        },
+        {
+          "action": "dialogue",
+          "text": "Why should I? ",
+          "speaker": "You"
+        },
+        {
+          "action": "dialogue",
+          "text": "Harmless accident. ",
+          "speaker": "You"
+        },
+        {
+          "action": "dialogue",
+          "text": "I\u2019m pretty sure fires are harmful. ",
+          "speaker": "Julia"
+        },
+        {
+          "action": "show_problem",
+          "problem_id": 71
+        },
+        {
+          "action": "dialogue",
+          "text": "\u2026 I wouldn\u2019t call it an accident, either. ",
+          "speaker": "Julia"
+        },
+        {
+          "action": "dialogue",
+          "text": "I know some people who are pretty angry. ",
+          "speaker": "Julia"
+        },
+        {
+          "action": "dialogue",
+          "text": "Stupid and angry.",
+          "speaker": "Julia"
+        },
+        {
+          "action": "dialogue",
+          "text": "That\u2019s a bit dangerous to say. ",
+          "speaker": "You"
+        },
+        {
+          "action": "dialogue",
+          "text": "\u2026 ",
+          "speaker": "Julia"
+        },
+        {
+          "action": "dialogue",
+          "text": "Good. It\u2019s good to think that way.",
+          "speaker": "Julia"
+        },
+        {
+          "action": "dialogue",
+          "text": "\u2026 But I can\u2019t tell if you really buy into this Ministry stuff. ",
+          "speaker": "Julia"
+        },
+        {
+          "action": "hide_character",
+          "position": 1
+        },
+        {
+          "action": "dialogue",
+          "text": " ",
+          "speaker": null
+        }
+      ]
+    },
+    "30": {
+      "on": {
+        "problems_solved": {
+          "thresh": 1,
+          "problems": [
+            74
+          ]
+        }
+      },
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "E"
+        },
+        {
+          "action": "show_problem",
+          "problem_id": 80
+        },
+        {
+          "action": "dialogue",
+          "text": "H-hi, can I see the state happiness poll -- ",
+          "speaker": "Minako"
+        },
+        {
+          "action": "dialogue",
+          "text": "For 10 years ago, during the famine? Or maybe 14 years ago, when the plague --",
+          "speaker": "You"
+        },
+        {
+          "action": "dialogue",
+          "text": "I -- yes -- please don\u2019t report me!",
+          "speaker": "Minako"
+        },
+        {
+          "action": "dialogue",
+          "text": "It\u2019s not illegal to look at reports. ",
+          "speaker": "You"
+        },
+        {
+          "action": "dialogue",
+          "text": "\u2026 Even if you want some things the Republic published that it probably wants you to forget.",
+          "speaker": "You"
+        },
+        {
+          "action": "dialogue",
+          "text": "I-I\u2019m not doing this for work. It\u2019s a -- personal project?",
+          "speaker": "Minako"
+        },
+        {
+          "action": "dialogue",
+          "text": "I guessed as much. ",
+          "speaker": "You"
+        },
+        {
+          "action": "dialogue",
+          "text": "Eep!",
+          "speaker": "Minako"
+        },
+        {
+          "action": "dialogue",
+          "text": "\u2026 I just told you, it\u2019s not illegal to look. ",
+          "speaker": "You"
+        },
+        {
+          "action": "dialogue",
+          "text": "Thank you. ",
+          "speaker": "Minako"
+        },
+        {
+          "action": "hide_character",
+          "position": 1
+        },
+        {
+          "action": "dialogue",
+          "text": " ",
+          "speaker": null
+        }
+      ]
+    },
+    "31": {
+      "on": {
+        "problems_solved": {
+          "thresh": 1,
+          "problems": [
+            67
+          ]
+        }
+      },
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "A"
+        },
+        {
+          "action": "dialogue",
+          "text": "Freedom awaits the new Republic.  ",
+          "speaker": "???"
+        },
+        {
+          "action": "show_problem",
+          "problem_id": 79
+        },
+        {
+          "action": "dialogue",
+          "text": "The wall that surrounds the capital\u2026 ",
+          "speaker": "???"
+        },
+        {
+          "action": "dialogue",
+          "text": "Where is it be penetrable?",
+          "speaker": "???"
+        },
+        {
+          "action": "dialogue",
+          "text": "The doors, maybe? I came through the checkpoint when I applied to move here. ",
+          "speaker": "You"
+        },
+        {
+          "action": "dialogue",
+          "text": "That\u2019s not what I mean.",
+          "speaker": "???"
+        },
+        {
+          "action": "dialogue",
+          "text": "It\u2019s best if the guards don\u2019t know.",
+          "speaker": "???"
+        },
+        {
+          "action": "hide_character",
+          "position": 1
+        },
+        {
+          "action": "dialogue",
+          "text": " ",
+          "speaker": null
+        }
+      ]
+    },
+    "32": {
+      "on": {
+        "problems_solved": {
+          "thresh": 1,
+          "problems": [
+            58
+          ]
+        }
+      },
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "B"
+        },
+        {
+          "action": "dialogue",
+          "text": "Have you heard of the Order of [REDACTED], Investigator? ",
+          "speaker": "Director"
+        },
+        {
+          "action": "dialogue",
+          "text": "\u2026 ",
+          "speaker": "You"
+        },
+        {
+          "action": "show_problem",
+          "problem_id": 86
+        },
+        {
+          "action": "dialogue",
+          "text": "Anything that you find on the Order and the Minister\u2019s government -- deliver it to me. ",
+          "speaker": "Director"
+        },
+        {
+          "action": "dialogue",
+          "text": "Do not mention this name to anyone else.",
+          "speaker": "Director"
+        },
+        {
+          "action": "dialogue",
+          "text": "It is a seditious evil.",
+          "speaker": "Director"
+        },
+        {
+          "action": "hide_character",
+          "position": 1
+        },
+        {
+          "action": "dialogue",
+          "text": " ",
+          "speaker": null
+        }
+      ]
+    },
+    "33": {
+      "on": {
+        "problems_solved": {
+          "thresh": 1,
+          "problems": [
+            60
+          ]
+        }
+      },
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "C"
+        },
+        {
+          "action": "show_problem",
+          "problem_id": 95
+        },
+        {
+          "action": "dialogue",
+          "text": "u w4nt 2 vwisit m3 wen i go h0m3?? ",
+          "speaker": "x_SLAYER_X"
+        },
+        {
+          "action": "dialogue",
+          "text": "w3 hav trees!!11",
+          "speaker": "x_SLAYER_X"
+        },
+        {
+          "action": "dialogue",
+          "text": "That\u2019s kind of hard. ",
+          "speaker": "You"
+        },
+        {
+          "action": "dialogue",
+          "text": "Especially since our nations are at war... ",
+          "speaker": "You"
+        },
+        {
+          "action": "dialogue",
+          "text": "They\u2019ll think I\u2019m a spy. ",
+          "speaker": "You"
+        },
+        {
+          "action": "dialogue",
+          "text": "i v0uch fow u!!",
+          "speaker": "x_SLAYER_X"
+        },
+        {
+          "action": "dialogue",
+          "text": "im pw3tty imp0wrtant u kno 3:<",
+          "speaker": "x_SLAYER_X"
+        },
+        {
+          "action": "dialogue",
+          "text": "ju5t n33d s0m d0cwuments\u2026. ",
+          "speaker": "x_SLAYER_X"
+        },
+        {
+          "action": "hide_character",
+          "position": 1
+        },
+        {
+          "action": "dialogue",
+          "text": " ",
+          "speaker": null
+        }
+      ]
+    },
+    "34": {
+      "on": {
+        "problems_solved": {
+          "thresh": 1,
+          "problems": [
+            71
+          ]
+        }
+      },
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "D"
+        },
+        {
+          "action": "dialogue",
+          "text": "Yo. ",
+          "speaker": "Julia"
+        },
+        {
+          "action": "dialogue",
+          "text": "Yo. ",
+          "speaker": "You"
+        },
+        {
+          "action": "dialogue",
+          "text": "Ugh, it\u2019s weird coming from you. You don\u2019t talk like that. ",
+          "speaker": "Julia"
+        },
+        {
+          "action": "dialogue",
+          "text": "\u2026 Isn\u2019t that pretty old slang? ",
+          "speaker": "You"
+        },
+        {
+          "action": "show_problem",
+          "problem_id": 59
+        },
+        {
+          "action": "dialogue",
+          "text": "Most people have forgotten stuff like that. That\u2019s what makes it cool.  ",
+          "speaker": "Julia"
+        },
+        {
+          "action": "dialogue",
+          "text": "Better to be forgotten than banned, I suppose.",
+          "speaker": "You"
+        },
+        {
+          "action": "dialogue",
+          "text": "Yeah, isn\u2019t that lit? Isn\u2019t it gucci? ",
+          "speaker": "Julia"
+        },
+        {
+          "action": "dialogue",
+          "text": "\u2026 I can tell I\u2019m losing you.",
+          "speaker": "Julia"
+        },
+        {
+          "action": "hide_character",
+          "position": 1
+        },
+        {
+          "action": "dialogue",
+          "text": " ",
+          "speaker": null
+        }
+      ]
+    },
+    "35": {
+      "on": {
+        "problems_solved": {
+          "thresh": 1,
+          "problems": [
+            80
+          ]
+        }
+      },
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "E"
+        },
+        {
+          "action": "dialogue",
+          "text": "I can trust you, right?",
+          "speaker": "Minako"
+        },
+        {
+          "action": "dialogue",
+          "text": "Y-you\u2019ve read all these reports?",
+          "speaker": "Minako"
+        },
+        {
+          "action": "dialogue",
+          "text": "Maybe \u201cskimmed.\u201d",
+          "speaker": "You"
+        },
+        {
+          "action": "show_problem",
+          "problem_id": 77
+        },
+        {
+          "action": "dialogue",
+          "text": "Well, then you know that we\u2019ve been lied to. ",
+          "speaker": "Minako"
+        },
+        {
+          "action": "dialogue",
+          "text": "D-discrepancies between Economic Reports in the same year, between the history of the war and the Minister\u2019s speech\u2026 There was a plague and e-everyone was cheerful! Is the war e-even --",
+          "speaker": "Minako"
+        },
+        {
+          "action": "dialogue",
+          "text": "I know that. ",
+          "speaker": "You"
+        },
+        {
+          "action": "dialogue",
+          "text": "There\u2019s a lot more than you think like that. ",
+          "speaker": "You"
+        },
+        {
+          "action": "dialogue",
+          "text": "So you know? And do nothing?",
+          "speaker": "Minako"
+        },
+        {
+          "action": "hide_character",
+          "position": 1
+        },
+        {
+          "action": "dialogue",
+          "text": " ",
+          "speaker": null
+        }
+      ]
+    },
+    "36": {
+      "on": {
+        "problems_solved": {
+          "thresh": 1,
+          "problems": [
+            79
+          ]
+        }
+      },
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "A"
+        },
+        {
+          "action": "dialogue",
+          "text": "What do you think of the war? ",
+          "speaker": "???"
+        },
+        {
+          "action": "dialogue",
+          "text": "It\u2019s harder to buy oranges. The chocolate gets bitterer every year. ",
+          "speaker": "You"
+        },
+        {
+          "action": "dialogue",
+          "text": "It was easier to notice when I lived outside the capital. Sometimes it doesn\u2019t seem real, except for those little things.",
+          "speaker": "You"
+        },
+        {
+          "action": "dialogue",
+          "text": "...",
+          "speaker": "???"
+        },
+        {
+          "action": "show_problem",
+          "problem_id": 93
+        },
+        {
+          "action": "dialogue",
+          "text": "Sometimes blood needs to be shed. ",
+          "speaker": "???"
+        },
+        {
+          "action": "dialogue",
+          "text": "Sometimes a war needs to begin. ",
+          "speaker": "???"
+        },
+        {
+          "action": "dialogue",
+          "text": "\u2026 ",
+          "speaker": "???"
+        },
+        {
+          "action": "dialogue",
+          "text": "Tell me of the water supply to the capital. ",
+          "speaker": "???"
+        },
+        {
+          "action": "hide_character",
+          "position": 1
+        },
+        {
+          "action": "dialogue",
+          "text": " ",
+          "speaker": null
+        }
+      ]
+    },
+    "37": {
+      "on": {
+        "problems_solved": {
+          "thresh": 1,
+          "problems": [
+            86
+          ]
+        }
+      },
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "B"
+        },
+        {
+          "action": "dialogue",
+          "text": "You used to live in the East?",
+          "speaker": "Director"
+        },
+        {
+          "action": "dialogue",
+          "text": "That\u2019s right. ",
+          "speaker": "You"
+        },
+        {
+          "action": "dialogue",
+          "text": "Did you live close to the Tyrian border?",
+          "speaker": "Director"
+        },
+        {
+          "action": "dialogue",
+          "text": "Not really. ",
+          "speaker": "You"
+        },
+        {
+          "action": "dialogue",
+          "text": "That\u2019s lucky. We find those near the border to be most susceptible to unclean thought. ",
+          "speaker": "Director"
+        },
+        {
+          "action": "dialogue",
+          "text": "Doubly dangerous in the war, you know.  ",
+          "speaker": "Director"
+        },
+        {
+          "action": "dialogue",
+          "text": "Do you believe our borders to be impenetrable?",
+          "speaker": "Director"
+        },
+        {
+          "action": "dialogue",
+          "text": "Well, I\u2019m not the Director of Security.",
+          "speaker": "You"
+        },
+        {
+          "action": "show_problem",
+          "problem_id": 76
+        },
+        {
+          "action": "dialogue",
+          "text": "Foreign agents\u2026 ",
+          "speaker": "Director"
+        },
+        {
+          "action": "dialogue",
+          "text": "Conduct an investigation for me.  ",
+          "speaker": "Director"
+        },
+        {
+          "action": "hide_character",
+          "position": 1
+        },
+        {
+          "action": "dialogue",
+          "text": " ",
+          "speaker": null
+        }
+      ]
+    },
+    "38": {
+      "on": {
+        "problems_solved": {
+          "thresh": 1,
+          "problems": [
+            95
+          ]
+        }
+      },
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "C"
+        },
+        {
+          "action": "dialogue",
+          "text": "c0m h0m3 w m33!!",
+          "speaker": "x_SLAYER_X"
+        },
+        {
+          "action": "show_problem",
+          "problem_id": 102
+        },
+        {
+          "action": "dialogue",
+          "text": "t1s pwace sux u cant d0 4nyt1ng 3\u2019:",
+          "speaker": "x_SLAYER_X"
+        },
+        {
+          "action": "dialogue",
+          "text": "\u2026 ",
+          "speaker": "You"
+        },
+        {
+          "action": "dialogue",
+          "text": "Does everyone talk like you where you\u2019re from?",
+          "speaker": "You"
+        },
+        {
+          "action": "dialogue",
+          "text": "n0p :3",
+          "speaker": "x_SLAYER_X"
+        },
+        {
+          "action": "hide_character",
+          "position": 1
+        },
+        {
+          "action": "dialogue",
+          "text": " ",
+          "speaker": null
+        }
+      ]
+    },
+    "39": {
+      "on": {
+        "problems_solved": {
+          "thresh": 1,
+          "problems": [
+            59
+          ]
+        }
+      },
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "D"
+        },
+        {
+          "action": "dialogue",
+          "text": "Hear the news lately?",
+          "speaker": "Julia"
+        },
+        {
+          "action": "dialogue",
+          "text": "What news? ",
+          "speaker": "You"
+        },
+        {
+          "action": "dialogue",
+          "text": "Fire three buildings down from Department of Liberty. ",
+          "speaker": "Julia"
+        },
+        {
+          "action": "dialogue",
+          "text": "How do you know this before I do? ",
+          "speaker": "You"
+        },
+        {
+          "action": "dialogue",
+          "text": "\u2026",
+          "speaker": "Julia"
+        },
+        {
+          "action": "show_problem",
+          "problem_id": 68
+        },
+        {
+          "action": "dialogue",
+          "text": "Better that you pretend you never heard this, actually. ",
+          "speaker": "Julia"
+        },
+        {
+          "action": "dialogue",
+          "text": "Keep your head down. ",
+          "speaker": "Julia"
+        },
+        {
+          "action": "hide_character",
+          "position": 1
+        },
+        {
+          "action": "dialogue",
+          "text": " ",
+          "speaker": null
+        }
+      ]
+    },
+    "40": {
+      "on": {
+        "problems_solved": {
+          "thresh": 1,
+          "problems": [
+            77
+          ]
+        }
+      },
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "E"
+        },
+        {
+          "action": "dialogue",
+          "text": "I-I have to to get this out. People can know the truth!",
+          "speaker": "Minako"
+        },
+        {
+          "action": "dialogue",
+          "text": "The Minister writes the truth. ",
+          "speaker": "You"
+        },
+        {
+          "action": "show_problem",
+          "problem_id": 83
+        },
+        {
+          "action": "dialogue",
+          "text": "I know you don\u2019t really believe that. ",
+          "speaker": "Minako"
+        },
+        {
+          "action": "dialogue",
+          "text": "We can do the right thing. Help me publish this.",
+          "speaker": "Minako"
+        },
+        {
+          "action": "hide_character",
+          "position": 1
+        },
+        {
+          "action": "dialogue",
+          "text": " ",
+          "speaker": null
+        }
+      ]
+    },
+    "41": {
+      "on": {
+        "problems_solved": {
+          "thresh": 1,
+          "problems": [
+            9300
+          ]
+        }
+      },
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "A"
+        },
+        {
+          "action": "dialogue",
+          "text": "The dawn approaches. ",
+          "speaker": "???"
+        },
+        {
+          "action": "dialogue",
+          "text": "This is your chance to free us all from evil. ",
+          "speaker": "???"
+        },
+        {
+          "action": "show_problem",
+          "problem_id": 9700
+        },
+        {
+          "action": "dialogue",
+          "text": "Get us control of the Minister\u2019s Peacekeeping drones. ",
+          "speaker": "???"
+        },
+        {
+          "action": "dialogue",
+          "text": "The Order thanks you. ",
+          "speaker": "???"
+        },
+        {
+          "action": "dialogue",
+          "text": "Haste. ",
+          "speaker": "???"
+        },
+        {
+          "action": "hide_character",
+          "position": 1
+        },
+        {
+          "action": "dialogue",
+          "text": " ",
+          "speaker": null
+        }
+      ]
+    },
+    "42": {
+      "on": {
+        "problems_solved": {
+          "thresh": 1,
+          "problems": [
+            7600
+          ]
+        }
+      },
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "B"
+        },
+        {
+          "action": "dialogue",
+          "text": "You would be willing to do anything for your country, would you not?",
+          "speaker": "Director"
+        },
+        {
+          "action": "show_problem",
+          "problem_id": 9800
+        },
+        {
+          "action": "dialogue",
+          "text": "These are orders from the Minister himself. ",
+          "speaker": "Director"
+        },
+        {
+          "action": "dialogue",
+          "text": "Hide this device inside the office of the Director of Truth. ",
+          "speaker": "Director"
+        },
+        {
+          "action": "dialogue",
+          "text": "This is the sequence to broadcast. ",
+          "speaker": "Director"
+        },
+        {
+          "action": "hide_character",
+          "position": 1
+        },
+        {
+          "action": "dialogue",
+          "text": " ",
+          "speaker": null
+        }
+      ]
+    },
+    "43": {
+      "on": {
+        "problems_solved": {
+          "thresh": 1,
+          "problems": [
+            10200
+          ]
+        }
+      },
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "C"
+        },
+        {
+          "action": "dialogue",
+          "text": " im g0in home th1s wednesdayw !!",
+          "speaker": "x_SLAYER_X"
+        },
+        {
+          "action": "show_problem",
+          "problem_id": 9900
+        },
+        {
+          "action": "dialogue",
+          "text": "f0rge ur p3rmit :3",
+          "speaker": "x_SLAYER_X"
+        },
+        {
+          "action": "dialogue",
+          "text": "b th3r3 or i wleave w1th0ut u!!! 3:<",
+          "speaker": "x_SLAYER_X"
+        },
+        {
+          "action": "dialogue",
+          "text": "c u on t3h oht3r s1de :3",
+          "speaker": "x_SLAYER_X"
+        },
+        {
+          "action": "hide_character",
+          "position": 1
+        },
+        {
+          "action": "dialogue",
+          "text": " ",
+          "speaker": null
+        }
+      ]
+    },
+    "44": {
+      "on": {
+        "problems_solved": {
+          "thresh": 1,
+          "problems": [
+            6800
+          ]
+        }
+      },
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "D"
+        },
+        {
+          "action": "dialogue",
+          "text": "Trust me, please. ",
+          "speaker": "Julia"
+        },
+        {
+          "action": "dialogue",
+          "text": "I can\u2019t tell you exactly, but very soon, the Department of Truth will become very unsafe. ",
+          "speaker": "Julia"
+        },
+        {
+          "action": "show_problem",
+          "problem_id": 10000
+        },
+        {
+          "action": "dialogue",
+          "text": "You need to find a way to get out of work. Just for a few days. ",
+          "speaker": "Julia"
+        },
+        {
+          "action": "hide_character",
+          "position": 1
+        },
+        {
+          "action": "dialogue",
+          "text": " ",
+          "speaker": null
+        }
+      ]
+    },
+    "45": {
+      "on": {
+        "problems_solved": {
+          "thresh": 1,
+          "problems": [
+            8300
+          ]
+        }
+      },
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "E"
+        },
+        {
+          "action": "dialogue",
+          "text": "I\u2019ve compiled all the evidence here. ",
+          "speaker": "Minako"
+        },
+        {
+          "action": "show_problem",
+          "problem_id": 10100
+        },
+        {
+          "action": "dialogue",
+          "text": "Please, get it out. ",
+          "speaker": "Minako"
+        },
+        {
+          "action": "dialogue",
+          "text": "P-please hurry. We can\u2019t be caught with this stuff on us...",
+          "speaker": "Minako"
+        },
+        {
+          "action": "hide_character",
+          "position": 1
+        },
+        {
+          "action": "dialogue",
+          "text": " ",
+          "speaker": null
+        }
+      ]
+    },
+    "P01": {
+      "on": {
+        "problem": 91
+      },
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "E"
+        },
+        {
+          "action": "dialogue",
+          "text": "...",
+          "speaker": "Minako"
+        }
+      ]
+    },
+    "P02": {
+      "on": {
+        "problem": 66
+      },
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "B"
+        },
+        {
+          "action": "dialogue",
+          "text": "...",
+          "speaker": "Director"
+        }
+      ]
+    },
+    "P03": {
+      "on": {
+        "problem": 65
+      },
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "D"
+        },
+        {
+          "action": "dialogue",
+          "text": "...",
+          "speaker": "Julia"
+        }
+      ]
+    },
+    "P04": {
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "C"
+        },
+        {
+          "action": "dialogue",
+          "speaker": "x_SLAYER_X",
+          "text": "..."
+        }
+      ],
+      "on": {
+        "problem": 89
+      }
+    },
+    "P05": {
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "A"
+        },
+        {
+          "action": "dialogue",
+          "speaker": "???",
+          "text": "..."
+        }
+      ],
+      "on": {
+        "problem": 92
+      }
+    },
+    "P06": {
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "C"
+        },
+        {
+          "action": "dialogue",
+          "speaker": "x_SLAYER_X",
+          "text": "..."
+        }
+      ],
+      "on": {
+        "problem": 103
+      }
+    },
+    "P07": {
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "B"
+        },
+        {
+          "action": "dialogue",
+          "speaker": "Director",
+          "text": "..."
+        }
+      ],
+      "on": {
+        "problem": 87
+      }
+    },
+    "P08": {
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "A"
+        },
+        {
+          "action": "dialogue",
+          "speaker": "???",
+          "text": "..."
+        }
+      ],
+      "on": {
+        "problem": 81
+      }
+    },
+    "P09": {
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "D"
+        },
+        {
+          "action": "dialogue",
+          "speaker": "Julia",
+          "text": "..."
+        }
+      ],
+      "on": {
+        "problem": 75
+      }
+    },
+    "P10": {
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "E"
+        },
+        {
+          "action": "dialogue",
+          "speaker": "Minako",
+          "text": "..."
+        }
+      ],
+      "on": {
+        "problem": 82
+      }
+    },
+    "P11": {
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "D"
+        },
+        {
+          "action": "dialogue",
+          "speaker": "Julia",
+          "text": "..."
+        }
+      ],
+      "on": {
+        "problem": 78
+      }
+    },
+    "P12": {
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "C"
+        },
+        {
+          "action": "dialogue",
+          "speaker": "x_SLAYER_X",
+          "text": "..."
+        }
+      ],
+      "on": {
+        "problem": 69
+      }
+    },
+    "P13": {
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "E"
+        },
+        {
+          "action": "dialogue",
+          "speaker": "Minako",
+          "text": "..."
+        }
+      ],
+      "on": {
+        "problem": 99
+      }
+    },
+    "P14": {
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "B"
+        },
+        {
+          "action": "dialogue",
+          "speaker": "Director",
+          "text": "..."
+        }
+      ],
+      "on": {
+        "problem": 100
+      }
+    },
+    "P15": {
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "A"
+        },
+        {
+          "action": "dialogue",
+          "speaker": "???",
+          "text": "..."
+        }
+      ],
+      "on": {
+        "problem": 88
+      }
+    },
+    "P16": {
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "B"
+        },
+        {
+          "action": "dialogue",
+          "speaker": "Director",
+          "text": "..."
+        }
+      ],
+      "on": {
+        "problem": 62
+      }
+    },
+    "P17": {
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "C"
+        },
+        {
+          "action": "dialogue",
+          "speaker": "x_SLAYER_X",
+          "text": "..."
+        }
+      ],
+      "on": {
+        "problem": 85
+      }
+    },
+    "P18": {
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "D"
+        },
+        {
+          "action": "dialogue",
+          "speaker": "Julia",
+          "text": "..."
+        }
+      ],
+      "on": {
+        "problem": 90
+      }
+    },
+    "P19": {
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "A"
+        },
+        {
+          "action": "dialogue",
+          "speaker": "???",
+          "text": "..."
+        }
+      ],
+      "on": {
+        "problem": 63
+      }
+    },
+    "P20": {
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "E"
+        },
+        {
+          "action": "dialogue",
+          "speaker": "Minako",
+          "text": "..."
+        }
+      ],
+      "on": {
+        "problem": 94
+      }
+    },
+    "P21": {
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "A"
+        },
+        {
+          "action": "dialogue",
+          "speaker": "???",
+          "text": "..."
+        }
+      ],
+      "on": {
+        "problem": 57
+      }
+    },
+    "P22": {
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "D"
+        },
+        {
+          "action": "dialogue",
+          "speaker": "Julia",
+          "text": "..."
+        }
+      ],
+      "on": {
+        "problem": 61
+      }
+    },
+    "P23": {
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "E"
+        },
+        {
+          "action": "dialogue",
+          "speaker": "Minako",
+          "text": "..."
+        }
+      ],
+      "on": {
+        "problem": 74
+      }
+    },
+    "P24": {
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "B"
+        },
+        {
+          "action": "dialogue",
+          "speaker": "Director",
+          "text": "..."
+        }
+      ],
+      "on": {
+        "problem": 64
+      }
+    },
+    "P25": {
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "C"
+        },
+        {
+          "action": "dialogue",
+          "speaker": "x_SLAYER_X",
+          "text": "..."
+        }
+      ],
+      "on": {
+        "problem": 70
+      }
+    },
+    "P26": {
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "A"
+        },
+        {
+          "action": "dialogue",
+          "speaker": "???",
+          "text": "..."
+        }
+      ],
+      "on": {
+        "problem": 67
+      }
+    },
+    "P27": {
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "B"
+        },
+        {
+          "action": "dialogue",
+          "speaker": "Director",
+          "text": "..."
+        }
+      ],
+      "on": {
+        "problem": 58
+      }
+    },
+    "P28": {
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "C"
+        },
+        {
+          "action": "dialogue",
+          "speaker": "x_SLAYER_X",
+          "text": "..."
+        }
+      ],
+      "on": {
+        "problem": 60
+      }
+    },
+    "P29": {
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "D"
+        },
+        {
+          "action": "dialogue",
+          "speaker": "Julia",
+          "text": "..."
+        }
+      ],
+      "on": {
+        "problem": 71
+      }
+    },
+    "P30": {
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "E"
+        },
+        {
+          "action": "dialogue",
+          "speaker": "Minako",
+          "text": "..."
+        }
+      ],
+      "on": {
+        "problem": 80
+      }
+    },
+    "P31": {
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "A"
+        },
+        {
+          "action": "dialogue",
+          "speaker": "???",
+          "text": "..."
+        }
+      ],
+      "on": {
+        "problem": 79
+      }
+    },
+    "P32": {
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "B"
+        },
+        {
+          "action": "dialogue",
+          "speaker": "Director",
+          "text": "..."
+        }
+      ],
+      "on": {
+        "problem": 86
+      }
+    },
+    "P33": {
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "C"
+        },
+        {
+          "action": "dialogue",
+          "speaker": "x_SLAYER_X",
+          "text": "..."
+        }
+      ],
+      "on": {
+        "problem": 95
+      }
+    },
+    "P34": {
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "D"
+        },
+        {
+          "action": "dialogue",
+          "speaker": "Julia",
+          "text": "..."
+        }
+      ],
+      "on": {
+        "problem": 59
+      }
+    },
+    "P35": {
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "E"
+        },
+        {
+          "action": "dialogue",
+          "speaker": "Minako",
+          "text": "..."
+        }
+      ],
+      "on": {
+        "problem": 77
+      }
+    },
+    "P36": {
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "A"
+        },
+        {
+          "action": "dialogue",
+          "speaker": "???",
+          "text": "..."
+        }
+      ],
+      "on": {
+        "problem": 93
+      }
+    },
+    "P37": {
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "B"
+        },
+        {
+          "action": "dialogue",
+          "speaker": "Director",
+          "text": "..."
+        }
+      ],
+      "on": {
+        "problem": 76
+      }
+    },
+    "P38": {
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "C"
+        },
+        {
+          "action": "dialogue",
+          "speaker": "x_SLAYER_X",
+          "text": "..."
+        }
+      ],
+      "on": {
+        "problem": 102
+      }
+    },
+    "P39": {
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "D"
+        },
+        {
+          "action": "dialogue",
+          "speaker": "Julia",
+          "text": "..."
+        }
+      ],
+      "on": {
+        "problem": 68
+      }
+    },
+    "P40": {
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "E"
+        },
+        {
+          "action": "dialogue",
+          "speaker": "Minako",
+          "text": "..."
+        }
+      ],
+      "on": {
+        "problem": 83
+      }
+    },
+    "P41": {
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "A"
+        },
+        {
+          "action": "dialogue",
+          "speaker": "???",
+          "text": "..."
+        }
+      ],
+      "on": {
+        "problem": 9700
+      }
+    },
+    "P42": {
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "B"
+        },
+        {
+          "action": "dialogue",
+          "speaker": "Director",
+          "text": "..."
+        }
+      ],
+      "on": {
+        "problem": 9800
+      }
+    },
+    "P43": {
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "C"
+        },
+        {
+          "action": "dialogue",
+          "speaker": "x_SLAYER_X",
+          "text": "..."
+        }
+      ],
+      "on": {
+        "problem": 9900
+      }
+    },
+    "P44": {
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "D"
+        },
+        {
+          "action": "dialogue",
+          "speaker": "Julia",
+          "text": "..."
+        }
+      ],
+      "on": {
+        "problem": 10000
+      }
+    },
+    "P45": {
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "E"
+        },
+        {
+          "action": "dialogue",
+          "speaker": "Minako",
+          "text": "..."
+        }
+      ],
+      "on": {
+        "problem": 10100
+      }
+    },
+    "E1a": {
+      "on": {
+        "problems_solved": {
+          "thresh": 1,
+          "problems": [
+          ]
+        }
+      },
+      "background_image": "blue",
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "A"
+        },
+        {
+          "action": "dialogue",
+          "text": "Hello. ",
+          "speaker": "???"
+        },
+        {
+          "action": "dialogue",
+          "text": "Welcome to a new order. ",
+          "speaker": "???"
+        },
+        {
+          "action": "dialogue",
+          "text": "We thank you for your role. ",
+          "speaker": "???"
+        },
+        {
+          "action": "dialogue",
+          "text": "You have been spared from the purges. ",
+          "speaker": "???"
+        },
+        {
+          "action": "dialogue",
+          "text": "We welcome you to our ranks.",
+          "speaker": "???"
+        },
+        {
+          "action": "dialogue",
+          "text": "Thank you. ",
+          "speaker": "You"
+        },
+        {
+          "action": "dialogue",
+          "text": "Glory to the Order.",
+          "speaker": "You"
+        },
+        {
+          "action": "hide_character",
+          "position": 1
+        },
+        {
+          "action": "dialogue",
+          "text": "ROUTE END",
+          "speaker": null
+        }
+      ]
+    },
+    "E1b": {
+      "on": {
+        "after_scenes": [
+          "E1a"
+        ]
+      },
+      "background_image": "bg",
+      "choreography": [
+        {
+          "action": "dialogue",
+          "text": "- END ROUTE 1 -",
+          "speaker": null
+        },
+        {
+          "action": "dialogue",
+          "text": "(CONTINUE)",
+          "speaker": null
+        }
+      ]
+    },
+    "E2a": {
+      "on": {
+        "problems_solved": {
+          "thresh": 1,
+          "problems": [
+          ]
+        }
+      },
+      "background_image": "blue",
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "B"
+        },
+        {
+          "action": "dialogue",
+          "text": "Well done, Investigator. ",
+          "speaker": "Director"
+        },
+        {
+          "action": "dialogue",
+          "text": "You have proven yourself a valuable servant to the state, and you have preserved the security of the Republic. ",
+          "speaker": "Director"
+        },
+        {
+          "action": "dialogue",
+          "text": "We have uncovered the plot of the Order and the Director of Truth has been rehabilitated.",
+          "speaker": "Director"
+        },
+        {
+          "action": "dialogue",
+          "text": "Your salary has been upgraded to level 4 as a reward for your service. ",
+          "speaker": "Director"
+        },
+        {
+          "action": "dialogue",
+          "text": "Thank you, Director.",
+          "speaker": "You"
+        },
+        {
+          "action": "dialogue",
+          "text": "Glory to the Republic.",
+          "speaker": "Director"
+        },
+        {
+          "action": "hide_character",
+          "position": 1
+        },
+        {
+          "action": "dialogue",
+          "text": "ROUTE END",
+          "speaker": null
+        }
+      ]
+    },
+    "E2b": {
+      "on": {
+        "after_scenes": [
+          "E2a"
+        ]
+      },
+      "background_image": "bg",
+      "choreography": [
+        {
+          "action": "dialogue",
+          "text": "- END ROUTE 2 -",
+          "speaker": null
+        },
+        {
+          "action": "dialogue",
+          "text": "(CONTINUE)",
+          "speaker": null
+        }
+      ]
+    },
+    "E3b": {
+      "on": {
+        "after_scenes": [
+          "E3a"
+        ]
+      },
+      "background_image": "bg",
+      "choreography": [
+        {
+          "action": "dialogue",
+          "text": "- END ROUTE 3 -",
+          "speaker": null
+        },
+        {
+          "action": "dialogue",
+          "text": "(CONTINUE)",
+          "speaker": null
+        }
+      ]
+    },
+    "E3a": {
+      "on": {
+        "problems_solved": {
+          "thresh": 1,
+          "problems": [
+          ]
+        }
+      },
+      "background_image": "blue",
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "C"
+        },
+        {
+          "action": "dialogue",
+          "text": "hii!!!!111",
+          "speaker": "x_SLAYER_X"
+        },
+        {
+          "action": "dialogue",
+          "text": "u g0t thru :00",
+          "speaker": "x_SLAYER_X"
+        },
+        {
+          "action": "dialogue",
+          "text": "Thank you. ",
+          "speaker": "You"
+        },
+        {
+          "action": "dialogue",
+          "text": "\u2026 Poor everyone still in there. ",
+          "speaker": "You"
+        },
+        {
+          "action": "dialogue",
+          "text": ":3",
+          "speaker": "x_SLAYER_X"
+        },
+        {
+          "action": "dialogue",
+          "text": "c0m with m3 !! :3",
+          "speaker": "x_SLAYER_X"
+        },
+        {
+          "action": "hide_character",
+          "position": 1
+        },
+        {
+          "action": "dialogue",
+          "text": "ROUTE END",
+          "speaker": null
+        }
+      ]
+    },
+    "E4b": {
+      "on": {
+        "after_scenes": [
+          "E4a"
+        ]
+      },
+      "background_image": "bg",
+      "choreography": [
+        {
+          "action": "dialogue",
+          "text": "- END ROUTE 4 -",
+          "speaker": null
+        },
+        {
+          "action": "dialogue",
+          "text": "(CONTINUE)",
+          "speaker": null
+        }
+      ]
+    },
+    "E4a": {
+      "on": {
+        "problems_solved": {
+          "thresh": 1,
+          "problems": [
+          ]
+        }
+      },
+      "background_image": "blue",
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "D"
+        },
+        {
+          "action": "dialogue",
+          "text": "Well, you\u2019re alive. ",
+          "speaker": "Julia"
+        },
+        {
+          "action": "dialogue",
+          "text": "Did they mean to kill people?",
+          "speaker": "You"
+        },
+        {
+          "action": "dialogue",
+          "text": "It\u2019s horrible. I can\u2019t tell",
+          "speaker": "Julia"
+        },
+        {
+          "action": "dialogue",
+          "text": "How long before the smoke clears, do you think?",
+          "speaker": "Julia"
+        },
+        {
+          "action": "dialogue",
+          "text": "They\u2019re going to be caught. The gloves, the cans --",
+          "speaker": "You"
+        },
+        {
+          "action": "dialogue",
+          "text": "Yeah, I know. Stupid and angry, like I said. ",
+          "speaker": "Julia"
+        },
+        {
+          "action": "dialogue",
+          "text": "I wish they hadn\u2019t. ",
+          "speaker": "Julia"
+        },
+        {
+          "action": "dialogue",
+          "text": "At least you\u2019re alive. ",
+          "speaker": "Julia"
+        },
+        {
+          "action": "dialogue",
+          "text": "At least I\u2019m alive.",
+          "speaker": "You"
+        },
+        {
+          "action": "hide_character",
+          "position": 1
+        },
+        {
+          "action": "dialogue",
+          "text": "ROUTE END",
+          "speaker": null
+        }
+      ]
+    },
+    "E5a": {
+      "on": {
+        "problems_solved": {
+          "thresh": 1,
+          "problems": [
+          ]
+        }
+      },
+      "background_image": "blue",
+      "choreography": [
+        {
+          "action": "show_character",
+          "position": 1,
+          "sprite": "E"
+        },
+        {
+          "action": "dialogue",
+          "text": "H-hello. ",
+          "speaker": "Minako"
+        },
+        {
+          "action": "dialogue",
+          "text": "Did you hear what happened the other day?",
+          "speaker": "Minako"
+        },
+        {
+          "action": "dialogue",
+          "text": "Another riot in front of the Department of Security.",
+          "speaker": "Minako"
+        },
+        {
+          "action": "dialogue",
+          "text": "I know\u2026 this is because of what we did.",
+          "speaker": "Minako"
+        },
+        {
+          "action": "dialogue",
+          "text": "Yes, I heard.",
+          "speaker": "You"
+        },
+        {
+          "action": "dialogue",
+          "text": "I\u2019m glad.",
+          "speaker": "Minako"
+        },
+        {
+          "action": "hide_character",
+          "position": 1
+        },
+        {
+          "action": "dialogue",
+          "text": "ROUTE END",
+          "speaker": null
+        }
+      ]
+    },
+    "E5b": {
+      "on": {
+        "after_scenes": [
+          "E5a"
+        ]
+      },
+      "background_image": "bg",
+      "choreography": [
+        {
+          "action": "dialogue",
+          "text": "- END ROUTE 5 -",
+          "speaker": null
+        },
+        {
+          "action": "dialogue",
+          "text": "(CONTINUE)",
+          "speaker": null
+        }
+      ]
+    }
+  },
+  "problem_triggers": {
+    "91": {
+      "after_scenes": [
+        "1"
+      ]
+    },
+    "66": {
+      "after_scenes": [
+        "2"
+      ]
+    },
+    "65": {
+      "after_scenes": [
+        "3"
+      ]
+    },
+    "89": {
+      "after_scenes": [
+        "4"
+      ]
+    },
+    "92": {
+      "after_scenes": [
+        "5"
+      ]
+    },
+    "103": {
+      "after_scenes": [
+        "6"
+      ]
+    },
+    "87": {
+      "after_scenes": [
+        "7"
+      ]
+    },
+    "81": {
+      "after_scenes": [
+        "8"
+      ]
+    },
+    "75": {
+      "after_scenes": [
+        "9"
+      ]
+    },
+    "82": {
+      "after_scenes": [
+        "10"
+      ]
+    },
+    "78": {
+      "after_scenes": [
+        "11"
+      ]
+    },
+    "69": {
+      "after_scenes": [
+        "12"
+      ]
+    },
+    "99": {
+      "after_scenes": [
+        "13"
+      ]
+    },
+    "100": {
+      "after_scenes": [
+        "14"
+      ]
+    },
+    "88": {
+      "after_scenes": [
+        "15"
+      ]
+    },
+    "62": {
+      "after_scenes": [
+        "16"
+      ]
+    },
+    "85": {
+      "after_scenes": [
+        "17"
+      ]
+    },
+    "90": {
+      "after_scenes": [
+        "18"
+      ]
+    },
+    "63": {
+      "after_scenes": [
+        "19"
+      ]
+    },
+    "94": {
+      "after_scenes": [
+        "20"
+      ]
+    },
+    "57": {
+      "after_scenes": [
+        "21"
+      ]
+    },
+    "61": {
+      "after_scenes": [
+        "22"
+      ]
+    },
+    "74": {
+      "after_scenes": [
+        "23"
+      ]
+    },
+    "64": {
+      "after_scenes": [
+        "24"
+      ]
+    },
+    "70": {
+      "after_scenes": [
+        "25"
+      ]
+    },
+    "67": {
+      "after_scenes": [
+        "26"
+      ]
+    },
+    "58": {
+      "after_scenes": [
+        "27"
+      ]
+    },
+    "60": {
+      "after_scenes": [
+        "28"
+      ]
+    },
+    "71": {
+      "after_scenes": [
+        "29"
+      ]
+    },
+    "80": {
+      "after_scenes": [
+        "30"
+      ]
+    },
+    "79": {
+      "after_scenes": [
+        "31"
+      ]
+    },
+    "86": {
+      "after_scenes": [
+        "32"
+      ]
+    },
+    "95": {
+      "after_scenes": [
+        "33"
+      ]
+    },
+    "59": {
+      "after_scenes": [
+        "34"
+      ]
+    },
+    "77": {
+      "after_scenes": [
+        "35"
+      ]
+    },
+    "93": {
+      "after_scenes": [
+        "36"
+      ]
+    },
+    "76": {
+      "after_scenes": [
+        "37"
+      ]
+    },
+    "102": {
+      "after_scenes": [
+        "38"
+      ]
+    },
+    "68": {
+      "after_scenes": [
+        "39"
+      ]
+    },
+    "83": {
+      "after_scenes": [
+        "40"
+      ]
+    }
+  },
+  "routes": {
+    "1": {
+      "trigger_spec": {
+      },
+      "release_spec": {
+        "route": 1,
+        "after_scenes": [
+          "1"
+        ]
+      }
+    }
+  }
+}

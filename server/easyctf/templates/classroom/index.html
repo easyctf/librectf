@@ -1,0 +1,88 @@
+{% extends "layout.html" %}
+{% block title %}Classrooms{% endblock %}
+
+{% block content %}
+    <div class="section gradient">
+        <div class="container">
+            {% if current_user.level == 3 %}
+                <div style="float: right;">
+                    <a href="{{ url_for('classroom.new') }}" class="btn btn-success btn-lg"><i class="fa fa-fw fa-plus"></i>New Class</a>
+                </div>
+            {% endif %}
+            <h1>Classrooms</h1>
+        </div>
+    </div>
+    <div class="section">
+        <div class="container">
+            {% if current_user.level == 3 %}
+                <p>These are the classrooms that you manage. You can create a new one by clicking
+                    <a href="{{ url_for('classroom.new') }}">here</a>.</p>
+                <table class="table table-striped table-hover">
+                    <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Members</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for class in classes %}
+                        <tr>
+                            <td>
+                                <a href="{{ url_for('classroom.view', id=class.id) }}">{{ class.name }}</a>
+                            </td>
+                            <td>{{ class.size }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            {% else %}
+                <div class="row">
+                    <div class="col-md-6">
+                        <p>These are the classrooms that you are a part of.</p>
+                        <table class="table table-striped table-hover">
+                            <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Members</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for class in classes %}
+                                <tr>
+                                    <td>
+                                        <a href="{{ url_for('classroom.view', id=class.id) }}">{{ class.name }}</a>
+                                    </td>
+                                    <td>{{ class.size }}</td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="col-md-6">
+                        <p>The teacher of these classrooms have invited you to join their classroom.</p>
+                        <table class="table table-striped table-hover">
+                            <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Members</th>
+                                <th></th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            {% for class in invites %}
+                                <tr>
+                                    <td>{{ class.name }}</td>
+                                    <td>{{ class.size }}</td>
+                                    <td>
+                                        <a href="{{ url_for('classroom.accept', id=class.id) }}">Join &raquo;</a>
+                                    </td>
+                                </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+{% endblock %}

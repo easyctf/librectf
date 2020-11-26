@@ -1,0 +1,25 @@
+#!/bin/bash
+
+function randomuser() { cat /dev/urandom | tr -dc '0-9' | fold -w 5 | head -n 1; }
+function randomsalt() { cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 16 | head -n 1; }
+function randompass() { cat /dev/urandom | tr -dc 'a-zA-Z0-9' | fold -w 32 | head -n 1; }
+
+#========================================
+echo "Creating CTF user."
+
+USERFOUND=0
+NEWUSER=""
+while [ $USERFOUND -lt 1 ]; do
+    NEWUSER="user$(randomuser)"
+    getent passwd $NEWUSER >/dev/null 2>&1 || USERFOUND=1
+done
+salt=$(randomsalt)
+RAWPASS=$(randompass)
+NEWPASS=$(openssl passwd -1 -salt $salt $RAWPASS)
+
+sudo useradd --gid ctfuser \
+        --password $NEWPASS \
+        --create-home \
+        --no-user-group \
+        --shell /bin/bash $NEWUSER
+echo "$NEWUSER:$RAWPASS"

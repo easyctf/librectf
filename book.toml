@@ -1,5 +1,0 @@
-[book]
-authors = ["Michael Zhang"]
-multilingual = false
-src = "docs"
-title = "LibreCTF"

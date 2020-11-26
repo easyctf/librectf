@@ -1,0 +1,60 @@
+{% macro render_field(field) %}
+<div class="form-group">
+    {{ field.label(class_="control-label") }}
+    {{ field(class_="form-control", autocomplete="off", **kwargs.get("options", {})) }}
+    {% if field.errors %}
+        <p style="color: #F00;">
+            {% for error in field.errors %}
+                {{ error }}<br/>
+            {% endfor %}
+        </p>
+    {% endif %}
+</div>
+{% endmacro %}
+
+{% macro render_generic_field(field) %}
+<div class="form-group">
+    {{ field.label(class_="control-label") }}
+    {{ field(autocomplete="off") }}
+    {% if field.errors %}
+        <p style="color: #F00;">
+            {% for error in field.errors %}
+                {{ error }}<br/>
+            {% endfor %}
+        </p>
+    {% endif %}
+</div>
+{% endmacro %}
+
+{% macro render_editor(field, language) %}
+<div class="form-group">
+    {{ field.label(class_="control-label") }}
+    {{ field(style="display:none;") }}
+    <div id="{{ field.name }}_editor"></div>
+    {% if field.errors %}
+        <p style="color: #F00;">
+            {% for error in field.errors %}
+                {{ error }}<br/>
+            {% endfor %}
+        </p>
+    {% endif %}
+</div>
+<script type="text/javascript">
+    $(document).ready(function () {
+        var {{ field.name }} =
+        ace.edit("{{ field.name }}_editor");
+        {{ field.name }}.
+        setTheme("ace/theme/tomorrow");
+        {{ field.name }}.
+        getSession().setMode("ace/mode/{{ language }}");
+        {{ field.name }}.
+        setValue(`{{ "" if not field.data else field.data.replace("`", "\\`").replace("$", "\\$") | safe }}`);
+        {{ field.name }}.
+        on("change", function () {
+            $("textarea[name={{ field.name }}]").val({{ field.name }}.getValue()
+            )
+            ;
+        });
+    });
+</script>
+{% endmacro %}

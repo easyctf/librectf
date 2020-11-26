@@ -1,0 +1,213 @@
+@font-face {
+    font-family: "Source Sans Pro";
+    font-weight: 300;
+    src: url("../fonts/SourceSansPro-Light.ttf") format("truetype");
+}
+
+@font-face {
+    font-family: "Source Sans Pro";
+    font-weight: 400;
+    src: url("../fonts/SourceSansPro-Regular.ttf") format("truetype");
+}
+
+html, body {
+	font-family: "Source Sans Pro";
+	font-weight: 300 !important;
+}
+
+h1, h2, h3, h4, h5, h6, .btn {
+	font-weight: 300 !important;
+}
+
+#main-content {
+	min-height: 85vh;
+}
+
+.navbar {
+	margin-bottom: 0;
+	border-radius: 0;
+	-moz-border-radius: 0;
+	-webkit-border-radius: 0;
+}
+
+.navatar {
+	width: 20px;
+	height: 20px;
+	border-radius: 2px;
+	margin-right: 4px;
+}
+
+.section {
+	padding: 30px 0 50px 0;
+}
+
+.logo-table {
+	margin: 10px;
+}
+
+.logo-table td {
+	padding: 10px;
+	vertical-align: middle;
+}
+
+.logo-table a:hover {
+	text-decoration: none;
+}
+
+.logo-table h2 {
+	margin: 0;
+}
+
+.logo {
+	max-height: 100px;
+}
+
+.badge a {
+	color: white;
+	text-decoration: none;
+}
+
+.gradient {
+	color: #FFF;
+	background: #31abc6;
+	background: -moz-linear-gradient(45deg,  #31abc6 0%, #5b69bf 100%);
+	background: -webkit-linear-gradient(45deg,  #31abc6 0%,#5b69bf 100%);
+	background: linear-gradient(45deg,  #31abc6 0%,#5b69bf 100%);
+	filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#695bbf', endColorstr='#c631ab',GradientType=1 );
+}
+
+#masthead {
+	min-height:40vh;
+	position:relative;
+	margin: 0;
+	padding-top: 34px;
+	padding-bottom: 42px;
+
+	color: #FFF;
+}
+
+#title h1 {
+	color: rgba(255, 255, 255, 1);
+	font-size: 6.5em;
+}
+
+#title h2 {
+	color: rgba(255, 255, 255, 0.8);
+	font-size: 2.0em;
+}
+
+#title a {
+	color: rgba(255, 255, 255, 0.6);
+	font-size: 1.2em;
+	text-decoration: none;
+}
+
+#links a {
+	margin: 0 12px 0 12px;
+	color: #555;
+	font-size: 0.75em;
+}
+
+.site-footer {
+	/*margin-top: 90px;*/
+	background-color: #eee;
+	color: #999;
+	padding: 3em 0 0;
+	font-size: 14.3px;
+	position: relative;
+}
+
+.site-footer .footer-heading {
+	color: #555;
+}
+
+.footer-copyright {
+	margin-top: 2em;
+	padding: 2em 2em;
+	border-top: 1px solid rgba(0, 0, 0, 0.1);
+	text-align: center;
+}
+
+.site-footer h5, .site-footer .h5 {
+	font-size: 1.2em;
+}
+
+.container.jumbotron {
+	background-color: transparent;
+}
+
+
+html, body, h1, h2, h3, h4, h5, h6 {
+    font-family: "Source Sans Pro", Arial, sans-serif;
+    font-weight: 300;
+}
+
+b {
+    font-weight: 400;
+}
+
+.large-text {
+    font-size: 1.6em;
+}
+
+.tab-content {
+    padding: 15px;
+}
+
+.tab-content > .tab-pane {
+    display: none;
+}
+
+.tab-content > .active {
+    display: block;
+}
+
+.navbar {
+    border-radius: 0;
+}
+
+.site-footer {
+    background-color: #eee;
+    color: #999;
+    padding: 3em 0 0;
+    font-size: 14.3px;
+    position: relative;
+}
+
+.site-footer .footer-heading {
+    color: #555;
+}
+
+.footer-copyright {
+    margin-top: 2em;
+    padding: 2em 2em;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+h5, .h5 {
+    font-size: 1.2em;
+}
+
+#links a {
+    margin: 0 12px 0 12px;
+    color: #555;
+    font-size: 0.75em;
+}
+
+.selectize-input {
+    height: 34px;
+    padding: 6px 12px;
+    font-size: 14px;
+    -webkit-transition: border-color ease-in-out .15s,-webkit-box-shadow ease-in-out .15s;
+    -o-transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+    transition: border-color ease-in-out .15s,box-shadow ease-in-out .15s;
+}
+
+.selectize-control {
+	margin-top: 8px !important;
+}
+
+.selectize-input .item {
+	padding: 1px 6px !important;
+}

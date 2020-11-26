@@ -1,0 +1,70 @@
+<div class="container">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-content" aria-expanded="false">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="{{ url_for('base.index') }}">EasyCTF IV</a>
+    </div>
+    <div id="navbar-content" class="collapse navbar-collapse">
+        <ul class="nav navbar-nav">
+            <li class="dropdown">
+                <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-fw fa-info-circle"></i> About<span class="caret"></span></a>
+                <ul class="dropdown-menu" role="menu">
+                    <li><a href="{{ url_for('base.about') }}"><i class="fa fa-fw fa-info-circle"></i> About</a></li>
+                    <li><a href="{{ url_for('base.team') }}"><i class="fa fa-fw fa-users"></i> The Team</a></li>
+                    <li><a href="{{ url_for('base.rules') }}"><i class="fa fa-fw fa-gavel"></i> Rules</a></li>
+                    <li><a href="{{ url_for('base.prizes') }}"><i class="fa fa-fw fa-trophy"></i> Prizes</a></li>
+                    <li><a href="{{ url_for('base.sponsors') }}"><i class="fa fa-fw fa-rocket"></i> Sponsors</a></li>
+                </ul>
+            </li>
+            <li><a href="{{ url_for('base.updates') }}">Updates</a></li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+            {% if current_user.admin %}
+                <li class="dropdown">
+                    <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-fw fa-cogs"></i> Admin<span class="caret"></span></a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li><a href="{{ url_for('admin.problems') }}"><i class="fa fa-fw fa-pencil"></i> Problem Editor</a></li>
+                        <li><a href="{{ url_for('admin.settings') }}"><i class="fa fa-fw fa-sliders"></i> CTF Settings</a></li>
+                    </ul>
+                </li>
+            {% endif %}
+            {% if current_user.is_authenticated %}
+                {% if easter_egg_enabled %}
+                    <li><a href="{{ url_for('base.easter') }}"><i class="fa fa-fw fa-star-o"></i> Easter Egg</a></li>
+                {% endif %} 
+                <li><a href="{{ url_for('classroom.index') }}"><i class="fa fa-fw fa-users"></i> Classrooms</a></li>
+                {% if competition_running or current_user.admin %}
+                    <li><a href="{{ url_for('base.scoreboard') }}"><i class="fa fa-fw fa-bars"></i> Scoreboard</a></li>
+                    <li class="dropdown">
+                        <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-fw fa-list-ul"></i> Challenges<span class="caret"></span></a>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a href="{{ url_for('game.game') }}"><i class="fa fa-fw fa-gamepad"></i> Game</a></li>
+                            <li><a href="{{ url_for('chals.list') }}"><i class="fa fa-fw fa-pencil"></i> Problem List</a></li>
+                            <li><a href="{{ url_for('chals.shell') }}"><i class="fa fa-fw fa-terminal"></i> Shell Server</a></li>
+                            <li><a href="{{ url_for('chals.programming') }}"><i class="fa fa-fw fa-file-code-o"></i> Programming Judge</a></li>
+                        </ul>
+                    </li>
+                {% endif %}
+                <li><a href="{{ url_for('teams.profile') }}"><i class="fa fa-fw fa-users"></i> My Team</a></li>
+                <li class="dropdown">
+                    <a href="javascript:void(0);" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+                        <img class="navatar" src="{{ filestore(current_user.avatar) }}" />&nbsp;{{ current_user.username }}<span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu" role="menu">
+                        <li><a href="{{ url_for('users.profile') }}"><i class="fa fa-fw fa-user"></i> My Profile</a></li>
+                        <li role="separator" class="divider"></li>
+                        <li><a href="{{ url_for('users.settings') }}"><i class="fa fa-fw fa-sliders"></i> Settings</a></li>
+                        <li><a href="{{ url_for('users.logout') }}"><i class="fa fa-fw fa-sign-out"></i> Logout</a></li>
+                    </ul>
+                </li>
+            {% else %}
+                <li><a href="{{ url_for('users.register') }}">Register</a></li>
+                <li><a href="{{ url_for('users.login') }}">Login</a></li>
+            {% endif %}
+        </ul>
+    </div>
+</div>

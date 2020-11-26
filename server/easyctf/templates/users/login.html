@@ -1,0 +1,68 @@
+{% from "templates.html" import render_field, render_generic_field %}
+{% extends "layout.html" %}
+{% block title %}Login{% endblock %}
+
+{% block content %}
+    <div class="section gradient">
+        <div class="container">
+            <h1>Login</h1>
+        </div>
+    </div>
+    <div class="section">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 col-md-offset-3 col-sm-10 col-sm-offset-1">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h2 class="panel-title">Login</h2>
+                        </div>
+                        <div class="list-group">
+                            <div class="list-group-item">
+                                <form method="POST">
+                                    {{ login_form.csrf_token }}
+                                    <fieldset>
+                                        {{ render_field(login_form.username) }}
+                                        {{ render_field(login_form.password) }}
+                                        <div id="code" style="display: none;">
+                                            {{ render_field(login_form.code) }}
+                                        </div>
+                                        <div class="form-group">
+                                            {{ login_form.remember(autocomplete="off") }}
+                                            {{ login_form.remember.label(class_="control-label") }}
+                                        </div>
+                                    </fieldset>
+                                    {{ login_form.submit(class_="btn btn-primary") }}
+                                    <input type="hidden" name="next" value="{{ next or '' }}"/>
+                                    <a href="{{ url_for("users.forgot") }}" class="btn btn-sm btn-default">Forgot Password</a>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        var check_code_required = function (username) {
+            $("input[name={{ login_form.submit.name }}]").prop("disabled", true);
+            $.get("{{ url_for("users.two_factor_required") }}", {"username": username}, function (result) {
+                var response = JSON.parse(result);
+                if (response === true) {
+                    $("#code").slideDown("fast");
+                } else {
+                    $("#code").slideUp("fast");
+                }
+                $("input[name={{ login_form.code.name }}]").prop("required", response);
+            }).always(function() {
+                $("input[name={{ login_form.submit.name }}]").prop("disabled", false);
+            });
+        };
+        $("input[name={{ login_form.username.name }}]").change(function () {
+            var username = $("input[name={{ login_form.username.name }}]").val();
+            check_code_required(username);
+        });
+        $(document).ready(function () {
+            check_code_required($("input[name={{ login_form.username.name }}]").val());
+        });
+    </script>
+{% endblock %}

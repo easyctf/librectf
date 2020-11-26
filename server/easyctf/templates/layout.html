@@ -1,0 +1,69 @@
+{% from "templates.html" import flashes %}
+<!DOCTYPE html>
+<html>
+
+<head>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-32258920-2"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'UA-32258920-2');
+    </script>
+    <title>{% block title %}{% endblock %} - EasyCTF IV, High School CTF Competition</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="application-name" content="{{ ctf_name }}" />
+    <meta name="msapplication-tooltip" content="{{ ctf_name }}" />
+    <meta name="description" content="{{ ctf_description }}" />
+    <meta name="og:title" content="{{ self.title() }} - EasyCTF IV, High School CTF Competition" />
+    <meta name="og:site_name" content="{{ ctf_name }}" />
+    <meta name="og:description" content="{{ page_description if page_description else ctf_description }}" />
+    <link rel="icon" href="/assets/images/logo.png" /> {% if keywords %}
+    <meta name="keywords" content="{{ keywords }}" />{% endif %}
+    <link href="/assets/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="/assets/css/font-awesome.min.css" rel="stylesheet" />
+    <link href="/assets/css/main.css" rel="stylesheet" type="text/css" />
+    <link href="https://fonts.googleapis.com/css?family=Inconsolata" rel="stylesheet">
+    <script src="/assets/js/jquery-2.1.4.min.js"></script>
+    <script src="/assets/js/bootstrap.min.js"></script>
+    <script src="/assets/js/bootstrap3-typeahead.min.js"></script>
+    <script src="/assets/js/moment.min.js"></script>
+    <script src="/assets/js/smooth-scroll.min.js"></script>
+    <script src="/assets/js/livestamp.min.js"></script>
+</head>
+
+<body>
+    {% if current_user.admin %}
+        <div class="alert alert-warning" style="margin: 0; border-radius: 0;">
+            <div class="container">
+                competition status:
+                <b style="color: {{ "green" if competition_running else "red" }}">{{ "not " if not competition_running }}running.</b>
+                (window: <b data-livestamp="{{ competition_start | to_timestamp }}"></b> to <b data-livestamp="{{ competition_end | to_timestamp }}"></b>)
+            </div>
+        </div>
+    {% endif %}
+    <nav role="navigation" class="navbar navbar-inverse" id="navbar">
+        {% include "navbar.html" %}
+    </nav>
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <div style="margin-bottom: 0;">
+            {% for category, message in messages %}
+                <div class="alert alert-{{ category or 'info' }}" style="border-radius: 0; margin: 0">
+                    <div class="container">{{ message }}</div>
+                </div>
+            {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+    <div style="min-height: 80vh;">
+        {% block content %}{% endblock %}
+    </div>
+    <div class="footer">
+        {% include "footer.html" %}
+    </div>
+    <!-- EasyCTF Platform IV, server: {{ hostname }} -->
+</body>
+
+</html>

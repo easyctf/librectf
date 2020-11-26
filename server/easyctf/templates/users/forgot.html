@@ -1,0 +1,28 @@
+{% from "templates.html" import render_field, render_generic_field %}
+{% extends "layout.html" %}
+{% block title %}Forgot Password{% endblock %}
+
+{% block content %}
+    <div class="section">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 col-md-offset-3 col-sm-10 col-sm-offset-1">
+                    <div class="panel panel-default">
+                        <div class="panel-heading">
+                            <h2 class="panel-title">Forgot Password</h2>
+                        </div>
+                        <div class="panel-body">
+                            <form method="POST">
+                                {{ forgot_form.csrf_token }}
+                                <fieldset>
+                                    {{ render_field(forgot_form.email) }}
+                                </fieldset>
+                                {{ forgot_form.submit(class_="btn btn-primary") }}
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

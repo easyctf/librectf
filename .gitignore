@@ -1,6 +1,10 @@
-/target
-*~
+.data
 .env
-/data
-librectf.toml
-/test.db
+.vagrant
+.vscode
+.digitalocean-token
+.idea
+
+__pycache__
+*.pyc
+ubuntu-xenial-16.04-cloudimg-console.log
