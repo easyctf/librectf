@@ -1,7 +1,7 @@
-import pickle
 import os
 import sys
 import logging
+import dhall
 
 import pathlib
 
@@ -22,6 +22,12 @@ import pathlib
 
 
 class Config(object):
+    @classmethod
+    def from_dhall_file(cls, path):
+        with open(path, "r") as f:
+            config = dhall.load(f)
+        print(config)
+
     def __init__(self, app_root=None, testing=False, secret_key=None):
         if app_root is None:
             self.app_root = pathlib.Path(

@@ -23,8 +23,8 @@ services:
             - db
             - redis
         volumes:
-            - "./contest.dhall:/contest.dhall"
-            - "./deploy.dhall:/deploy.dhall"
+            - "./contest.dhall:/app/contest.dhall"
+            - "./deploy.dhall:/app/deploy.dhall"
         environment:
             - "SECRET_KEY=${SECRET_KEY}"
             - "ADMIN_EMAIL=${ADMIN_EMAIL}"

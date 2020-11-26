@@ -15,7 +15,7 @@ def create_app(config=None):
     print("CONFIG IS", config)
     if config is None:
         from easyctf.config import Config
-        config = Config()
+        config = Config.from_dhall_file("deploy.dhall")
     app.config.from_object(config)
 
     from easyctf.objects import cache, db, login_manager, sentry
