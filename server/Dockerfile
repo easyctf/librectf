@@ -9,5 +9,5 @@ RUN pipenv install --deploy --system
 
 COPY . /app
 WORKDIR /app
-EXPOSE 8000
+EXPOSE 80
 ENTRYPOINT ["pipenv", "run", "/app/entrypoint.sh", "runserver"]

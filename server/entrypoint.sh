@@ -33,7 +33,7 @@ WORKERS=${WORKERS:-4}
 flask db upgrade
 
 if [ "$COMMAND" == "runserver" ]; then
-    flask run --host 0.0.0.0 --port 8000
+    flask run --host 0.0.0.0 --port 80
     # if [ "$ENVIRONMENT" == "development" ]; then
     #     $PYTHON manage.py runserver
     # else
