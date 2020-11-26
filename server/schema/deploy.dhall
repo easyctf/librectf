@@ -6,10 +6,12 @@ let Config = {
     secretKey : Text,
     environment : Environment,
     sentryDsn : Optional Text,
+    disableEmails : Bool,
   },
   default = {
     environment = Environment.Production,
     sentryDsn = None Text,
+    disableEmails = False,
   },
 } in
 

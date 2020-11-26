@@ -28,7 +28,6 @@ services:
         environment:
             - "FLASK_DEBUG=1"
             - "SECRET_KEY=${SECRET_KEY}"
-            - "ADMIN_EMAIL=${ADMIN_EMAIL}"
             - "ENVIRONMENT=${ENVIRONMENT}"
             - "CACHE_REDIS_HOST=redis"
             - "MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}"

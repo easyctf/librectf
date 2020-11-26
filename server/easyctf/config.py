@@ -5,21 +5,6 @@ import dhall
 
 import pathlib
 
-# from werkzeug.contrib.cache import RedisCache
-# 
-# 
-# class CTFCache(RedisCache):
-#     def dump_object(self, value):
-#         value_type = type(value)
-#         if value_type in (int, int):
-#             return str(value).encode('ascii')
-#         return b'!' + pickle.dumps(value, -1)
-# 
-# 
-# def cache(app, config, args, kwargs):
-#     kwargs["host"] = app.config.get("CACHE_REDIS_HOST", "localhost")
-#     return CTFCache(*args, **kwargs)
-
 
 class Config(object):
     @classmethod
@@ -70,7 +55,7 @@ class Config(object):
 
         if testing or self.ENVIRONMENT == "testing":
             test_db_path = os.path.join(os.path.dirname(__file__), "test.db")
-            self.SQLALCHEMY_DATABASE_URI = "sqlite:///%s" % test_db_path
+            self.SQLALCHEMY_DATABASE_URI = f"sqlite:///{test_db_path}"
             if not os.path.exists(test_db_path):
                 with open(test_db_path, "a"):
                     os.utime(test_db_path, None)
@@ -90,4 +75,8 @@ class Config(object):
         url = os.getenv("DATABASE_URL")
         if url:
             return url
-        return "mysql://root:%s@%s:3306/%s" % (os.getenv("MYSQL_ROOT_PASSWORD"), os.getenv("MYSQL_HOST"), os.getenv("MYSQL_DATABASE"))
+
+        password = os.getenv("MYSQL_ROOT_PASSWORD")
+        host = os.getenv("MYSQL_HOST")
+        db = os.getenv("MYSQL_DATABASE")
+        return f"mysql://root:{password}@{host}:3306/{db}"
