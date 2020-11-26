@@ -1,0 +1,19 @@
+[package]
+name = "filestore"
+version = "0.1.0"
+authors = ["Michael Zhang <mail@mzhang.io>"]
+edition = "2018"
+
+[dependencies]
+hyper = "0.13.9"
+lazy_static = "1.4.0"
+tokio = { version = "0.2", features = ["full"] }
+anyhow = "1.0.34"
+sha2 = "0.9.2"
+futures = "0.3.8"
+
+[dependencies.multipart-async]
+git = "https://github.com/abonander/multipart-async"
+rev = "12a19d651a784684422fa180bb000595c5e907dc"
+default-features = false
+features = ["server"]
