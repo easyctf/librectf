@@ -26,7 +26,7 @@ class Config(object):
     def from_dhall_file(cls, path):
         with open(path, "r") as f:
             config = dhall.load(f)
-        print(config)
+        return Config()
 
     def __init__(self, app_root=None, testing=False, secret_key=None):
         if app_root is None:

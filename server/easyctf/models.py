@@ -209,7 +209,7 @@ class User(db.Model):
         return self._password
 
     @password.setter
-    def set_password(self, password):
+    def password(self, password):
         self._password = bcrypt.encrypt(password, rounds=10)
 
     @hybrid_property

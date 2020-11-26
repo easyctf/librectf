@@ -1,5 +1,5 @@
-#!/bin/sh
-set -e
+#!/bin/bash
+set -eux
 PYTHON=python3
 
 # wait for mysql to be ready
@@ -26,10 +26,9 @@ fi
 # BIND_ADDR_=$(curl -w "\n" http://169.254.169.254/metadata/v1/interfaces/private/0/ipv4/address --connect-timeout 2 || printf "0.0.0.0")
 # BIND_ADDR=$(echo $BIND_ADDR_ | xargs)
 
-echo "starting EasyCTF..."
+echo "starting app $FLASK_APP..."
 COMMAND=${1:-runserver}
-ENVIRONMENT=${ENVIRONMENT:-production}
-WORKERS=${WORKERS:-4}
+
 flask db upgrade
 
 if [ "$COMMAND" == "runserver" ]; then
