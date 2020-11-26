@@ -5,9 +5,11 @@ let Config = {
     adminEmail : Text,
     secretKey : Text,
     environment : Environment,
+    sentryDsn : Optional Text,
   },
   default = {
     environment = Environment.Production,
+    sentryDsn = None Text,
   },
 } in
 

@@ -1,8 +1,8 @@
 from flask_wtf import FlaskForm
 from sqlalchemy import func
 from wtforms import ValidationError
-from wtforms.fields import *
-from wtforms.validators import *
+from wtforms.fields import StringField, SubmitField
+from wtforms.validators import InputRequired
 
 from easyctf.models import Team
 

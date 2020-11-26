@@ -22,7 +22,7 @@ import pathlib
 
 
 class Config(object):
-    def __init__(self, app_root=None, testing=False):
+    def __init__(self, app_root=None, testing=False, secret_key=None):
         if app_root is None:
             self.app_root = pathlib.Path(
                 os.path.dirname(os.path.abspath(__file__)))
@@ -30,7 +30,10 @@ class Config(object):
             self.app_root = pathlib.Path(app_root)
 
         self.TESTING = False
-        self.SECRET_KEY = self._load_secret_key()
+        self.SECRET_KEY = secret_key
+        if self.SECRET_KEY is None:
+            self.SECRET_KEY = self._load_secret_key()
+
         self.SQLALCHEMY_DATABASE_URI = self._get_database_url()
         self.SQLALCHEMY_TRACK_MODIFICATIONS = False
         self.PREFERRED_URL_SCHEME = "https"
@@ -72,8 +75,9 @@ class Config(object):
         key = os.environ.get("SECRET_KEY")
         if key:
             return key
-        logging.fatal("No SECRET_KEY specified. Exiting...")
-        sys.exit(1)
+        if not self.SECRET_KEY:
+            logging.fatal("No SECRET_KEY specified. Exiting...")
+            sys.exit(1)
 
     @staticmethod
     def _get_database_url():

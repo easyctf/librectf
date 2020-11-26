@@ -38,12 +38,16 @@ rauth = "*"
 raven = {extras = ["flask"], version = "*"}
 redis = "*"
 requests = "*"
+wtforms = "*"
 
 [dev-packages]
 pyls = "*"
 pyls-mypy = "*"
 mypy = "*"
 neovim = "*"
+coverage = "*"
+pytest = "*"
+webtest = "*"
 
 [requires]
 python_version = "3.8"

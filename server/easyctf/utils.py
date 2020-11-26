@@ -95,6 +95,8 @@ def sanitize_avatar(f):
 
 
 def generate_identicon(seed):
+    # forgot where i got this code from but if i find it i'll credit it
+
     seed = seed.strip().lower().encode("utf-8")
     h = hashlib.sha1(seed).hexdigest()
     size = 256

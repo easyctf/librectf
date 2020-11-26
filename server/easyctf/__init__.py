@@ -12,7 +12,8 @@ def create_app(config=None):
     app = Flask(__name__, static_folder="assets", static_url_path="/assets")
     hostname = socket.gethostname()
 
-    if not config:
+    print("CONFIG IS", config)
+    if config is None:
         from easyctf.config import Config
         config = Config()
     app.config.from_object(config)

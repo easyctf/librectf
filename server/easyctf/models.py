@@ -23,14 +23,13 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import backref
 from sqlalchemy.sql.expression import union_all
 
-from easyctf.config import Config as AppConfig
 from easyctf.constants import USER_REGULAR
 from easyctf.objects import cache, db, login_manager
 from easyctf.utils import (generate_identicon, generate_short_string,
                            generate_string, save_file)
 
-config = AppConfig()
-SEED = "OPENCTF_PROBLEM_SEED_PREFIX_%s" % config.SECRET_KEY
+# TODO: randomize
+SEED = "OPENCTF_PROBLEM_SEED_PREFIX_%s"
 login_manager.login_view = "users.login"
 login_manager.login_message_category = "danger"
 
@@ -210,7 +209,7 @@ class User(db.Model):
         return self._password
 
     @password.setter
-    def password(self, password):
+    def set_password(self, password):
         self._password = bcrypt.encrypt(password, rounds=10)
 
     @hybrid_property
@@ -338,7 +337,7 @@ class Problem(db.Model):
         for filename in files:
             file_path = os.path.join(path, filename)
             if not os.path.isfile(file_path):
-                print("\t* File '{}' doesn't exist".format(filename, name))
+                print(f"\t* File '{filename}' doesn't exist")
                 continue
 
             source = open(file_path, "rb")
@@ -622,7 +621,7 @@ class Team(db.Model):
         return User.query.filter(and_(User.tid == self.tid, User.level != USER_REGULAR)).count()
 
     @observer.expression
-    def observer(self):
+    def observer_expr(self):
         return db.session.query(User).filter(User.tid == self.tid and User.level != USER_REGULAR).count()
 
     @hybrid_property
@@ -632,7 +631,7 @@ class Team(db.Model):
                    db.session.query(Problem, Solve).filter(Solve.tid == self.tid).filter(Problem.pid == Solve.tid).all())
 
     @prop_points.expression
-    def prop_points(self):
+    def prop_points_expr(self):
         return db.session.query(Problem, Solve).filter(Solve.tid == self.tid).filter(Problem.pid == Solve.tid)\
             .with_entities(func.sum(Problem.value)).scalar()
 
