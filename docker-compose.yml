@@ -12,6 +12,7 @@ services:
             - filestore:/filestore-data
     filestore:
         build: filestore
+        expose: [80]
         volumes:
             - filestore:/filestore-data
         environment:

@@ -78,7 +78,8 @@ async fn hello_world_inner(req: Request<Body>) -> Result<Response<Body>> {
 async fn main() {
     println!("Uploading to {:?}", *UPLOAD_FOLDER);
 
-    let addr = SocketAddr::from(([127, 0, 0, 1], 3000));
+    let port = env::var("FILESTORE_PORT").unwrap().parse::<u16>().unwrap();
+    let addr = SocketAddr::from(([0, 0, 0, 0], port));
     let make_svc = make_service_fn(|_conn| async { Ok::<_, Infallible>(service_fn(hello_world)) });
     let server = Server::bind(&addr).serve(make_svc);
 
