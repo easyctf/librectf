@@ -8,6 +8,7 @@
       let
         pkgs = nixpkgs.legacyPackages.${system};
         python39Packages = pkgs.python39Packages;
+        nodePackages = pkgs.nodePackages;
 
         myPkgs = rec {
           docs = pkgs.callPackage ./docs {};
@@ -24,8 +25,9 @@
 
         devShell = pkgs.mkShell {
           packages = with pkgs;
-            with python39Packages; [
+            with python39Packages; with nodePackages; [
               crate2nix
+              node2nix
               black
               nixfmt
               mdbook
