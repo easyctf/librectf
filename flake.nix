@@ -10,6 +10,7 @@
         python39Packages = pkgs.python39Packages;
 
         myPkgs = rec {
+          docs = pkgs.callPackage ./docs {};
           filestore = pkgs.callPackage ./filestore { };
           judge = python39Packages.callPackage ./judge { };
           frontend = pkgs.callPackage ./frontend {};
@@ -27,6 +28,7 @@
               crate2nix
               black
               nixfmt
+              mdbook
             ];
         };
       });
