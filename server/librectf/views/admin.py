@@ -1,5 +1,4 @@
 from flask import Blueprint, abort, flash, redirect, render_template, request, url_for
-from wtforms_components import read_only
 
 from librectf.decorators import admin_required
 from librectf.forms.admin import ProblemForm, SettingsForm

@@ -1,0 +1,3 @@
+graft librectf/assets
+graft librectf/templates
+global-exclude *.pyc

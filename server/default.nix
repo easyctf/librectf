@@ -9,6 +9,7 @@ let
   extraPypi = callPackage ./extra-pypi.nix { };
   propagatedBuildInputs = with python39Packages;
     [
+      email_validator
       flask
       flask-caching
       flask_login
@@ -19,15 +20,15 @@ let
       pillow
       pycryptodome
       pyotp
+      pyqrcode
       raven
       requests
-      email_validator
+      setuptools
       wtforms
-      pyqrcode
 
       # TODO: figure out why these fail tests
       (dontCheck flask_migrate)
-    ] ++ (with extraPypi; [ wtforms-components ]);
+    ] ++ (with extraPypi; [ ]);
   checkInputs = with python39Packages; [ pytest webtest ];
 in buildPythonApplication {
   pname = "librectf-server";
