@@ -1,31 +1,29 @@
 {
-  description = "Open-source CTF administration server.";
+  description = "Open-source CTF administration suite.";
 
-  inputs = {
-    flake-utils.url = "github:numtide/flake-utils";
-  };
+  inputs = { flake-utils.url = "github:numtide/flake-utils"; };
 
   outputs = { self, nixpkgs, flake-utils }:
-  flake-utils.lib.eachDefaultSystem (system:
-  let
-    pkgs = nixpkgs.legacyPackages.${system};
-    python39Packages = pkgs.python39Packages;
+    flake-utils.lib.eachDefaultSystem (system:
+      let
+        pkgs = nixpkgs.legacyPackages.${system};
+        python39Packages = pkgs.python39Packages;
 
-    myPkgs = rec {
-      filestore = pkgs.callPackage ./filestore {};
-      judge = python39Packages.callPackage ./judge {};
-      server = python39Packages.callPackage ./server {};
-    };
-  in
-  {
-    packages = flake-utils.lib.flattenTree myPkgs;
+        myPkgs = rec {
+          filestore = pkgs.callPackage ./filestore { };
+          judge = python39Packages.callPackage ./judge { };
+          server = python39Packages.callPackage ./server { };
+        };
+      in {
+        packages = flake-utils.lib.flattenTree myPkgs;
 
-    devShell = pkgs.mkShell {
-      packages = with pkgs; with python39Packages; [
-        crate2nix
-        black
-        nixfmt
-      ];
-    };
-  });
+        devShell = pkgs.mkShell {
+          packages = with pkgs;
+            with python39Packages; [
+              crate2nix
+              black
+              nixfmt
+            ];
+        };
+      });
 }

@@ -1,7 +1,5 @@
 { pkgs }:
 
-let
-  rustProject = import ./Cargo.nix { inherit pkgs; };
-in
+let rustProject = import ./Cargo.nix { inherit pkgs; };
 
-rustProject.rootCrate.build
+in rustProject.rootCrate.build

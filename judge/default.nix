@@ -1,9 +1,7 @@
 { buildPythonApplication, nix-gitignore, python39Packages }:
 
-let
-  propagatedBuildInputs = with python39Packages; [];
-in
-buildPythonApplication {
+let propagatedBuildInputs = with python39Packages; [ ];
+in buildPythonApplication {
   pname = "librectf-judge";
   version = "0.1.0";
 
