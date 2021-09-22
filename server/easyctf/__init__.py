@@ -15,11 +15,13 @@ def create_app(config=None):
     print("CONFIG IS", config)
     if config is None:
         from easyctf.config import Config
-        config = Config.from_dhall_file("deploy.dhall")
+
+        config = Config()
     app.config.from_object(config)
 
     from easyctf.objects import cache, db, login_manager, sentry
     import easyctf.models
+
     cache.init_app(app)
     db.init_app(app)
     login_manager.init_app(app)
@@ -27,11 +29,13 @@ def create_app(config=None):
         sentry.init_app(app, logging=True, level=logging.WARNING)
 
     from easyctf.utils import filestore, to_place_str, to_timestamp
+
     app.jinja_env.globals.update(filestore=filestore)
     app.jinja_env.filters["to_timestamp"] = to_timestamp
     app.jinja_env.filters["to_place_str"] = to_place_str
 
     from easyctf.models import Config
+
     Migrate(app, db)
 
     def get_competition_running():
@@ -57,7 +61,11 @@ def create_app(config=None):
     # TODO: actually finish this
     @app.context_processor
     def inject_config():
-        competition_start, competition_end, competition_running = get_competition_running()
+        (
+            competition_start,
+            competition_end,
+            competition_running,
+        ) = get_competition_running()
         easter_egg_enabled = False
         if competition_running and current_user.is_authenticated:
             try:
@@ -72,11 +80,12 @@ def create_app(config=None):
             competition_end=competition_end,
             ctf_name=Config.get("ctf_name", "OpenCTF"),
             easter_egg_enabled=easter_egg_enabled,
-            environment=app.config.get("ENVIRONMENT", "production")
+            environment=app.config.get("ENVIRONMENT", "production"),
         )
         return config
 
     from easyctf.views import admin, base, classroom, chals, game, judge, teams, users
+
     app.register_blueprint(admin.blueprint, url_prefix="/admin")
     app.register_blueprint(base.blueprint)
     app.register_blueprint(classroom.blueprint, url_prefix="/classroom")

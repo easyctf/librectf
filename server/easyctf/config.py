@@ -1,37 +1,29 @@
 import os
 import sys
 import logging
-import dhall
 
 import pathlib
 
 # from werkzeug.contrib.cache import RedisCache
-# 
-# 
+#
+#
 # class CTFCache(RedisCache):
 #     def dump_object(self, value):
 #         value_type = type(value)
 #         if value_type in (int, int):
 #             return str(value).encode('ascii')
 #         return b'!' + pickle.dumps(value, -1)
-# 
-# 
+#
+#
 # def cache(app, config, args, kwargs):
 #     kwargs["host"] = app.config.get("CACHE_REDIS_HOST", "localhost")
 #     return CTFCache(*args, **kwargs)
 
 
 class Config(object):
-    @classmethod
-    def from_dhall_file(cls, path):
-        with open(path, "r") as f:
-            config = dhall.load(f)
-        return Config()
-
     def __init__(self, app_root=None, testing=False, secret_key=None):
         if app_root is None:
-            self.app_root = pathlib.Path(
-                os.path.dirname(os.path.abspath(__file__)))
+            self.app_root = pathlib.Path(os.path.dirname(os.path.abspath(__file__)))
         else:
             self.app_root = pathlib.Path(app_root)
 
@@ -44,18 +36,26 @@ class Config(object):
         self.SQLALCHEMY_TRACK_MODIFICATIONS = False
         self.PREFERRED_URL_SCHEME = "https"
 
-        self.CACHE_TYPE = "redis" # "easyctf.config.cache"
+        self.CACHE_TYPE = "redis"  # "easyctf.config.cache"
         self.CACHE_REDIS_HOST = os.getenv("CACHE_REDIS_HOST", "redis")
 
         self.ENVIRONMENT = os.getenv("ENVIRONMENT", "production")
-        self.EMAIL_VERIFICATION_REQUIRED = int(os.getenv(
-            "EMAIL_VERIFICATION_REQUIRED", "1" if self.ENVIRONMENT == "production" else "0"))
+        self.EMAIL_VERIFICATION_REQUIRED = int(
+            os.getenv(
+                "EMAIL_VERIFICATION_REQUIRED",
+                "1" if self.ENVIRONMENT == "production" else "0",
+            )
+        )
 
         self.FILESTORE_SAVE_ENDPOINT = os.getenv(
-            "FILESTORE_SAVE_ENDPOINT", "http://filestore:5001/save")
+            "FILESTORE_SAVE_ENDPOINT", "http://filestore:5001/save"
+        )
         self.FILESTORE_STATIC = os.getenv("FILESTORE_STATIC", "/static")
 
-        self.DISABLE_EMAILS = os.getenv("DISABLE_EMAILS", "" if self.ENVIRONMENT == "production" else "1") != ""
+        self.DISABLE_EMAILS = (
+            os.getenv("DISABLE_EMAILS", "" if self.ENVIRONMENT == "production" else "1")
+            != ""
+        )
         self.JUDGE_URL = os.getenv("JUDGE_URL", "http://127.0.0.1/")
         self.JUDGE_API_KEY = os.getenv("JUDGE_API_KEY", "")
         self.SHELL_HOST = os.getenv("SHELL_HOST", "")
@@ -90,4 +90,8 @@ class Config(object):
         url = os.getenv("DATABASE_URL")
         if url:
             return url
-        return "mysql://root:%s@%s:3306/%s" % (os.getenv("MYSQL_ROOT_PASSWORD"), os.getenv("MYSQL_HOST"), os.getenv("MYSQL_DATABASE"))
+        return "mysql://root:%s@%s:3306/%s" % (
+            os.getenv("MYSQL_ROOT_PASSWORD"),
+            os.getenv("MYSQL_HOST"),
+            os.getenv("MYSQL_DATABASE"),
+        )

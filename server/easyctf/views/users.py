@@ -4,21 +4,43 @@ from io import BytesIO
 from string import Template
 
 import pyqrcode
-from flask import (Blueprint, abort, flash, redirect, render_template, request,
-                   url_for, current_app)
+from flask import (
+    Blueprint,
+    abort,
+    flash,
+    redirect,
+    render_template,
+    request,
+    url_for,
+    current_app,
+)
 from flask_login import current_user, login_required, login_user, logout_user
 from sqlalchemy import func
 
-from easyctf.constants import (FORGOT_EMAIL_TEMPLATE,
-                               REGISTRATION_EMAIL_TEMPLATE, USER_LEVELS)
-from easyctf.forms.users import (ChangeLoginForm, LoginForm,
-                                 PasswordForgotForm, PasswordResetForm,
-                                 ProfileEditForm, RegisterForm,
-                                 TwoFactorAuthSetupForm)
+from easyctf.constants import (
+    FORGOT_EMAIL_TEMPLATE,
+    REGISTRATION_EMAIL_TEMPLATE,
+    USER_LEVELS,
+)
+from easyctf.forms.users import (
+    ChangeLoginForm,
+    LoginForm,
+    PasswordForgotForm,
+    PasswordResetForm,
+    ProfileEditForm,
+    RegisterForm,
+    TwoFactorAuthSetupForm,
+)
 from easyctf.models import Config, PasswordResetToken, Team, User
 from easyctf.objects import db, sentry
-from easyctf.utils import (generate_string, get_redirect_target, redirect_back,
-                           sanitize_avatar, save_file, send_mail)
+from easyctf.utils import (
+    generate_string,
+    get_redirect_target,
+    redirect_back,
+    sanitize_avatar,
+    save_file,
+    send_mail,
+)
 
 blueprint = Blueprint("users", __name__, template_folder="templates")
 
@@ -30,9 +52,13 @@ def accept(id):
     max_size = Config.get_team_size()
     try:
         assert not current_user.tid, "You're already in a team!"
-        assert current_user in target_team.outgoing_invitations, "There is no invitation for you!"
+        assert (
+            current_user in target_team.outgoing_invitations
+        ), "There is no invitation for you!"
         if not target_team.admin:
-            assert target_team.size < max_size, "This team has already reached the maximum member limit!"
+            assert (
+                target_team.size < max_size
+            ), "This team has already reached the maximum member limit!"
         target_team.outgoing_invitations.remove(current_user)
         target_team.members.append(current_user)
         db.session.add(current_user)
@@ -50,12 +76,21 @@ def forgot():
     forgot_form = PasswordForgotForm()
     if forgot_form.validate_on_submit():
         if forgot_form.user is not None:
-            token = PasswordResetToken(active=True, uid=forgot_form.user.uid, email=forgot_form.email.data, expire=datetime.utcnow() + timedelta(days=1))
+            token = PasswordResetToken(
+                active=True,
+                uid=forgot_form.user.uid,
+                email=forgot_form.email.data,
+                expire=datetime.utcnow() + timedelta(days=1),
+            )
             db.session.add(token)
             db.session.commit()
             url = url_for("users.reset", code=token.token, _external=True)
             # TODO: stick this into the template
-            send_mail(forgot_form.email.data, "%s Password Reset" % Config.get("ctf_name"), "Click here to reset your password: %s" % url)
+            send_mail(
+                forgot_form.email.data,
+                "%s Password Reset" % Config.get("ctf_name"),
+                "Click here to reset your password: %s" % url,
+            )
             flash("Sent! Check your email.", "success")
         return redirect(url_for("users.forgot"))
     return render_template("users/forgot.html", forgot_form=forgot_form)
@@ -87,14 +122,22 @@ def login():
     next = get_redirect_target()
     if login_form.validate_on_submit():
         target_user = login_form.get_user()
-        if target_user.otp_confirmed and not target_user.verify_totp(login_form.code.data):
+        if target_user.otp_confirmed and not target_user.verify_totp(
+            login_form.code.data
+        ):
             flash("Invalid code.", "danger")
             return render_template("users/login.html", login_form=login_form, next=next)
 
         login_user(target_user, remember=login_form.remember.data)
         flash("Successfully logged in as %s!" % target_user.username, "success")
         if sentry.client:
-            sentry.client.capture_breadcrumb(message="login", category="user:login", level="info", data=dict(uid=target_user.uid, username=target_user.username), timestamp=datetime.now())
+            sentry.client.capture_breadcrumb(
+                message="login",
+                category="user:login",
+                level="info",
+                data=dict(uid=target_user.uid, username=target_user.username),
+                timestamp=datetime.now(),
+            )
         return redirect_back("users.profile")
     return render_template("users/login.html", login_form=login_form, next=next)
 
@@ -126,11 +169,14 @@ def register():
         return redirect(url_for("users.profile", uid=current_user.uid))
     register_form = RegisterForm(prefix="register")
     if register_form.validate_on_submit():
-        new_user = register_user(register_form.name.data,
-                                 register_form.email.data,
-                                 register_form.username.data,
-                                 register_form.password.data,
-                                 int(register_form.level.data), admin=False)
+        new_user = register_user(
+            register_form.name.data,
+            register_form.email.data,
+            register_form.username.data,
+            register_form.password.data,
+            int(register_form.level.data),
+            admin=False,
+        )
         login_user(new_user)
         return redirect(url_for("users.profile"))
     return render_template("users/register.html", register_form=register_form)
@@ -164,7 +210,9 @@ def settings():
                     f = BytesIO(field.data.read())
                     new_avatar = sanitize_avatar(f)
                     if new_avatar:
-                        response = save_file(new_avatar, prefix="user_avatar", suffix=".png")
+                        response = save_file(
+                            new_avatar, prefix="user_avatar", suffix=".png"
+                        )
                         if response.status_code == 200:
                             current_user._avatar = response.text
                 continue
@@ -181,7 +229,11 @@ def settings():
         for field in profile_edit_form:
             if hasattr(current_user, field.short_name):
                 field.data = getattr(current_user, field.short_name, "")
-    return render_template("users/settings.html", change_login_form=change_login_form, profile_edit_form=profile_edit_form)
+    return render_template(
+        "users/settings.html",
+        change_login_form=change_login_form,
+        profile_edit_form=profile_edit_form,
+    )
 
 
 @blueprint.route("/two_factor/required")
@@ -204,7 +256,9 @@ def two_factor_setup():
         db.session.commit()
         flash("Two-factor authentication setup is complete.", "success")
         return redirect(url_for("users.settings"))
-    return render_template("users/two_factor/setup.html", two_factor_form=two_factor_form)
+    return render_template(
+        "users/two_factor/setup.html", two_factor_form=two_factor_form
+    )
 
 
 @blueprint.route("/two_factor/qr")
@@ -213,13 +267,17 @@ def two_factor_qr():
     url = pyqrcode.create(current_user.get_totp_uri())
     stream = BytesIO()
     url.svg(stream, scale=6)
-    return stream.getvalue(), 200, {
-        "Content-Type": "image/svg+xml",
-        "Cache-Control": "no-cache, no-store, must-revalidate",
-        "Pragma": "no-cache",
-        "Expires": 0,
-        "Secret": current_user.otp_secret
-    }
+    return (
+        stream.getvalue(),
+        200,
+        {
+            "Content-Type": "image/svg+xml",
+            "Cache-Control": "no-cache, no-store, must-revalidate",
+            "Pragma": "no-cache",
+            "Expires": 0,
+            "Secret": current_user.otp_secret,
+        },
+    )
 
 
 @blueprint.route("/two_factor/disable")
@@ -258,7 +316,9 @@ def verify_email():
     db.session.commit()
     try:
         link = url_for("users.verify", code=code, _external=True)
-        response = send_verification_email(current_user.username, current_user.email, link)
+        response = send_verification_email(
+            current_user.username, current_user.email, link
+        )
         if response.status_code // 100 != 2:
             return "failed"
         return "success"
@@ -268,21 +328,29 @@ def verify_email():
 
 def send_verification_email(username, email, verification_link):
     subject = "[ACTION REQUIRED] EasyCTF Email Verification"
-    body = Template(REGISTRATION_EMAIL_TEMPLATE).substitute({
-        "link": verification_link,
-        "username": username
-    })
+    body = Template(REGISTRATION_EMAIL_TEMPLATE).substitute(
+        {"link": verification_link, "username": username}
+    )
     return send_mail(email, subject, body)
 
 
 def register_user(name, email, username, password, level, admin=False, **kwargs):
-    new_user = User(name=name, username=username, password=password, email=email, level=level, admin=admin)
+    new_user = User(
+        name=name,
+        username=username,
+        password=password,
+        email=email,
+        level=level,
+        admin=admin,
+    )
     for key, value in list(kwargs.items()):
         setattr(new_user, key, value)
     code = generate_string()
     if not current_app.config["DISABLE_EMAILS"]:
         new_user.email_token = code
-        send_verification_email(username, email, url_for("users.verify", code=code, _external=True))
+        send_verification_email(
+            username, email, url_for("users.verify", code=code, _external=True)
+        )
     db.session.add(new_user)
     db.session.commit()
     return new_user

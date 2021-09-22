@@ -5,9 +5,15 @@ from datetime import datetime
 from flask_wtf import FlaskForm
 from sqlalchemy import and_
 from wtforms import ValidationError
-from wtforms.fields import (BooleanField, FloatField, HiddenField,
-                            IntegerField, StringField, SubmitField,
-                            TextAreaField)
+from wtforms.fields import (
+    BooleanField,
+    FloatField,
+    HiddenField,
+    IntegerField,
+    StringField,
+    SubmitField,
+    TextAreaField,
+)
 from wtforms.fields.html5 import DateTimeLocalField
 from wtforms.validators import InputRequired, NumberRange, Optional
 
@@ -28,16 +34,30 @@ class DateTimeField(DateTimeLocalField):
 
 
 class ProblemForm(FlaskForm):
-    author = StringField("Problem Author", validators=[InputRequired("Please enter the author.")])
-    title = StringField("Problem Title", validators=[InputRequired("Please enter a problem title.")])
-    name = StringField("Problem Name (slug)", validators=[InputRequired("Please enter a problem name.")])
-    category = StringField("Problem Category", validators=[InputRequired("Please enter a problem category.")])
-    description = TextAreaField("Description", validators=[InputRequired("Please enter a description.")])
+    author = StringField(
+        "Problem Author", validators=[InputRequired("Please enter the author.")]
+    )
+    title = StringField(
+        "Problem Title", validators=[InputRequired("Please enter a problem title.")]
+    )
+    name = StringField(
+        "Problem Name (slug)",
+        validators=[InputRequired("Please enter a problem name.")],
+    )
+    category = StringField(
+        "Problem Category",
+        validators=[InputRequired("Please enter a problem category.")],
+    )
+    description = TextAreaField(
+        "Description", validators=[InputRequired("Please enter a description.")]
+    )
     value = IntegerField("Value", validators=[InputRequired("Please enter a value.")])
     programming = BooleanField(default=False, validators=[Optional()])
 
     autogen = BooleanField("Autogen", validators=[Optional()])
-    grader = TextAreaField("Grader", validators=[InputRequired("Please enter a grader.")])
+    grader = TextAreaField(
+        "Grader", validators=[InputRequired("Please enter a grader.")]
+    )
     generator = TextAreaField("Generator", validators=[Optional()])
     source_verifier = TextAreaField("Source Verifier", validators=[Optional()])
 
@@ -49,7 +69,9 @@ class ProblemForm(FlaskForm):
 
     def validate_name(self, field):
         if not VALID_PROBLEM_NAME.match(field.data):
-            raise ValidationError("Problem name must be an all-lowercase, slug-style string.")
+            raise ValidationError(
+                "Problem name must be an all-lowercase, slug-style string."
+            )
         # if Problem.query.filter(Problem.name == field.data).count():
         #     raise ValidationError("That problem name already exists.")
 
@@ -61,18 +83,22 @@ class ProblemForm(FlaskForm):
         else:
             try:
                 exec(field.data, grader.__dict__)
-                assert hasattr(grader, "grade"), \
-                    "Grader is missing a 'grade' function."
+                assert hasattr(grader, "grade"), "Grader is missing a 'grade' function."
                 if self.autogen.data:
-                    assert hasattr(grader, "generate"), "Grader is missing a 'generate' function."
+                    assert hasattr(
+                        grader, "generate"
+                    ), "Grader is missing a 'generate' function."
                     seed1 = generate_string()
                     import random
+
                     random.seed(seed1)
                     data = grader.generate(random)
                     assert type(data) is dict, "'generate' must return dict"
                 else:
                     result = grader.grade(None, "")
-                    assert type(result) is tuple, "'grade' must return (correct, message)"
+                    assert (
+                        type(result) is tuple
+                    ), "'grade' must return (correct, message)"
                     correct, message = result
                     assert type(correct) is bool, "'correct' must be a boolean."
                     assert type(message) is str, "'message' must be a string."
@@ -81,14 +107,27 @@ class ProblemForm(FlaskForm):
 
 
 class SettingsForm(FlaskForm):
-    team_size = IntegerField("Team Size", default=5, validators=[NumberRange(min=1), InputRequired("Please enter a max team size.")])
-    ctf_name = StringField("CTF Name", default="OpenCTF", validators=[InputRequired("Please enter a CTF name.")])
-    start_time = DateTimeField("Start Time", validators=[InputRequired("Please enter a CTF start time.")])
-    end_time = DateTimeField("End Time", validators=[InputRequired("Please enter a CTF end time.")])
+    team_size = IntegerField(
+        "Team Size",
+        default=5,
+        validators=[NumberRange(min=1), InputRequired("Please enter a max team size.")],
+    )
+    ctf_name = StringField(
+        "CTF Name",
+        default="OpenCTF",
+        validators=[InputRequired("Please enter a CTF name.")],
+    )
+    start_time = DateTimeField(
+        "Start Time", validators=[InputRequired("Please enter a CTF start time.")]
+    )
+    end_time = DateTimeField(
+        "End Time", validators=[InputRequired("Please enter a CTF end time.")]
+    )
     judge_api_key = StringField("Judge API Key", validators=[Optional()])
 
     submit = SubmitField("Save Settings")
 
     def validate_start_time(self, field):
         import logging
+
         logging.error("lol {}".format(field.data))

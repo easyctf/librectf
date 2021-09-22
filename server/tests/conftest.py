@@ -8,7 +8,8 @@ from easyctf import create_app
 from easyctf.config import Config
 from easyctf.objects import db as _db
 
-@pytest.yield_fixture(scope='function')
+
+@pytest.yield_fixture(scope="function")
 def app():
     config = Config(testing=True, secret_key="asdf")
     _app = create_app(config)
@@ -24,12 +25,12 @@ def app():
     ctx.pop()
 
 
-@pytest.fixture(scope='function')
+@pytest.fixture(scope="function")
 def testapp(app):
     return TestApp(app)
 
 
-@pytest.yield_fixture(scope='function')
+@pytest.yield_fixture(scope="function")
 def db(app):
     _db.app = app
     with app.app_context():
@@ -51,4 +52,3 @@ def db(app):
 #             db.session.commit()
 #             return muser
 #     return User()
-

@@ -23,7 +23,12 @@ def api_view(f):
         if not key:
             return abort(403)
         status, result = f(*args, **kwargs)
-        return make_response(json.dumps(result or dict()), status, {"Content-Type": "application/json; charset=utf-8"})
+        return make_response(
+            json.dumps(result or dict()),
+            status,
+            {"Content-Type": "application/json; charset=utf-8"},
+        )
+
     return wrapper
 
 
@@ -32,7 +37,19 @@ def api_view(f):
 def jobs():
     if request.method == "GET":
         # implement language preference later
-        available = Job.query.filter(or_(Job.status == 0, and_(Job.status == 1, Job.claimed < datetime.utcnow() - timedelta(minutes=5)))).order_by(Job.submitted).first()
+        available = (
+            Job.query.filter(
+                or_(
+                    Job.status == 0,
+                    and_(
+                        Job.status == 1,
+                        Job.claimed < datetime.utcnow() - timedelta(minutes=5),
+                    ),
+                )
+            )
+            .order_by(Job.submitted)
+            .first()
+        )
         if not available:
             return 204, []
         # assign job to current judge
@@ -75,7 +92,9 @@ def jobs():
             if job.verdict == "AC":
                 solve = Solve.query.filter_by(pid=job.pid, tid=job.tid).first()
                 if not solve:
-                    solve = Solve(pid=job.pid, uid=job.uid, tid=job.tid, _date=job.completed)
+                    solve = Solve(
+                        pid=job.pid, uid=job.uid, tid=job.tid, _date=job.completed
+                    )
                     db.session.add(solve)
             db.session.commit()
             return 202, None

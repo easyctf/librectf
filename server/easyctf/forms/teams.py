@@ -10,13 +10,20 @@ from easyctf.models import Config, Team, User
 
 
 class AddMemberForm(FlaskForm):
-    username = StringField("Username", validators=[InputRequired(
-        "Please enter the username of the person you would like to add.")])
+    username = StringField(
+        "Username",
+        validators=[
+            InputRequired(
+                "Please enter the username of the person you would like to add."
+            )
+        ],
+    )
     submit = SubmitField("Add")
 
     def get_user(self):
         query = User.query.filter(
-            func.lower(User.username) == self.username.data.lower())
+            func.lower(User.username) == self.username.data.lower()
+        )
         return query.first()
 
     def validate_username(self, field):
@@ -25,9 +32,12 @@ class AddMemberForm(FlaskForm):
         if current_user.team.owner != current_user.uid:
             raise ValidationError("Only the team captain can invite new members.")
         if len(current_user.team.outgoing_invitations) >= Config.get_team_size():
-            raise ValidationError("You've already sent the maximum number of invitations.")
+            raise ValidationError(
+                "You've already sent the maximum number of invitations."
+            )
         user = User.query.filter(
-            func.lower(User.username) == field.data.lower()).first()
+            func.lower(User.username) == field.data.lower()
+        ).first()
         if user is None:
             raise ValidationError("This user doesn't exist.")
         if user.tid is not None:
@@ -37,8 +47,21 @@ class AddMemberForm(FlaskForm):
 
 
 class CreateTeamForm(FlaskForm):
-    teamname = StringField("Team Name", validators=[InputRequired("Please create a team name."), TeamLengthValidator])
-    school = StringField("School", validators=[InputRequired("Please enter your school."), Length(3, 36, "Your school name must be between 3 and 36 characters long. Use abbreviations if necessary.")])
+    teamname = StringField(
+        "Team Name",
+        validators=[InputRequired("Please create a team name."), TeamLengthValidator],
+    )
+    school = StringField(
+        "School",
+        validators=[
+            InputRequired("Please enter your school."),
+            Length(
+                3,
+                36,
+                "Your school name must be between 3 and 36 characters long. Use abbreviations if necessary.",
+            ),
+        ],
+    )
     submit = SubmitField("Create Team")
 
     def validate_teamname(self, field):
@@ -62,8 +85,21 @@ class DisbandTeamForm(FlaskForm):
 
 
 class ManageTeamForm(FlaskForm):
-    teamname = StringField("Team Name", validators=[InputRequired("Please create a team name."), TeamLengthValidator])
-    school = StringField("School", validators=[InputRequired("Please enter your school."), Length(3, 36, "Your school name must be between 3 and 36 characters long. Use abbreviations if necessary.")])
+    teamname = StringField(
+        "Team Name",
+        validators=[InputRequired("Please create a team name."), TeamLengthValidator],
+    )
+    school = StringField(
+        "School",
+        validators=[
+            InputRequired("Please enter your school."),
+            Length(
+                3,
+                36,
+                "Your school name must be between 3 and 36 characters long. Use abbreviations if necessary.",
+            ),
+        ],
+    )
     submit = SubmitField("Update")
 
     def __init__(self, *args, **kwargs):
@@ -71,13 +107,28 @@ class ManageTeamForm(FlaskForm):
         self.tid = kwargs.get("tid", None)
 
     def validate_teamname(self, field):
-        if Team.query.filter(and_(func.lower(Team.teamname) == field.data.lower(), Team.tid != self.tid)).count():
+        if Team.query.filter(
+            and_(func.lower(Team.teamname) == field.data.lower(), Team.tid != self.tid)
+        ).count():
             raise ValidationError("Team name is taken.")
 
 
 class ProfileEditForm(FlaskForm):
-    teamname = StringField("Team Name", validators=[InputRequired("Please enter a team name."), TeamLengthValidator])
-    school = StringField("School", validators=[InputRequired("Please enter your school."), Length(3, 36, "Your school name must be between 3 and 36 characters long. Use abbreviations if necessary.")])
+    teamname = StringField(
+        "Team Name",
+        validators=[InputRequired("Please enter a team name."), TeamLengthValidator],
+    )
+    school = StringField(
+        "School",
+        validators=[
+            InputRequired("Please enter your school."),
+            Length(
+                3,
+                36,
+                "Your school name must be between 3 and 36 characters long. Use abbreviations if necessary.",
+            ),
+        ],
+    )
     avatar = FileField("Avatar")
     remove_avatar = BooleanField("Remove Avatar")
     submit = SubmitField("Update Profile")

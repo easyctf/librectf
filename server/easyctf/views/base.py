@@ -54,7 +54,9 @@ def scoreboard():
 
 @blueprint.route("/shibboleet", methods=["GET", "POST"])
 def easter():
-    if not (current_user.is_authenticated and (current_user.admin or current_user.team)):
+    if not (
+        current_user.is_authenticated and (current_user.admin or current_user.team)
+    ):
         return abort(404)
     eggs = []
     if request.method == "POST":
@@ -69,20 +71,28 @@ def easter():
             cand = request.form.get("egg")
             egg = Egg.query.filter_by(flag=cand).first()
             if egg:
-                solve = EggSolve.query.filter_by(eid=egg.eid, tid=current_user.tid).first()
+                solve = EggSolve.query.filter_by(
+                    eid=egg.eid, tid=current_user.tid
+                ).first()
                 if solve:
                     flash("You already got this one", "info")
                 else:
-                    solve = EggSolve(eid=egg.eid, tid=current_user.tid, uid=current_user.uid)
+                    solve = EggSolve(
+                        eid=egg.eid, tid=current_user.tid, uid=current_user.uid
+                    )
                     db.session.add(solve)
                     db.session.commit()
                     flash("Congrats!", "success")
             else:
-                submission = WrongEgg.query.filter_by(tid=current_user.tid, submission=cand).first()
+                submission = WrongEgg.query.filter_by(
+                    tid=current_user.tid, submission=cand
+                ).first()
                 if submission:
                     flash("You've already tried that egg", "info")
                 else:
-                    submission = WrongEgg(tid=current_user.tid, uid=current_user.uid, submission=cand)
+                    submission = WrongEgg(
+                        tid=current_user.tid, uid=current_user.uid, submission=cand
+                    )
                     db.session.add(submission)
                     db.session.commit()
                     flash("Nope, sorry", "danger")

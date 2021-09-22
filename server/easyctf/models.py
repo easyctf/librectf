@@ -25,8 +25,12 @@ from sqlalchemy.sql.expression import union_all
 
 from easyctf.constants import USER_REGULAR
 from easyctf.objects import cache, db, login_manager
-from easyctf.utils import (generate_identicon, generate_short_string,
-                           generate_string, save_file)
+from easyctf.utils import (
+    generate_identicon,
+    generate_short_string,
+    generate_string,
+    save_file,
+)
 
 # TODO: randomize
 SEED = "OPENCTF_PROBLEM_SEED_PREFIX_%s"
@@ -40,28 +44,34 @@ def filename_filter(name):
     return re.sub("[^a-zA-Z0-9]+", "_", name)
 
 
-team_classroom = db.Table("team_classroom",
-                          db.Column("team_id", db.Integer, db.ForeignKey(
-                              "teams.tid"), nullable=False),
-                          db.Column("classroom_id", db.Integer, db.ForeignKey(
-                              "classrooms.id"), nullable=False),
-                          db.PrimaryKeyConstraint("team_id", "classroom_id"))
-classroom_invitation = db.Table("classroom_invitation",
-                                db.Column("team_id", db.Integer, db.ForeignKey(
-                                    "teams.tid"), nullable=False),
-                                db.Column("classroom_id", db.Integer, db.ForeignKey(
-                                    "classrooms.id"), nullable=False),
-                                db.PrimaryKeyConstraint("team_id", "classroom_id"))
+team_classroom = db.Table(
+    "team_classroom",
+    db.Column("team_id", db.Integer, db.ForeignKey("teams.tid"), nullable=False),
+    db.Column(
+        "classroom_id", db.Integer, db.ForeignKey("classrooms.id"), nullable=False
+    ),
+    db.PrimaryKeyConstraint("team_id", "classroom_id"),
+)
+classroom_invitation = db.Table(
+    "classroom_invitation",
+    db.Column("team_id", db.Integer, db.ForeignKey("teams.tid"), nullable=False),
+    db.Column(
+        "classroom_id", db.Integer, db.ForeignKey("classrooms.id"), nullable=False
+    ),
+    db.PrimaryKeyConstraint("team_id", "classroom_id"),
+)
 
-team_player_invitation = db.Table("team_player_invitation",
-                                  db.Column("team_id", db.Integer, db.ForeignKey(
-                                      "teams.tid", primary_key=True)),
-                                  db.Column("user_id", db.Integer, db.ForeignKey("users.uid", primary_key=True)))
+team_player_invitation = db.Table(
+    "team_player_invitation",
+    db.Column("team_id", db.Integer, db.ForeignKey("teams.tid", primary_key=True)),
+    db.Column("user_id", db.Integer, db.ForeignKey("users.uid", primary_key=True)),
+)
 
-player_team_invitation = db.Table("player_team_invitation",
-                                  db.Column("user_id", db.Integer, db.ForeignKey(
-                                      "users.uid", primary_key=True)),
-                                  db.Column("team_id", db.Integer, db.ForeignKey("teams.tid", primary_key=True)))
+player_team_invitation = db.Table(
+    "player_team_invitation",
+    db.Column("user_id", db.Integer, db.ForeignKey("users.uid", primary_key=True)),
+    db.Column("team_id", db.Integer, db.ForeignKey("teams.tid", primary_key=True)),
+)
 
 
 class Config(db.Model):
@@ -121,10 +131,12 @@ class Config(db.Model):
             key = RSA.generate(2048)
             private_key = key.exportKey("PEM")
             public_key = key.publickey().exportKey("OpenSSH")
-            cls.set_many({
-                "private_key": str(private_key, "utf-8"),
-                "public_key": str(public_key, "utf-8")
-            })
+            cls.set_many(
+                {
+                    "private_key": str(private_key, "utf-8"),
+                    "public_key": str(public_key, "utf-8"),
+                }
+            )
         return private_key, public_key
 
     def __repr__(self):
@@ -154,7 +166,12 @@ class User(db.Model):
     jobs = db.relationship("Job", backref="user", lazy=True)
     _avatar = db.Column("avatar", db.String(128))
 
-    outgoing_invitations = db.relationship("Team", secondary=player_team_invitation, lazy="subquery", backref=db.backref("incoming_invitations", lazy=True))
+    outgoing_invitations = db.relationship(
+        "Team",
+        secondary=player_team_invitation,
+        lazy="subquery",
+        backref=db.backref("incoming_invitations", lazy=True),
+    )
 
     @property
     def avatar(self):
@@ -163,8 +180,7 @@ class User(db.Model):
             avatar = generate_identicon("user%s" % self.uid)
             avatar.save(avatar_file, format="PNG")
             avatar_file.seek(0)
-            response = save_file(
-                avatar_file, prefix="team_avatar_", suffix=".png")
+            response = save_file(avatar_file, prefix="team_avatar_", suffix=".png")
             if response.status_code == 200:
                 self._avatar = response.text
                 db.session.add(self)
@@ -227,7 +243,12 @@ class User(db.Model):
             db.session.add(self)
             db.session.commit()
         service_name = Config.get("ctf_name")
-        return "otpauth://totp/%s:%s?secret=%s&issuer=%s" % (service_name, self.username, self.otp_secret, service_name)
+        return "otpauth://totp/%s:%s?secret=%s&issuer=%s" % (
+            service_name,
+            self.username,
+            self.otp_secret,
+            service_name,
+        )
 
     def verify_totp(self, token):
         return onetimepass.valid_totp(token, self.otp_secret)
@@ -268,8 +289,7 @@ class Problem(db.Model):
     path = db.Column(db.String(128))  # path to problem source code
 
     files = db.relationship("File", backref="problem", lazy=True)
-    autogen_files = db.relationship(
-        "AutogenFile", backref="problem", lazy=True)
+    autogen_files = db.relationship("AutogenFile", backref="problem", lazy=True)
 
     @staticmethod
     def validate_problem(path, name):
@@ -291,7 +311,11 @@ class Problem(db.Model):
 
             for required_key in ["test_cases", "time_limit", "memory_limit"]:
                 if required_key not in metadata:
-                    print("\t* Expected required key {} in 'problem.yml'".format(required_key))
+                    print(
+                        "\t* Expected required key {} in 'problem.yml'".format(
+                            required_key
+                        )
+                    )
                     valid = False
 
         return valid
@@ -355,7 +379,9 @@ class Problem(db.Model):
 
     @staticmethod
     def import_repository(path):
-        if not (os.path.realpath(path) and os.path.exists(path) and os.path.isdir(path)):
+        if not (
+            os.path.realpath(path) and os.path.exists(path) and os.path.isdir(path)
+        ):
             print("this isn't a path")
             sys.exit(1)
         path = os.path.realpath(path)
@@ -371,7 +397,9 @@ class Problem(db.Model):
 
     @classmethod
     def categories(cls):
-        def f(c): return c[0]
+        def f(c):
+            return c[0]
+
         categories = map(f, db.session.query(Problem.category).distinct().all())
         return list(categories)
 
@@ -431,7 +459,9 @@ class Problem(db.Model):
         solved = Solve.query.filter_by(tid=current_user.tid, pid=self.pid).first()
         if solved:
             return "error", "You've already solved this problem"
-        already_tried = WrongFlag.query.filter_by(tid=current_user.tid, pid=self.pid, flag=flag).count()
+        already_tried = WrongFlag.query.filter_by(
+            tid=current_user.tid, pid=self.pid, flag=flag
+        ).count()
         if already_tried:
             return "error", "You've already tried this flag"
         random = None
@@ -441,13 +471,16 @@ class Problem(db.Model):
         grader = self.get_grader()
         correct, message = grader.grade(random, flag)
         if correct:
-            submission = Solve(pid=self.pid, tid=current_user.tid, uid=current_user.uid, flag=flag)
+            submission = Solve(
+                pid=self.pid, tid=current_user.tid, uid=current_user.uid, flag=flag
+            )
             db.session.add(submission)
             db.session.commit()
         else:
             if len(flag) < 256:
-                submission = WrongFlag(pid=self.pid, tid=current_user.tid, uid=current_user.uid,
-                                       flag=flag)
+                submission = WrongFlag(
+                    pid=self.pid, tid=current_user.tid, uid=current_user.uid, flag=flag
+                )
                 db.session.add(submission)
                 db.session.commit()
             else:
@@ -462,9 +495,21 @@ class Problem(db.Model):
         return "success" if correct else "failure", message
 
     def api_summary(self):
-        summary = {field: getattr(self, field) for field in ['pid', 'author', 'name', 'title', 'hint',
-                                                             'category', 'value', 'solved', 'programming']}
-        summary['description'] = self.render_description(current_user.tid)
+        summary = {
+            field: getattr(self, field)
+            for field in [
+                "pid",
+                "author",
+                "name",
+                "title",
+                "hint",
+                "category",
+                "value",
+                "solved",
+                "programming",
+            ]
+        }
+        summary["description"] = self.render_description(current_user.tid)
         return summary
 
 
@@ -532,7 +577,7 @@ class PasswordResetToken(db.Model):
 
 class Solve(db.Model):
     __tablename__ = "solves"
-    __table_args__ = (db.UniqueConstraint('pid', 'tid'),)
+    __table_args__ = (db.UniqueConstraint("pid", "tid"),)
     id = db.Column(db.Integer, index=True, primary_key=True)
     pid = db.Column(db.Integer, db.ForeignKey("problems.pid"), index=True)
     tid = db.Column(db.Integer, db.ForeignKey("teams.tid"), index=True)
@@ -573,8 +618,12 @@ class Team(db.Model):
     teamname = db.Column(db.Unicode(32), unique=True)
     school = db.Column(db.Unicode(64))
     owner = db.Column(db.Integer)
-    classrooms = db.relationship("Classroom", secondary=team_classroom, backref="classrooms")
-    classroom_invites = db.relationship("Classroom", secondary=classroom_invitation, backref="classroom_invites")
+    classrooms = db.relationship(
+        "Classroom", secondary=team_classroom, backref="classrooms"
+    )
+    classroom_invites = db.relationship(
+        "Classroom", secondary=classroom_invitation, backref="classroom_invites"
+    )
     members = db.relationship("User", back_populates="team")
     admin = db.Column(db.Boolean, default=False)
     shell_user = db.Column(db.String(16), unique=True)
@@ -584,7 +633,12 @@ class Team(db.Model):
     jobs = db.relationship("Job", backref="team", lazy=True)
     _avatar = db.Column("avatar", db.String(128))
 
-    outgoing_invitations = db.relationship("User", secondary=team_player_invitation, lazy="subquery", backref=db.backref("incoming_invitations", lazy=True))
+    outgoing_invitations = db.relationship(
+        "User",
+        secondary=team_player_invitation,
+        lazy="subquery",
+        backref=db.backref("incoming_invitations", lazy=True),
+    )
 
     def __repr__(self):
         return "%s_%s" % (self.__class__.__name__, self.tid)
@@ -599,8 +653,7 @@ class Team(db.Model):
             avatar = generate_identicon("team%s" % self.tid)
             avatar.save(avatar_file, format="PNG")
             avatar_file.seek(0)
-            response = save_file(
-                avatar_file, prefix="user_avatar_", suffix=".png")
+            response = save_file(avatar_file, prefix="user_avatar_", suffix=".png")
             if response.status_code == 200:
                 self._avatar = response.text
                 db.session.add(self)
@@ -618,22 +671,37 @@ class Team(db.Model):
 
     @hybrid_property
     def observer(self):
-        return User.query.filter(and_(User.tid == self.tid, User.level != USER_REGULAR)).count()
+        return User.query.filter(
+            and_(User.tid == self.tid, User.level != USER_REGULAR)
+        ).count()
 
     @observer.expression
     def observer_expr(self):
-        return db.session.query(User).filter(User.tid == self.tid and User.level != USER_REGULAR).count()
+        return (
+            db.session.query(User)
+            .filter(User.tid == self.tid and User.level != USER_REGULAR)
+            .count()
+        )
 
     @hybrid_property
     def prop_points(self):
-        return sum(problem.value
-                   for problem, solve in
-                   db.session.query(Problem, Solve).filter(Solve.tid == self.tid).filter(Problem.pid == Solve.tid).all())
+        return sum(
+            problem.value
+            for problem, solve in db.session.query(Problem, Solve)
+            .filter(Solve.tid == self.tid)
+            .filter(Problem.pid == Solve.tid)
+            .all()
+        )
 
     @prop_points.expression
     def prop_points_expr(self):
-        return db.session.query(Problem, Solve).filter(Solve.tid == self.tid).filter(Problem.pid == Solve.tid)\
-            .with_entities(func.sum(Problem.value)).scalar()
+        return (
+            db.session.query(Problem, Solve)
+            .filter(Solve.tid == self.tid)
+            .filter(Problem.pid == Solve.tid)
+            .with_entities(func.sum(Problem.value))
+            .scalar()
+        )
 
     @cache.memoize(timeout=120)
     def points(self):
@@ -659,8 +727,7 @@ class Team(db.Model):
 
     @hybrid_property
     def prop_last_solved(self):
-        solve = Solve.query.filter_by(
-            tid=self.tid).order_by(Solve.date).first()
+        solve = Solve.query.filter_by(tid=self.tid).order_by(Solve.date).first()
         if not solve:
             return 0
         return solve.date
@@ -679,7 +746,8 @@ class Team(db.Model):
         if not problem.weightmap:
             return True
         current = sum(
-            [problem.weightmap.get(solve.problem.name, 0) for solve in solves])
+            [problem.weightmap.get(solve.problem.name, 0) for solve in solves]
+        )
         return current >= problem.threshold
 
     def get_unlocked_problems(self, admin=False, programming=None):
@@ -694,13 +762,17 @@ class Team(db.Model):
         def unlocked(problem):
             if not problem.weightmap:
                 return True
-            current = sum([problem.weightmap.get(solve.problem.name, 0) for solve in solves])
+            current = sum(
+                [problem.weightmap.get(solve.problem.name, 0) for solve in solves]
+            )
             return current >= problem.threshold
+
         return list(filter(unlocked, problems))
 
     def get_jobs(self):
-        return Job.query.filter_by(tid=self.tid).order_by(
-            Job.completion_time.desc()).all()
+        return (
+            Job.query.filter_by(tid=self.tid).order_by(Job.completion_time.desc()).all()
+        )
 
     def has_solved(self, pid):
         return Solve.query.filter_by(tid=self.tid, pid=pid).count() > 0
@@ -709,31 +781,46 @@ class Team(db.Model):
     @cache.memoize(timeout=60)
     def scoreboard(cls):
         # credit: https://github.com/CTFd/CTFd/blob/master/CTFd/scoreboard.py
-        uniq = db.session\
-            .query(Solve.tid.label("tid"), Solve.pid.label("pid"))\
-            .distinct()\
+        uniq = (
+            db.session.query(Solve.tid.label("tid"), Solve.pid.label("pid"))
+            .distinct()
             .subquery()
+        )
         # flash("uniq: " + str(uniq).replace("\n", ""), "info")
-        scores = db.session\
-            .query(
+        scores = (
+            db.session.query(
                 # uniq.columns.tid.label("tid"),
                 Solve.tid.label("tid"),
                 db.func.max(Solve.pid).label("pid"),
                 db.func.sum(Problem.value).label("score"),
-                db.func.max(Solve.date).label("date"))\
-            .join(Problem)\
+                db.func.max(Solve.date).label("date"),
+            )
+            .join(Problem)
             .group_by(Solve.tid)
+        )
         # flash("scores: " + str(scores).replace("\n", ""), "info")
         results = union_all(scores).alias("results")
-        sumscores = db.session\
-            .query(results.columns.tid, db.func.sum(results.columns.score).label("score"), db.func.max(results.columns.pid), db.func.max(results.columns.date).label("date"))\
-            .group_by(results.columns.tid)\
+        sumscores = (
+            db.session.query(
+                results.columns.tid,
+                db.func.sum(results.columns.score).label("score"),
+                db.func.max(results.columns.pid),
+                db.func.max(results.columns.date).label("date"),
+            )
+            .group_by(results.columns.tid)
             .subquery()
-        query = db.session\
-            .query(Team, Team.tid.label("tid"), sumscores.columns.score, sumscores.columns.date)\
-            .filter(Team.banned == False)\
-            .join(sumscores, Team.tid == sumscores.columns.tid)\
+        )
+        query = (
+            db.session.query(
+                Team,
+                Team.tid.label("tid"),
+                sumscores.columns.score,
+                sumscores.columns.date,
+            )
+            .filter(Team.banned == False)
+            .join(sumscores, Team.tid == sumscores.columns.tid)
             .order_by(sumscores.columns.score.desc(), sumscores.columns.date)
+        )
         # flash("full query: " + str(query).replace("\n", ""), "info")
         return query.all()
 
@@ -774,7 +861,9 @@ class Team(db.Model):
         if not self.shell_user or not self.shell_pass:
             client = paramiko.SSHClient()
             client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-            client.connect(host, username="ctfadmin", pkey=private_key, look_for_keys=False)
+            client.connect(
+                host, username="ctfadmin", pkey=private_key, look_for_keys=False
+            )
             stdin, stdout, stderr = client.exec_command("\n")
             data = stdout.read().decode("utf-8").split("\n")
             for line in data:
@@ -796,8 +885,12 @@ class Classroom(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.Unicode(64), nullable=False)
     owner = db.Column(db.Integer)
-    teams = db.relationship("Team", passive_deletes=True, secondary=team_classroom, backref="teams")
-    invites = db.relationship("Team", passive_deletes=True, secondary=classroom_invitation, backref="invites")
+    teams = db.relationship(
+        "Team", passive_deletes=True, secondary=team_classroom, backref="teams"
+    )
+    invites = db.relationship(
+        "Team", passive_deletes=True, secondary=classroom_invitation, backref="invites"
+    )
 
     def __contains__(self, obj):
         if isinstance(obj, Team):
@@ -814,7 +907,11 @@ class Classroom(db.Model):
 
     @property
     def scoreboard(self):
-        return sorted(self.teams, key=lambda team: (team.points(), -team.get_last_solved()), reverse=True)
+        return sorted(
+            self.teams,
+            key=lambda team: (team.points(), -team.get_last_solved()),
+            reverse=True,
+        )
 
 
 class Egg(db.Model):
@@ -841,6 +938,7 @@ class WrongEgg(db.Model):
     uid = db.Column(db.Integer, db.ForeignKey("users.uid"), index=True)
     date = db.Column(db.DateTime, default=datetime.utcnow)
     submission = db.Column(db.Unicode(64))
+
 
 # judge stuff
 
@@ -884,6 +982,11 @@ class GameState(db.Model):
     __tablename__ = "game_states"
     id = db.Column(db.Integer, primary_key=True)
     uid = db.Column(db.Integer, db.ForeignKey("users.uid"), unique=True)
-    last_updated = db.Column(db.DateTime, server_default=func.now(), onupdate=func.current_timestamp(), unique=True)
+    last_updated = db.Column(
+        db.DateTime,
+        server_default=func.now(),
+        onupdate=func.current_timestamp(),
+        unique=True,
+    )
 
     state = db.Column(db.UnicodeText, nullable=False, default="{}")
