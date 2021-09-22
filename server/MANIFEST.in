@@ -1,3 +1,4 @@
 graft librectf/assets
 graft librectf/templates
+graft migrations
 global-exclude *.pyc
