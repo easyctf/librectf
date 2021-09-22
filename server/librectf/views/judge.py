@@ -7,8 +7,8 @@ from functools import wraps
 from flask import Blueprint, abort, make_response, request
 
 from sqlalchemy import and_, or_
-from easyctf.models import Job, JudgeKey, Solve, Problem
-from easyctf.objects import db
+from librectf.models import Job, JudgeKey, Solve, Problem
+from librectf.objects import db
 
 blueprint = Blueprint("judge", __name__)
 

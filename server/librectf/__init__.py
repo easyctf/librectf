@@ -14,13 +14,13 @@ def create_app(config=None):
 
     print("CONFIG IS", config)
     if config is None:
-        from easyctf.config import Config
+        from librectf.config import Config
 
         config = Config()
     app.config.from_object(config)
 
-    from easyctf.objects import cache, db, login_manager, sentry
-    import easyctf.models
+    from librectf.objects import cache, db, login_manager, sentry
+    import librectf.models
 
     cache.init_app(app)
     db.init_app(app)
@@ -28,13 +28,13 @@ def create_app(config=None):
     if app.config.get("ENVIRONMENT") != "development":
         sentry.init_app(app, logging=True, level=logging.WARNING)
 
-    from easyctf.utils import filestore, to_place_str, to_timestamp
+    from librectf.utils import filestore, to_place_str, to_timestamp
 
     app.jinja_env.globals.update(filestore=filestore)
     app.jinja_env.filters["to_timestamp"] = to_timestamp
     app.jinja_env.filters["to_place_str"] = to_place_str
 
-    from easyctf.models import Config
+    from librectf.models import Config
 
     Migrate(app, db)
 
@@ -84,7 +84,7 @@ def create_app(config=None):
         )
         return config
 
-    from easyctf.views import admin, base, classroom, chals, game, judge, teams, users
+    from librectf.views import admin, base, classroom, chals, game, judge, teams, users
 
     app.register_blueprint(admin.blueprint, url_prefix="/admin")
     app.register_blueprint(base.blueprint)

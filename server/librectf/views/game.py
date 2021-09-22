@@ -14,11 +14,11 @@ from flask import (
 )
 from flask_login import current_user, login_required
 
-from easyctf.decorators import block_before_competition, team_required
-from easyctf.forms.chals import ProblemSubmitForm, ProgrammingSubmitForm
-from easyctf.forms.game import GameStateUpdateForm
-from easyctf.models import AutogenFile, GameState, Job, Problem, Solve, User, WrongFlag
-from easyctf.objects import cache, db, sentry
+from librectf.decorators import block_before_competition, team_required
+from librectf.forms.chals import ProblemSubmitForm, ProgrammingSubmitForm
+from librectf.forms.game import GameStateUpdateForm
+from librectf.models import AutogenFile, GameState, Job, Problem, Solve, User, WrongFlag
+from librectf.objects import cache, db, sentry
 
 blueprint = Blueprint("game", __name__, template_folder="templates")
 

@@ -4,7 +4,7 @@ from wtforms import ValidationError
 from wtforms.fields import StringField, SubmitField
 from wtforms.validators import InputRequired
 
-from easyctf.models import Team
+from librectf.models import Team
 
 
 class NewClassroomForm(FlaskForm):

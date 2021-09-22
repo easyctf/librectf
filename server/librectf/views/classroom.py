@@ -2,10 +2,10 @@ from flask import Blueprint, abort, flash, redirect, render_template, url_for
 from flask_login import current_user, login_required
 from sqlalchemy import func
 
-from easyctf.decorators import teacher_required, team_required
-from easyctf.forms.classroom import AddTeamForm, NewClassroomForm
-from easyctf.models import Classroom, Team, classroom_invitation, team_classroom
-from easyctf.objects import db
+from librectf.decorators import teacher_required, team_required
+from librectf.forms.classroom import AddTeamForm, NewClassroomForm
+from librectf.models import Classroom, Team, classroom_invitation, team_classroom
+from librectf.objects import db
 
 blueprint = Blueprint("classroom", __name__)
 

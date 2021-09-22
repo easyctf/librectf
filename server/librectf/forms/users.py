@@ -14,9 +14,9 @@ from wtforms.fields import (
 from wtforms.validators import Email, EqualTo, InputRequired, Length, Optional
 from wtforms.widgets.html5 import NumberInput
 
-from easyctf.forms.validators import UsernameLengthValidator
-from easyctf.models import User
-from easyctf.utils import VALID_USERNAME
+from librectf.forms.validators import UsernameLengthValidator
+from librectf.models import User
+from librectf.utils import VALID_USERNAME
 
 
 class ChangeLoginForm(FlaskForm):

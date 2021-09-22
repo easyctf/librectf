@@ -4,12 +4,12 @@ from io import BytesIO
 from flask import Blueprint, abort, flash, redirect, render_template, url_for
 from flask_login import current_user, login_required
 
-from easyctf.decorators import is_team_captain, email_verification_required
-from easyctf.forms.teams import AddMemberForm, CreateTeamForm, ProfileEditForm
-from easyctf.models import Config, Team, User
-from easyctf.objects import db
-from easyctf.utils import sanitize_avatar, save_file
-from easyctf.constants import USER_TEACHER
+from librectf.decorators import is_team_captain, email_verification_required
+from librectf.forms.teams import AddMemberForm, CreateTeamForm, ProfileEditForm
+from librectf.models import Config, Team, User
+from librectf.objects import db
+from librectf.utils import sanitize_avatar, save_file
+from librectf.constants import USER_TEACHER
 
 blueprint = Blueprint("teams", __name__, template_folder="templates")
 

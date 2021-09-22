@@ -12,10 +12,10 @@ from flask import (
 )
 from flask_login import current_user, login_required
 
-from easyctf.decorators import block_before_competition, team_required, no_cache
-from easyctf.forms.chals import ProblemSubmitForm, ProgrammingSubmitForm
-from easyctf.models import AutogenFile, Job, Problem, Solve, User, WrongFlag
-from easyctf.objects import cache, db, sentry
+from librectf.decorators import block_before_competition, team_required, no_cache
+from librectf.forms.chals import ProblemSubmitForm, ProgrammingSubmitForm
+from librectf.models import AutogenFile, Job, Problem, Solve, User, WrongFlag
+from librectf.objects import cache, db, sentry
 
 blueprint = Blueprint("chals", __name__, template_folder="templates")
 

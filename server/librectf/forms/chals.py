@@ -3,7 +3,7 @@ from wtforms import ValidationError
 from wtforms.fields import HiddenField, StringField, TextAreaField
 from wtforms.validators import InputRequired
 
-from easyctf.constants import SUPPORTED_LANGUAGES
+from librectf.constants import SUPPORTED_LANGUAGES
 
 
 class ProblemSubmitForm(FlaskForm):

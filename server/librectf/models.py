@@ -23,9 +23,9 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from sqlalchemy.orm import backref
 from sqlalchemy.sql.expression import union_all
 
-from easyctf.constants import USER_REGULAR
-from easyctf.objects import cache, db, login_manager
-from easyctf.utils import (
+from librectf.constants import USER_REGULAR
+from librectf.objects import cache, db, login_manager
+from librectf.utils import (
     generate_identicon,
     generate_short_string,
     generate_string,

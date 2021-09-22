@@ -1,10 +1,10 @@
 from flask import Blueprint, abort, flash, redirect, render_template, request, url_for
 from wtforms_components import read_only
 
-from easyctf.decorators import admin_required
-from easyctf.forms.admin import ProblemForm, SettingsForm
-from easyctf.models import AutogenFile, Config, Problem, JudgeKey
-from easyctf.objects import db
+from librectf.decorators import admin_required
+from librectf.forms.admin import ProblemForm, SettingsForm
+from librectf.models import AutogenFile, Config, Problem, JudgeKey
+from librectf.objects import db
 
 blueprint = Blueprint("admin", __name__, template_folder="templates")
 

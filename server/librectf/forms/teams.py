@@ -5,8 +5,8 @@ from wtforms import ValidationError
 from wtforms.fields import BooleanField, FileField, StringField, SubmitField
 from wtforms.validators import InputRequired, Length
 
-from easyctf.forms.validators import TeamLengthValidator
-from easyctf.models import Config, Team, User
+from librectf.forms.validators import TeamLengthValidator
+from librectf.models import Config, Team, User
 
 
 class AddMemberForm(FlaskForm):

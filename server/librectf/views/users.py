@@ -17,12 +17,12 @@ from flask import (
 from flask_login import current_user, login_required, login_user, logout_user
 from sqlalchemy import func
 
-from easyctf.constants import (
+from librectf.constants import (
     FORGOT_EMAIL_TEMPLATE,
     REGISTRATION_EMAIL_TEMPLATE,
     USER_LEVELS,
 )
-from easyctf.forms.users import (
+from librectf.forms.users import (
     ChangeLoginForm,
     LoginForm,
     PasswordForgotForm,
@@ -31,9 +31,9 @@ from easyctf.forms.users import (
     RegisterForm,
     TwoFactorAuthSetupForm,
 )
-from easyctf.models import Config, PasswordResetToken, Team, User
-from easyctf.objects import db, sentry
-from easyctf.utils import (
+from librectf.models import Config, PasswordResetToken, Team, User
+from librectf.objects import db, sentry
+from librectf.utils import (
     generate_string,
     get_redirect_target,
     redirect_back,

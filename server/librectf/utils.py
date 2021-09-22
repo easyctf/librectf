@@ -9,7 +9,7 @@ import requests
 from flask import current_app, redirect, request, url_for
 from PIL import Image, ImageDraw, ImageOps
 
-from easyctf.objects import random
+from librectf.objects import random
 
 VALID_USERNAME = re.compile(r"^[A-Za-z_][A-Za-z\d_]*$")
 VALID_PROBLEM_NAME = re.compile(r"^[a-z_][a-z\-\d_]*$")

@@ -2,8 +2,8 @@ from flask import Blueprint, abort, redirect, render_template, request, url_for,
 from flask_login import current_user, login_required
 from sqlalchemy import func
 
-from easyctf.models import Egg, WrongEgg, Team, User, EggSolve
-from easyctf.objects import cache, db
+from librectf.models import Egg, WrongEgg, Team, User, EggSolve
+from librectf.objects import cache, db
 
 blueprint = Blueprint("base", __name__, template_folder="templates")
 

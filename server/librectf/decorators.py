@@ -4,7 +4,7 @@ from functools import wraps, update_wrapper
 from flask import abort, flash, redirect, url_for, session, make_response
 from flask_login import current_user, login_required
 
-from easyctf.models import Config
+from librectf.models import Config
 
 
 def email_verification_required(func):

@@ -17,8 +17,8 @@ from wtforms.fields import (
 from wtforms.fields.html5 import DateTimeLocalField
 from wtforms.validators import InputRequired, NumberRange, Optional
 
-from easyctf.models import Problem
-from easyctf.utils import VALID_PROBLEM_NAME, generate_string
+from librectf.models import Problem
+from librectf.utils import VALID_PROBLEM_NAME, generate_string
 
 
 class DateTimeField(DateTimeLocalField):
