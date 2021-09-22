@@ -13,6 +13,7 @@
 
     myPkgs = rec {
       filestore = pkgs.callPackage ./filestore {};
+      judge = python39Packages.callPackage ./judge {};
       server = python39Packages.callPackage ./server {};
     };
   in

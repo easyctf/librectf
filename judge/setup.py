@@ -1,5 +1,5 @@
 from distutils.core import setup
 
 setup(
-    name="librectf-server",
+    name="librectf-judge",
 )
