@@ -9,13 +9,13 @@ import traceback
 from io import BytesIO, StringIO
 from string import Template
 
-import onetimepass
 import paramiko
 import yaml
 from Crypto.PublicKey import RSA
 from flask import current_app as app
 from flask import url_for
 from flask_login import current_user
+from pyotp import TOTP
 from markdown2 import markdown
 from passlib.hash import bcrypt
 from sqlalchemy import and_, func, select
@@ -251,7 +251,9 @@ class User(db.Model):
         )
 
     def verify_totp(self, token):
-        return onetimepass.valid_totp(token, self.otp_secret)
+        totp = TOTP(self.otp_secret)
+        return totp.verify(token)
+        # return onetimepass.valid_totp(token, self.otp_secret)
 
     @cache.memoize(timeout=120)
     def points(self):

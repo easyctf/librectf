@@ -4,9 +4,9 @@ import tempfile
 import pytest
 from webtest import TestApp
 
-from easyctf import create_app
-from easyctf.config import Config
-from easyctf.objects import db as _db
+from librectf import create_app
+from librectf.config import Config
+from librectf.objects import db as _db
 
 
 @pytest.yield_fixture(scope="function")
