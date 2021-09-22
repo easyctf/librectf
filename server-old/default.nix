@@ -29,7 +29,7 @@ let
       # TODO: figure out why these fail tests
       (dontCheck flask_migrate)
     ] ++ (with extraPypi; [ ]);
-  checkInputs = with python39Packages; [ pytest webtest ];
+  checkInputs = with python39Packages; [ pytest webtest pylint ];
 in buildPythonApplication {
   pname = "librectf-server";
   version = "0.1.0";

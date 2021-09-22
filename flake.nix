@@ -12,7 +12,11 @@
         myPkgs = rec {
           filestore = pkgs.callPackage ./filestore { };
           judge = python39Packages.callPackage ./judge { };
-          server = python39Packages.callPackage ./server { };
+          frontend = pkgs.callPackage ./frontend {};
+          backend = pkgs.callPackage ./backend {};
+
+          # old server
+          server = python39Packages.callPackage ./server-old { };
         };
       in {
         packages = flake-utils.lib.flattenTree myPkgs;

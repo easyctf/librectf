@@ -1,0 +1,7 @@
+{
+  "rocket 0.5.0-rc.1 (git+https://github.com/SergioBenitez/Rocket?branch=v0.5-rc#e382bc584b478092fdd53eefb9f90ea9c08a6967)": "0dcpdch1fkpwrxn28nlq02dzc1yb4mh8w1x9viaiw1d05v5v4npg",
+  "rocket_codegen 0.5.0-rc.1 (git+https://github.com/SergioBenitez/Rocket?branch=v0.5-rc#e382bc584b478092fdd53eefb9f90ea9c08a6967)": "0dcpdch1fkpwrxn28nlq02dzc1yb4mh8w1x9viaiw1d05v5v4npg",
+  "rocket_db_pools 0.1.0-rc (git+https://github.com/SergioBenitez/Rocket?branch=v0.5-rc#e382bc584b478092fdd53eefb9f90ea9c08a6967)": "0dcpdch1fkpwrxn28nlq02dzc1yb4mh8w1x9viaiw1d05v5v4npg",
+  "rocket_db_pools_codegen 0.1.0-rc (git+https://github.com/SergioBenitez/Rocket?branch=v0.5-rc#e382bc584b478092fdd53eefb9f90ea9c08a6967)": "0dcpdch1fkpwrxn28nlq02dzc1yb4mh8w1x9viaiw1d05v5v4npg",
+  "rocket_http 0.5.0-rc.1 (git+https://github.com/SergioBenitez/Rocket?branch=v0.5-rc#e382bc584b478092fdd53eefb9f90ea9c08a6967)": "0dcpdch1fkpwrxn28nlq02dzc1yb4mh8w1x9viaiw1d05v5v4npg"
+}

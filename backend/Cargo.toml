@@ -1,0 +1,17 @@
+[package]
+name = "backend"
+version = "0.1.0"
+edition = "2018"
+
+[dependencies]
+serde = { version = "1.0.127", features = ["derive"] }
+
+[dependencies.rocket]
+git = "https://github.com/SergioBenitez/Rocket"
+branch = "v0.5-rc"
+features = ["json"]
+
+[dependencies.rocket_db_pools]
+git = "https://github.com/SergioBenitez/Rocket"
+branch = "v0.5-rc"
+features = ["sqlx_sqlite"]
