@@ -7,9 +7,9 @@ import time
 import tempfile
 import traceback
 
-import executor
-from api import API
-from models import Job
+import judge.executor
+from judge.api import API
+from judge.models import Job
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)

@@ -4,8 +4,8 @@ import os
 from abc import ABCMeta
 from typing import List, Dict
 
-import config
-from models import JobVerdict
+import judge.config
+from judge.models import JobVerdict
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)

@@ -2,8 +2,8 @@ import logging
 
 import requests
 
-from languages import languages, Python3
-from models import Job, Problem
+from judge.languages import languages, Python3
+from judge.models import Job, Problem
 
 
 class API(object):

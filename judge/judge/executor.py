@@ -8,9 +8,9 @@ import time
 from functools import wraps
 from typing import Iterator
 
-import config
-from languages import Language
-from models import ExecutionResult, Job, JobVerdict, Problem
+import judge.config
+from judge.languages import Language
+from judge.models import ExecutionResult, Job, JobVerdict, Problem
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)

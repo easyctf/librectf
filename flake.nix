@@ -25,5 +25,12 @@
               nixfmt
             ];
         };
-      });
+      }) // {
+        nixopsConfigurations = {
+          default = {
+            inherit nixpkgs;
+            network = { storage.memory = { }; };
+          };
+        };
+      };
 }
