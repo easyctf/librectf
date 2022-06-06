@@ -5,7 +5,7 @@ authors = ["Michael Zhang <mail@mzhang.io>"]
 edition = "2018"
 
 [dependencies]
-hyper = "0.13.9"
+hyper = "0.14.10"
 lazy_static = "1.4.0"
 tokio = { version = "0.2", features = ["full"] }
 anyhow = "1.0.34"
