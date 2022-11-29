@@ -1,7 +1,7 @@
 from datetime import datetime
 from functools import wraps, update_wrapper
 
-from flask import abort, flash, redirect, url_for, session, make_response
+from flask import abort, flash, redirect, url_for, session, make_response, current_app
 from flask_login import current_user, login_required
 
 from easyctf.models import Config
@@ -10,10 +10,11 @@ from easyctf.models import Config
 def email_verification_required(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
-        if not (current_user.is_authenticated and current_user.email_verified):
-            session.pop("_flashes", None)
-            flash("You need to verify your email first.", "warning")
-            return redirect(url_for("users.settings"))
+        if current_app.config.get("EMAIL_VERIFICATION_REQUIRED", 0):
+            if not (current_user.is_authenticated and current_user.email_verified):
+                session.pop("_flashes", None)
+                flash("You need to verify your email first.", "warning")
+                return redirect(url_for("users.settings"))
         return func(*args, **kwargs)
     return wrapper
 

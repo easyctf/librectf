@@ -19,6 +19,7 @@ services:
       - DATABASE_URL=mysql://app:hellosu@db:3306/app
       - S3_RESOURCE=http://minio:9000
       - FILESTORE_SAVE_ENDPOINT=http://files:5000/save
+      - CACHE_REDIS_HOST=redis
 
       - WAIT_HOSTS=db:3306
       - WAIT_HOSTS_TIMEOUT=300

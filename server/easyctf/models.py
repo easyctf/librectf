@@ -546,11 +546,11 @@ class Solve(db.Model):
 
     @hybrid_property
     def date(self):
-        return int(time.mktime(self._date.timetuple()))
+        return self._date
 
     @date.expression
     def date_expression(self):
-        return self._date
+        return int(time.mktime(self._date.timetuple()))
 
 
 class WrongFlag(db.Model):

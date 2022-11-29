@@ -38,8 +38,9 @@ class Config(object):
         self.CACHE_REDIS_HOST = os.getenv("CACHE_REDIS_HOST", "redis")
 
         self.ENVIRONMENT = os.getenv("ENVIRONMENT", "production")
-        self.EMAIL_VERIFICATION_REQUIRED = int(os.getenv(
-            "EMAIL_VERIFICATION_REQUIRED", "1" if self.ENVIRONMENT == "production" else "0"))
+        self.EMAIL_VERIFICATION_REQUIRED = 0
+        # self.EMAIL_VERIFICATION_REQUIRED = int(os.getenv(
+        # "EMAIL_VERIFICATION_REQUIRED", "1" if self.ENVIRONMENT == "production" else "0"))
 
         self.S3_RESOURCE = os.getenv("S3_RESOURCE", "")
         self.FILESTORE_SAVE_ENDPOINT = os.getenv(
