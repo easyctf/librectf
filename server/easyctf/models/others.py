@@ -1,36 +1,24 @@
-import base64
 import imp
-import logging
 import os
 import re
 import sys
 import time
 from datetime import datetime
-from functools import partial
 import traceback
-from io import BytesIO, StringIO
 from string import Template
 from typing import Tuple
 
-import onetimepass
-import paramiko
-import requests
 import yaml
 from Crypto.PublicKey import ECC
-from flask import current_app as app
-from flask import flash, url_for
+from flask import current_app as app, url_for
 from flask_login import current_user
 from markdown2 import markdown
-from passlib.hash import bcrypt
-from sqlalchemy import and_, func, select
+from sqlalchemy import func
 from sqlalchemy.ext.hybrid import hybrid_property
-from sqlalchemy.orm import backref
-from sqlalchemy.sql.expression import union_all
 
 from easyctf.config import Config as AppConfig
 from easyctf.objects import cache, db, login_manager
 from easyctf.utils import (
-    generate_identicon,
     generate_short_string,
     generate_string,
     save_file,
