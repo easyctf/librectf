@@ -620,15 +620,15 @@ class Team(db.Model):
     def size(self):
         return len(self.members)
 
-    @hybrid_property
+    # @hybrid_property
     @cache.memoize(timeout=120)
     def observer(self):
         return User.query.filter(and_(User.tid == self.tid, User.level != USER_REGULAR)).count()
 
-    @observer.expression
-    @cache.memoize(timeout=120)
-    def observer(self):
-        return db.session.query(User).filter(User.tid == self.tid and User.level != USER_REGULAR).count()
+    # @observer.expression
+    # @cache.memoize(timeout=120)
+    # def observer(self):
+    #     return db.session.query(User).filter(User.tid == self.tid and User.level != USER_REGULAR).count()
 
     @hybrid_property
     def prop_points(self):

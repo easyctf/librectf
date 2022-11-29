@@ -281,7 +281,10 @@ def register_user(name, email, username, password, level, admin=False, **kwargs)
         setattr(new_user, key, value)
     code = generate_string()
     new_user.email_token = code
-    send_verification_email(username, email, url_for("users.verify", code=code, _external=True))
+
+    # TODO: Config for this
+    # send_verification_email(username, email, url_for("users.verify", code=code, _external=True))
+
     db.session.add(new_user)
     db.session.commit()
     return new_user

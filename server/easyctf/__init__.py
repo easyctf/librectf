@@ -8,7 +8,7 @@ from flask_login import current_user
 
 
 def create_app(config=None):
-    app = Flask(__name__, static_folder="assets", static_path="/assets")
+    app = Flask(__name__, static_folder="assets", static_url_path="/assets")
     hostname = socket.gethostname()
 
     if not config:
@@ -16,10 +16,11 @@ def create_app(config=None):
         config = Config()
     app.config.from_object(config)
 
-    from easyctf.objects import cache, db, login_manager, sentry
+    from easyctf.objects import cache, db, login_manager, sentry, migrate
     import easyctf.models
     cache.init_app(app)
     db.init_app(app)
+    migrate.init_app(app, db)
     login_manager.init_app(app)
     if app.config.get("ENVIRONMENT") != "development":
         sentry.init_app(app, logging=True, level=logging.WARNING)

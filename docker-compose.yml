@@ -1,0 +1,37 @@
+version: "3"
+
+services:
+  nginx:
+    build: nginx
+
+  app:
+    build: server
+    depends_on: [db]
+    ports: [3000:5000]
+    volumes:
+      - ./server:/app
+    environment:
+      - SECRET_KEY=ad88fec19a7641e5de308e45dd4fa1c5
+      - DATABASE_URL=mysql://app:hellosu@db:3306/app
+
+      - WAIT_HOSTS=db:3306
+      - WAIT_HOSTS_TIMEOUT=300
+      - WAIT_SLEEP_INTERVAL=10
+      - WAIT_HOST_CONNECT_TIMEOUT=30
+
+  db:
+    image: mariadb
+    expose: [3306]
+    volumes:
+      - ./db/init.d:/docker-entrypoint-initdb.d
+      - ./ctf-data/mariadb:/var/lib/mysql
+    environment:
+      - MARIADB_ROOT_PASSWORD=45694fd9e39afc4a3597bc2797620e15
+
+  files:
+    image: minio/minio
+    volumes:
+      - ./ctf-data/minio:/data
+
+  redis:
+    image: redis

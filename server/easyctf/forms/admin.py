@@ -7,8 +7,7 @@ from sqlalchemy import and_
 from wtforms import ValidationError
 from wtforms.fields import (BooleanField, FloatField, HiddenField,
                             IntegerField, StringField, SubmitField,
-                            TextAreaField)
-from wtforms.fields.html5 import DateTimeLocalField
+                            TextAreaField, DateTimeLocalField)
 from wtforms.validators import InputRequired, NumberRange, Optional
 
 from easyctf.models import Problem

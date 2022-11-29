@@ -4,7 +4,7 @@ import sys
 import logging
 
 import pathlib
-from werkzeug.contrib.cache import RedisCache
+from cachelib import RedisCache
 
 
 class CTFCache(RedisCache):

@@ -6,7 +6,7 @@ from wtforms.fields import (BooleanField, FileField, IntegerField,
                             PasswordField, RadioField, StringField,
                             SubmitField)
 from wtforms.validators import Email, EqualTo, InputRequired, Length, Optional
-from wtforms.widgets.html5 import NumberInput
+from wtforms.widgets import NumberInput
 
 from easyctf.forms.validators import UsernameLengthValidator
 from easyctf.models import User
