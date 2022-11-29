@@ -16,12 +16,13 @@ def create_app(config=None):
         config = Config()
     app.config.from_object(config)
 
-    from easyctf.objects import cache, db, login_manager, sentry, migrate
+    from easyctf.objects import cache, db, login_manager, sentry, migrate, s3
     import easyctf.models
     cache.init_app(app)
     db.init_app(app)
     migrate.init_app(app, db)
     login_manager.init_app(app)
+    s3.init_app(app)
     if app.config.get("ENVIRONMENT") != "development":
         sentry.init_app(app, logging=True, level=logging.WARNING)
 

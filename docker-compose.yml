@@ -2,17 +2,23 @@ version: "3"
 
 services:
   nginx:
-    build: nginx
+    image: nginx
+    ports: [3000:80]
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - ./nginx/easyctf.conf:/etc/nginx/conf.d/default.conf
+      - ./ctf-data/filestore:/var/opt/filestore
 
   app:
     build: server
-    depends_on: [db]
-    ports: [3000:5000]
+    depends_on: [db, files]
     volumes:
       - ./server:/app
     environment:
       - SECRET_KEY=ad88fec19a7641e5de308e45dd4fa1c5
       - DATABASE_URL=mysql://app:hellosu@db:3306/app
+      - S3_RESOURCE=http://minio:9000
+      - FILESTORE_SAVE_ENDPOINT=http://files:5000/save
 
       - WAIT_HOSTS=db:3306
       - WAIT_HOSTS_TIMEOUT=300
@@ -29,7 +35,18 @@ services:
       - MARIADB_ROOT_PASSWORD=45694fd9e39afc4a3597bc2797620e15
 
   files:
+    build: filestore
+    expose: [5000]
+    volumes:
+      - ./filestore:/app
+      - ./ctf-data/filestore:/data
+    environment:
+      - UPLOAD_FOLDER=/data/static
+      - FILESTORE_PORT=5000
+
+  minio:
     image: minio/minio
+    ports: [9000:9000, 9001:9001]
     volumes:
       - ./ctf-data/minio:/data
 

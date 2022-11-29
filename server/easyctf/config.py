@@ -41,6 +41,7 @@ class Config(object):
         self.EMAIL_VERIFICATION_REQUIRED = int(os.getenv(
             "EMAIL_VERIFICATION_REQUIRED", "1" if self.ENVIRONMENT == "production" else "0"))
 
+        self.S3_RESOURCE = os.getenv("S3_RESOURCE", "")
         self.FILESTORE_SAVE_ENDPOINT = os.getenv(
             "FILESTORE_SAVE_ENDPOINT", "http://filestore:5001/save")
         self.FILESTORE_STATIC = os.getenv("FILESTORE_STATIC", "/static")

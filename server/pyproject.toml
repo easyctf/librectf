@@ -42,6 +42,7 @@ SQLAlchemy = "^1.4.44"
 WTForms-Components = "^0.10.5"
 Werkzeug = "^2.2.2"
 cachelib = "^0.9.0"
+boto3 = "^1.26.17"
 
 [tool.poetry.dev-dependencies]
 
