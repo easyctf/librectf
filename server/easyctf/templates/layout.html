@@ -11,12 +11,12 @@
         gtag('js', new Date());
         gtag('config', 'UA-32258920-2');
     </script>
-    <title>{% block title %}{% endblock %} - EasyCTF IV, High School CTF Competition</title>
+    <title>{% block title %}{% endblock %} - {{ ctf_name }}, High School CTF Competition</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="application-name" content="{{ ctf_name }}" />
     <meta name="msapplication-tooltip" content="{{ ctf_name }}" />
     <meta name="description" content="{{ ctf_description }}" />
-    <meta name="og:title" content="{{ self.title() }} - EasyCTF IV, High School CTF Competition" />
+    <meta name="og:title" content="{{ self.title() }} - {{ ctf_name }}, High School CTF Competition" />
     <meta name="og:site_name" content="{{ ctf_name }}" />
     <meta name="og:description" content="{{ page_description if page_description else ctf_description }}" />
     <link rel="icon" href="/assets/images/logo.png" /> {% if keywords %}
