@@ -1,5 +1,4 @@
-from flask import (Blueprint, abort, flash, redirect, render_template, request,
-                   url_for)
+from flask import Blueprint, abort, flash, redirect, render_template, request, url_for
 from wtforms_components import read_only
 
 from easyctf.decorators import admin_required
@@ -72,7 +71,12 @@ def problems(pid=None):
             #     problem_form.generator.data = judge_problem.data['generator_code']
     else:
         problem_form.grader.data = DEFAULT_GRADER
-    return render_template("admin/problems.html", current_problem=problem, problems=problems, problem_form=problem_form)
+    return render_template(
+        "admin/problems.html",
+        current_problem=problem,
+        problems=problems,
+        problem_form=problem_form,
+    )
 
 
 @blueprint.route("/settings/judge/key")

@@ -2,7 +2,16 @@ import json
 import os
 from functools import wraps
 
-from flask import Blueprint, abort, current_app, flash, make_response, render_template, request, url_for
+from flask import (
+    Blueprint,
+    abort,
+    current_app,
+    flash,
+    make_response,
+    render_template,
+    request,
+    url_for,
+)
 from flask_login import current_user, login_required
 
 from easyctf.decorators import block_before_competition, team_required
@@ -18,7 +27,12 @@ def api_view(f):
     @wraps(f)
     def wrapper(*args, **kwargs):
         status, result = f(*args, **kwargs)
-        return make_response(json.dumps(result or dict()), status, {"Content-Type": "application/json; charset=utf-8"})
+        return make_response(
+            json.dumps(result or dict()),
+            status,
+            {"Content-Type": "application/json; charset=utf-8"},
+        )
+
     return wrapper
 
 
@@ -75,7 +89,9 @@ def game_state_get():
         # TODO: proper upserting
         db.session.add(game_state)
         db.session.commit()
-    return make_response(game_state.state, 200, {"Content-Type": "application/json; charset=utf-8"})
+    return make_response(
+        game_state.state, 200, {"Content-Type": "application/json; charset=utf-8"}
+    )
 
 
 @blueprint.route("/state/update", methods=["POST"])

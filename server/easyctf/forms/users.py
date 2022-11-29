@@ -2,9 +2,15 @@ from flask_login import current_user
 from flask_wtf import FlaskForm
 from sqlalchemy import func
 from wtforms import ValidationError
-from wtforms.fields import (BooleanField, FileField, IntegerField,
-                            PasswordField, RadioField, StringField,
-                            SubmitField)
+from wtforms.fields import (
+    BooleanField,
+    FileField,
+    IntegerField,
+    PasswordField,
+    RadioField,
+    StringField,
+    SubmitField,
+)
 from wtforms.validators import Email, EqualTo, InputRequired, Length, Optional
 from wtforms.widgets import NumberInput
 
@@ -14,10 +20,18 @@ from easyctf.utils import VALID_USERNAME
 
 
 class ChangeLoginForm(FlaskForm):
-    email = StringField("Email", validators=[InputRequired("Please enter your email."), Email()])
-    old_password = PasswordField("Current Password", validators=[InputRequired("Please enter your current password.")])
+    email = StringField(
+        "Email", validators=[InputRequired("Please enter your email."), Email()]
+    )
+    old_password = PasswordField(
+        "Current Password",
+        validators=[InputRequired("Please enter your current password.")],
+    )
     password = PasswordField("Password", validators=[Optional()])
-    confirm_password = PasswordField("Confirm Password", validators=[Optional(), EqualTo("password", "Please enter the same password.")])
+    confirm_password = PasswordField(
+        "Confirm Password",
+        validators=[Optional(), EqualTo("password", "Please enter the same password.")],
+    )
     submit = SubmitField("Update Login Information")
 
     def validate_old_password(self, field):
@@ -26,14 +40,24 @@ class ChangeLoginForm(FlaskForm):
 
 
 class LoginForm(FlaskForm):
-    username = StringField("Username", validators=[InputRequired("Please enter your username."), UsernameLengthValidator])
-    password = PasswordField("Password", validators=[InputRequired("Please enter your password.")])
+    username = StringField(
+        "Username",
+        validators=[
+            InputRequired("Please enter your username."),
+            UsernameLengthValidator,
+        ],
+    )
+    password = PasswordField(
+        "Password", validators=[InputRequired("Please enter your password.")]
+    )
     code = IntegerField("Two-Factor Token", validators=[Optional()])
     remember = BooleanField("Remember Me")
     submit = SubmitField("Login")
 
     def get_user(self):
-        query = User.query.filter(func.lower(User.username) == self.username.data.lower())
+        query = User.query.filter(
+            func.lower(User.username) == self.username.data.lower()
+        )
         return query.first()
 
     def validate_username(self, field):
@@ -56,7 +80,13 @@ class ProfileEditForm(FlaskForm):
 
 
 class PasswordForgotForm(FlaskForm):
-    email = StringField("Email", validators=[InputRequired("Please enter your email."), Email("Please enter a valid email.")])
+    email = StringField(
+        "Email",
+        validators=[
+            InputRequired("Please enter your email."),
+            Email("Please enter a valid email."),
+        ],
+    )
     submit = SubmitField("Send Recovery Email")
 
     def __init__(self):
@@ -68,29 +98,59 @@ class PasswordForgotForm(FlaskForm):
     def user(self):
         if not self._user_cached:
             self._user = User.query.filter(
-                func.lower(User.email) == self.email.data.lower()).first()
+                func.lower(User.email) == self.email.data.lower()
+            ).first()
             self._user_cached = True
         return self._user
 
 
 class PasswordResetForm(FlaskForm):
-    password = PasswordField("Password", validators=[InputRequired("Please enter a password.")])
-    confirm_password = PasswordField("Confirm Password", validators=[InputRequired("Please confirm your password."), EqualTo("password", "Please enter the same password.")])
+    password = PasswordField(
+        "Password", validators=[InputRequired("Please enter a password.")]
+    )
+    confirm_password = PasswordField(
+        "Confirm Password",
+        validators=[
+            InputRequired("Please confirm your password."),
+            EqualTo("password", "Please enter the same password."),
+        ],
+    )
     submit = SubmitField("Change Password")
 
 
 class RegisterForm(FlaskForm):
     name = StringField("Name", validators=[InputRequired("Please enter a name.")])
-    username = StringField("Username", validators=[InputRequired("Please enter a username."), UsernameLengthValidator])
-    email = StringField("Email", validators=[InputRequired("Please enter an email."), Email("Please enter a valid email.")])
-    password = PasswordField("Password", validators=[InputRequired("Please enter a password.")])
-    confirm_password = PasswordField("Confirm Password", validators=[InputRequired("Please confirm your password."), EqualTo("password", "Please enter the same password.")])
-    level = RadioField("Who are you?", choices=[("1", "Student"), ("2", "Observer"), ("3", "Teacher")])
+    username = StringField(
+        "Username",
+        validators=[InputRequired("Please enter a username."), UsernameLengthValidator],
+    )
+    email = StringField(
+        "Email",
+        validators=[
+            InputRequired("Please enter an email."),
+            Email("Please enter a valid email."),
+        ],
+    )
+    password = PasswordField(
+        "Password", validators=[InputRequired("Please enter a password.")]
+    )
+    confirm_password = PasswordField(
+        "Confirm Password",
+        validators=[
+            InputRequired("Please confirm your password."),
+            EqualTo("password", "Please enter the same password."),
+        ],
+    )
+    level = RadioField(
+        "Who are you?", choices=[("1", "Student"), ("2", "Observer"), ("3", "Teacher")]
+    )
     submit = SubmitField("Register")
 
     def validate_username(self, field):
         if not VALID_USERNAME.match(field.data):
-            raise ValidationError("Username must be contain letters, numbers, or _, and not start with a number.")
+            raise ValidationError(
+                "Username must be contain letters, numbers, or _, and not start with a number."
+            )
         if User.query.filter(func.lower(User.username) == field.data.lower()).count():
             raise ValidationError("Username is taken.")
 
@@ -100,9 +160,14 @@ class RegisterForm(FlaskForm):
 
 
 class TwoFactorAuthSetupForm(FlaskForm):
-    code = IntegerField("Code", validators=[InputRequired("Please enter the code.")], widget=NumberInput())
-    password = PasswordField("Password", validators=[
-        InputRequired("Please enter your password.")])
+    code = IntegerField(
+        "Code",
+        validators=[InputRequired("Please enter the code.")],
+        widget=NumberInput(),
+    )
+    password = PasswordField(
+        "Password", validators=[InputRequired("Please enter your password.")]
+    )
     submit = SubmitField("Confirm")
 
     def validate_code(self, field):

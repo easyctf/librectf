@@ -8,14 +8,12 @@ from easyctf.constants import SUPPORTED_LANGUAGES
 
 class ProblemSubmitForm(FlaskForm):
     pid = HiddenField("Problem ID")
-    flag = StringField("Flag",
-                       validators=[InputRequired("Please enter a flag.")])
+    flag = StringField("Flag", validators=[InputRequired("Please enter a flag.")])
 
 
 class ProgrammingSubmitForm(FlaskForm):
     pid = HiddenField()
-    code = TextAreaField("Code",
-                         validators=[InputRequired("Please enter code.")])
+    code = TextAreaField("Code", validators=[InputRequired("Please enter code.")])
     language = HiddenField()
 
     def validate_language(self, field):

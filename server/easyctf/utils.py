@@ -25,11 +25,7 @@ def generate_short_string():
 
 
 def send_mail(recipient, subject, body):
-    data = {
-        "from": current_app.config["ADMIN_EMAIL"],
-        "subject": subject,
-        "html": body
-    }
+    data = {"from": current_app.config["ADMIN_EMAIL"], "subject": subject, "html": body}
     data["bcc" if type(recipient) == list else "to"] = recipient
     auth = ("api", current_app.config["MAILGUN_API_KEY"])
     url = "{}/messages".format(current_app.config["MAILGUN_URL"])
@@ -43,7 +39,8 @@ def filestore(name):
 
 def save_file(file, **params):
     url = current_app.config.get(
-        "FILESTORE_SAVE_ENDPOINT", "http://filestore:5001/save")
+        "FILESTORE_SAVE_ENDPOINT", "http://filestore:5001/save"
+    )
     return requests.post(url, data=params, files=dict(file=file))
 
 
@@ -55,14 +52,13 @@ def to_timestamp(date):
 
 def to_place_str(n):
     k = n % 10
-    return "%d%s" % (n, "tsnrhtdd"[(n / 10 % 10 != 1) * (k < 4) * k::4])
+    return "%d%s" % (n, "tsnrhtdd"[(n / 10 % 10 != 1) * (k < 4) * k :: 4])
 
 
 def is_safe_url(target):
     ref_url = urlparse(request.host_url)
     test_url = urlparse(urljoin(request.host_url, target))
-    return test_url.scheme in ("http", "https") and \
-        ref_url.netloc == test_url.netloc
+    return test_url.scheme in ("http", "https") and ref_url.netloc == test_url.netloc
 
 
 def get_redirect_target():
@@ -118,11 +114,9 @@ def generate_identicon(seed):
         s1.append(b + h % 1 * s)
         s1.append(b + s)
 
-        return [
-            s1[~~h % 6], s1[(h | 16) % 6], s1[(h | 8) % 6]
-        ]
+        return [s1[~~h % 6], s1[(h | 16) % 6], s1[(h | 8) % 6]]
 
-    rgb = hsl2rgb(int(h[-7:], 16) & 0xfffffff, 0.5, 0.7)
+    rgb = hsl2rgb(int(h[-7:], 16) & 0xFFFFFFF, 0.5, 0.7)
     bg = (255, 255, 255)
     fg = (int(rgb[0] * 255), int(rgb[1] * 255), int(rgb[2] * 255))
     draw.rectangle([(0, 0), (size, size)], fill=bg)
@@ -130,22 +124,42 @@ def generate_identicon(seed):
     for i in range(15):
         c = bg if int(h[i], 16) % 2 == 1 else fg
         if i < 5:
-            draw.rectangle([(2 * cell + margin, i * cell + margin),
-                            (3 * cell + margin, (i + 1) * cell + margin)],
-                           fill=c)
+            draw.rectangle(
+                [
+                    (2 * cell + margin, i * cell + margin),
+                    (3 * cell + margin, (i + 1) * cell + margin),
+                ],
+                fill=c,
+            )
         elif i < 10:
-            draw.rectangle([(1 * cell + margin, (i - 5) * cell + margin),
-                            (2 * cell + margin, (i - 4) * cell + margin)],
-                           fill=c)
-            draw.rectangle([(3 * cell + margin, (i - 5) * cell + margin),
-                            (4 * cell + margin, (i - 4) * cell + margin)],
-                           fill=c)
+            draw.rectangle(
+                [
+                    (1 * cell + margin, (i - 5) * cell + margin),
+                    (2 * cell + margin, (i - 4) * cell + margin),
+                ],
+                fill=c,
+            )
+            draw.rectangle(
+                [
+                    (3 * cell + margin, (i - 5) * cell + margin),
+                    (4 * cell + margin, (i - 4) * cell + margin),
+                ],
+                fill=c,
+            )
         elif i < 15:
             draw.rectangle(
-                [(0 * cell + margin, (i - 10) * cell + margin),
-                 (1 * cell + margin, (i - 9) * cell + margin)], fill=c)
+                [
+                    (0 * cell + margin, (i - 10) * cell + margin),
+                    (1 * cell + margin, (i - 9) * cell + margin),
+                ],
+                fill=c,
+            )
             draw.rectangle(
-                [(4 * cell + margin, (i - 10) * cell + margin),
-                 (5 * cell + margin, (i - 9) * cell + margin)], fill=c)
+                [
+                    (4 * cell + margin, (i - 10) * cell + margin),
+                    (5 * cell + margin, (i - 9) * cell + margin),
+                ],
+                fill=c,
+            )
 
     return image

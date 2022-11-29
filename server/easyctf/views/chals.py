@@ -1,7 +1,15 @@
 import json
 import os
 
-from flask import Blueprint, abort, current_app, flash, redirect, render_template, url_for
+from flask import (
+    Blueprint,
+    abort,
+    current_app,
+    flash,
+    redirect,
+    render_template,
+    url_for,
+)
 from flask_login import current_user, login_required
 
 from easyctf.decorators import block_before_competition, team_required, no_cache
@@ -38,7 +46,12 @@ def list():
         problems = Problem.query.filter(Problem.value > 0).order_by(Problem.value).all()
     else:
         problems = current_user.team.get_unlocked_problems()
-    return render_template("chals/list.html", categories=categories, problems=problems, problem_submit_form=problem_submit_form)
+    return render_template(
+        "chals/list.html",
+        categories=categories,
+        problems=problems,
+        problem_submit_form=problem_submit_form,
+    )
 
 
 @blueprint.route("/solves/<int:pid>")
@@ -94,15 +107,24 @@ def programming(pid=None):
     if programming_submit_form.validate_on_submit():
         if not problem.programming:
             return redirect(url_for("chals.list"))
-        job = Job(uid=current_user.uid, tid=current_user.tid, pid=pid,
-                  language=programming_submit_form.language.data, contents=programming_submit_form.code.data)
+        job = Job(
+            uid=current_user.uid,
+            tid=current_user.tid,
+            pid=pid,
+            language=programming_submit_form.language.data,
+            contents=programming_submit_form.code.data,
+        )
         db.session.add(job)
         db.session.commit()
         flash("Code was sent! Refresh the page for updates.", "success")
         return redirect(url_for("chals.submission", id=job.id))
 
-    return render_template("chals/programming.html", problem=problem,
-                           problems=problems, programming_submit_form=programming_submit_form)
+    return render_template(
+        "chals/programming.html",
+        problem=problem,
+        problems=problems,
+        programming_submit_form=programming_submit_form,
+    )
 
 
 @blueprint.route("/programming/status")
@@ -110,7 +132,9 @@ def programming(pid=None):
 @team_required
 @block_before_competition
 def status():
-    jobs = Job.query.filter_by(tid=current_user.tid).order_by(Job.submitted.desc()).all()
+    jobs = (
+        Job.query.filter_by(tid=current_user.tid).order_by(Job.submitted.desc()).all()
+    )
     return render_template("chals/status.html", jobs=jobs)
 
 
@@ -124,7 +148,9 @@ def submission(id):
         return abort(404)
     if not current_user.admin and job.tid != current_user.tid:
         return abort(403)
-    return render_template("chals/submission.html", problem=job.problem, job=job, user=job.user)
+    return render_template(
+        "chals/submission.html", problem=job.problem, job=job, user=job.user
+    )
 
 
 @blueprint.route("/autogen/<int:pid>/<filename>")
@@ -139,9 +165,13 @@ def autogen(pid, filename):
 
     tid = current_user.tid
     # If autogen file exists in db, redirect to filestore
-    autogen_file = AutogenFile.query.filter_by(pid=pid, tid=tid, filename=filename).first()
+    autogen_file = AutogenFile.query.filter_by(
+        pid=pid, tid=tid, filename=filename
+    ).first()
     if autogen_file:
-        return redirect("{}/{}".format(current_app.config["FILESTORE_STATIC"], autogen_file.url))
+        return redirect(
+            "{}/{}".format(current_app.config["FILESTORE_STATIC"], autogen_file.url)
+        )
 
     current_path = os.getcwd()
     if problem.path:
@@ -156,6 +186,8 @@ def autogen(pid, filename):
         autogen_file = AutogenFile(pid=pid, tid=tid, filename=filename, data=data)
         db.session.add(autogen_file)
         db.session.commit()
-        return redirect("{}/{}".format(current_app.config["FILESTORE_STATIC"], autogen_file.url))
+        return redirect(
+            "{}/{}".format(current_app.config["FILESTORE_STATIC"], autogen_file.url)
+        )
     os.chdir(current_path)
     return abort(404)

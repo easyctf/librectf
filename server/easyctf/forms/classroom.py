@@ -17,5 +17,7 @@ class AddTeamForm(FlaskForm):
     submit = SubmitField("Add Team")
 
     def validate_name(self, field):
-        if not Team.query.filter(func.lower(Team.teamname) == field.data.lower()).count():
+        if not Team.query.filter(
+            func.lower(Team.teamname) == field.data.lower()
+        ).count():
             raise ValidationError("Team does not exist!")

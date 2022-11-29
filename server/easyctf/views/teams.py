@@ -29,11 +29,15 @@ def cancel(id):
     target_user = User.get_by_id(id)
     try:
         assert target_user != None, "User not found."
-        assert target_user in current_team.outgoing_invitations, "No invitation for this user found."
+        assert (
+            target_user in current_team.outgoing_invitations
+        ), "No invitation for this user found."
         current_team.outgoing_invitations.remove(target_user)
         db.session.add(current_team)
         db.session.commit()
-        flash("Invitation to %s successfully withdrawn." % target_user.username, "success")
+        flash(
+            "Invitation to %s successfully withdrawn." % target_user.username, "success"
+        )
     except AssertionError as e:
         flash(str(e), "danger")
     return redirect(url_for("teams.settings"))
@@ -113,7 +117,9 @@ def settings():
                     f = BytesIO(field.data.read())
                     new_avatar = sanitize_avatar(f)
                     if new_avatar:
-                        response = save_file(new_avatar, prefix="team_avatar", suffix=".png")
+                        response = save_file(
+                            new_avatar, prefix="team_avatar", suffix=".png"
+                        )
                         if response.status_code == 200:
                             current_team._avatar = response.text
                 continue
@@ -129,7 +135,12 @@ def settings():
         for field in profile_edit_form:
             if hasattr(current_team, field.short_name):
                 field.data = getattr(current_team, field.short_name, "")
-    return render_template("teams/settings.html", team=current_team, profile_edit_form=profile_edit_form, add_member_form=add_member_form)
+    return render_template(
+        "teams/settings.html",
+        team=current_team,
+        profile_edit_form=profile_edit_form,
+        add_member_form=add_member_form,
+    )
 
 
 def create_team(form):

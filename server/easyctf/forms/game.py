@@ -13,4 +13,4 @@ class GameStateUpdateForm(FlaskForm):
         try:
             json.loads(field.data)
         except:
-            raise ValidationError('invalid json!')
+            raise ValidationError("invalid json!")
