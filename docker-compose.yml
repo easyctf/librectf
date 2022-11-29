@@ -50,6 +50,7 @@ services:
     ports: [9000:9000, 9001:9001]
     volumes:
       - ./ctf-data/minio:/data
+    command: server --address 0.0.0.0:9000 /data
 
   redis:
     image: redis
